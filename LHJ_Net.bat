@@ -1,0 +1,1 @@
+UnrealEditor.exe %cd%\BODYCREDIT.uproject -NetTrace=1 -Trace=Net
