@@ -4,6 +4,7 @@
 ACNox::ACNox()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
 
 }
 
