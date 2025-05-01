@@ -12,6 +12,9 @@ class BODYCREDIT_API ACNox : public ACharacter
 public:
 	ACNox();
 
+	UPROPERTY(EditDefaultsOnly, Category = "Team")
+	uint8 TeamID = 1;
+
 protected:
 	virtual void BeginPlay() override;
 
