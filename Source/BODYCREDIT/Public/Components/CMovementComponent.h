@@ -53,6 +53,7 @@ private:
 	// Inputs
 	void OnMoveForward(const struct FInputActionValue& InVal);
 	void OnMoveRight(const struct FInputActionValue& InVal);
+	void OffMovement(const struct FInputActionValue& InVal);
 
 	void OnHorizontalLook(const struct FInputActionValue& InVal);
 	void OnVerticalLook(const struct FInputActionValue& InVal);
@@ -78,6 +79,9 @@ public:
 private:
 	void Init();
 
+	void SetSprintState(bool bEnable);
+	void SetCrouchState(bool bEnable);
+
 private:
 	UPROPERTY(EditAnywhere, Category = "Speed")
 	float Speed[(int32)ESpeedType::MAX] = { 200, 600, 1000 };
@@ -91,13 +95,16 @@ private:
 
 private:
 	bool bCanMove = true;
+	bool bMove = false;
+	bool bSprint = false;
 	bool bFixedCamera = false;
 	bool bCrouch = false;
 
 	// FOV
 	const float DefaultFOV = 90;
+	const float RunFOV = 100;
 	const float SprintFOV = 110;
-	const float FOVInterpSpeed = 5;
+	const float FOVInterpSpeed = 3;
 	float TargetFOV = DefaultFOV;
 
 };
