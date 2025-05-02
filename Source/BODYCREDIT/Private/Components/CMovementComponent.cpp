@@ -4,6 +4,7 @@
 #include "EnhancedInputComponent.h"
 #include "Characters/CNox.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Camera/CameraComponent.h"
 
 UCMovementComponent::UCMovementComponent()
 {
@@ -17,11 +18,16 @@ void UCMovementComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	DisableControlRotation();
+
 }
 
 void UCMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if (UCameraComponent* camera = CHelpers::GetComponent<UCameraComponent>(OwnerCharacter))
+		camera->SetFieldOfView(FMath::FInterpTo(camera->FieldOfView, TargetFOV, DeltaTime, FOVInterpSpeed));
 
 }
 
@@ -34,10 +40,6 @@ void UCMovementComponent::BindInput(UEnhancedInputComponent* InEnhancedInputComp
 	// Look
 	InEnhancedInputComponent->BindAction(IA_Look, ETriggerEvent::Triggered, this, &UCMovementComponent::OnHorizontalLook);
 	InEnhancedInputComponent->BindAction(IA_Look, ETriggerEvent::Triggered, this, &UCMovementComponent::OnVerticalLook);
-
-	// Walk
-	InEnhancedInputComponent->BindAction(IA_Walk, ETriggerEvent::Triggered, this, &UCMovementComponent::OnWalk);
-	InEnhancedInputComponent->BindAction(IA_Walk, ETriggerEvent::Completed, this, &UCMovementComponent::OnReset);
 
 	// Sprint
 	InEnhancedInputComponent->BindAction(IA_Sprint, ETriggerEvent::Triggered, this, &UCMovementComponent::OnSprint);
@@ -93,22 +95,31 @@ void UCMovementComponent::OnVerticalLook(const FInputActionValue& InVal)
 
 }
 
-void UCMovementComponent::OnWalk(const FInputActionValue& InVal)
-{
-	CheckTrue(bCrouch);
-
-	SetWalkSpeed();
-
-}
-
 void UCMovementComponent::OnSprint(const FInputActionValue& InVal)
 {
 	SetSprintSpeed();
+
+	TargetFOV = SprintFOV;
+
+}
+
+void UCMovementComponent::OnReset(const FInputActionValue& InVal)
+{
+	SetRunSpeed();
+
+	TargetFOV = DefaultFOV;
 
 }
 
 void UCMovementComponent::OnCrouch(const FInputActionValue& InVal)
 {
+	if (OwnerCharacter->GetCharacterMovement()->IsFalling())
+	{
+		OwnerCharacter->LaunchCharacter(OwnerCharacter->GetActorForwardVector() * 1000, false, false);
+
+		return;
+	}
+
 	bCrouch = !bCrouch;
 
 	if (bCrouch)
@@ -132,12 +143,6 @@ void UCMovementComponent::OnJump(const FInputActionValue& InVal)
 
 }
 
-void UCMovementComponent::OnReset(const FInputActionValue& InVal)
-{
-	SetRunSpeed();
-
-}
-
 void UCMovementComponent::SetSpeed(ESpeedType InType)
 {
 	OwnerCharacter->GetCharacterMovement()->MaxWalkSpeed = Speed[(uint8)InType];
@@ -147,12 +152,6 @@ void UCMovementComponent::SetSpeed(ESpeedType InType)
 void UCMovementComponent::SetCrouchSpeed()
 {
 	SetSpeed(ESpeedType::CROUCH);
-
-}
-
-void UCMovementComponent::SetWalkSpeed()
-{
-	SetSpeed(ESpeedType::WALK);
 
 }
 
@@ -168,6 +167,20 @@ void UCMovementComponent::SetSprintSpeed()
 
 }
 
+void UCMovementComponent::EnableControlRotation()
+{
+	OwnerCharacter->bUseControllerRotationYaw = true;
+	OwnerCharacter->GetCharacterMovement()->bOrientRotationToMovement = false;
+
+}
+
+void UCMovementComponent::DisableControlRotation()
+{
+	OwnerCharacter->bUseControllerRotationYaw = false;
+	OwnerCharacter->GetCharacterMovement()->bOrientRotationToMovement = true;
+
+}
+
 void UCMovementComponent::Init()
 {
 	// Movement
@@ -175,9 +188,6 @@ void UCMovementComponent::Init()
 
 	// Look
 	CHelpers::GetAsset<UInputAction>(&IA_Look, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Look.IA_Look'"));
-
-	// Walk
-	CHelpers::GetAsset<UInputAction>(&IA_Walk, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Walk.IA_Walk'"));
 
 	// Sprint
 	CHelpers::GetAsset<UInputAction>(&IA_Sprint, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Sprint.IA_Sprint'"));
