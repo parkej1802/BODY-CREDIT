@@ -9,7 +9,6 @@ UENUM(BlueprintType)
 enum class ESpeedType : uint8
 {
 	CROUCH = 0,
-	WALK,
 	RUN,
 	SPRINT,
 	MAX
@@ -28,9 +27,6 @@ private:
 
 	UPROPERTY(VisibleAnywhere)
 	class UInputAction* IA_Look;
-
-	UPROPERTY(VisibleAnywhere)
-	class UInputAction* IA_Walk;
 
 	UPROPERTY(VisibleAnywhere)
 	class UInputAction* IA_Sprint;
@@ -61,7 +57,6 @@ private:
 	void OnHorizontalLook(const struct FInputActionValue& InVal);
 	void OnVerticalLook(const struct FInputActionValue& InVal);
 
-	void OnWalk(const struct FInputActionValue& InVal);
 	void OnSprint(const struct FInputActionValue& InVal);
 	void OnReset(const struct FInputActionValue& InVal);
 	
@@ -74,16 +69,18 @@ public:
 
 public:
 	void SetCrouchSpeed();
-	void SetWalkSpeed();
 	void SetRunSpeed();
 	void SetSprintSpeed();
+
+	void EnableControlRotation();
+	void DisableControlRotation();
 
 private:
 	void Init();
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Speed")
-	float Speed[(int32)ESpeedType::MAX] = { 200, 400, 600, 800 };
+	float Speed[(int32)ESpeedType::MAX] = { 200, 600, 1000 };
 
 private:
 	UPROPERTY(EditAnywhere, Category = "CameraSpeed")
@@ -96,5 +93,11 @@ private:
 	bool bCanMove = true;
 	bool bFixedCamera = false;
 	bool bCrouch = false;
+
+	// FOV
+	const float DefaultFOV = 90;
+	const float SprintFOV = 110;
+	const float FOVInterpSpeed = 5;
+	float TargetFOV = DefaultFOV;
 
 };

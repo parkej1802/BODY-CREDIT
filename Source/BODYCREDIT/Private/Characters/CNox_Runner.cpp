@@ -19,11 +19,48 @@ void ACNox_Runner::BeginPlay()
 {
 	Super::BeginPlay();
 
+	// 서버 관련 메시 숨김 처리 함수
+	//GetMesh()->SetOnlyOwnerSee();
+	//GetMesh()->SetOwnerNoSee();
+
+	//TPSCamera->SetActive(false);
+	//FPSCamera->bUsePawnControlRotation = true;
+	//// 머리 본 숨김
+	//GetMesh()->HideBoneByName(FName("neck_01"), EPhysBodyOp::PBO_None);
+
 }
 
 void ACNox_Runner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+#if WITH_EDITOR
+	const FVector Location = GetActorLocation();
+
+	// 1. Actor Rotation (청록색)
+	const FRotator ActorRot = GetActorRotation();
+	const FVector ActorDir = ActorRot.Vector() * 300.0f;
+	DrawDebugDirectionalArrow(GetWorld(), Location, Location + ActorDir, 100.f, FColor::Cyan, false, -1.f, 0, 2.f);
+	DrawDebugString(GetWorld(), Location + ActorDir + FVector(0, 0, 20.f),
+		FString::Printf(TEXT("ActorYaw: %.1f"), ActorRot.Yaw), nullptr, FColor::Cyan, 0.f, true);
+
+	// 2. Control Rotation (노란색)
+	const FRotator ControlRot = GetControlRotation();
+	const FVector ControlDir = ControlRot.Vector() * 300.0f;
+	DrawDebugDirectionalArrow(GetWorld(), Location, Location + ControlDir, 100.f, FColor::Yellow, false, -1.f, 0, 2.f);
+	DrawDebugString(GetWorld(), Location + ControlDir + FVector(0, 0, 40.f),
+		FString::Printf(TEXT("ControlYaw: %.1f"), ControlRot.Yaw), nullptr, FColor::Yellow, 0.f, true);
+
+	// 3. Velocity Rotation (빨간색)
+	if (!GetVelocity().IsNearlyZero())
+	{
+		const FRotator VelocityRot = GetVelocity().ToOrientationRotator();
+		const FVector VelocityDir = VelocityRot.Vector() * 300.0f;
+		DrawDebugDirectionalArrow(GetWorld(), Location, Location + VelocityDir, 100.f, FColor::Red, false, -1.f, 0, 2.f);
+		DrawDebugString(GetWorld(), Location + VelocityDir + FVector(0, 0, 60.f),
+			FString::Printf(TEXT("VelocityYaw: %.1f"), VelocityRot.Yaw), nullptr, FColor::Red, 0.f, true);
+	}
+#endif
 
 }
 
@@ -65,9 +102,14 @@ void ACNox_Runner::Init()
 	SpringArm->TargetArmLength = 200;
 	SpringArm->bUsePawnControlRotation = true;
 
-	// Camera
-	CHelpers::CreateComponent<UCameraComponent>(this, &Camera, "Camera", SpringArm);
-	Camera->SetRelativeLocation(FVector(~79, 30, 100));
+	// TPSCamera
+	CHelpers::CreateComponent<UCameraComponent>(this, &TPSCamera, "TPSCamera", SpringArm);
+	TPSCamera->SetRelativeLocation(FVector(~79, 30, 100));
+
+	// FPSCamera
+	//CHelpers::CreateComponent<UCameraComponent>(this, &FPSCamera, "FPSCamera", GetMesh(), FName("FPSCamera"));
+	FPSCamera = CreateDefaultSubobject<UCameraComponent>("FPSCamera");
+	FPSCamera->SetupAttachment(GetMesh(), FName("FPSCamera"));
 
 	// MappingContext
 	CHelpers::GetAsset<UInputMappingContext>(&MappingContext, TEXT("/Script/EnhancedInput.InputMappingContext'/Game/Inputs/IMC_Runner.IMC_Runner'"));

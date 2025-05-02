@@ -14,7 +14,10 @@ private:
 	class USpringArmComponent* SpringArm;
 
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
-	class UCameraComponent* Camera;
+	class UCameraComponent* TPSCamera;
+
+	UPROPERTY(VisibleAnywhere, Category = "Camera")
+	class UCameraComponent* FPSCamera;
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
