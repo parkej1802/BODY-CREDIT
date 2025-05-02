@@ -54,6 +54,10 @@ void FCDebuggerCategory::CollectData(APlayerController* OwnerPC, AActor* DebugAc
 			ForwardActorData.Location = hitResult.GetActor()->GetActorLocation();
 			ForwardActorData.Forward = hitResult.GetActor()->GetActorForwardVector();
 		}
+		else
+		{
+			ForwardActorData.bDraw = false;
+		}
 	}
 
 	// Debug Actor
@@ -63,6 +67,10 @@ void FCDebuggerCategory::CollectData(APlayerController* OwnerPC, AActor* DebugAc
 		DebugActorData.Name = DebugActor->GetName();
 		DebugActorData.Location = DebugActor->GetActorLocation();
 		DebugActorData.Forward = DebugActor->GetActorForwardVector();
+	}
+	else
+	{
+		DebugActorData.bDraw = false;
 	}
 }
 
