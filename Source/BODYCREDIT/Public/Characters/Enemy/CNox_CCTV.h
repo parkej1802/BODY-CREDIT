@@ -40,5 +40,11 @@ private:
 	float PauseTimer = 0.f;
 	bool bIsPaused = false;
 
+	float SumRotYaw = 0.f;
+	
 	void RotateCCTV(float DeltaTime);
+
+private:
+	UPROPERTY(EditDefaultsOnly)
+	class UStaticMeshComponent* CCTVMesh;
 };

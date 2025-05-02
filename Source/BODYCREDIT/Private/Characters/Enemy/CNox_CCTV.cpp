@@ -3,15 +3,32 @@
 
 #include "Characters/Enemy/CNox_CCTV.h"
 
+#include "Global.h"
+#include "GameFramework/CharacterMovementComponent.h"
+
 ACNox_CCTV::ACNox_CCTV()
 {
 	EnemyType = EEnemyType::CCTV;
+
+	GetCapsuleComponent()->SetCapsuleRadius(32.f);
+	GetCapsuleComponent()->SetCapsuleHalfHeight(32.f);
+	GetCharacterMovement()->GravityScale = 0.f;
+
+	CCTVMesh = CreateDefaultSubobject<UStaticMeshComponent>("CCTVMesh");
+	CCTVMesh->SetupAttachment(RootComponent);
+	CCTVMesh->SetRelativeLocation(FVector(0, 0, -14));
+	CCTVMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	ConstructorHelpers::FObjectFinder<UStaticMesh> tmpCCTV(TEXT("/Script/Engine.StaticMesh'/Game/Assets/cctv_prop/source/prop_cctv_cam_01a_001.prop_cctv_cam_01a_001'"));
+	if (tmpCCTV.Succeeded())
+		CCTVMesh->SetStaticMesh(tmpCCTV.Object);
 }
 
 void ACNox_CCTV::BeginPlay()
 {
 	Super::BeginPlay();
 	InitialRotation = GetActorRotation();
+	SumRotYaw = InitialRotation.Yaw;
 }
 
 void ACNox_CCTV::Tick(float DeltaTime)
@@ -37,15 +54,18 @@ void ACNox_CCTV::RotateCCTV(float DeltaTime)
 
 	FRotator CurrentRotation = GetActorRotation();
 	float TargetYaw = bRotatingRight
-		? InitialRotation.Yaw + MaxYaw
-		: InitialRotation.Yaw + MinYaw;
+		                  ? InitialRotation.Yaw + MaxYaw
+		                  : InitialRotation.Yaw + MinYaw;
 
 	float Direction = bRotatingRight ? 1.f : -1.f;
 	float YawDelta = RotationSpeed * DeltaTime * Direction;
 	float NewYaw = CurrentRotation.Yaw + YawDelta;
+	SumRotYaw += YawDelta;
 
 	// 회전이 끝점에 도달했는지 확인
-	if ((bRotatingRight && NewYaw >= TargetYaw) || (!bRotatingRight && NewYaw <= TargetYaw))
+	// CLog::Log(FString::Printf(
+	// 	TEXT("bRotatingRight: %d, SumRotYaw: %.1f, TargetYaw: %.1f"), bRotatingRight, SumRotYaw, TargetYaw));
+	if ((bRotatingRight && SumRotYaw >= TargetYaw) || (!bRotatingRight && SumRotYaw <= TargetYaw))
 	{
 		NewYaw = TargetYaw;
 		bIsPaused = true;
