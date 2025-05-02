@@ -17,12 +17,14 @@ void UCNoxAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	if (OwnerCharacter)
 	{
+		// 방향 보간 ( -180 ~ +180 )
 		FRotator rot1 = OwnerCharacter->GetVelocity().ToOrientationRotator();
 		FRotator rot2 = OwnerCharacter->GetControlRotation();
 		FRotator delta = UKismetMathLibrary::NormalizedDeltaRotator(rot1, rot2);
 		PrevRotation = UKismetMathLibrary::RInterpTo(PrevRotation, delta, DeltaSeconds, 25);
 		Direction = PrevRotation.Yaw;
 
+		// 캐릭터 이동 속도 ( 0 ~ )
 		Speed = OwnerCharacter->GetVelocity().Size2D();
 	}
 

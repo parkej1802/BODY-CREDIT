@@ -18,7 +18,7 @@ void UCMovementComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	DisableControlRotation();
+	EnableControlRotation();
 
 }
 
@@ -36,13 +36,14 @@ void UCMovementComponent::BindInput(UEnhancedInputComponent* InEnhancedInputComp
 	// Movement
 	InEnhancedInputComponent->BindAction(IA_Movement, ETriggerEvent::Triggered, this, &UCMovementComponent::OnMoveForward);
 	InEnhancedInputComponent->BindAction(IA_Movement, ETriggerEvent::Triggered, this, &UCMovementComponent::OnMoveRight);
+	InEnhancedInputComponent->BindAction(IA_Movement, ETriggerEvent::Completed, this, &UCMovementComponent::OffMovement);
 
 	// Look
 	InEnhancedInputComponent->BindAction(IA_Look, ETriggerEvent::Triggered, this, &UCMovementComponent::OnHorizontalLook);
 	InEnhancedInputComponent->BindAction(IA_Look, ETriggerEvent::Triggered, this, &UCMovementComponent::OnVerticalLook);
 
 	// Sprint
-	InEnhancedInputComponent->BindAction(IA_Sprint, ETriggerEvent::Triggered, this, &UCMovementComponent::OnSprint);
+	InEnhancedInputComponent->BindAction(IA_Sprint, ETriggerEvent::Started, this, &UCMovementComponent::OnSprint);
 	InEnhancedInputComponent->BindAction(IA_Sprint, ETriggerEvent::Completed, this, &UCMovementComponent::OnReset);
 
 	// Crouch
@@ -56,84 +57,106 @@ void UCMovementComponent::BindInput(UEnhancedInputComponent* InEnhancedInputComp
 void UCMovementComponent::OnMoveForward(const FInputActionValue& InVal)
 {
 	CheckFalse(bCanMove);
-	CheckTrue(InVal.Get<FVector2D>().X == 0);
 
-	FRotator rotator = FRotator(0, OwnerCharacter->GetControlRotation().Yaw, 0);
-	FVector direction = FQuat(rotator).GetForwardVector();
+	const FVector2D input = InVal.Get<FVector2D>();
+	CheckTrue(input.X == 0);
 
-	OwnerCharacter->AddMovementInput(direction, InVal.Get<FVector2D>().X);
+	bMove = true;
+	TargetFOV = RunFOV;
+
+	// 이동 방향 계산 (카메라 전방 기준)
+	const float yaw = OwnerCharacter->GetControlRotation().Yaw;
+	const FVector direction = FQuat(FRotator(0, yaw, 0)).GetForwardVector();
+
+	// 이동 입력 적용
+	OwnerCharacter->AddMovementInput(direction, input.X);
 
 }
 
 void UCMovementComponent::OnMoveRight(const FInputActionValue& InVal)
 {
 	CheckFalse(bCanMove);
-	CheckTrue(InVal.Get<FVector2D>().Y == 0);
 
-	FRotator rotator = FRotator(0, OwnerCharacter->GetControlRotation().Yaw, 0);
-	FVector direction = FQuat(rotator).GetRightVector();
+	const FVector2D input = InVal.Get<FVector2D>();
+	CheckTrue(input.Y == 0);
 
-	OwnerCharacter->AddMovementInput(direction, InVal.Get<FVector2D>().Y);
+	bMove = true;
+
+	// 이동 방향 계산 (카메라 전방 기준)
+	const float yaw = OwnerCharacter->GetControlRotation().Yaw;
+	const FVector direction = FQuat(FRotator(0, yaw, 0)).GetRightVector();
+
+	// 이동 입력 적용
+	OwnerCharacter->AddMovementInput(direction, input.Y);
+
+}
+
+void UCMovementComponent::OffMovement(const FInputActionValue& InVal)
+{
+	bMove = false;
+	TargetFOV = DefaultFOV;
 
 }
 
 void UCMovementComponent::OnHorizontalLook(const FInputActionValue& InVal)
 {
 	CheckTrue(bFixedCamera);
-	CheckTrue(InVal.Get<FVector2D>().X == 0);
 
-	OwnerCharacter->AddControllerYawInput(InVal.Get<FVector2D>().X * HorizontalLook * GetWorld()->GetDeltaSeconds());
+	const FVector2D input = InVal.Get<FVector2D>();
+	CheckTrue(input.X == 0);
+
+	OwnerCharacter->AddControllerYawInput(input.X * HorizontalLook * GetWorld()->GetDeltaSeconds());
 
 }
 
 void UCMovementComponent::OnVerticalLook(const FInputActionValue& InVal)
 {
 	CheckTrue(bFixedCamera);
-	CheckTrue(InVal.Get<FVector2D>().Y == 0);
 
-	OwnerCharacter->AddControllerPitchInput(InVal.Get<FVector2D>().Y * VerticalLook * GetWorld()->GetDeltaSeconds());
+	const FVector2D input = InVal.Get<FVector2D>();
+	CheckTrue(input.Y == 0);
+
+	OwnerCharacter->AddControllerPitchInput(input.Y * VerticalLook * GetWorld()->GetDeltaSeconds());
 
 }
 
 void UCMovementComponent::OnSprint(const FInputActionValue& InVal)
 {
-	SetSprintSpeed();
+	CheckFalse(bMove);
 
-	TargetFOV = SprintFOV;
+	if (bCrouch)
+		OnCrouch(FInputActionValue());
+
+	SetSprintState(true);
 
 }
 
 void UCMovementComponent::OnReset(const FInputActionValue& InVal)
 {
-	SetRunSpeed();
+	if (bCrouch) // Crouch 상태 리셋
+		SetCrouchSpeed();
+	else SetRunSpeed();
 
+	bMove = false;
+	bSprint = false;
 	TargetFOV = DefaultFOV;
 
 }
 
 void UCMovementComponent::OnCrouch(const FInputActionValue& InVal)
 {
+	if (bSprint) // Sprint 상태 리셋
+		OnReset(FInputActionValue());
+
 	if (OwnerCharacter->GetCharacterMovement()->IsFalling())
 	{
-		OwnerCharacter->LaunchCharacter(OwnerCharacter->GetActorForwardVector() * 1000, false, false);
+		const FVector launch = OwnerCharacter->GetActorForwardVector() * 500.f;
+		OwnerCharacter->LaunchCharacter(launch, false, false);
 
 		return;
 	}
 
-	bCrouch = !bCrouch;
-
-	if (bCrouch)
-	{
-		OwnerCharacter->Crouch();
-
-		SetCrouchSpeed();
-	}
-	else
-	{
-		OwnerCharacter->UnCrouch();
-
-		SetRunSpeed();
-	}
+	SetCrouchState(!bCrouch);
 
 }
 
@@ -197,5 +220,30 @@ void UCMovementComponent::Init()
 
 	// Jump
 	CHelpers::GetAsset<UInputAction>(&IA_Jump, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Jump.IA_Jump'"));
+
+}
+
+void UCMovementComponent::SetSprintState(bool bEnable)
+{
+	bSprint = bEnable;
+	SetSprintSpeed();
+	TargetFOV = bEnable ? SprintFOV : RunFOV;
+
+}
+
+void UCMovementComponent::SetCrouchState(bool bEnable)
+{
+	bCrouch = bEnable;
+
+	if (bCrouch)
+	{
+		OwnerCharacter->Crouch();
+		SetCrouchSpeed();
+	}
+	else
+	{
+		OwnerCharacter->UnCrouch();
+		SetRunSpeed();
+	}
 
 }

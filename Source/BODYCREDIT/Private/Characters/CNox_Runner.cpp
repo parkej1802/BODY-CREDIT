@@ -105,11 +105,11 @@ void ACNox_Runner::Init()
 	// TPSCamera
 	CHelpers::CreateComponent<UCameraComponent>(this, &TPSCamera, "TPSCamera", SpringArm);
 	TPSCamera->SetRelativeLocation(FVector(~79, 30, 100));
+	TPSCamera->bUsePawnControlRotation = false;
 
 	// FPSCamera
-	//CHelpers::CreateComponent<UCameraComponent>(this, &FPSCamera, "FPSCamera", GetMesh(), FName("FPSCamera"));
-	FPSCamera = CreateDefaultSubobject<UCameraComponent>("FPSCamera");
-	FPSCamera->SetupAttachment(GetMesh(), FName("FPSCamera"));
+	CHelpers::CreateComponent<UCameraComponent>(this, &FPSCamera, "FPSCamera", GetMesh(), FName("FPSCamera"));
+	FPSCamera->bUsePawnControlRotation = false;
 
 	// MappingContext
 	CHelpers::GetAsset<UInputMappingContext>(&MappingContext, TEXT("/Script/EnhancedInput.InputMappingContext'/Game/Inputs/IMC_Runner.IMC_Runner'"));
