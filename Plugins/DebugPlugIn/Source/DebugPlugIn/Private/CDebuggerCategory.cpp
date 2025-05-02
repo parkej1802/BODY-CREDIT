@@ -1,4 +1,4 @@
-#include "CDebuggerCategory.h"
+﻿#include "CDebuggerCategory.h"
 
 #include "GameFramework/Character.h"
 #include "Utilities/CLog.h"
@@ -34,6 +34,7 @@ void FCDebuggerCategory::CollectData(APlayerController* OwnerPC, AActor* DebugAc
 		PlayerPawnData.Name = player->GetName();
 		PlayerPawnData.Location = player->GetActorLocation();
 		PlayerPawnData.Forward = player->GetActorForwardVector();
+		PlayerPawnData.Speed = player->GetVelocity().Size2D();
 	}
 
 	// Forward Actor
@@ -94,6 +95,7 @@ void FCDebuggerCategory::DrawData(APlayerController* OwnerPC, FGameplayDebuggerC
 	CanvasContext.Printf(FColor::White, L" -- Name : %s --", *PlayerPawnData.Name);
 	CanvasContext.Printf(FColor::White, L" -- Location : %s --", *PlayerPawnData.Location.ToString());
 	CanvasContext.Printf(FColor::White, L" -- Forward : %s --", *PlayerPawnData.Forward.ToString());
+	CanvasContext.Printf(FColor::White, L" -- Speed : %f --", PlayerPawnData.Speed);
 	CanvasContext.Printf(FColor::White, L"");
 
 	if (ForwardActorData.bDraw)

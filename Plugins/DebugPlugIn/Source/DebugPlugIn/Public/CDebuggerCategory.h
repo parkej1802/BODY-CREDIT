@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "GameplayDebuggerCategory.h"
@@ -26,6 +26,7 @@ private:
 		FString Name;
 		FVector Location;
 		FVector Forward;
+		float Speed;
 	};
 
 private:
