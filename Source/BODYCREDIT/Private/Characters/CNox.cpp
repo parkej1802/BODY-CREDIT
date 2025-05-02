@@ -1,4 +1,6 @@
 ﻿#include "Characters/CNox.h"
+
+#include "AIController.h"
 #include "Global.h"
 
 ACNox::ACNox()
@@ -17,11 +19,18 @@ void ACNox::BeginPlay()
 void ACNox::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void ACNox::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void ACNox::TakeDamage(float Amount)
+{
+}
+
+void ACNox::Die()
+{
 }

@@ -3,38 +3,24 @@
 
 #include "Characters/Enemy/CNox_EBase.h"
 
-#include "Perception/AIPerceptionComponent.h"
-#include "Perception/AISenseConfig_Hearing.h"
-#include "Perception/AISenseConfig_Sight.h"
+#include "global.h"
+#include "Characters/Enemy/AI/CEnemyController.h"
 
 ACNox_EBase::ACNox_EBase()
 {
 	TeamID = 2;
-	
-	Perception = CreateDefaultSubobject<UAIPerceptionComponent>("Perception");
 
-	// Sight
-	Sight = CreateDefaultSubobject<UAISenseConfig_Sight>("Sight");
-	Sight->SightRadius = SightRadius;
-	Sight->LoseSightRadius = LoseSightRadius;
-	Sight->PeripheralVisionAngleDegrees = PeripheralVisionAngleDegrees;
-	Sight->SetMaxAge(RetentionTime);
+	// Controller Setting
+	AIControllerClass = ACEnemyController::StaticClass();
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+}
 
-	Sight->DetectionByAffiliation.bDetectEnemies = true;
-	Sight->DetectionByAffiliation.bDetectNeutrals = false;
-	Sight->DetectionByAffiliation.bDetectFriendlies = false;
+void ACNox_EBase::BeginPlay()
+{
+	Super::BeginPlay();
+}
 
-	Perception->ConfigureSense(*Sight);
-
-	// Hearing
-	Hearing = CreateDefaultSubobject<UAISenseConfig_Hearing>("Hearing");
-	Hearing->HearingRange = HearingRange;
-	Hearing->SetMaxAge(RetentionTime);
-	Hearing->DetectionByAffiliation.bDetectEnemies = true;
-	Hearing->DetectionByAffiliation.bDetectNeutrals = false;
-	Hearing->DetectionByAffiliation.bDetectFriendlies = false;
-
-	Perception->ConfigureSense(*Hearing);
-
-	Perception->SetDominantSense(*Sight->GetSenseImplementation());	
+void ACNox_EBase::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
 }

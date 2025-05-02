@@ -13,5 +13,7 @@ UCLASS()
 class BODYCREDIT_API ACNox_Zero : public ACNox_EBase
 {
 	GENERATED_BODY()
-	
+
+public:
+	ACNox_Zero();
 };

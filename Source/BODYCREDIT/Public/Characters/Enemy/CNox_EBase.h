@@ -6,6 +6,15 @@
 #include "Characters/CNox.h"
 #include "CNox_EBase.generated.h"
 
+UENUM(BlueprintType)
+enum class EEnemyType : uint8
+{
+	CCTV,
+	Zero,
+	MedicAndroid,
+	MemoryCollector,
+};
+
 /**
  * Enemy Base
  */
@@ -16,16 +25,6 @@ class BODYCREDIT_API ACNox_EBase : public ACNox
 
 public:
 	ACNox_EBase();
-
-private: // Sensing
-	UPROPERTY(VisibleAnywhere)
-	class UAIPerceptionComponent* Perception;
-
-	UPROPERTY()
-	class UAISenseConfig_Hearing* Hearing;
-
-	UPROPERTY()
-	class UAISenseConfig_Sight* Sight;
 
 protected: // Sensing Property
 	UPROPERTY(EditDefaultsOnly, Category="Sensing")
@@ -39,4 +38,19 @@ protected: // Sensing Property
 
 	UPROPERTY(EditDefaultsOnly, Category="Sensing")
 	float HearingRange = 800.f;
+
+public: // Get Sensing Function
+	float GetSightRadius() const {return SightRadius;}
+	float GetLoseSightRadius() const {return LoseSightRadius;}
+	float GetPeripheralVisionAngleDegrees() const {return PeripheralVisionAngleDegrees;}
+	float GetRetentionTime() const {return RetentionTime;}
+	float GetHearingRange() const {return HearingRange;}
+	
+protected:	// Status
+	UPROPERTY(EditDefaultsOnly)
+	EEnemyType EnemyType;
+
+protected:	// Virtual Function
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
 };

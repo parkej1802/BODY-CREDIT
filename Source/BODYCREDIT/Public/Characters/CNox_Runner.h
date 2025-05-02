@@ -1,11 +1,12 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "GenericTeamAgentInterface.h"
 #include "Characters/CNox.h"
 #include "CNox_Runner.generated.h"
 
 UCLASS()
-class BODYCREDIT_API ACNox_Runner : public ACNox
+class BODYCREDIT_API ACNox_Runner : public ACNox, public IGenericTeamAgentInterface
 {
 	GENERATED_BODY()
 
@@ -43,4 +44,11 @@ public:
 private:
 	void Init();
 
+/**
+ *	Team ID Setting - LHJ (2025.05.02)
+ *	IGenericTeamAgentInterface 상속 추가
+ *	GenericTeamAgentInterface.h 헤더 추가
+ */
+private:
+	virtual FGenericTeamId GetGenericTeamId() const override { return FGenericTeamId(TeamID); }
 };

@@ -3,3 +3,7 @@
 
 #include "Characters/Enemy/CNox_Zero.h"
 
+ACNox_Zero::ACNox_Zero()
+{
+	EnemyType = EEnemyType::Zero;
+}
