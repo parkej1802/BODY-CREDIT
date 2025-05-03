@@ -1,6 +1,7 @@
 #include "Components/Enemy/CNox_BehaviorComponent.h"
 
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Patrol/CPatrolRoute.h"
 
 UCNox_BehaviorComponent::UCNox_BehaviorComponent()
 {
@@ -20,5 +21,10 @@ void UCNox_BehaviorComponent::TickComponent(float DeltaTime, ELevelTick TickType
 void UCNox_BehaviorComponent::SetEnemyType(EEnemyType InType)
 {
 	Blackboard->SetValueAsEnum(AIStateTypeKey, (uint8)InType);
+}
+
+void UCNox_BehaviorComponent::SetPatrolRoute(class ACPatrolRoute* InPatrolRoute)
+{
+	Blackboard->SetValueAsObject(PatrolRoute, InPatrolRoute);
 }
 

@@ -4,6 +4,7 @@
 
 // GameFramework
 #include "GameFramework/Character.h"
+#include "Kismet/GameplayStatics.h"
 
 // Components
 #include "Components/CapsuleComponent.h"

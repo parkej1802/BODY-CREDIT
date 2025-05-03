@@ -85,6 +85,6 @@ void ACEnemyController::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors
 	Perception->GetCurrentlyPerceivedActors(nullptr, actors);
 	for (auto& actor : actors)
 	{
-		CLog::Log(actor);
+		// CLog::Log(actor);
 	}
 }

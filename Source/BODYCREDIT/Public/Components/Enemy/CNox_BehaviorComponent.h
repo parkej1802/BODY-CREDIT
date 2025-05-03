@@ -27,14 +27,18 @@ public:
 
 private:
 	const FName AIStateTypeKey = "AIType";
+	const FName PatrolRoute = "PatrolRoute";
 	
 private:
 	UPROPERTY()
 	class UBlackboardComponent* Blackboard;
 	
 public:
-	FORCEINLINE void SetBlackboard(class UBlackboardComponent* InBlackboard) { Blackboard = InBlackboard; }
+	FORCEINLINE void SetBlackboard(UBlackboardComponent* InBlackboard) { Blackboard = InBlackboard; }
 
 public:
 	void SetEnemyType(EEnemyType InType);
+
+public:	// For Zero
+	void SetPatrolRoute(class ACPatrolRoute* InPatrolRoute);
 };
