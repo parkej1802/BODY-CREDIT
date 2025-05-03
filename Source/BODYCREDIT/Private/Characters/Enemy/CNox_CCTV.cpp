@@ -8,20 +8,20 @@
 
 ACNox_CCTV::ACNox_CCTV()
 {
-	EnemyType = EEnemyType::CCTV;
+	EnemyType = EEnemyType::Cctv;
 
 	GetCapsuleComponent()->SetCapsuleRadius(32.f);
 	GetCapsuleComponent()->SetCapsuleHalfHeight(32.f);
 	GetCharacterMovement()->GravityScale = 0.f;
 
-	CCTVMesh = CreateDefaultSubobject<UStaticMeshComponent>("CCTVMesh");
-	CCTVMesh->SetupAttachment(RootComponent);
+	CHelpers::CreateComponent(this, &CCTVMesh, "CCTVMesh", RootComponent);
 	CCTVMesh->SetRelativeLocation(FVector(0, 0, -14));
 	CCTVMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	ConstructorHelpers::FObjectFinder<UStaticMesh> tmpCCTV(TEXT("/Script/Engine.StaticMesh'/Game/Assets/cctv_prop/source/prop_cctv_cam_01a_001.prop_cctv_cam_01a_001'"));
-	if (tmpCCTV.Succeeded())
-		CCTVMesh->SetStaticMesh(tmpCCTV.Object);
+	CHelpers::GetStaticAsset<UStaticMeshComponent>(
+		&CCTVMesh, TEXT("/Game/Assets/cctv_prop/source/prop_cctv_cam_01a_001.prop_cctv_cam_01a_001"));
+
+	bUseBehaviorTree = false;
 }
 
 void ACNox_CCTV::BeginPlay()

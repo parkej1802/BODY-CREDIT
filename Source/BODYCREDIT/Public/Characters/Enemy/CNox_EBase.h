@@ -9,7 +9,7 @@
 UENUM(BlueprintType)
 enum class EEnemyType : uint8
 {
-	CCTV,
+	Cctv = 0,
 	Zero,
 	MedicAndroid,
 	MemoryCollector,
@@ -40,17 +40,31 @@ protected: // Sensing Property
 	float HearingRange = 800.f;
 
 public: // Get Sensing Function
-	float GetSightRadius() const {return SightRadius;}
-	float GetLoseSightRadius() const {return LoseSightRadius;}
-	float GetPeripheralVisionAngleDegrees() const {return PeripheralVisionAngleDegrees;}
-	float GetRetentionTime() const {return RetentionTime;}
-	float GetHearingRange() const {return HearingRange;}
-	
-protected:	// Status
+	float GetSightRadius() const { return SightRadius; }
+	float GetLoseSightRadius() const { return LoseSightRadius; }
+	float GetPeripheralVisionAngleDegrees() const { return PeripheralVisionAngleDegrees; }
+	float GetRetentionTime() const { return RetentionTime; }
+	float GetHearingRange() const { return HearingRange; }
+
+protected: // Status
 	UPROPERTY(EditDefaultsOnly)
 	EEnemyType EnemyType;
 
-protected:	// Virtual Function
+protected: // Virtual Function
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+
+protected: // Component
+	UPROPERTY(VisibleDefaultsOnly)
+	class UCNox_BehaviorComponent* BehaviorComp;
+
+public:
+	bool bUseBehaviorTree = true;
+
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "AI")
+	class UBehaviorTree* BehaviorTree;
+
+public:
+	FORCEINLINE class UBehaviorTree* GetBehaviorTree() { return BehaviorTree; }
 };

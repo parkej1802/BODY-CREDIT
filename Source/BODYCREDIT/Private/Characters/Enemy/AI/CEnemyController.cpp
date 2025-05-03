@@ -4,20 +4,24 @@
 #include "Characters/Enemy/AI/CEnemyController.h"
 
 #include "global.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "Characters/Enemy/CNox_CCTV.h"
 #include "Characters/Enemy/CNox_EBase.h"
+#include "Components/Enemy/CNox_BehaviorComponent.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Hearing.h"
 #include "Perception/AISenseConfig_Sight.h"
 
 ACEnemyController::ACEnemyController()
 {
-	Perception = CreateDefaultSubobject<UAIPerceptionComponent>("Perception");
+	CHelpers::CreateActorComponent<UAIPerceptionComponent>(this, &Perception, "Perception");
 
 	// Sight
-	Sight = CreateDefaultSubobject<UAISenseConfig_Sight>("Sight");
+	CHelpers::CreateActorComponent<UAISenseConfig_Sight>(this, &Sight, "Sight");
 	Perception->ConfigureSense(*Sight);
 	// Hearing
-	Hearing = CreateDefaultSubobject<UAISenseConfig_Hearing>("Hearing");
+	CHelpers::CreateActorComponent<UAISenseConfig_Hearing>(this, &Hearing, "Hearing");
 	Perception->ConfigureSense(*Hearing);
 	Perception->SetDominantSense(*Sight->GetSenseImplementation());
 }
@@ -29,6 +33,11 @@ void ACEnemyController::BeginPlay()
 	Perception->OnPerceptionUpdated.AddDynamic(this, &ACEnemyController::OnPerceptionUpdated);
 }
 
+void ACEnemyController::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+}
+
 void ACEnemyController::InitPerception()
 {
 	Sight->SightRadius = EnemyBase->GetSightRadius();
@@ -37,8 +46,8 @@ void ACEnemyController::InitPerception()
 	Sight->SetMaxAge(EnemyBase->GetRetentionTime());
 	Sight->DetectionByAffiliation.bDetectEnemies = true;
 	Sight->DetectionByAffiliation.bDetectNeutrals = false;
-	Sight->DetectionByAffiliation.bDetectFriendlies = false;	
-	
+	Sight->DetectionByAffiliation.bDetectFriendlies = false;
+
 	Hearing->HearingRange = EnemyBase->GetHearingRange();
 	Hearing->SetMaxAge(EnemyBase->GetRetentionTime());
 	Hearing->DetectionByAffiliation.bDetectEnemies = true;
@@ -53,6 +62,21 @@ void ACEnemyController::OnPossess(APawn* InPawn)
 	EnemyBase = Cast<ACNox_EBase>(InPawn);
 	if (EnemyBase)
 		SetGenericTeamId(EnemyBase->TeamID);
+
+	if (EnemyBase->bUseBehaviorTree)
+	{
+		BT_Behavior = CHelpers::GetComponent<UCNox_BehaviorComponent>(EnemyBase);
+
+		check(EnemyBase->GetBehaviorTree());
+
+		UBlackboardComponent* blackboard = Blackboard.Get();
+		if (UseBlackboard(EnemyBase->GetBehaviorTree()->BlackboardAsset, blackboard))
+			this->Blackboard = blackboard;
+
+		BT_Behavior->SetBlackboard(Blackboard);
+
+		RunBehaviorTree(NoxBehaviorTree);
+	}
 }
 
 void ACEnemyController::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)

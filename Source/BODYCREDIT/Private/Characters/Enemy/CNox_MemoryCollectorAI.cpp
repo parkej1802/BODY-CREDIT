@@ -6,4 +6,6 @@
 ACNox_MemoryCollectorAI::ACNox_MemoryCollectorAI()
 {
 	EnemyType = EEnemyType::MemoryCollector;
+
+	
 }

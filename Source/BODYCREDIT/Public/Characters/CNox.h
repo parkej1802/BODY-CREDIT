@@ -34,6 +34,8 @@ protected:
 	UPROPERTY()
 	float Defense;
 
+	bool bIsDead{false};
+
 /**
  *	Common Virtual Function - LHJ (2025.05.02)
  *	추후 컴포넌트로 옮길 예정

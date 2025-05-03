@@ -14,6 +14,16 @@ class BODYCREDIT_API ACEnemyController : public AAIController
 {
 	GENERATED_BODY()
 
+private:
+	UPROPERTY()
+	class ACNox_EBase* EnemyBase;
+
+	UPROPERTY()
+	class UCNox_BehaviorComponent* BT_Behavior;
+
+	UPROPERTY(EditDefaultsOnly, Category = "BehaviorTree")
+	UBehaviorTree* NoxBehaviorTree;
+	
 private: // Sensing
 	UPROPERTY(VisibleAnywhere)
 	class UAIPerceptionComponent* Perception;
@@ -31,11 +41,8 @@ private: // Sensing Delegate Function
 private:
 	ACEnemyController();
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
 	virtual void OnPossess(APawn* InPawn) override;
 
 	void InitPerception();
-
-private:
-	UPROPERTY()
-	class ACNox_EBase* EnemyBase;
 };
