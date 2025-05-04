@@ -67,4 +67,8 @@ private:
 
 public:
 	FORCEINLINE class UBehaviorTree* GetBehaviorTree() { return BehaviorTree; }
+
+public:
+	// CCTV에서는 Blackboard에 세팅은 안하고 주변 Enemy에게만 전달한다.
+	virtual void SetTarget(ACNox* InTarget);
 };

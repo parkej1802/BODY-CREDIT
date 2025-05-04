@@ -21,7 +21,7 @@ ACNox_EBase::ACNox_EBase()
 
 	// 목표에 거리가 가까워지면서 속도가 줄어드는 현상 방지
 	// GetCharacterMovement()->GetNavMovementProperties()->bUseFixedBrakingDistanceForPaths = false;
-	GetCharacterMovement()->GetNavMovementProperties()->FixedPathBrakingDistance=0;
+	GetCharacterMovement()->GetNavMovementProperties()->FixedPathBrakingDistance = 0;
 }
 
 void ACNox_EBase::BeginPlay()
@@ -35,4 +35,9 @@ void ACNox_EBase::BeginPlay()
 void ACNox_EBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void ACNox_EBase::SetTarget(ACNox* InTarget)
+{
+	BehaviorComp->SetTarget(InTarget);
 }

@@ -28,6 +28,7 @@ public:
 private:
 	const FName AIStateTypeKey = "AIType";
 	const FName PatrolRoute = "PatrolRoute";
+	const FName TargetPlayer = "Target";
 	
 private:
 	UPROPERTY()
@@ -38,6 +39,7 @@ public:
 
 public:
 	void SetEnemyType(EEnemyType InType);
+	void SetTarget(class ACNox* InTarget);
 
 public:	// For Zero
 	void SetPatrolRoute(class ACPatrolRoute* InPatrolRoute);

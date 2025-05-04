@@ -37,7 +37,15 @@ private: // Sensing
 private: // Sensing Delegate Function
 	UFUNCTION()
 	void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
+	UFUNCTION()
+	void OnAITargetPerceptionInfoUpdate(const FActorPerceptionUpdateInfo& UpdateInfo);
+
+private:
+	bool bExpiredStimuli = false;
+	float CurExpiredTime = 0.f;
 	
+	void UpdateExpiredStimuli(float DeltaTime);
+
 private:
 	ACEnemyController();
 	virtual void BeginPlay() override;
@@ -45,4 +53,8 @@ private:
 	virtual void OnPossess(APawn* InPawn) override;
 
 	void InitPerception();
+
+private:
+	UPROPERTY()
+	class ACNox* TargetPlayer;
 };
