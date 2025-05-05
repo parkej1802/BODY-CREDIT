@@ -24,6 +24,9 @@ private:
 	UPROPERTY()
 	ACNox_EBase* OwnerEnemy;
 
+	UPROPERTY(BlueprintReadOnly, Category=Anim, meta=(AllowPrivateAccess=true))
+	float Speed;
+
 public: // Medic Android
 	UPROPERTY(VisibleAnywhere)
 	UAnimMontage* IdleMontage;

@@ -16,6 +16,10 @@ void UCNoxEnemy_Animinstance::NativeBeginPlay()
 void UCNoxEnemy_Animinstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
+
+	if (!OwnerEnemy) return;
+	
+	Speed = OwnerEnemy->GetVelocity().Size();
 }
 
 void UCNoxEnemy_Animinstance::AnimNotify_PlayIdleMontage()
