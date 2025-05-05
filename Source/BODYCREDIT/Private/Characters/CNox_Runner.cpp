@@ -6,6 +6,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Components/CMovementComponent.h"
+#include "Inventory/AC_InventoryComponent.h"
 
 ACNox_Runner::ACNox_Runner()
 {
@@ -13,6 +14,7 @@ ACNox_Runner::ACNox_Runner()
 
 	Init();
 
+	InventoryComp = CreateDefaultSubobject<UAC_InventoryComponent>(TEXT("InventoryComp"));
 }
 
 void ACNox_Runner::BeginPlay()

@@ -51,4 +51,9 @@ private:
  */
 private:
 	virtual FGenericTeamId GetGenericTeamId() const override { return FGenericTeamId(TeamID); }
+
+// Inventory
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UAC_InventoryComponent* InventoryComp;
 };
