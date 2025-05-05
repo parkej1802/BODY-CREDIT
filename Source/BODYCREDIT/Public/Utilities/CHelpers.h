@@ -4,6 +4,7 @@
 
 // GameFramework
 #include "GameFramework/Character.h"
+#include "Kismet/GameplayStatics.h"
 
 // Components
 #include "Components/CapsuleComponent.h"
@@ -21,6 +22,13 @@ public:
 	{
 		ConstructorHelpers::FObjectFinder<T> asset(*InPath);
 		*OutObject = asset.Object;
+	}
+
+	template<typename T>
+	static void GetStaticAsset(T** OutObject, const FString& InPath)
+	{
+		ConstructorHelpers::FObjectFinder<UStaticMesh> asset(*InPath);
+		(*OutObject)->SetStaticMesh(asset.Object);
 	}
 
 	template<typename T>
