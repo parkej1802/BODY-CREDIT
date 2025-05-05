@@ -4,6 +4,8 @@
 #include "Characters/Enemy/CNox_EBase.h"
 
 #include "global.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "Characters/Enemy/CNoxEnemy_Animinstance.h"
 #include "Characters/Enemy/AI/CEnemyController.h"
 #include "Components/Enemy/CNox_BehaviorComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -22,6 +24,9 @@ ACNox_EBase::ACNox_EBase()
 	// 목표에 거리가 가까워지면서 속도가 줄어드는 현상 방지
 	// GetCharacterMovement()->GetNavMovementProperties()->bUseFixedBrakingDistanceForPaths = false;
 	GetCharacterMovement()->GetNavMovementProperties()->FixedPathBrakingDistance = 0;
+
+	CHelpers::GetAsset(&BehaviorTree,
+	                   TEXT("/Game/Characters/Enemy/AI/BT_Nox.BT_Nox"));
 }
 
 void ACNox_EBase::BeginPlay()
@@ -29,7 +34,16 @@ void ACNox_EBase::BeginPlay()
 	Super::BeginPlay();
 
 	if (bUseBehaviorTree)
+	{
 		BehaviorComp->SetEnemyType(EnemyType);
+	}
+
+
+	if (auto Anim = GetMesh()->GetAnimInstance())
+	{
+		EnemyAnim = Cast<UCNoxEnemy_Animinstance>(Anim);
+		EnemyAnim->SetEnemy(this);
+	}
 }
 
 void ACNox_EBase::Tick(float DeltaTime)

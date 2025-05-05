@@ -16,4 +16,12 @@ class BODYCREDIT_API ACNox_MedicAndroid : public ACNox_EBase
 
 public:
 	ACNox_MedicAndroid();
+
+private:
+	virtual void BeginPlay() override;
+
+	virtual void SetPerceptionInfo() override;
+
+public:
+	virtual void SetTarget(class ACNox* InTarget) override;
 };

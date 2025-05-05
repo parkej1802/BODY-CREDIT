@@ -46,6 +46,9 @@ public: // Get Sensing Function
 	float GetRetentionTime() const { return RetentionTime; }
 	float GetHearingRange() const { return HearingRange; }
 
+protected: // Set Sensing Function
+	virtual void SetPerceptionInfo() {}
+
 protected: // Status
 	UPROPERTY(EditDefaultsOnly)
 	EEnemyType EnemyType;
@@ -57,7 +60,9 @@ protected: // Virtual Function
 protected: // Component
 	UPROPERTY(VisibleDefaultsOnly)
 	class UCNox_BehaviorComponent* BehaviorComp;
-
+	UPROPERTY(VisibleDefaultsOnly)
+	class UCNoxEnemy_Animinstance* EnemyAnim;
+	
 public:
 	bool bUseBehaviorTree = true;
 

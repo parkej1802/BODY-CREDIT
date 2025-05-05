@@ -16,4 +16,7 @@ class BODYCREDIT_API ACNox_MemoryCollectorAI : public ACNox_EBase
 
 public:
 	ACNox_MemoryCollectorAI();
+
+private:
+	virtual void BeginPlay() override;
 };
