@@ -22,6 +22,7 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UCanvasPanel* Canvas_Grid;
 
+
 // Widget Functions
 public:
 	void InitInventory(class UAC_InventoryComponent* InventoryComponent, float TileSize);
@@ -49,4 +50,16 @@ public:
 		const FWidgetStyle& InWidgetStyle,
 		bool bParentEnabled
 	) const override;
+
+	void Refresh();
+
+	void OnItemRemoved(class UItemObject* ItemObject);
+
+public:
+	UPROPERTY(EditAnywhere, Category = Widget)
+	TSubclassOf<UUserWidget> InventoryItemWidget;
+
+	class UInventory_ItemWidget* InventoryItemUI;
+
+	
 };

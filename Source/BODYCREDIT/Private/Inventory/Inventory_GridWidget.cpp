@@ -5,6 +5,9 @@
 #include "Inventory/AC_InventoryComponent.h"
 #include "Components/Border.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Components/CanvasPanel.h"
+#include "Item/ItemObject.h"
+#include "Inventory/Inventory_ItemWidget.h"
 
 
 void UInventory_GridWidget::InitInventory(class UAC_InventoryComponent* InventoryComponent, float Inventoy_TileSize)
@@ -18,6 +21,10 @@ void UInventory_GridWidget::InitInventory(class UAC_InventoryComponent* Inventor
 	CanvasSlot->SetSize(FVector2D(InventoryColumns * TileSize, InventoryRows * TileSize));
 
 	CreateLineSegment();
+
+	Refresh();
+	
+	// InventoryComp->InventoryChanged.AddDynamic(this, &UInventory_GridWidget::Refresh);
 }	
 
 void UInventory_GridWidget::CreateLineSegment()
@@ -73,4 +80,35 @@ int32 UInventory_GridWidget::NativePaint(const FPaintArgs& Args, const FGeometry
 
 	return LayerId + 1;
 
+}
+
+void UInventory_GridWidget::Refresh()
+{
+	Canvas_Grid->ClearChildren();
+
+	TMap<UItemObject*, FInventoryTile> AllItem = InventoryComp->GetAllItems();
+
+	for (auto& Item : AllItem)
+	{
+		FInventoryTile& InvenTile = *AllItem.Find(Item.Key);
+		if (InventoryItemWidget)
+		{
+			InventoryItemUI = CreateWidget<UInventory_ItemWidget>(GetWorld(), InventoryItemWidget);
+			InventoryItemUI->TileSize = TileSize;
+			InventoryItemUI->ItemObject = Item.Key;
+			// InventoryItemUI->OnItemRemoved.AddDynamic(this, &UInventory_GridWidget::OnItemRemoved);
+
+			UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Canvas_Grid->AddChild(InventoryItemUI));
+
+			if (CanvasSlot) {
+				CanvasSlot->SetAutoSize(true);
+				CanvasSlot->SetPosition(FVector2D(Item.Value.X * TileSize, Item.Value.Y * TileSize));
+			}
+		}
+	}
+}
+
+void UInventory_GridWidget::OnItemRemoved(UItemObject* ItemObject)
+{
+	InventoryComp->RemoveItem(ItemObject);
 }

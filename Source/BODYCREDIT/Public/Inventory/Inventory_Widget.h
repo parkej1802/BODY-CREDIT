@@ -27,5 +27,5 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
 	float TileSize = 50.f;
 
-	virtual bool Initialize() override;
+	virtual void NativeConstruct() override;
 };

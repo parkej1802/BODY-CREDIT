@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Inventory_Tile.h"
 #include "AC_InventoryComponent.generated.h"
 
 
@@ -33,10 +34,11 @@ public:
 
 // Widget
 public:
-	UPROPERTY(EditAnywhere, Category = MainWidget)
+	UPROPERTY(EditAnywhere, Category = Widget)
 	TSubclassOf<UUserWidget> InventoryWidget;
 
 	class UInventory_Widget* InventoryMainUI;
+
 
 // Input
 public:
@@ -54,4 +56,35 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ExposeOnSpawn = "true"))
 	int32 Rows = 15.f;
 
+// Item
+public:
+	bool TryAddItem(class UItemObject* ItemObject);
+
+	bool IsRoomAvailable(class UItemObject* ItemObject, int32 TopLeftIndex);
+
+	FInventoryTile IndexToTile(int32 Index);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<class UItemObject*> Items;
+
+	void ForEachIndex(class UItemObject* ItemObject, int32 TopLeftIndex);
+	bool IsTileValid(FInventoryTile& Tile);
+	class UItemObject* GetItemAtIndex(int32 Index);
+
+	int32 TileToIndex(FInventoryTile& Tile);
+
+	void AddItemAt(class UItemObject* ItemObject, int32 TopLeftIndex);
+
+	bool IsDirty = false;
+
+	TMap<UItemObject*, FInventoryTile> GetAllItems();
+
+	void RemoveItem(class UItemObject* ItemObject);
+
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInventoryChanged);
+
+    UPROPERTY(BlueprintAssignable)
+	FOnInventoryChanged InventoryChanged;
+
+    void OnInventoryChanged();
 };

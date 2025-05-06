@@ -5,20 +5,17 @@
 #include "Inventory/Inventory_GridWidget.h"
 #include "Characters/CNox_Runner.h"
 
-
-bool UInventory_Widget::Initialize()
+void UInventory_Widget::NativeConstruct()
 {
-    if (!Super::Initialize()) return false;
-    
+    Super::NativeConstruct();
+
     APlayerController* PC = GetOwningPlayer();
 
     APawn* Pawn = PC->GetPawn();
-    
+
     PlayerCharacter = Cast<ACNox_Runner>(Pawn);
 
     InventoryComp = PlayerCharacter->InventoryComp;
 
     InventoryGridWidget->InitInventory(InventoryComp, TileSize);
-
-    return true;
 }
