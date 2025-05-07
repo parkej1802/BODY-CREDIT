@@ -62,7 +62,7 @@ protected: // Component
 	class UCNox_BehaviorComponent* BehaviorComp;
 	UPROPERTY(VisibleDefaultsOnly)
 	class UCNoxEnemy_Animinstance* EnemyAnim;
-	
+
 public:
 	bool bUseBehaviorTree = true;
 

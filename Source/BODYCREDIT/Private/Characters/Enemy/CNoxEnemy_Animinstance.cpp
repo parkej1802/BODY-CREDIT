@@ -11,6 +11,7 @@ void UCNoxEnemy_Animinstance::NativeInitializeAnimation()
 void UCNoxEnemy_Animinstance::NativeBeginPlay()
 {
 	Super::NativeBeginPlay();
+	this->OnMontageEnded.AddDynamic(this, &UCNoxEnemy_Animinstance::OnAnimMontageEnded);
 }
 
 void UCNoxEnemy_Animinstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -20,9 +21,23 @@ void UCNoxEnemy_Animinstance::NativeUpdateAnimation(float DeltaSeconds)
 	if (!OwnerEnemy) return;
 	
 	Speed = OwnerEnemy->GetVelocity().Size();
+
+	
+}
+
+void UCNoxEnemy_Animinstance::OnAnimMontageEnded(UAnimMontage* Montage, bool bInterrupted)
+{
+	if (Montage==GrenadeMontage)
+		BehaviorComponent->SetGrenadeEnded(true);
 }
 
 void UCNoxEnemy_Animinstance::AnimNotify_PlayIdleMontage()
 {
 	OwnerEnemy->PlayAnimMontage(IdleMontage, 1.0f);
+}
+
+void UCNoxEnemy_Animinstance::PlayGrenadeMontage()
+{
+	BehaviorComponent->SetGrenadeEnded(false);
+	OwnerEnemy->PlayAnimMontage(GrenadeMontage, 1.0f);
 }

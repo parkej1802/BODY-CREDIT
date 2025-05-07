@@ -35,3 +35,8 @@ void UCNox_BehaviorComponent::SetPatrolRoute(class ACPatrolRoute* InPatrolRoute)
 	Blackboard->SetValueAsObject(PatrolRoute, InPatrolRoute);
 }
 
+void UCNox_BehaviorComponent::SetGrenadeEnded(bool InbEndedAnim)
+{
+	Blackboard->SetValueAsBool(GrenadeKey, InbEndedAnim);
+}
+

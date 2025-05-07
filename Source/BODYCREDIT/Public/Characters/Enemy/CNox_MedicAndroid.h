@@ -24,4 +24,10 @@ private:
 
 public:
 	virtual void SetTarget(class ACNox* InTarget) override;
+
+public:
+	float CurElectricGrenadeCoolTime = 0.f;
+	float ElectricGrenadeCoolTimeMax = 3.f;
+
+	void HandleElectricGrenade();
 };

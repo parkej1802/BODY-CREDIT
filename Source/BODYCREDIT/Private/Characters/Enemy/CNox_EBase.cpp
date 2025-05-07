@@ -4,11 +4,10 @@
 #include "Characters/Enemy/CNox_EBase.h"
 
 #include "global.h"
-#include "BehaviorTree/BehaviorTree.h"
 #include "Characters/Enemy/CNoxEnemy_Animinstance.h"
-#include "Characters/Enemy/AI/CEnemyController.h"
 #include "Components/Enemy/CNox_BehaviorComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "BehaviorTree/behaviorTree.h"
 
 ACNox_EBase::ACNox_EBase()
 {
@@ -43,6 +42,8 @@ void ACNox_EBase::BeginPlay()
 	{
 		EnemyAnim = Cast<UCNoxEnemy_Animinstance>(Anim);
 		EnemyAnim->SetEnemy(this);
+		if (bUseBehaviorTree)
+			EnemyAnim->SetBT(BehaviorComp);
 	}
 }
 
