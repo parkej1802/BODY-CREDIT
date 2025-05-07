@@ -15,12 +15,13 @@ void UCBTS_TargetInRange::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 	
 	AActor* SelfActor = OwnerComp.GetAIOwner()->GetPawn();
 	AActor* TargetActor = Cast<AActor>(Blackboard->GetValueAsObject(TargetKey.SelectedKeyName));
-	float AttackRange = Blackboard->GetValueAsFloat(RangeKey.SelectedKeyName);
+	float MinAttackRange = Blackboard->GetValueAsFloat(MinRangeKey.SelectedKeyName);
+	float MaxAttackRange = Blackboard->GetValueAsFloat(MaxRangeKey.SelectedKeyName);
 	
 	if (SelfActor && TargetActor)
 	{
 		float Distance = FVector::Dist(SelfActor->GetActorLocation(), TargetActor->GetActorLocation());
-		bool bInRange = Distance <= AttackRange;
+		bool bInRange = MinAttackRange < Distance && Distance <= MaxAttackRange;
 
 		Blackboard->SetValueAsBool(IsInAttackRangeKey.SelectedKeyName, bInRange);
 	}

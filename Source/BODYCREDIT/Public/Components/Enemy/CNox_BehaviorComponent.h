@@ -29,7 +29,8 @@ private:
 	const FName AIStateTypeKey = "AIType";
 	const FName PatrolRoute = "PatrolRoute";
 	const FName TargetPlayer = "Target";
-	const FName GrenadeKey = "GrenadeEnd";
+	const FName GrenadeKey = "GrenadeAnimEnd";
+	const FName ShieldKey = "ShieldAnimEnd";
 	
 private:
 	UPROPERTY()
@@ -47,4 +48,5 @@ public:	// For Zero
 
 public:	// For Medic Android
 	void SetGrenadeEnded(bool InbEndedAnim);
+	void SetShieldEnded(bool InbEndedAnim);
 };

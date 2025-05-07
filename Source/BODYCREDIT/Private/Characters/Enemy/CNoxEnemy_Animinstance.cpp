@@ -19,15 +19,13 @@ void UCNoxEnemy_Animinstance::NativeUpdateAnimation(float DeltaSeconds)
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
 	if (!OwnerEnemy) return;
-	
-	Speed = OwnerEnemy->GetVelocity().Size();
 
-	
+	Speed = OwnerEnemy->GetVelocity().Size();
 }
 
 void UCNoxEnemy_Animinstance::OnAnimMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-	if (Montage==GrenadeMontage)
+	if (Montage == GrenadeMontage)
 		BehaviorComponent->SetGrenadeEnded(true);
 }
 
@@ -40,4 +38,14 @@ void UCNoxEnemy_Animinstance::PlayGrenadeMontage()
 {
 	BehaviorComponent->SetGrenadeEnded(false);
 	OwnerEnemy->PlayAnimMontage(GrenadeMontage, 1.0f);
+}
+
+void UCNoxEnemy_Animinstance::PlayShieldMontage(const bool bInShieldStart)
+{
+	BehaviorComponent->SetShieldEnded(false);
+	
+	if (bInShieldStart)
+		OwnerEnemy->PlayAnimMontage(ShieldMontage, 1.0f, ShieldStartSection);
+	else
+		OwnerEnemy->PlayAnimMontage(ShieldMontage, -1.0f, ShieldEndSection);
 }

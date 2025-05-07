@@ -40,3 +40,8 @@ void UCNox_BehaviorComponent::SetGrenadeEnded(bool InbEndedAnim)
 	Blackboard->SetValueAsBool(GrenadeKey, InbEndedAnim);
 }
 
+void UCNox_BehaviorComponent::SetShieldEnded(bool InbEndedAnim)
+{
+	Blackboard->SetValueAsBool(ShieldKey, InbEndedAnim);
+}
+

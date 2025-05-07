@@ -16,7 +16,10 @@ void ACNox_MedicAndroid::BeginPlay()
 	Super::BeginPlay();
 
 	CHelpers::GetAssetDynamic(&(EnemyAnim->IdleMontage), TEXT("/Game/Characters/Enemy/Anim/MedicAnim/AM_Idle.AM_Idle"));
-	CHelpers::GetAssetDynamic(&(EnemyAnim->GrenadeMontage), TEXT("/Game/Characters/Enemy/Anim/MedicAnim/AM_Grenade.AM_Grenade"));
+	CHelpers::GetAssetDynamic(&(EnemyAnim->GrenadeMontage),
+	                          TEXT("/Game/Characters/Enemy/Anim/MedicAnim/AM_Grenade.AM_Grenade"));
+	CHelpers::GetAssetDynamic(&(EnemyAnim->ShieldMontage),
+	                          TEXT("/Game/Characters/Enemy/Anim/MedicAnim/AM_Shield.AM_Shield"));
 	EnemyAnim->AnimNotify_PlayIdleMontage();
 }
 
@@ -36,4 +39,9 @@ void ACNox_MedicAndroid::SetTarget(class ACNox* InTarget)
 void ACNox_MedicAndroid::HandleElectricGrenade()
 {
 	EnemyAnim->PlayGrenadeMontage();
+}
+
+void ACNox_MedicAndroid::HandleEquipShield(const bool bInEquipShield)
+{
+	EnemyAnim->PlayShieldMontage(bInEquipShield);
 }

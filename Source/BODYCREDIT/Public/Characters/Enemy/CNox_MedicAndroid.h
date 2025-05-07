@@ -30,4 +30,7 @@ public:
 	float ElectricGrenadeCoolTimeMax = 3.f;
 
 	void HandleElectricGrenade();
+
+public:
+	void HandleEquipShield(const bool bInEquipShield);
 };

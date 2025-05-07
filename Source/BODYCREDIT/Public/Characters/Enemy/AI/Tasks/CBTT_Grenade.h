@@ -14,7 +14,7 @@ class BODYCREDIT_API UCBTT_Grenade : public UBTTaskNode
 {
 	GENERATED_BODY()
 
-	const FName GrenadeKey = "GrenadeEnd";
+	const FName GrenadeKey = "GrenadeAnimEnd";
 	const FName GrenadeCanUseKey = "bCanUseElectricGrenade";
 private:
 	UCBTT_Grenade();

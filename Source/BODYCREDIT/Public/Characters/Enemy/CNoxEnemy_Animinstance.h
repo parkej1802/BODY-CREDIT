@@ -9,7 +9,7 @@
 #include "CNoxEnemy_Animinstance.generated.h"
 
 /**
- * 
+ * Enemy AnimInstance
  */
 UCLASS()
 class BODYCREDIT_API UCNoxEnemy_Animinstance : public UAnimInstance
@@ -24,7 +24,7 @@ private:
 private:
 	UFUNCTION()
 	void OnAnimMontageEnded(UAnimMontage* Montage, bool bInterrupted);
-	
+
 private:
 	UPROPERTY()
 	ACNox_EBase* OwnerEnemy;
@@ -34,11 +34,18 @@ private:
 	UPROPERTY(BlueprintReadOnly, Category=Anim, meta=(AllowPrivateAccess=true))
 	float Speed;
 
-public: // Medic Android
+	// ==================================================================================
+	// Medic Android
+public:
 	UPROPERTY(VisibleAnywhere)
 	UAnimMontage* IdleMontage;
 	UPROPERTY(VisibleAnywhere)
 	UAnimMontage* GrenadeMontage;
+	UPROPERTY(VisibleAnywhere)
+	UAnimMontage* ShieldMontage;
+
+	const FName ShieldStartSection = "ShieldStart";
+	const FName ShieldEndSection = "ShieldEnd";
 
 public:
 	FORCEINLINE void SetEnemy(ACNox_EBase* InOwnerEnemy) { OwnerEnemy = InOwnerEnemy; }
@@ -48,9 +55,13 @@ public:
 	UFUNCTION()
 	void AnimNotify_PlayIdleMontage();
 
-public:
-	UPROPERTY(BlueprintReadWrite, Category = "Anim")
+private:
+	UPROPERTY(BlueprintReadWrite, Category = "Anim", meta=(AllowPrivateAccess=true))
 	bool bUsingShield = false;
-	
+
+public:
 	void PlayGrenadeMontage();
+
+public:
+	void PlayShieldMontage(const bool bInShieldStart);
 };

@@ -21,7 +21,9 @@ private:
 	UPROPERTY(EditAnywhere, Category="Blackboard")
 	FBlackboardKeySelector TargetKey;
 	UPROPERTY(EditAnywhere, Category="Blackboard")
-	FBlackboardKeySelector RangeKey;
+	FBlackboardKeySelector MinRangeKey;
+	UPROPERTY(EditAnywhere, Category="Blackboard")
+	FBlackboardKeySelector MaxRangeKey;
 	UPROPERTY(EditAnywhere, Category = "Blackboard")
 	FBlackboardKeySelector IsInAttackRangeKey;
 };
