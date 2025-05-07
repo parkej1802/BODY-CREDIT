@@ -58,7 +58,7 @@ void UAC_InventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 	if (IsDirty)
 	{
 		IsDirty = false;
-
+		OnInventoryChanged();
 	}
 }
 
@@ -144,7 +144,7 @@ void UAC_InventoryComponent::AddItemAt(class UItemObject* ItemObject, int32 TopL
 			if (IsTileValid(ResultTile))
 			{
 				Items[TileToIndex(ResultTile)] = ItemObject;
-				GEngine->AddOnScreenDebugMessage(3, 1.f, FColor::Green, FString::Printf(TEXT("Item Index %d"), TileToIndex(ResultTile)));
+				// GEngine->AddOnScreenDebugMessage(3, 1.f, FColor::Green, FString::Printf(TEXT("Item Index %d"), TileToIndex(ResultTile)));
 			}
 		}
 	}
@@ -236,5 +236,20 @@ TMap<UItemObject*, FInventoryTile> UAC_InventoryComponent::GetAllItems()
 
 void UAC_InventoryComponent::RemoveItem(UItemObject* ItemObject)
 {
+	if (IsValid(ItemObject))
+	{
+		for (int i = 0; i < Items.Num(); ++i)
+		{
+			if (ItemObject == Items[i])
+			{
+				Items[i] = nullptr;
+				IsDirty = true;
+			}
+		}
+	}	
+}
 
+void UAC_InventoryComponent::OnInventoryChanged()
+{
+	InventoryChanged.Broadcast();
 }

@@ -33,4 +33,6 @@ public:
 	bool Rotated = false;
 
 	UMaterialInterface* GetIcon();
+
+	TSubclassOf<AItem_Base> GetItemClass();
 };

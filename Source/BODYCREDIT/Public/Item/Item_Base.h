@@ -30,6 +30,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USphereComponent* SphereComp;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 Width = 1.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 Height = 1.f;
+
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UMaterialInterface* Icon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UMaterialInterface* RotatedIcon;
+
 public:
 	UFUNCTION()
     void OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

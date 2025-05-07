@@ -10,6 +10,9 @@
  * 
  */
 
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemRemoved, UItemObject*, RemovedItem);
+
 UCLASS()
 class BODYCREDIT_API UInventory_ItemWidget : public UUserWidget
 {
@@ -34,13 +37,19 @@ public:
 
 	FSlateBrush GetIconImage();
 
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnItemRemoved, UItemObject*, RemovedItem);
-
     UPROPERTY(BlueprintAssignable)
     FOnItemRemoved OnItemRemoved;
 
-	/*UFUNCTION()
-    void OnRemoved(class UItemObject* IObject);*/
+	UFUNCTION(BlueprintCallable)
+    void CallOnRemoved();
 
 	virtual void NativeConstruct() override;
+
+public:
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
+	virtual void NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation) override;
+ 
 };
+

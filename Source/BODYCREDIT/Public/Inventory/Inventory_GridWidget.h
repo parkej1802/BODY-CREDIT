@@ -51,9 +51,22 @@ public:
 		bool bParentEnabled
 	) const override;
 
+	UFUNCTION()
 	void Refresh();
 
+	UFUNCTION()
 	void OnItemRemoved(class UItemObject* ItemObject);
+
+
+	UItemObject* GetPayLoad(class UDragDropOperation* Operation);
+
+	bool IsRoomAvailableForPayload(class UItemObject* ItemObject) const;
+
+	FIntPoint DraggedItemTopLeftTile;
+	bool DrawDropLocation = false;
+
+	TPair<bool, bool> MousePositionInTile(FVector2D MousePosition);
+
 
 public:
 	UPROPERTY(EditAnywhere, Category = Widget)
@@ -61,5 +74,11 @@ public:
 
 	class UInventory_ItemWidget* InventoryItemUI;
 
-	
+public:
+
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+	virtual bool NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+	virtual void NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+	virtual void NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 };

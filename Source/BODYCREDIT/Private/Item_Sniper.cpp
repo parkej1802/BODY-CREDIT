@@ -17,14 +17,17 @@ AItem_Sniper::AItem_Sniper()
 	{
 		RotatedIcon = Temp_MatR.Object;
 	}
+	
+	Width = 4;
+	Height = 4;
 }
 
 UItemObject* AItem_Sniper::GetDefaultItemObject()
 {
 	UItemObject* NewItem = NewObject<UItemObject>(this, UItemObject::StaticClass());
 
-	NewItem->Dimensions.X = 4;
-	NewItem->Dimensions.Y = 1;
+	NewItem->Dimensions.X = Width;
+	NewItem->Dimensions.Y = Height;
 	NewItem->Icon = Icon;
 	NewItem->RotatedIcon = RotatedIcon;
 	NewItem->ItemClass = GetClass();

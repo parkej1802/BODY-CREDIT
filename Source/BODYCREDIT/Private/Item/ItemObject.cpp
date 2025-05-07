@@ -16,3 +16,9 @@ UMaterialInterface* UItemObject::GetIcon()
 	}
 	return Icon;
 }
+
+TSubclassOf<AItem_Base> UItemObject::GetItemClass()
+{
+	return ItemClass;
+}
+

@@ -86,5 +86,6 @@ public:
     UPROPERTY(BlueprintAssignable)
 	FOnInventoryChanged InventoryChanged;
 
-    void OnInventoryChanged();
+	UFUNCTION()
+	void OnInventoryChanged();
 };

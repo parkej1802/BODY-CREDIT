@@ -14,4 +14,9 @@ class BODYCREDIT_API AItem_Grenade : public AItem_Base
 {
 	GENERATED_BODY()
 	
+public:
+	AItem_Grenade();
+
+
+	virtual UItemObject* GetDefaultItemObject() override;
 };

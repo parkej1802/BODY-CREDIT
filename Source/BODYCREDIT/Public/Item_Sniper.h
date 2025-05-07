@@ -19,10 +19,4 @@ public:
 	
 	virtual UItemObject* GetDefaultItemObject() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UMaterialInterface* Icon;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UMaterialInterface* RotatedIcon;
-
 };
