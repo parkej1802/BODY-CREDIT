@@ -4,6 +4,7 @@
 
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Patrol/CPatrolRoute.h"
+#include "Utilities/CLog.h"
 
 UCNox_BehaviorComponent::UCNox_BehaviorComponent()
 {
@@ -37,11 +38,18 @@ void UCNox_BehaviorComponent::SetPatrolRoute(class ACPatrolRoute* InPatrolRoute)
 
 void UCNox_BehaviorComponent::SetGrenadeEnded(bool InbEndedAnim)
 {
+	CLog::Log(FString::Printf(TEXT("SetGrenadeEnded: %d"), InbEndedAnim));
 	Blackboard->SetValueAsBool(GrenadeKey, InbEndedAnim);
 }
 
 void UCNox_BehaviorComponent::SetShieldEnded(bool InbEndedAnim)
 {
 	Blackboard->SetValueAsBool(ShieldKey, InbEndedAnim);
+	SetDamageTaken(InbEndedAnim);
+}
+
+void UCNox_BehaviorComponent::SetDamageTaken(bool bInDamageTaken)
+{
+	Blackboard->SetValueAsBool(HitDamageKey, bInDamageTaken);
 }
 

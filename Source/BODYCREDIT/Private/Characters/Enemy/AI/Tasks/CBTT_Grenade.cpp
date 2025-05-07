@@ -6,6 +6,7 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/Enemy/CNox_EBase.h"
 #include "Characters/Enemy/CNox_MedicAndroid.h"
+#include "Utilities/CLog.h"
 
 UCBTT_Grenade::UCBTT_Grenade()
 {
@@ -17,6 +18,7 @@ EBTNodeResult::Type UCBTT_Grenade::ExecuteTask(UBehaviorTreeComponent& OwnerComp
 	if (ACNox_MedicAndroid* MyEnemy = Cast<
 		ACNox_MedicAndroid>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(FName("SelfActor"))))
 	{
+		// CLog::Log(FString::Printf(TEXT("GrenadeCanUse: %d"), OwnerComp.GetBlackboardComponent()->GetValueAsBool(GrenadeCanUseKey)));
 		MyEnemy->HandleElectricGrenade(); // 애니메이션 실행
 		OwnerComp.GetBlackboardComponent()->SetValueAsBool(GrenadeCanUseKey, false); // 감전탄 쿨타임 실행
 		return EBTNodeResult::InProgress;
@@ -31,7 +33,6 @@ void UCBTT_Grenade::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemor
 
 	if (OwnerComp.GetBlackboardComponent()->GetValueAsBool(GrenadeKey))
 	{
-		OwnerComp.GetBlackboardComponent()->SetValueAsBool(GrenadeKey, false);
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 	}
 }

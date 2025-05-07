@@ -23,6 +23,22 @@ void ACNox_MedicAndroid::BeginPlay()
 	EnemyAnim->AnimNotify_PlayIdleMontage();
 }
 
+void ACNox_MedicAndroid::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (bIsEquipShield)
+	{
+		CurShieldTime += DeltaTime;
+		if (CurShieldTime >= ShieldInterval)
+		{
+			CurShieldTime = 0.f;
+			bIsEquipShield = false;
+			EnemyAnim->PlayShieldMontage(bIsEquipShield);
+		}
+	}
+}
+
 void ACNox_MedicAndroid::SetPerceptionInfo()
 {
 	Super::SetPerceptionInfo();
@@ -44,4 +60,17 @@ void ACNox_MedicAndroid::HandleElectricGrenade()
 void ACNox_MedicAndroid::HandleEquipShield(const bool bInEquipShield)
 {
 	EnemyAnim->PlayShieldMontage(bInEquipShield);
+}
+
+float ACNox_MedicAndroid::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+                                     class AController* EventInstigator, AActor* DamageCauser)
+{
+	if (!bIsEquipShield)
+	{
+		bIsEquipShield = true;
+		EnemyAnim->PlayShieldMontage(bIsEquipShield);
+	}
+	else
+		CurShieldTime = 0.f;
+	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }

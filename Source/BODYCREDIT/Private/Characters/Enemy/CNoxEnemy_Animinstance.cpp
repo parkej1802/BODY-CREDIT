@@ -26,7 +26,7 @@ void UCNoxEnemy_Animinstance::NativeUpdateAnimation(float DeltaSeconds)
 void UCNoxEnemy_Animinstance::OnAnimMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
 	if (Montage == GrenadeMontage)
-		BehaviorComponent->SetGrenadeEnded(true);
+		OwnerEnemy->SetGrenadeEnded(true);
 }
 
 void UCNoxEnemy_Animinstance::AnimNotify_PlayIdleMontage()
@@ -36,13 +36,14 @@ void UCNoxEnemy_Animinstance::AnimNotify_PlayIdleMontage()
 
 void UCNoxEnemy_Animinstance::PlayGrenadeMontage()
 {
-	BehaviorComponent->SetGrenadeEnded(false);
+	OwnerEnemy->SetGrenadeEnded(false);
 	OwnerEnemy->PlayAnimMontage(GrenadeMontage, 1.0f);
 }
 
 void UCNoxEnemy_Animinstance::PlayShieldMontage(const bool bInShieldStart)
 {
 	BehaviorComponent->SetShieldEnded(false);
+	bUsingShield = bInShieldStart;
 	
 	if (bInShieldStart)
 		OwnerEnemy->PlayAnimMontage(ShieldMontage, 1.0f, ShieldStartSection);

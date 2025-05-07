@@ -47,6 +47,9 @@ void ACNox_EBase::BeginPlay()
 		if (bUseBehaviorTree)
 			EnemyAnim->SetBT(BehaviorComp);
 	}
+
+	if (HPComp)
+		HPComp->SetEnemy(this);
 }
 
 void ACNox_EBase::Tick(float DeltaTime)
@@ -57,4 +60,9 @@ void ACNox_EBase::Tick(float DeltaTime)
 void ACNox_EBase::SetTarget(ACNox* InTarget)
 {
 	BehaviorComp->SetTarget(InTarget);
+}
+
+void ACNox_EBase::SetGrenadeEnded(bool InbEndedAnim)
+{
+	BehaviorComp->SetGrenadeEnded(InbEndedAnim);
 }

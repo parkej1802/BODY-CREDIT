@@ -31,6 +31,7 @@ private:
 	const FName TargetPlayer = "Target";
 	const FName GrenadeKey = "GrenadeAnimEnd";
 	const FName ShieldKey = "ShieldAnimEnd";
+	const FName HitDamageKey = "bHitDamage";
 	
 private:
 	UPROPERTY()
@@ -49,4 +50,5 @@ public:	// For Zero
 public:	// For Medic Android
 	void SetGrenadeEnded(bool InbEndedAnim);
 	void SetShieldEnded(bool InbEndedAnim);
+	void SetDamageTaken(bool bInDamageTaken);
 };
