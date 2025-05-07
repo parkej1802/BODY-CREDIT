@@ -27,11 +27,3 @@ void ACNox::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
-
-void ACNox::TakeDamage(float Amount)
-{
-}
-
-void ACNox::Die()
-{
-}

@@ -6,13 +6,14 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Components/CMovementComponent.h"
+#include "Components/CNoxHPComponent.h"
 
 ACNox_Runner::ACNox_Runner()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	CHelpers::CreateActorComponent<UCNoxHPComponent>(this, &HPComp, "HPComp");
 	Init();
-
 }
 
 void ACNox_Runner::BeginPlay()

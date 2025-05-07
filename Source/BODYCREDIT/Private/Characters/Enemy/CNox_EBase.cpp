@@ -8,6 +8,7 @@
 #include "Components/Enemy/CNox_BehaviorComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "BehaviorTree/behaviorTree.h"
+#include "Components/Enemy/CNoxEnemyHPComponent.h"
 
 ACNox_EBase::ACNox_EBase()
 {
@@ -26,6 +27,7 @@ ACNox_EBase::ACNox_EBase()
 
 	CHelpers::GetAsset(&BehaviorTree,
 	                   TEXT("/Game/Characters/Enemy/AI/BT_Nox.BT_Nox"));
+	CHelpers::CreateActorComponent<UCNoxEnemyHPComponent>(this, &HPComp, "HPComp");
 }
 
 void ACNox_EBase::BeginPlay()
