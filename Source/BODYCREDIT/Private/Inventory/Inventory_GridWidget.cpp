@@ -232,6 +232,22 @@ void UInventory_GridWidget::NativeOnDragLeave(const FDragDropEvent& InDragDropEv
 	DrawDropLocation = false;
 }
 
+FReply UInventory_GridWidget::NativeOnPreviewKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+{
+	Super::NativeOnPreviewKeyDown(InGeometry, InKeyEvent);
+
+	//if (InKeyEvent.GetKey() == 'R')
+	{
+		UDragDropOperation* CurrentOp = UWidgetBlueprintLibrary::GetDragDroppingContent();
+
+		if (GetPayLoad(CurrentOp))
+		{
+
+		}
+
+	}
+}
+
 bool UInventory_GridWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
