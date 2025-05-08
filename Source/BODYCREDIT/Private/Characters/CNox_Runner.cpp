@@ -6,6 +6,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
 #include "Components/CMovementComponent.h"
+#include "Inventory/AC_InventoryComponent.h"
 #include "Components/CNoxHPComponent.h"
 
 ACNox_Runner::ACNox_Runner()
@@ -14,6 +15,8 @@ ACNox_Runner::ACNox_Runner()
 
 	CHelpers::CreateActorComponent<UCNoxHPComponent>(this, &HPComp, "HPComp");
 	Init();
+
+	InventoryComp = CreateDefaultSubobject<UAC_InventoryComponent>(TEXT("InventoryComp"));
 }
 
 void ACNox_Runner::BeginPlay()

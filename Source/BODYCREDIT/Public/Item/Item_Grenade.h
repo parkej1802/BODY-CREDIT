@@ -1,0 +1,22 @@
+﻿// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "Item/Item_Base.h"
+#include "Item_Grenade.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class BODYCREDIT_API AItem_Grenade : public AItem_Base
+{
+	GENERATED_BODY()
+	
+public:
+	AItem_Grenade();
+
+
+	virtual UItemObject* GetDefaultItemObject() override;
+};

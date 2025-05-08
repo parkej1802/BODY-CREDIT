@@ -58,4 +58,9 @@ private:
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UCNoxHPComponent* HPComp;
+
+// Inventory
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UAC_InventoryComponent* InventoryComp;
 };
