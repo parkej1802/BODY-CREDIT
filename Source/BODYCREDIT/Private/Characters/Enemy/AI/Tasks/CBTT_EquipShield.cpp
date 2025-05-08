@@ -9,6 +9,7 @@
 UCBTT_EquipShield::UCBTT_EquipShield()
 {
 	bNotifyTick = true;
+	bCreateNodeInstance = true; //  Enemy 마다 각각의 인스턴스 생성
 }
 
 EBTNodeResult::Type UCBTT_EquipShield::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -23,14 +24,14 @@ EBTNodeResult::Type UCBTT_EquipShield::ExecuteTask(UBehaviorTreeComponent& Owner
 		bIsBrokenShield = OwnerComp.GetBlackboardComponent()->GetValueAsBool(BrokenShieldKey);
 
 		if (!bGrenadeEnd) return EBTNodeResult::Succeeded;
-		
+
 		if (!bIsEquipShield && bCanUseShield && bHitDamage)
 			MyEnemy->HandleEquipShield(true);
 		else if (bIsEquipShield && bIsBrokenShield)
 			MyEnemy->HandleEquipShield(false);
 
 		OwnerComp.GetBlackboardComponent()->SetValueAsBool(EquipShieldKey, !bIsEquipShield);
-		
+
 		return EBTNodeResult::InProgress;
 	}
 	else

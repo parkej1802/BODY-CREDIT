@@ -8,6 +8,7 @@
 UCBT_CheckCondition::UCBT_CheckCondition()
 {
 	FlowAbortMode = EBTFlowAbortMode::Self;
+	bCreateNodeInstance = true;
 }
 
 bool UCBT_CheckCondition::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const

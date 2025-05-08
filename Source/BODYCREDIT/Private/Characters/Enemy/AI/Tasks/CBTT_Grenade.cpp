@@ -11,6 +11,7 @@
 UCBTT_Grenade::UCBTT_Grenade()
 {
 	bNotifyTick = true;
+	bCreateNodeInstance = true;
 }
 
 EBTNodeResult::Type UCBTT_Grenade::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)

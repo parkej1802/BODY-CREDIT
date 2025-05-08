@@ -6,18 +6,23 @@
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
+UCBTS_TargetInRange::UCBTS_TargetInRange()
+{
+	bCreateNodeInstance = true;
+}
+
 void UCBTS_TargetInRange::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
 	UBlackboardComponent* Blackboard = OwnerComp.GetBlackboardComponent();
 	if (!Blackboard) return;
-	
+
 	AActor* SelfActor = OwnerComp.GetAIOwner()->GetPawn();
 	AActor* TargetActor = Cast<AActor>(Blackboard->GetValueAsObject(TargetKey.SelectedKeyName));
 	float MinAttackRange = Blackboard->GetValueAsFloat(MinRangeKey.SelectedKeyName);
 	float MaxAttackRange = Blackboard->GetValueAsFloat(MaxRangeKey.SelectedKeyName);
-	
+
 	if (SelfActor && TargetActor)
 	{
 		float Distance = FVector::Dist(SelfActor->GetActorLocation(), TargetActor->GetActorLocation());

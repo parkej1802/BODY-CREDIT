@@ -15,6 +15,7 @@ class BODYCREDIT_API UCBTS_TargetInRange : public UBTService
 	GENERATED_BODY()
 
 private:
+	UCBTS_TargetInRange();
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
 private:

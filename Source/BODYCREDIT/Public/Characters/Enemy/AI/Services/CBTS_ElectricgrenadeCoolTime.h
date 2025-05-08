@@ -7,7 +7,7 @@
 #include "CBTS_ElectricgrenadeCoolTime.generated.h"
 
 /**
- * 
+ * 미사용 서비스 (CoolDown 노드로 대체)
  */
 UCLASS()
 class BODYCREDIT_API UCBTS_ElectricgrenadeCoolTime : public UBTService
