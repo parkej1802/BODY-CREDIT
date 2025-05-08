@@ -1,6 +1,7 @@
 ﻿#include "Characters/CNoxAnimInstance.h"
 #include "Global.h"
 #include "Characters/CNox.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 void UCNoxAnimInstance::NativeBeginPlay()
 {
@@ -26,6 +27,9 @@ void UCNoxAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 		// 캐릭터 이동 속도 ( 0 ~ )
 		Speed = OwnerCharacter->GetVelocity().Size2D();
+
+		// 캐릭터 점프 중인지
+		bFalling = OwnerCharacter->GetCharacterMovement()->IsFalling();
 	}
 
 }

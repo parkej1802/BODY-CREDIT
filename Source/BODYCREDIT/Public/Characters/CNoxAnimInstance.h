@@ -25,6 +25,9 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	float Speed;
 
+	UPROPERTY(BlueprintReadOnly)
+	bool bFalling;
+
 private:
 	FRotator PrevRotation;
 
