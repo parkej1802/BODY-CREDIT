@@ -30,23 +30,30 @@ protected:
 	*/
 	UPROPERTY(EditAnywhere, Category="Status")
 	float MaxHealth{100};
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category="Status")
 	float Health;
 
 	UPROPERTY(EditAnywhere, Category="Status")
 	float MaxDefense{50};
-	UPROPERTY()
+	UPROPERTY(VisibleAnywhere, Category="Status")
 	float Defense;
 
 	bool bIsDead{false};
+
+	UPROPERTY(EditAnywhere, Category="Status")
+	float ShieldRegenTimeMax = 3.f;
+	float CurShieldRegenTime;
 
 public:
 	/**
 	 *	Common Virtual Function - LHJ (2025.05.07)
 	 */
-	virtual void TakeDamage(float Amount);
+	virtual void TakeDamage(float Amount, bool ActiveShield, bool& OutIsShieldCrash);
 	virtual void Die();
 
 protected:
 	virtual void InitStatus();
+
+public:
+	float GetHealthPercent() const { return Health / MaxHealth; }
 };

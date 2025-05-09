@@ -5,6 +5,7 @@
 
 #include "Characters/Enemy/CNox_MedicAndroid.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Utilities/CLog.h"
 
 UCBTT_EquipShield::UCBTT_EquipShield()
 {
@@ -17,20 +18,11 @@ EBTNodeResult::Type UCBTT_EquipShield::ExecuteTask(UBehaviorTreeComponent& Owner
 	if (ACNox_MedicAndroid* MyEnemy = Cast<
 		ACNox_MedicAndroid>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(FName("SelfActor"))))
 	{
-		bGrenadeEnd = OwnerComp.GetBlackboardComponent()->GetValueAsBool(GrenadeEndKey);
-		bCanUseShield = OwnerComp.GetBlackboardComponent()->GetValueAsBool(CanUseShieldKey);
-		bHitDamage = OwnerComp.GetBlackboardComponent()->GetValueAsBool(HitDamageKey);
+		// 쉴드를 들고있으면 내리고, 내리고있으면 들게한다
 		bIsEquipShield = OwnerComp.GetBlackboardComponent()->GetValueAsBool(EquipShieldKey);
-		bIsBrokenShield = OwnerComp.GetBlackboardComponent()->GetValueAsBool(BrokenShieldKey);
 
-		if (!bGrenadeEnd) return EBTNodeResult::Succeeded;
-
-		if (!bIsEquipShield && bCanUseShield && bHitDamage)
-			MyEnemy->HandleEquipShield(true);
-		else if (bIsEquipShield && bIsBrokenShield)
-			MyEnemy->HandleEquipShield(false);
-
-		OwnerComp.GetBlackboardComponent()->SetValueAsBool(EquipShieldKey, !bIsEquipShield);
+		// CLog::Log(FString::Printf(TEXT("[UCBTT_EquipShield::ExecuteTask] bIsEquipShield Reverse: %d"), !bIsEquipShield));
+		MyEnemy->HandleEquipShield(!bIsEquipShield);
 
 		return EBTNodeResult::InProgress;
 	}
@@ -44,7 +36,23 @@ void UCBTT_EquipShield::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 
 	if (OwnerComp.GetBlackboardComponent()->GetValueAsBool(ShieldKey))
 	{
+		// 애니메이션 종료 플레그 초기화
+		// Anim - MontageEnded에서 true로 변경해줌
 		OwnerComp.GetBlackboardComponent()->SetValueAsBool(ShieldKey, false);
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+	}
+	else
+	{
+		CurHealTime += DeltaSeconds;
+		if (CurHealTime >= HealTime)
+		{
+			CurHealTime = 0.f;
+
+			if (ACNox_MedicAndroid* MyEnemy = Cast<
+				ACNox_MedicAndroid>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(FName("SelfActor"))))
+			{
+				MyEnemy->HealEnd();
+			}
+		}
 	}
 }

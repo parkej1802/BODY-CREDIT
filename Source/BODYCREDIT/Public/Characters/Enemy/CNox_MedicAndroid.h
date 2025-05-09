@@ -35,9 +35,18 @@ public:
 	bool bIsEquipShield = false;
 	float CurShieldTime = 0.f;
 	float ShieldInterval = 2.f;
-	
+
 	void HandleEquipShield(const bool bInEquipShield);
 
 private:
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+	                         class AController* EventInstigator, AActor* DamageCauser) override;
+
+private:
+	UPROPERTY(EditDefaultsOnly, Category=Heal)
+	float HealStdValue = 0.4f;
+	
+	bool IsLowHealth();
+public:
+	void HealEnd();
 };

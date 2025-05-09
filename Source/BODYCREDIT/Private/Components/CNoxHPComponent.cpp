@@ -23,8 +23,22 @@ void UCNoxHPComponent::InitStatus()
 	Defense = MaxDefense;
 }
 
-void UCNoxHPComponent::TakeDamage(float Amount)
+void UCNoxHPComponent::TakeDamage(float Amount, bool ActiveShield, bool& OutIsShieldCrash)
 {
+	if (ActiveShield)
+	{
+		Defense -= Amount;
+		if (Defense <= 0)
+		{
+			OutIsShieldCrash = true;
+			Health += Defense; // 초과된 데미지 만큼 HP 차감
+			Defense = 0;
+		}
+	}
+	else
+	{
+		Health = FMath::Max(0.f, Health - Amount);		
+	}
 }
 
 void UCNoxHPComponent::Die()

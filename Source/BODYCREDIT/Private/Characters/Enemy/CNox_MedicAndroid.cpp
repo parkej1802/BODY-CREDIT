@@ -4,6 +4,7 @@
 #include "Characters/Enemy/CNox_MedicAndroid.h"
 #include "Global.h"
 #include "Characters/Enemy/CNoxEnemy_Animinstance.h"
+#include "Components/Enemy/CNoxEnemyHPComponent.h"
 
 ACNox_MedicAndroid::ACNox_MedicAndroid()
 {
@@ -27,16 +28,10 @@ void ACNox_MedicAndroid::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (bIsEquipShield)
-	{
-		CurShieldTime += DeltaTime;
-		if (CurShieldTime >= ShieldInterval)
-		{
-			CurShieldTime = 0.f;
-			bIsEquipShield = false;
-			EnemyAnim->PlayShieldMontage(bIsEquipShield);
-		}
-	}
+	if (IsLowHealth())
+		BehaviorComp->SetHealFlag(true);
+	else
+		BehaviorComp->SetHealFlag(false);
 }
 
 void ACNox_MedicAndroid::SetPerceptionInfo()
@@ -59,18 +54,36 @@ void ACNox_MedicAndroid::HandleElectricGrenade()
 
 void ACNox_MedicAndroid::HandleEquipShield(const bool bInEquipShield)
 {
+	// CLog::Log(FString::Printf(TEXT("[ACNox_MedicAndroid::HandleEquipShield] bInEquipShield: %d"), bInEquipShield));
+	
+	bIsEquipShield = bInEquipShield;
 	EnemyAnim->PlayShieldMontage(bInEquipShield);
+	BehaviorComp->SetEquipShield(bInEquipShield);
 }
 
 float ACNox_MedicAndroid::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
                                      class AController* EventInstigator, AActor* DamageCauser)
 {
-	if (!bIsEquipShield)
+	bool bIsDamageShield = false;
+	if (bIsEquipShield)
 	{
-		bIsEquipShield = true;
-		EnemyAnim->PlayShieldMontage(bIsEquipShield);
+		bIsDamageShield = true;
 	}
-	else
-		CurShieldTime = 0.f;
+
+	// 데미지 처리 추가
+	bool bIsShieldCrash = false;
+	HPComp->TakeDamage(DamageAmount, bIsDamageShield, bIsShieldCrash);
+
+	
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+}
+
+bool ACNox_MedicAndroid::IsLowHealth()
+{
+	return HPComp->GetHealthPercent() <= HealStdValue;
+}
+
+void ACNox_MedicAndroid::HealEnd()
+{
+	EnemyAnim->JumpShieldMontage();
 }

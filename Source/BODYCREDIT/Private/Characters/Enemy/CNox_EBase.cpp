@@ -62,6 +62,11 @@ void ACNox_EBase::SetTarget(ACNox* InTarget)
 	BehaviorComp->SetTarget(InTarget);
 }
 
+void ACNox_EBase::HealHP()
+{
+	HPComp->HealHP(HealAmount);
+}
+
 void ACNox_EBase::SetGrenadeEnded(bool InbEndedAnim)
 {
 	BehaviorComp->SetGrenadeEnded(InbEndedAnim);

@@ -55,13 +55,10 @@ public:
 	UFUNCTION()
 	void AnimNotify_PlayIdleMontage();
 
-private:
-	UPROPERTY(BlueprintReadWrite, Category = "Anim", meta=(AllowPrivateAccess=true))
-	bool bUsingShield = false;
-
 public:
 	void PlayGrenadeMontage();
 
 public:
 	void PlayShieldMontage(const bool bInShieldStart);
+	void JumpShieldMontage();
 };

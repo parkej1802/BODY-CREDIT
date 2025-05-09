@@ -3,6 +3,8 @@
 
 #include "Characters/Enemy/CNoxEnemy_Animinstance.h"
 
+#include "Utilities/CLog.h"
+
 void UCNoxEnemy_Animinstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
@@ -27,6 +29,8 @@ void UCNoxEnemy_Animinstance::OnAnimMontageEnded(UAnimMontage* Montage, bool bIn
 {
 	if (Montage == GrenadeMontage)
 		OwnerEnemy->SetGrenadeEnded(true);
+	else if (Montage == ShieldMontage)
+		BehaviorComponent->SetShieldEnded(true);
 }
 
 void UCNoxEnemy_Animinstance::AnimNotify_PlayIdleMontage()
@@ -42,11 +46,18 @@ void UCNoxEnemy_Animinstance::PlayGrenadeMontage()
 
 void UCNoxEnemy_Animinstance::PlayShieldMontage(const bool bInShieldStart)
 {
-	BehaviorComponent->SetShieldEnded(false);
-	bUsingShield = bInShieldStart;
+	// CLog::Log(FString::Printf(TEXT("bUsingShield: %d"), bInShieldStart));
 	
+	BehaviorComponent->SetShieldEnded(false);
+
 	if (bInShieldStart)
 		OwnerEnemy->PlayAnimMontage(ShieldMontage, 1.0f, ShieldStartSection);
 	else
-		OwnerEnemy->PlayAnimMontage(ShieldMontage, -1.0f, ShieldEndSection);
+		OwnerEnemy->PlayAnimMontage(ShieldMontage, -.65f, ShieldEndSection);
+}
+
+void UCNoxEnemy_Animinstance::JumpShieldMontage()
+{
+	if (ShieldMontage && Montage_IsPlaying(ShieldMontage))
+		Montage_JumpToSection(FName("ShieldEnd"), ShieldMontage);
 }
