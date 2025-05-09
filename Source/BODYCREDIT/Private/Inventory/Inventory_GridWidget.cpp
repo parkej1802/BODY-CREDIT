@@ -28,6 +28,8 @@ void UInventory_GridWidget::InitInventory(class UAC_InventoryComponent* Inventor
 	Refresh();
 	
 	InventoryComp->InventoryChanged.AddDynamic(this, &UInventory_GridWidget::Refresh);
+
+
 }	
 
 void UInventory_GridWidget::CreateLineSegment()
@@ -193,6 +195,10 @@ bool UInventory_GridWidget::NativeOnDragOver(const FGeometry& InGeometry, const 
 {
 	Super::NativeOnDragOver(InGeometry, InDragDropEvent, InOperation);
 
+	//SetFocus();
+	//bIsFocusable = true;
+	//SetKeyboardFocus();
+
 	bool Right;
 	bool Down;
 
@@ -236,43 +242,49 @@ FReply UInventory_GridWidget::NativeOnPreviewKeyDown(const FGeometry& InGeometry
 {
 	Super::NativeOnPreviewKeyDown(InGeometry, InKeyEvent);
 
-	//if (InKeyEvent.GetKey() == 'R')
+	/*if (InKeyEvent.GetKey() == EKeys::R)
 	{
 		UDragDropOperation* CurrentOp = UWidgetBlueprintLibrary::GetDragDroppingContent();
-
-		if (GetPayLoad(CurrentOp))
+		UItemObject* ItemObject = GetPayLoad(CurrentOp);
+		if (IsValid(ItemObject))
 		{
+			ItemObject->Rotate();
 
+			UInventory_ItemWidget* ItemWidget = Cast<UInventory_ItemWidget>(CurrentOp->DefaultDragVisual);
+			if (ItemWidget)
+			{
+				ItemWidget->ItemObject = ItemObject;
+				ItemWidget->Refresh();
+			}
 		}
-
 	}
+	*/
+	return FReply::Handled();
 }
 
 bool UInventory_GridWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
 
-	UItemObject* ItemObject = GetPayLoad(InOperation);
+	//bIsFocusable = false;
 
+	UItemObject* ItemObject = GetPayLoad(InOperation);
+	FInventoryTile TempTile;
 	if (IsRoomAvailableForPayload(ItemObject))
 	{
-		FInventoryTile TempTile;
 		TempTile.X = DraggedItemTopLeftTile.X;
 		TempTile.Y = DraggedItemTopLeftTile.Y;
 		InventoryComp->AddItemAt(GetPayLoad(InOperation), InventoryComp->TileToIndex(TempTile));
-		return true;
 		
 	}
 	else
 	{
-		if (!InventoryComp->TryAddItem(ItemObject))
-		{
-			AGameState_BodyCredit* MyGameState = GetWorld()->GetGameState<AGameState_BodyCredit>();
+		TempTile.X = ItemObject->StartPosition.X;
+		TempTile.Y = ItemObject->StartPosition.Y;
 
-			MyGameState->SpawnItemFromActor(ItemObject, InventoryComp->GetOwner(), true);
-		}
+		InventoryComp->AddItemAt(ItemObject, InventoryComp->TileToIndex(TempTile));
 	}
 	
-	return false;
+	return true;
 
 }

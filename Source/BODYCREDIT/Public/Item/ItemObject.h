@@ -35,4 +35,10 @@ public:
 	UMaterialInterface* GetIcon();
 
 	TSubclassOf<AItem_Base> GetItemClass();
+
+	FIntPoint StartPosition;
+
+	void Rotate();
+	bool IsRotated();
+	FIntPoint GetStartPosition();
 };

@@ -43,7 +43,11 @@ public:
 	UFUNCTION(BlueprintCallable)
     void CallOnRemoved();
 
+	void Refresh();
+
 	virtual void NativeConstruct() override;
+
+	FIntPoint StartTilePosition;
 
 public:
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;

@@ -47,7 +47,11 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	class UInputAction* IA_InventoryMode;
 
+	UPROPERTY(EditDefaultsOnly, Category = Input)
+	class UInputAction* IA_RotateItem;
+
 	void ShowInventory();
+	void RotateItem();
 
 // Inventory Data
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ExposeOnSpawn = "true"))

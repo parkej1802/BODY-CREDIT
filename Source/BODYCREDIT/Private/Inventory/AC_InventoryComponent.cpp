@@ -5,6 +5,8 @@
 #include "Inventory/Inventory_Widget.h"
 #include "Characters/CNox_Runner.h"
 #include "Item/ItemObject.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Inventory/Inventory_ItemWidget.h"
 
 // Sets default values for this component's properties
 UAC_InventoryComponent::UAC_InventoryComponent()
@@ -17,6 +19,12 @@ UAC_InventoryComponent::UAC_InventoryComponent()
 	if (TempIA_InventoryMode.Succeeded())
 	{
 		IA_InventoryMode = TempIA_InventoryMode.Object;
+	}
+
+	ConstructorHelpers::FObjectFinder<UInputAction>TempIA_RotateItem(TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_RotateItem.IA_RotateItem'"));
+	if (TempIA_RotateItem.Succeeded())
+	{
+		IA_RotateItem = TempIA_RotateItem.Object;
 	}
 
 	static ConstructorHelpers::FClassFinder<UUserWidget> TempWidget(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/Inventory/WBP_MainInventory.WBP_MainInventory'"));
@@ -65,6 +73,7 @@ void UAC_InventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 void UAC_InventoryComponent::SetupInputBinding(class UEnhancedInputComponent* Input)
 {
 	Input->BindAction(IA_InventoryMode, ETriggerEvent::Started, this, &UAC_InventoryComponent::ShowInventory);
+	Input->BindAction(IA_RotateItem, ETriggerEvent::Started, this, &UAC_InventoryComponent::RotateItem);
 }
 
 void UAC_InventoryComponent::ShowInventory()
@@ -95,10 +104,39 @@ void UAC_InventoryComponent::ShowInventory()
 	}
 }
 
+void UAC_InventoryComponent::RotateItem()
+{
+	UDragDropOperation* CurrentOp = UWidgetBlueprintLibrary::GetDragDroppingContent();
+	if (!CurrentOp) return;
+
+	UItemObject* ItemObject = Cast<UItemObject>(CurrentOp->Payload);
+	if (IsValid(ItemObject))
+	{
+		ItemObject->Rotate();
+
+		UInventory_ItemWidget* ItemWidget = Cast<UInventory_ItemWidget>(CurrentOp->DefaultDragVisual);
+		if (ItemWidget)
+		{
+			ItemWidget->ItemObject = ItemObject;
+			ItemWidget->Refresh();
+		}
+	}
+}
+
 bool UAC_InventoryComponent::TryAddItem(UItemObject* ItemObject)
 {
 	if (IsValid(ItemObject)) 
 	{
+		for (int32 i = 0; i < Items.Num(); ++i)
+		{
+			if (IsRoomAvailable(ItemObject, i))
+			{
+				AddItemAt(ItemObject, i);
+				return true;
+			}
+		}
+		ItemObject->Rotate();
+
 		for (int32 i = 0; i < Items.Num(); ++i)
 		{
 			if (IsRoomAvailable(ItemObject, i))
@@ -144,10 +182,13 @@ void UAC_InventoryComponent::AddItemAt(class UItemObject* ItemObject, int32 TopL
 			if (IsTileValid(ResultTile))
 			{
 				Items[TileToIndex(ResultTile)] = ItemObject;
+				ItemObject->StartPosition = FIntPoint(TempTile.X, TempTile.Y);
+				
 				// GEngine->AddOnScreenDebugMessage(3, 1.f, FColor::Green, FString::Printf(TEXT("Item Index %d"), TileToIndex(ResultTile)));
 			}
 		}
 	}
+
 	IsDirty = true;
 }
 
@@ -252,4 +293,4 @@ void UAC_InventoryComponent::RemoveItem(UItemObject* ItemObject)
 void UAC_InventoryComponent::OnInventoryChanged()
 {
 	InventoryChanged.Broadcast();
-}
+} 
