@@ -46,6 +46,9 @@ public: // Get Sensing Function
 	float GetRetentionTime() const { return RetentionTime; }
 	float GetHearingRange() const { return HearingRange; }
 
+protected: // Set Sensing Function
+	virtual void SetPerceptionInfo() {}
+
 protected: // Status
 	UPROPERTY(EditDefaultsOnly)
 	EEnemyType EnemyType;
@@ -57,6 +60,10 @@ protected: // Virtual Function
 protected: // Component
 	UPROPERTY(VisibleDefaultsOnly)
 	class UCNox_BehaviorComponent* BehaviorComp;
+	UPROPERTY(VisibleDefaultsOnly)
+	class UCNoxEnemy_Animinstance* EnemyAnim;
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	class UCNoxEnemyHPComponent* HPComp;
 
 public:
 	bool bUseBehaviorTree = true;
@@ -71,4 +78,7 @@ public:
 public:
 	// CCTV에서는 Blackboard에 세팅은 안하고 주변 Enemy에게만 전달한다.
 	virtual void SetTarget(ACNox* InTarget);
+
+public:	// Medic Android
+	void SetGrenadeEnded(bool InbEndedAnim);
 };

@@ -16,4 +16,28 @@ class BODYCREDIT_API ACNox_MedicAndroid : public ACNox_EBase
 
 public:
 	ACNox_MedicAndroid();
+
+private:
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+	virtual void SetPerceptionInfo() override;
+
+public:
+	virtual void SetTarget(class ACNox* InTarget) override;
+
+public:
+	float CurElectricGrenadeCoolTime = 0.f;
+	float ElectricGrenadeCoolTimeMax = 3.f;
+
+	void HandleElectricGrenade();
+
+public:
+	bool bIsEquipShield = false;
+	float CurShieldTime = 0.f;
+	float ShieldInterval = 2.f;
+	
+	void HandleEquipShield(const bool bInEquipShield);
+
+private:
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 };

@@ -141,6 +141,7 @@ void ACEnemyController::UpdateExpiredStimuli(float DeltaTime)
 {
 	if (!bExpiredStimuli) return;
 	if (!TargetPlayer) return;
+	if (EnemyBase->GetRetentionTime() == KINDA_SMALL_NUMBER) return;
 
 	CurExpiredTime += DeltaTime;
 	if (CurExpiredTime >= Sight->GetMaxAge())

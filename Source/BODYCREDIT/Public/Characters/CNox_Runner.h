@@ -52,6 +52,13 @@ private:
 private:
 	virtual FGenericTeamId GetGenericTeamId() const override { return FGenericTeamId(TeamID); }
 
+/**
+ *	HP Component - LHJ (2025.05.07)
+ */
+private:
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	class UCNoxHPComponent* HPComp;
+
 // Inventory
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

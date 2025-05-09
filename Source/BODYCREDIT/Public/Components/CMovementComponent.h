@@ -8,10 +8,13 @@
 UENUM(BlueprintType)
 enum class ESpeedType : uint8
 {
-	CROUCH = 0,
-	RUN,
-	SPRINT,
-	MAX
+	CROUCH = 0,		 // C (슬라이딩, 대쉬와 버튼 공유 예정)
+	WALK,			 // LCtrl
+	MOVE_FWD,		 // W
+	MOVE_BWD,		 // S
+	MOVE_RLWD,		 // D or A
+	SPRINT,			 // LShift 보류
+	MAX,
 };
 
 UCLASS()
@@ -28,11 +31,14 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class UInputAction* IA_Look;
 
-	UPROPERTY(VisibleAnywhere)
-	class UInputAction* IA_Sprint;
+	//UPROPERTY(VisibleAnywhere) // 보류
+	//class UInputAction* IA_Sprint;
 
 	UPROPERTY(VisibleAnywhere)
 	class UInputAction* IA_Crouch;
+
+	UPROPERTY(VisibleAnywhere)
+	class UInputAction* IA_Walk;
 
 	UPROPERTY(VisibleAnywhere)
 	class UInputAction* IA_Jump;
@@ -69,8 +75,14 @@ public:
 	void SetSpeed(ESpeedType InType);
 
 public:
+	void UpdateSpeed();
+	int32 IsPressed(ESpeedType InType);
+
 	void SetCrouchSpeed();
-	void SetRunSpeed();
+	void SetWalkSpeed();
+	void SetMoveForwardSpeed();
+	void SetMoveBackwardSpeed();
+	void SetMoveRLSpeed();
 	void SetSprintSpeed();
 
 	void EnableControlRotation();
@@ -79,12 +91,12 @@ public:
 private:
 	void Init();
 
-	void SetSprintState(bool bEnable);
-	void SetCrouchState(bool bEnable);
-
 private:
 	UPROPERTY(EditAnywhere, Category = "Speed")
-	float Speed[(int32)ESpeedType::MAX] = { 200, 600, 1000 };
+	float Speed[(int32)ESpeedType::MAX] = { 200, 400, 600, 200, 300, 600 };
+
+	UPROPERTY(EditAnywhere, Category = "Speed")
+	int32 Pressed[(int32)ESpeedType::MAX];
 
 private:
 	UPROPERTY(EditAnywhere, Category = "CameraSpeed")
@@ -95,10 +107,9 @@ private:
 
 private:
 	bool bCanMove = true;
-	bool bMove = false;
-	bool bSprint = false;
 	bool bFixedCamera = false;
-	bool bCrouch = false;
+
+	bool bMoveForward = false;
 
 	// FOV
 	const float DefaultFOV = 90;
