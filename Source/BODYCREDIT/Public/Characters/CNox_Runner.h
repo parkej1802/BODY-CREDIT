@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GenericTeamAgentInterface.h"
 #include "Characters/CNox.h"
+#include "AC_LootingInventoryComponent.h"
 #include "CNox_Runner.generated.h"
 
 UCLASS()
@@ -63,4 +64,7 @@ private:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UAC_InventoryComponent* InventoryComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UAC_LootingInventoryComponent* LootableInventoryComp;
 };

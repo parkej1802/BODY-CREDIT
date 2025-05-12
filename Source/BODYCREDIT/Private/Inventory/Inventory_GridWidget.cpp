@@ -11,14 +11,16 @@
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "GameState_BodyCredit.h"
 #include "Blueprint/DragDropOperation.h"
+#include "AC_LootingInventoryComponent.h"
+#include "Inventory/AC_InventoryBaseComponent.h"
 
 
-void UInventory_GridWidget::InitInventory(class UAC_InventoryComponent* InventoryComponent, float Inventoy_TileSize)
+void UInventory_GridWidget::InitInventory(class UAC_InventoryBaseComponent* InventoryComponent, float Inventoy_TileSize)
 {
-	InventoryComp = InventoryComponent;
+	InventoryBaseComp = InventoryComponent;
 	TileSize = Inventoy_TileSize;
-	InventoryRows = InventoryComp->Rows;
-	InventoryColumns = InventoryComp->Columns;
+	InventoryRows = InventoryBaseComp->Rows;
+	InventoryColumns = InventoryBaseComp->Columns;
 
 	UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Border_Grid->Slot);
 	CanvasSlot->SetSize(FVector2D(InventoryColumns * TileSize, InventoryRows * TileSize));
@@ -27,9 +29,7 @@ void UInventory_GridWidget::InitInventory(class UAC_InventoryComponent* Inventor
 
 	Refresh();
 	
-	InventoryComp->InventoryChanged.AddDynamic(this, &UInventory_GridWidget::Refresh);
-
-
+	InventoryBaseComp->InventoryChanged.AddDynamic(this, &UInventory_GridWidget::Refresh);
 }	
 
 void UInventory_GridWidget::CreateLineSegment()
@@ -117,7 +117,7 @@ void UInventory_GridWidget::Refresh()
 {
 	Canvas_Grid->ClearChildren();
 
-	TMap<UItemObject*, FInventoryTile> AllItem = InventoryComp->GetAllItems();
+	TMap<UItemObject*, FInventoryTile> AllItem = InventoryBaseComp->GetAllItems();
 
 	for (auto& Item : AllItem)
 	{
@@ -141,7 +141,7 @@ void UInventory_GridWidget::Refresh()
 
 void UInventory_GridWidget::OnItemRemoved(UItemObject* ItemObject)
 {
-	InventoryComp->RemoveItem(ItemObject);
+	InventoryBaseComp->RemoveItem(ItemObject);
 }
 
 UItemObject* UInventory_GridWidget::GetPayLoad(UDragDropOperation* Operation)
@@ -162,7 +162,7 @@ bool UInventory_GridWidget::IsRoomAvailableForPayload(UItemObject* ItemObject) c
 		TempTile.X = DraggedItemTopLeftTile.X;
 		TempTile.Y = DraggedItemTopLeftTile.Y;
 
-		return InventoryComp->IsRoomAvailable(ItemObject, InventoryComp->TileToIndex(TempTile));
+		return InventoryBaseComp->IsRoomAvailable(ItemObject, InventoryBaseComp->TileToIndex(TempTile));
 	}
 	
 	return false;
@@ -274,7 +274,7 @@ bool UInventory_GridWidget::NativeOnDrop(const FGeometry& InGeometry, const FDra
 	{
 		TempTile.X = DraggedItemTopLeftTile.X;
 		TempTile.Y = DraggedItemTopLeftTile.Y;
-		InventoryComp->AddItemAt(GetPayLoad(InOperation), InventoryComp->TileToIndex(TempTile));
+		InventoryBaseComp->AddItemAt(GetPayLoad(InOperation), InventoryBaseComp->TileToIndex(TempTile));
 		
 	}
 	else
@@ -282,7 +282,7 @@ bool UInventory_GridWidget::NativeOnDrop(const FGeometry& InGeometry, const FDra
 		TempTile.X = ItemObject->StartPosition.X;
 		TempTile.Y = ItemObject->StartPosition.Y;
 
-		InventoryComp->AddItemAt(ItemObject, InventoryComp->TileToIndex(TempTile));
+		InventoryBaseComp->AddItemAt(ItemObject, InventoryBaseComp->TileToIndex(TempTile));
 	}
 	
 	return true;

@@ -98,5 +98,4 @@ void UInventory_ItemWidget::NativeOnDragDetected(const FGeometry& InGeometry, co
 	RemoveFromParent();
 
 	OutOperation = DragOperation;
-
 }

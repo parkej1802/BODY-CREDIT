@@ -22,6 +22,15 @@ void UInventory_Widget::NativeConstruct()
     InventoryComp = PlayerCharacter->InventoryComp;
 
     InventoryGridWidget->InitInventory(InventoryComp, TileSize);
+
+    if (bIsLootable) {
+        LootingInventoryComp = PlayerCharacter->LootableInventoryComp;
+        InventoryItemGridWidget->SetVisibility(ESlateVisibility::Visible);
+        InventoryItemGridWidget->InitInventory(LootingInventoryComp, TileSize);
+    }
+    else {
+        InventoryItemGridWidget->SetVisibility(ESlateVisibility::Hidden);
+    }
 }
 
 FReply UInventory_Widget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)

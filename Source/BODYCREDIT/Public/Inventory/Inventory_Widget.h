@@ -18,8 +18,14 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UInventory_GridWidget* InventoryGridWidget;
 
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UInventory_GridWidget* InventoryItemGridWidget;
+
 	UPROPERTY(EditAnywhere)
 	class UAC_InventoryComponent* InventoryComp;
+
+	UPROPERTY(EditAnywhere)
+	class UAC_LootingInventoryComponent* LootingInventoryComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ACNox_Runner* PlayerCharacter;
@@ -31,4 +37,6 @@ public:
 
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+
+	bool bIsLootable = false;
 };

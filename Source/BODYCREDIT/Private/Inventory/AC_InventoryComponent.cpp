@@ -4,9 +4,7 @@
 #include "../../../../Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputComponent.h"
 #include "Inventory/Inventory_Widget.h"
 #include "Characters/CNox_Runner.h"
-#include "Item/ItemObject.h"
-#include "Blueprint/WidgetBlueprintLibrary.h"
-#include "Inventory/Inventory_ItemWidget.h"
+#include "Lootable_Base.h"
 
 // Sets default values for this component's properties
 UAC_InventoryComponent::UAC_InventoryComponent()
@@ -25,6 +23,12 @@ UAC_InventoryComponent::UAC_InventoryComponent()
 	if (TempIA_RotateItem.Succeeded())
 	{
 		IA_RotateItem = TempIA_RotateItem.Object;
+	}
+
+	ConstructorHelpers::FObjectFinder<UInputAction>TempIA_LootableItem(TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_LootableItem.IA_LootableItem'"));
+	if (TempIA_LootableItem.Succeeded())
+	{
+		IA_LootableItem = TempIA_LootableItem.Object;
 	}
 
 	static ConstructorHelpers::FClassFinder<UUserWidget> TempWidget(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/Inventory/WBP_MainInventory.WBP_MainInventory'"));
@@ -54,8 +58,6 @@ void UAC_InventoryComponent::BeginPlay()
 	{
 		PlayerCharacter = Cast<ACNox_Runner>(OwnerActor);
 	}
-
-	Items.SetNum(Columns * Rows);
 }
 
 // Called every frame
@@ -63,21 +65,19 @@ void UAC_InventoryComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (IsDirty)
-	{
-		IsDirty = false;
-		OnInventoryChanged();
-	}
 }
 
 void UAC_InventoryComponent::SetupInputBinding(class UEnhancedInputComponent* Input)
 {
 	Input->BindAction(IA_InventoryMode, ETriggerEvent::Started, this, &UAC_InventoryComponent::ShowInventory);
 	Input->BindAction(IA_RotateItem, ETriggerEvent::Started, this, &UAC_InventoryComponent::RotateItem);
+	Input->BindAction(IA_LootableItem, ETriggerEvent::Started, this, &UAC_InventoryComponent::ShowLootableInventory);
 }
 
 void UAC_InventoryComponent::ShowInventory()
 {
+	if (bIsLootableMode) return;
+
 	if (!bIsInventoryMode) {
 		bIsInventoryMode = true;
 		if (InventoryWidget)
@@ -123,174 +123,54 @@ void UAC_InventoryComponent::RotateItem()
 	}
 }
 
-bool UAC_InventoryComponent::TryAddItem(UItemObject* ItemObject)
+void UAC_InventoryComponent::ShowLootableInventory()
 {
-	if (IsValid(ItemObject)) 
-	{
-		for (int32 i = 0; i < Items.Num(); ++i)
-		{
-			if (IsRoomAvailable(ItemObject, i))
-			{
-				AddItemAt(ItemObject, i);
-				return true;
-			}
-		}
-		ItemObject->Rotate();
+	if (bIsInventoryMode) return;
 
-		for (int32 i = 0; i < Items.Num(); ++i)
+	if (bIsLootableMode) {
+		bIsLootableMode = false;
+		if (InventoryMainUI)
 		{
-			if (IsRoomAvailable(ItemObject, i))
-			{
-				AddItemAt(ItemObject, i);
-				return true;
-			}
+			InventoryMainUI->bIsLootable = bIsLootableMode;
+			InventoryMainUI->RemoveFromParent();
 		}
-
+		FInputModeGameOnly GameInputMode;
+		pc->SetInputMode(GameInputMode);
+		pc->bShowMouseCursor = false;
+		return;
 	}
-	return false;
-}
 
-FInventoryTile UAC_InventoryComponent::IndexToTile(int32 Index)
-{
-	FInventoryTile TempTile;
+	FHitResult HitResult;
+	FCollisionQueryParams TraceParams;
+	TraceParams.AddIgnoredActor(GetOwner());
 
-	TempTile.X = Index % Columns;
-	TempTile.Y = Index / Columns;
+	FVector StartPos = PlayerCharacter->GetActorLocation();
+	FVector ForwardVector = PlayerCharacter->GetControlRotation().Vector();
+	FVector EndPos = StartPos + (ForwardVector * 300.f);
 
-	return TempTile;
-}
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, StartPos, EndPos, ECC_Visibility, TraceParams);
 
-int32 UAC_InventoryComponent::TileToIndex(FInventoryTile& Tile)
-{
-	int32 Result;
-	return Result = Tile.X + (Tile.Y * Columns);
-}
-
-void UAC_InventoryComponent::AddItemAt(class UItemObject* ItemObject, int32 TopLeftIndex)
-{
-	FInventoryTile ResultTile;
-
-	FInventoryTile TempTile = IndexToTile(TopLeftIndex);
-	FIntPoint TempDimension = ItemObject->GetDimension();
-
-	for (int32 i = TempTile.X; i < (TempDimension.X + TempTile.X); ++i)
+	if (bHit)
 	{
-		for (int32 j = TempTile.Y; j < (TempDimension.Y + TempTile.Y); ++j)
+		ALootable_Base* LootableActor = Cast<ALootable_Base>(HitResult.GetActor());
+		if (LootableActor)
 		{
-			ResultTile.X = i;
-			ResultTile.Y = j;
-			if (IsTileValid(ResultTile))
-			{
-				Items[TileToIndex(ResultTile)] = ItemObject;
-				ItemObject->StartPosition = FIntPoint(TempTile.X, TempTile.Y);
-				
-				// GEngine->AddOnScreenDebugMessage(3, 1.f, FColor::Green, FString::Printf(TEXT("Item Index %d"), TileToIndex(ResultTile)));
+			if (!bIsLootableMode) {
+				bIsLootableMode = true;
+				PlayerCharacter->LootableInventoryComp = LootableActor->LootInventoryComp;
+				if (InventoryWidget)
+				{
+					InventoryMainUI = CreateWidget<UInventory_Widget>(GetWorld(), InventoryWidget);
+					InventoryMainUI->bIsLootable = bIsLootableMode;
+				}
+				if (InventoryMainUI)
+				{
+					InventoryMainUI->AddToViewport();
+				}
+				FInputModeGameAndUI UIInputMode;
+				pc->SetInputMode(UIInputMode);
+				pc->bShowMouseCursor = true;
 			}
 		}
 	}
-
-	IsDirty = true;
 }
-
-bool UAC_InventoryComponent::IsRoomAvailable(class UItemObject* ItemObject, int32 TopLeftIndex)
-{
-	FInventoryTile ResultTile;
-
-	FInventoryTile TempTile = IndexToTile(TopLeftIndex);
-	FIntPoint TempDimension = ItemObject->GetDimension();
-
-	for (int32 i = TempTile.X; i < (TempDimension.X + TempTile.X); ++i)
-	{
-		for (int32 j = TempTile.Y; j < (TempDimension.Y + TempTile.Y); ++j)
-		{
-			ResultTile.X = i;
-			ResultTile.Y = j;
-
-			if (!IsTileValid(ResultTile))
-			{
-				return false;
-			}
-
-			UItemObject* TempItemObject = GetItemAtIndex(TileToIndex(ResultTile));
-			if (IsValid(TempItemObject))
-			{
-				return false;
-			}
-		}
-	}
-
-	return true;
-}
-
-void UAC_InventoryComponent::ForEachIndex(class UItemObject* ItemObject, int32 TopLeftIndex)
-{
-	FInventoryTile ResultTile;
-
-	FInventoryTile TempTile = IndexToTile(TopLeftIndex);
-	FIntPoint TempDimension = ItemObject->GetDimension();
-
-	for (int32 i = TempTile.X; i < (TempDimension.X - 1 + TempTile.X); ++i)
-	{
-		for (int32 j = TempTile.Y; j < (TempDimension.Y - 1 + TempTile.Y); ++j)
-		{
-			ResultTile.X = i;
-			ResultTile.Y = j;
-			IsTileValid(ResultTile);
-		}
-	}
-}
-
-bool UAC_InventoryComponent::IsTileValid(FInventoryTile& Tile)
-{
-	if (Tile.X >= 0 && Tile.Y >= 0 && Tile.X < Columns && Tile.Y < Rows) {
-		return true;
-	}
-	
-	return false;
-}
-
-UItemObject* UAC_InventoryComponent::GetItemAtIndex(int32 Index)
-{
-	if (Items.IsValidIndex(Index))
-	{
-		return Items[Index];
-	}
-
-	return nullptr;
-}
-
-TMap<UItemObject*, FInventoryTile> UAC_InventoryComponent::GetAllItems()
-{
-	TMap<UItemObject*, FInventoryTile> AllItem;
-	for (int32 i = 0; i < Items.Num(); ++i)
-	{
-		if (IsValid(Items[i]))
-		{
-			if (!AllItem.Contains(Items[i]))
-			{
-				AllItem.Add(Items[i], IndexToTile(i));
-			}
-		}
-	}
-	return AllItem;
-}
-
-void UAC_InventoryComponent::RemoveItem(UItemObject* ItemObject)
-{
-	if (IsValid(ItemObject))
-	{
-		for (int i = 0; i < Items.Num(); ++i)
-		{
-			if (ItemObject == Items[i])
-			{
-				Items[i] = nullptr;
-				IsDirty = true;
-			}
-		}
-	}	
-}
-
-void UAC_InventoryComponent::OnInventoryChanged()
-{
-	InventoryChanged.Broadcast();
-} 

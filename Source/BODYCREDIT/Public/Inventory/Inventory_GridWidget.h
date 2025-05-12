@@ -25,19 +25,21 @@ public:
 
 // Widget Functions
 public:
-	void InitInventory(class UAC_InventoryComponent* InventoryComponent, float TileSize);
+	void InitInventory(class UAC_InventoryBaseComponent* InventoryComponent, float Inventoy_TileSize);
 
 	void CreateLineSegment();
 
 // Inventory Data
 public:
 	UPROPERTY()
-	class UAC_InventoryComponent* InventoryComp;
+    UAC_InventoryBaseComponent* InventoryBaseComp;
 
 	float TileSize = 50.f;
 
 	int32 InventoryRows = 0;
 	int32 InventoryColumns = 0;
+	int32 LootRows = 0;
+	int32 LootColumns = 0;
 
 	TArray<FInventoryLine> Lines;
 
