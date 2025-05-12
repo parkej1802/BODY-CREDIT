@@ -26,6 +26,9 @@ public:
 	virtual void SetTarget(class ACNox* InTarget) override;
 
 public:
+	void HandleIdleMotion();
+
+public:
 	float CurElectricGrenadeCoolTime = 0.f;
 	float ElectricGrenadeCoolTimeMax = 3.f;
 
@@ -46,7 +49,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category=Heal)
 	float HealStdValue = 0.4f;
 	
-	bool IsLowHealth();
 public:
+	bool IsLowHealth();
+	void SetHealFlag(bool bHealFlag);
 	void HealEnd();
 };

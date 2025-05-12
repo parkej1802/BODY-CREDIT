@@ -21,17 +21,11 @@ void ACNox_MedicAndroid::BeginPlay()
 	                          TEXT("/Game/Characters/Enemy/Anim/MedicAnim/AM_Grenade.AM_Grenade"));
 	CHelpers::GetAssetDynamic(&(EnemyAnim->ShieldMontage),
 	                          TEXT("/Game/Characters/Enemy/Anim/MedicAnim/AM_Shield.AM_Shield"));
-	EnemyAnim->AnimNotify_PlayIdleMontage();
 }
 
 void ACNox_MedicAndroid::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	if (IsLowHealth())
-		BehaviorComp->SetHealFlag(true);
-	else
-		BehaviorComp->SetHealFlag(false);
 }
 
 void ACNox_MedicAndroid::SetPerceptionInfo()
@@ -45,6 +39,11 @@ void ACNox_MedicAndroid::SetTarget(class ACNox* InTarget)
 {
 	Super::SetTarget(InTarget);
 	EnemyAnim->StopAllMontages(0.25f);
+}
+
+void ACNox_MedicAndroid::HandleIdleMotion()
+{
+	EnemyAnim->AnimNotify_PlayIdleMontage();
 }
 
 void ACNox_MedicAndroid::HandleElectricGrenade()
@@ -81,6 +80,11 @@ float ACNox_MedicAndroid::TakeDamage(float DamageAmount, struct FDamageEvent con
 bool ACNox_MedicAndroid::IsLowHealth()
 {
 	return HPComp->GetHealthPercent() <= HealStdValue;
+}
+
+void ACNox_MedicAndroid::SetHealFlag(bool bHealFlag)
+{
+	BehaviorComp->SetHealFlag(bHealFlag);
 }
 
 void ACNox_MedicAndroid::HealEnd()

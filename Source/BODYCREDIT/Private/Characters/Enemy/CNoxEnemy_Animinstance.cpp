@@ -35,7 +35,8 @@ void UCNoxEnemy_Animinstance::OnAnimMontageEnded(UAnimMontage* Montage, bool bIn
 
 void UCNoxEnemy_Animinstance::AnimNotify_PlayIdleMontage()
 {
-	OwnerEnemy->PlayAnimMontage(IdleMontage, 1.0f);
+	if (!Montage_IsPlaying(IdleMontage))
+		OwnerEnemy->PlayAnimMontage(IdleMontage, 1.0f);
 }
 
 void UCNoxEnemy_Animinstance::PlayGrenadeMontage()
@@ -47,7 +48,7 @@ void UCNoxEnemy_Animinstance::PlayGrenadeMontage()
 void UCNoxEnemy_Animinstance::PlayShieldMontage(const bool bInShieldStart)
 {
 	// CLog::Log(FString::Printf(TEXT("bUsingShield: %d"), bInShieldStart));
-	
+
 	BehaviorComponent->SetShieldEnded(false);
 
 	if (bInShieldStart)
