@@ -22,7 +22,13 @@ private:
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
+	class UCStateComponent* State;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UCMovementComponent* Movement;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	class UCWeaponComponent* Weapon;
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "EnhancedInput")
@@ -64,7 +70,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UAC_InventoryComponent* InventoryComp;
 
-public:
+/**
+ *	Memory Piece Add Function - LHJ (2025.05.12)
+ */
+public:	
 	UFUNCTION(BlueprintCallable)
 	void MakeMemoryPiece();
 };
