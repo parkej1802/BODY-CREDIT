@@ -8,6 +8,9 @@
 #include "Components/CMovementComponent.h"
 #include "Inventory/AC_InventoryComponent.h"
 #include "Components/CNoxHPComponent.h"
+#include "Games/CMainGM.h"
+
+#include "Data/CMemoryData.h"
 
 ACNox_Runner::ACNox_Runner()
 {
@@ -121,4 +124,9 @@ void ACNox_Runner::Init()
 	// Movement
 	CHelpers::CreateActorComponent<UCMovementComponent>(this, &Movement, "Movement");
 
+}
+
+void ACNox_Runner::MakeMemoryPiece()
+{
+	MainGM->RegisterMemoryFromPlayer(this, EMemoryTriggerType::Intrusion);
 }

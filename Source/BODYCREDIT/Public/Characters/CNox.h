@@ -17,6 +17,8 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	UPROPERTY()
+	class ACMainGM* MainGM;
 
 public:
 	virtual void Tick(float DeltaTime) override;

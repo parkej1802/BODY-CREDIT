@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Characters/Enemy/CNox_MedicAndroid.h"
 #include "Global.h"
 #include "Characters/Enemy/CNoxEnemy_Animinstance.h"
@@ -65,14 +62,11 @@ float ACNox_MedicAndroid::TakeDamage(float DamageAmount, struct FDamageEvent con
 {
 	bool bIsDamageShield = false;
 	if (bIsEquipShield)
-	{
 		bIsDamageShield = true;
-	}
 
 	// 데미지 처리 추가
 	bool bIsShieldCrash = false;
 	HPComp->TakeDamage(DamageAmount, bIsDamageShield, bIsShieldCrash);
-
 	
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }

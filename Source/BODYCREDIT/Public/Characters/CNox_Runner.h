@@ -63,4 +63,8 @@ private:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UAC_InventoryComponent* InventoryComp;
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void MakeMemoryPiece();
 };
