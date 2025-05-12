@@ -9,7 +9,7 @@ void UCNoxAnimInstance::NativeBeginPlay()
 
 	OwnerCharacter = Cast<ACNox>(TryGetPawnOwner());
 	CheckNull(OwnerCharacter);
-
+	
 }
 
 void UCNoxAnimInstance::NativeUpdateAnimation(float DeltaSeconds)

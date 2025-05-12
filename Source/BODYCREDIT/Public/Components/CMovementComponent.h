@@ -44,6 +44,17 @@ private:
 	class UInputAction* IA_Jump;
 
 public:
+	FORCEINLINE bool CanMove() { return bCanMove; }
+
+	FORCEINLINE float GetWalkSpeed() { return Speed[(int32)ESpeedType::WALK]; }
+	//FORCEINLINE float GetRunSpeed() { return Speed[(int32)ESpeedType::Run]; }
+	//FORCEINLINE float GetSprintSpeed() { return Speed[(int32)ESpeedType::Sprint]; }
+
+	FORCEINLINE bool GetFixedCamera() { return bFixedCamera; }
+	FORCEINLINE void EnableFixedCamera() { bFixedCamera = true; }
+	FORCEINLINE void DisableFixedCamera() { bFixedCamera = false; }
+
+public:
 	UCMovementComponent();
 
 protected:
@@ -51,6 +62,8 @@ protected:
 
 public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
 public:
 	virtual void BindInput(class UEnhancedInputComponent* InEnhancedInputComponent) override;
@@ -74,8 +87,17 @@ private:
 public:
 	void SetSpeed(ESpeedType InType);
 
+	UFUNCTION(Reliable, Server)
+	void ServerRPC_SetSpeed(ESpeedType InType);
+	void ServerRPC_SetSpeed_Implementation(ESpeedType InType);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPC_SetSpeed(ESpeedType InType);
+	void MulticastRPC_SetSpeed_Implementation(ESpeedType InType);
+
 public:
 	void UpdateSpeed();
+
 	int32 IsPressed(ESpeedType InType);
 
 	void SetCrouchSpeed();
@@ -88,6 +110,10 @@ public:
 	void EnableControlRotation();
 	void DisableControlRotation();
 
+public:
+	void Move();
+	void Stop();
+
 private:
 	void Init();
 
@@ -95,7 +121,7 @@ private:
 	UPROPERTY(EditAnywhere, Category = "Speed")
 	float Speed[(int32)ESpeedType::MAX] = { 200, 400, 600, 200, 300, 600 };
 
-	UPROPERTY(EditAnywhere, Category = "Speed")
+	UPROPERTY(EditAnywhere, Replicated, Category = "Speed")
 	int32 Pressed[(int32)ESpeedType::MAX];
 
 private:
