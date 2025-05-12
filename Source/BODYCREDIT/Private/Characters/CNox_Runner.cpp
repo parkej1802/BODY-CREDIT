@@ -5,7 +5,9 @@
 #include "InputMappingContext.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Components/CStateComponent.h"
 #include "Components/CMovementComponent.h"
+#include "Components/CWeaponComponent.h"
 #include "Inventory/AC_InventoryComponent.h"
 #include "Components/CNoxHPComponent.h"
 
@@ -22,6 +24,8 @@ ACNox_Runner::ACNox_Runner()
 void ACNox_Runner::BeginPlay()
 {
 	Super::BeginPlay();
+
+	Movement->EnableControlRotation();
 
 	// 서버 관련 메시 숨김 처리 함수
 	//GetMesh()->SetOnlyOwnerSee();
@@ -89,6 +93,9 @@ void ACNox_Runner::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	{
 		// Movement
 		Movement->BindInput(input);
+
+		// Weapon
+		Weapon->BindInput(input);
 	}
 
 }
@@ -118,7 +125,13 @@ void ACNox_Runner::Init()
 	// MappingContext
 	CHelpers::GetAsset<UInputMappingContext>(&MappingContext, TEXT("/Script/EnhancedInput.InputMappingContext'/Game/Inputs/IMC_Runner.IMC_Runner'"));
 
+	// State
+	CHelpers::CreateActorComponent<UCStateComponent>(this, &State, "State");
+
 	// Movement
 	CHelpers::CreateActorComponent<UCMovementComponent>(this, &Movement, "Movement");
+
+	// Weapon
+	CHelpers::CreateActorComponent<UCWeaponComponent>(this, &Weapon, "Weapon");
 
 }

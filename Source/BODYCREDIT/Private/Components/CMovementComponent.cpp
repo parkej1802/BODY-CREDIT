@@ -5,6 +5,7 @@
 #include "Characters/CNox.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Net/UnrealNetwork.h"
 
 UCMovementComponent::UCMovementComponent()
 {
@@ -17,8 +18,6 @@ UCMovementComponent::UCMovementComponent()
 void UCMovementComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	EnableControlRotation();
 
 }
 
@@ -175,6 +174,25 @@ void UCMovementComponent::OnJump(const FInputActionValue& InVal)
 
 void UCMovementComponent::SetSpeed(ESpeedType InType)
 {
+	if (OwnerCharacter->IsLocallyControlled())
+	{
+		ServerRPC_SetSpeed(InType);
+
+		return;
+	}
+
+	OwnerCharacter->GetCharacterMovement()->MaxWalkSpeed = Speed[(uint8)InType];
+
+}
+
+void UCMovementComponent::ServerRPC_SetSpeed_Implementation(ESpeedType InType)
+{
+	MulticastRPC_SetSpeed(InType);
+
+}
+
+void UCMovementComponent::MulticastRPC_SetSpeed_Implementation(ESpeedType InType)
+{
 	OwnerCharacter->GetCharacterMovement()->MaxWalkSpeed = Speed[(uint8)InType];
 
 }
@@ -263,6 +281,18 @@ void UCMovementComponent::DisableControlRotation()
 
 }
 
+void UCMovementComponent::Move()
+{
+	bCanMove = true;
+
+}
+
+void UCMovementComponent::Stop()
+{
+	bCanMove = false;
+
+}
+
 void UCMovementComponent::Init()
 {
 	// Movement
@@ -282,5 +312,14 @@ void UCMovementComponent::Init()
 
 	// Jump
 	CHelpers::GetAsset<UInputAction>(&IA_Jump, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Jump.IA_Jump'"));
+
+}
+
+//virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+void UCMovementComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(UCMovementComponent, Pressed);
 
 }

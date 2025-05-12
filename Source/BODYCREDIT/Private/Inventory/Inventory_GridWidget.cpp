@@ -237,15 +237,17 @@ FReply UInventory_GridWidget::NativeOnPreviewKeyDown(const FGeometry& InGeometry
 	Super::NativeOnPreviewKeyDown(InGeometry, InKeyEvent);
 
 	//if (InKeyEvent.GetKey() == 'R')
-	{
-		UDragDropOperation* CurrentOp = UWidgetBlueprintLibrary::GetDragDroppingContent();
+	//{
+	//	UDragDropOperation* CurrentOp = UWidgetBlueprintLibrary::GetDragDroppingContent();
 
-		if (GetPayLoad(CurrentOp))
-		{
+	//	if (GetPayLoad(CurrentOp))
+	//	{
 
-		}
+	//	}
 
-	}
+	//}
+
+	return FReply::Handled();
 }
 
 bool UInventory_GridWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
