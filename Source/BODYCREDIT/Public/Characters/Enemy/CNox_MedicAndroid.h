@@ -29,9 +29,6 @@ public:
 	void HandleIdleMotion();
 
 public:
-	float CurElectricGrenadeCoolTime = 0.f;
-	float ElectricGrenadeCoolTimeMax = 3.f;
-
 	void HandleElectricGrenade();
 
 public:

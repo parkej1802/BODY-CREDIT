@@ -4,17 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTService.h"
-#include "CBTS_ElectricgrenadeCoolTime.generated.h"
+#include "CBTS_CoolDown.generated.h"
 
 /**
- * 미사용 서비스 (CoolDown 노드로 대체)
+ * 
  */
 UCLASS()
-class BODYCREDIT_API UCBTS_ElectricgrenadeCoolTime : public UBTService
+class BODYCREDIT_API UCBTS_CoolDown : public UBTService
 {
 	GENERATED_BODY()
 
-	const FName ElectricGrenadeCoolTimeKey = "bCanUseElectricGrenade";
 private:
+	UCBTS_CoolDown();
+
+private:
+	UPROPERTY(EditAnywhere, Category = "Blackboard")
+	FBlackboardKeySelector CoolDownKey;
+
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 };
