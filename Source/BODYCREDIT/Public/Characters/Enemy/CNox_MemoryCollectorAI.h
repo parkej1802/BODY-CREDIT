@@ -20,6 +20,7 @@ public:
 
 private:
 	virtual void BeginPlay() override;
+	virtual void SetPerceptionInfo() override;
 
 private:
 	UPROPERTY(EditAnywhere, Category="Memory")

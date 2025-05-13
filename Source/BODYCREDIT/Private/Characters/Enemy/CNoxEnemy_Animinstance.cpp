@@ -36,7 +36,13 @@ void UCNoxEnemy_Animinstance::OnAnimMontageEnded(UAnimMontage* Montage, bool bIn
 void UCNoxEnemy_Animinstance::AnimNotify_PlayIdleMontage()
 {
 	if (!Montage_IsPlaying(IdleMontage))
-		OwnerEnemy->PlayAnimMontage(IdleMontage, 1.0f);
+	{
+		if (Speed >= KINDA_SMALL_NUMBER)
+			PlaySlotAnimationAsDynamicMontage(IdleMontage, FName("UpperBody"));
+		else
+			PlaySlotAnimationAsDynamicMontage(IdleMontage, FName("FullBody"));
+	}
+	// OwnerEnemy->PlayAnimMontage(IdleMontage, 1.0f);
 }
 
 void UCNoxEnemy_Animinstance::PlayGrenadeMontage()

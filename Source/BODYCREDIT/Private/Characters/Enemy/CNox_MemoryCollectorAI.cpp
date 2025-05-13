@@ -8,12 +8,36 @@
 
 ACNox_MemoryCollectorAI::ACNox_MemoryCollectorAI()
 {
+	ConstructorHelpers::FObjectFinder<USkeletalMesh> tmpMesh(TEXT(
+			"/Game/Assets/Sci_Fi_Characters_Pack/Mesh/Sci_Fi_Character_04/SK_Sci_Fi_Character_04_Full.SK_Sci_Fi_Character_04_Full"));
+	if (tmpMesh.Succeeded())
+		GetMesh()->SetSkeletalMesh(tmpMesh.Object);
+
+	GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -85), FRotator(0, -90, 0));
+	GetMesh()->SetRelativeScale3D(FVector(1.1));
+
+	GetCapsuleComponent()->SetCapsuleHalfHeight(95.f);
+	GetCapsuleComponent()->SetCapsuleRadius(34.f);
+
+	ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClass(
+		TEXT("/Game/Characters/Enemy/Anim/MemoryAnim/ABP_MemoryAnim.ABP_MemoryAnim_C"));
+	if (AnimInstanceClass.Succeeded())
+		GetMesh()->SetAnimInstanceClass(AnimInstanceClass.Class);
+
 	EnemyType = EEnemyType::MemoryCollector;
+	SetPerceptionInfo();
 }
 
 void ACNox_MemoryCollectorAI::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void ACNox_MemoryCollectorAI::SetPerceptionInfo()
+{
+	Super::SetPerceptionInfo();
+
+	RetentionTime = 0.f;
 }
 
 void ACNox_MemoryCollectorAI::RegisterMemory(const FMemoryFragment& InNewMemory)
