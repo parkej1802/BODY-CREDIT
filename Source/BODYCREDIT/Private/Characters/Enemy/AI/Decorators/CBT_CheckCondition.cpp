@@ -4,6 +4,7 @@
 #include "Characters/Enemy/AI/Decorators/CBT_CheckCondition.h"
 
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Utilities/CLog.h"
 
 UCBT_CheckCondition::UCBT_CheckCondition()
 {
@@ -21,6 +22,7 @@ bool UCBT_CheckCondition::CalculateRawConditionValue(UBehaviorTreeComponent& Own
 	for (int i = 0; i < ArrayNum; ++i)
 	{
 		bool bCondition = Blackboard->GetValueAsBool(KeyArray[i].SelectedKeyName);
+		// CLog::Log(FString::Printf(TEXT("%s: %d"), *KeyArray[i].SelectedKeyName.ToString(), bCondition != ConditionArray[i]));
 		if (bCondition != ConditionArray[i]) return false;
 	}
 

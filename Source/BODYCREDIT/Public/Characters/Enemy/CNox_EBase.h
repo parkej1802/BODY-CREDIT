@@ -56,6 +56,7 @@ protected: // Status
 protected: // Virtual Function
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+	virtual void PossessedBy(AController* NewController) override;
 
 protected: // Component
 	UPROPERTY(VisibleDefaultsOnly)
@@ -64,6 +65,10 @@ protected: // Component
 	class UCNoxEnemy_Animinstance* EnemyAnim;
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UCNoxEnemyHPComponent* HPComp;
+
+protected:
+	UPROPERTY()
+	class ACEnemyController* EnemyController;
 
 public:
 	bool bUseBehaviorTree = true;
@@ -88,4 +93,19 @@ public:
 
 public:	// Medic Android
 	void SetGrenadeEnded(bool InbEndedAnim);
+
+private:
+	bool bAutoMove = false;
+	UPROPERTY(EditDefaultsOnly, Category=AutoMove)
+	ACNox* Target = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category=AutoMove)
+	float MoveDistance = 100.f;
+	
+public:
+	FORCEINLINE void SetAutoMove(bool InbAutoMove, ACNox* InTarget, float InMoveDistance)
+	{
+		bAutoMove = InbAutoMove;
+		Target = InTarget;
+		MoveDistance = InMoveDistance;
+	}
 };

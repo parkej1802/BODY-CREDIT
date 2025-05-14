@@ -16,6 +16,7 @@ class BODYCREDIT_API UCBTT_Grenade : public UBTTaskNode
 
 	const FName GrenadeKey = "GrenadeAnimEnd";
 	const FName GrenadeCanUseKey = "bCanUseElectricGrenade";
+	const FName GrenadeCoolTimeKey = "GrenadeCoolTime";
 private:
 	UCBTT_Grenade();
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;

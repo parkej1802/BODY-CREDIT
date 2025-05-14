@@ -15,7 +15,7 @@ bool UCBTD_CoolDownChecker::CalculateRawConditionValue(UBehaviorTreeComponent& O
 	float CurrentCoolDown = OwnerComp.GetBlackboardComponent()->GetValueAsFloat(CoolDownKey.SelectedKeyName);
 	if (CurrentCoolDown >= CoolDownTime)
 	{
-		OwnerComp.GetBlackboardComponent()->SetValueAsFloat(CoolDownKey.SelectedKeyName, 0.f);
+		// OwnerComp.GetBlackboardComponent()->SetValueAsFloat(CoolDownKey.SelectedKeyName, 0.f);
 		return true;
 	}
 	return false;

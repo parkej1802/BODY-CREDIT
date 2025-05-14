@@ -8,7 +8,9 @@
 #include "Components/Enemy/CNox_BehaviorComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "BehaviorTree/behaviorTree.h"
+#include "Characters/Enemy/AI/CEnemyController.h"
 #include "Components/Enemy/CNoxEnemyHPComponent.h"
+#include "Navigation/PathFollowingComponent.h"
 
 ACNox_EBase::ACNox_EBase()
 {
@@ -55,6 +57,27 @@ void ACNox_EBase::BeginPlay()
 void ACNox_EBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (bAutoMove && Target)
+	{
+		float dist = FVector::Dist(GetActorLocation(), Target->GetActorLocation());
+		if (dist > MoveDistance)
+		{
+			// CLog::Log(FString::Printf(TEXT("MoveDistance: %f, dist: %f"), MoveDistance, dist));
+			FAIMoveRequest request;
+			request.SetGoalActor(Target);
+			request.SetAcceptanceRadius(MoveDistance);
+			FPathFollowingRequestResult result = EnemyController->MoveTo(request);
+			// FVector DirectionVector = (Target->GetActorLocation() - GetActorLocation()).GetSafeNormal();
+			// AddMovementInput(DirectionVector);
+		}
+	}
+}
+
+void ACNox_EBase::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+	EnemyController = Cast<ACEnemyController>(NewController);
 }
 
 void ACNox_EBase::SetTarget(ACNox* InTarget)
