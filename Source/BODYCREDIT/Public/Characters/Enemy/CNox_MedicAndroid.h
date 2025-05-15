@@ -24,6 +24,7 @@ private:
 
 public:
 	virtual void SetTarget(class ACNox* InTarget) override;
+	void GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed, float& OutNewAccelSpeed) override;
 
 public:
 	void HandleIdleMotion();

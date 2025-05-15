@@ -34,6 +34,8 @@ void ACNox_MedicAndroid::BeginPlay()
 	                          TEXT("/Game/Assets/MedicAnim/AttackAnim/AM_Grenade.AM_Grenade"));
 	CHelpers::GetAssetDynamic(&(EnemyAnim->ShieldMontage),
 	                          TEXT("/Game/Assets/MedicAnim/HealAnim/AM_Shield.AM_Shield"));
+	CHelpers::GetAssetDynamic(&(EnemyAnim->AttackMontage),
+	                          TEXT("/Game/Assets/MedicAnim/AttackAnim/AM_Attack.AM_Attack"));
 }
 
 void ACNox_MedicAndroid::Tick(float DeltaTime)
@@ -52,6 +54,29 @@ void ACNox_MedicAndroid::SetTarget(class ACNox* InTarget)
 {
 	Super::SetTarget(InTarget);
 	EnemyAnim->StopAllMontages(0.25f);
+}
+
+void ACNox_MedicAndroid::GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed, float& OutNewAccelSpeed)
+{
+	OutNewSpeed = 0.f;
+	OutNewAccelSpeed = 600.f;
+
+	switch (InMovementSpeed)
+	{
+	case EEnemyMovementSpeed::Idle:
+		OutNewSpeed = 0.f;
+		break;
+	case EEnemyMovementSpeed::Walking:
+		OutNewSpeed = 400.f;
+		OutNewAccelSpeed = 450.f;
+		break;
+	case EEnemyMovementSpeed::Jogging:
+		OutNewSpeed = 0.f;
+		break;
+	case EEnemyMovementSpeed::Sprinting:
+		OutNewSpeed = 500.f;
+		break;
+	}
 }
 
 void ACNox_MedicAndroid::HandleIdleMotion()

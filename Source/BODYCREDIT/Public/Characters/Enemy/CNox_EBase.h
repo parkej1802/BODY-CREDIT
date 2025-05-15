@@ -15,6 +15,15 @@ enum class EEnemyType : uint8
 	MemoryCollector,
 };
 
+UENUM(BlueprintType)
+enum class EEnemyMovementSpeed : uint8
+{
+	Idle = 0,
+	Walking,
+	Jogging,
+	Sprinting
+};
+
 /**
  * Enemy Base
  */
@@ -47,11 +56,15 @@ public: // Get Sensing Function
 	float GetHearingRange() const { return HearingRange; }
 
 protected: // Set Sensing Function
-	virtual void SetPerceptionInfo() {}
+	virtual void SetPerceptionInfo()
+	{
+	}
 
 protected: // Status
 	UPROPERTY(EditDefaultsOnly)
 	EEnemyType EnemyType;
+	UPROPERTY(EditDefaultsOnly)
+	float AccelValue = 150.f;
 
 protected: // Virtual Function
 	virtual void BeginPlay() override;
@@ -83,15 +96,18 @@ public:
 public:
 	// CCTV에서는 Blackboard에 세팅은 안하고 주변 Enemy에게만 전달한다.
 	virtual void SetTarget(ACNox* InTarget);
+	void HandleAttack(float InAttackDistance);
+	bool IsAttacking();
+	bool IsPlayerInDistance();
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category=Health)
-	float HealAmount=10.f;
-	
+	float HealAmount = 10.f;
+
 public:
 	void HealHP();
 
-public:	// Medic Android
+public: // Medic Android
 	void SetGrenadeEnded(bool InbEndedAnim);
 
 private:
@@ -100,7 +116,9 @@ private:
 	ACNox* Target = nullptr;
 	UPROPERTY(EditDefaultsOnly, Category=AutoMove)
 	float MoveDistance = 100.f;
-	
+	UPROPERTY(EditDefaultsOnly, Category=AutoMove)
+	float AttackDistance = 100.f;
+
 public:
 	FORCEINLINE void SetAutoMove(bool InbAutoMove, ACNox* InTarget, float InMoveDistance)
 	{
@@ -108,4 +126,6 @@ public:
 		Target = InTarget;
 		MoveDistance = InMoveDistance;
 	}
+	virtual void GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed, float& OutNewAccelSpeed){};
+	void SetMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed);
 };

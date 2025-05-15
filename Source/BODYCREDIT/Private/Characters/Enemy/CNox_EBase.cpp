@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Characters/Enemy/CNox_EBase.h"
 
 #include "global.h"
@@ -36,11 +33,12 @@ void ACNox_EBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	GetCharacterMovement()->MaxAcceleration = AccelValue; // 가속도 설정
+
 	if (bUseBehaviorTree)
 	{
 		BehaviorComp->SetEnemyType(EnemyType);
 	}
-
 
 	if (auto Anim = GetMesh()->GetAnimInstance())
 	{
@@ -85,6 +83,25 @@ void ACNox_EBase::SetTarget(ACNox* InTarget)
 	BehaviorComp->SetTarget(InTarget);
 }
 
+void ACNox_EBase::HandleAttack(float InAttackDistance)
+{
+	AttackDistance = InAttackDistance;
+	EnemyAnim->PlayAttackMontage();
+}
+
+bool ACNox_EBase::IsAttacking()
+{
+	return EnemyAnim->IsAttacking();
+}
+
+bool ACNox_EBase::IsPlayerInDistance()
+{
+	if (!Target) return false;
+	float dist = FVector::Dist(GetActorLocation(), Target->GetActorLocation());
+	//CLog::Log(FString::Printf(TEXT("dist <= AttackDistance: %d"), dist <= AttackDistance));
+	return dist <= AttackDistance;
+}
+
 void ACNox_EBase::HealHP()
 {
 	HPComp->HealHP(HealAmount);
@@ -93,4 +110,12 @@ void ACNox_EBase::HealHP()
 void ACNox_EBase::SetGrenadeEnded(bool InbEndedAnim)
 {
 	BehaviorComp->SetGrenadeEnded(InbEndedAnim);
+}
+
+void ACNox_EBase::SetMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed)
+{
+	float newSpeed=0.f, newAccelSpeed=0.f;
+	GetNewMovementSpeed(InMovementSpeed, newSpeed, newAccelSpeed);
+	GetCharacterMovement()->MaxWalkSpeed = newSpeed;
+	GetCharacterMovement()->MaxAcceleration = newAccelSpeed;
 }
