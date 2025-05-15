@@ -37,6 +37,9 @@ public:
 
 	FSlateBrush GetIconImage();
 
+	UPROPERTY()
+    class UInventory_Widget* MainInventoryWidget;
+
     UPROPERTY(BlueprintAssignable)
     FOnItemRemoved OnItemRemoved;
 

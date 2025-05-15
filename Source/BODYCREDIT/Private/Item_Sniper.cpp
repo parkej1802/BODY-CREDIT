@@ -17,9 +17,6 @@ AItem_Sniper::AItem_Sniper()
 	{
 		RotatedIcon = Temp_MatR.Object;
 	}
-	
-	Width = 4;
-	Height = 4;
 }
 
 UItemObject* AItem_Sniper::GetDefaultItemObject()

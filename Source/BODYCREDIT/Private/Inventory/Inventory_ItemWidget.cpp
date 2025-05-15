@@ -10,6 +10,7 @@
 #include "Materials/MaterialInterface.h"
 #include "Styling/SlateBrush.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Inventory/Inventory_Widget.h"
 
 void UInventory_ItemWidget::NativeConstruct()
 {
@@ -89,6 +90,9 @@ void UInventory_ItemWidget::NativeOnDragDetected(const FGeometry& InGeometry, co
 	DragOperation->DefaultDragVisual = this;
 	DragOperation->Pivot = EDragPivot::CenterCenter;
 	DragOperation->Payload = ItemObject;
+
+	SetFocus();
+	bIsFocusable = true;
 
 	if (ItemObject)
 	{

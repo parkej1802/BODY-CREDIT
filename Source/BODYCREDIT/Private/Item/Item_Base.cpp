@@ -21,15 +21,20 @@ AItem_Base::AItem_Base()
 
 	SphereComp->SetGenerateOverlapEvents(true);
 
+	ConstructorHelpers::FObjectFinder<UDataTable> TempDT(
+		TEXT("/Script/Engine.DataTable'/Game/Item/DT_ItemData.DT_ItemData'"));
+
+	if (TempDT.Succeeded()) {
+		ItemDataTable = TempDT.Object;
+	}
 }
 
 // Called when the game starts or when spawned
 void AItem_Base::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	if (!IsValid(ItemObject))
-	{
+
+	if (!IsValid(ItemObject)) {
 		ItemObject = GetDefaultItemObject();
 	}
 
@@ -58,5 +63,10 @@ void AItem_Base::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 UItemObject* AItem_Base::GetDefaultItemObject()
 {
 	return NewObject<UItemObject>(this);
+}
+
+void AItem_Base::LoadItemData()
+{
+
 }
 

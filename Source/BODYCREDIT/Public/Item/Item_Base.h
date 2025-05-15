@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "ItemDT.h"
+#include "Engine/DataTable.h"
 #include "Item_Base.generated.h"
 
 UCLASS()
@@ -36,6 +38,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 Height = 1.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UDataTable* ItemDataTable;
+
+	FItemData* ItemData;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UMaterialInterface* Icon;
@@ -43,6 +49,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UMaterialInterface* RotatedIcon;
 
+	FString ContextString = TEXT("Item Data");
 public:
 	UFUNCTION()
     void OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -52,5 +59,5 @@ public:
 
 	virtual UItemObject* GetDefaultItemObject();
 
-
+	void LoadItemData();
 };

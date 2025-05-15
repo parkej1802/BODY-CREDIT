@@ -16,12 +16,21 @@ class BODYCREDIT_API UInventory_GridWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
+
+	UPROPERTY()
+    class UInventory_Widget* OwningInventoryWidget;
+
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UBorder* Border_Grid;
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UCanvasPanel* Canvas_Grid;
 
+	UPROPERTY(EditAnywhere)
+	int32 GridID;
+	
+	UPROPERTY()
+	class APlayerController* PlayerController;
 
 // Widget Functions
 public:
@@ -69,12 +78,16 @@ public:
 
 	TPair<bool, bool> MousePositionInTile(FVector2D MousePosition);
 
+	bool IsCurrentlyHovered() const;
+
 
 public:
 	UPROPERTY(EditAnywhere, Category = Widget)
 	TSubclassOf<UUserWidget> InventoryItemWidget;
 
 	class UInventory_ItemWidget* InventoryItemUI;
+
+	FGeometry GetGridContentGeometry();
 
 public:
 
@@ -83,5 +96,6 @@ public:
 	virtual bool NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 	virtual void NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 	virtual void NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
-	virtual FReply  NativeOnPreviewKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent) override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
 };

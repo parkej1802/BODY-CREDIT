@@ -10,7 +10,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType, Blueprintable)
 class BODYCREDIT_API UItemObject : public UObject
 {
 	GENERATED_BODY()

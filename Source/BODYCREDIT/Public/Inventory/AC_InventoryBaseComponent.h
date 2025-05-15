@@ -67,6 +67,9 @@ public:
     UPROPERTY(BlueprintAssignable)
 	FOnInventoryChanged InventoryChanged;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class AItem_Base* ItemBase;
+
 	UFUNCTION()
 	void OnInventoryChanged();
 		

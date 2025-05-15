@@ -13,6 +13,7 @@
 #include "Blueprint/DragDropOperation.h"
 #include "AC_LootingInventoryComponent.h"
 #include "Inventory/AC_InventoryBaseComponent.h"
+#include "Inventory/Inventory_Widget.h"
 
 
 void UInventory_GridWidget::InitInventory(class UAC_InventoryBaseComponent* InventoryComponent, float Inventoy_TileSize)
@@ -65,6 +66,13 @@ int32 UInventory_GridWidget::NativePaint(const FPaintArgs& Args, const FGeometry
 {
 	Super::NativePaint(Args, AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);
 
+	FVector2D GridSize(InventoryColumns * TileSize, InventoryRows * TileSize);
+
+	FPaintGeometry GridGeom = AllottedGeometry.ToPaintGeometry(
+		FVector2D::ZeroVector,
+		GridSize
+	);
+
 	for (const FInventoryLine& Line : Lines)
 	{
 		TArray<FVector2D> Points;
@@ -74,13 +82,19 @@ int32 UInventory_GridWidget::NativePaint(const FPaintArgs& Args, const FGeometry
 		FSlateDrawElement::MakeLines(
 			OutDrawElements,
 			LayerId,
-			AllottedGeometry.ToPaintGeometry(),
+			//AllottedGeometry.ToPaintGeometry(),
+			GridGeom,
 			Points,
 			ESlateDrawEffect::None,
 			FLinearColor::White,
 			true,
 			1.0f
 		);
+	}
+
+
+	if (!IsCurrentlyHovered()) {
+		return LayerId + 1;
 	}
 
 	if (UWidgetBlueprintLibrary::IsDragDropping() && DrawDropLocation)
@@ -128,6 +142,7 @@ void UInventory_GridWidget::Refresh()
 			InventoryItemUI->OnItemRemoved.AddDynamic(this, &UInventory_GridWidget::OnItemRemoved);
 			InventoryItemUI->TileSize = TileSize;
 			InventoryItemUI->ItemObject = Item.Key;
+			InventoryItemUI->MainInventoryWidget = OwningInventoryWidget;
 
 			UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Canvas_Grid->AddChild(InventoryItemUI));
 
@@ -141,11 +156,13 @@ void UInventory_GridWidget::Refresh()
 
 void UInventory_GridWidget::OnItemRemoved(UItemObject* ItemObject)
 {
+	if (!IsCurrentlyHovered()) return;
 	InventoryBaseComp->RemoveItem(ItemObject);
 }
 
 UItemObject* UInventory_GridWidget::GetPayLoad(UDragDropOperation* Operation)
 {
+	if (!IsCurrentlyHovered()) return nullptr;
 	if (IsValid(Operation))
 	{
 		UItemObject* ItemObject = Cast<UItemObject>(Operation->Payload);
@@ -156,6 +173,7 @@ UItemObject* UInventory_GridWidget::GetPayLoad(UDragDropOperation* Operation)
 
 bool UInventory_GridWidget::IsRoomAvailableForPayload(UItemObject* ItemObject) const
 {
+	if (!IsCurrentlyHovered()) return false;
 	if (IsValid(ItemObject))
 	{
 		FInventoryTile TempTile;
@@ -176,6 +194,23 @@ TPair<bool, bool> UInventory_GridWidget::MousePositionInTile(FVector2D MousePosi
 	return TPair<bool, bool>(bX, bY);
 }
 
+bool UInventory_GridWidget::IsCurrentlyHovered() const
+{
+	if (!OwningInventoryWidget || !OwningInventoryWidget->CurrentHoveredGrid) return false;
+	GEngine->AddOnScreenDebugMessage(2, 2.0f, FColor::Red, FString::Printf(TEXT("Currently Hovered %d"), OwningInventoryWidget->CurrentHoveredGrid->GridID));
+	return OwningInventoryWidget->CurrentHoveredGrid == this;
+}
+
+FGeometry UInventory_GridWidget::GetGridContentGeometry()
+{
+	if (Canvas_Grid)
+	{
+		return Canvas_Grid->GetCachedGeometry();
+	}
+
+	return GetCachedGeometry();
+}
+
 FReply UInventory_GridWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	/*FEventReply reply;
@@ -191,13 +226,19 @@ FReply UInventory_GridWidget::NativeOnMouseButtonDown(const FGeometry& InGeometr
 	return FReply::Handled();
 }
 
+
+
 bool UInventory_GridWidget::NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	Super::NativeOnDragOver(InGeometry, InDragDropEvent, InOperation);
-
 	//SetFocus();
 	//bIsFocusable = true;
 	//SetKeyboardFocus();
+
+	if (!IsValid(InOperation)) {
+		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, FString::Printf(TEXT("NativeOnDragOver : %s"), GridID));
+		return false;
+	}
 
 	bool Right;
 	bool Down;
@@ -223,43 +264,29 @@ bool UInventory_GridWidget::NativeOnDragOver(const FGeometry& InGeometry, const 
 
 	DraggedItemTopLeftTile = FIntPoint(TempResult.X, TempResult.Y) - ResultIntPoint;
 
-	return true;
+
+
+	return false;
 }
 
 void UInventory_GridWidget::NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
+	//if (!IsCurrentlyHovered()) return;
 	Super::NativeOnDragEnter(InGeometry, InDragDropEvent, InOperation);
 	DrawDropLocation = true;
 }
 
 void UInventory_GridWidget::NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
+	//if (!IsCurrentlyHovered()) return;
 	Super::NativeOnDragLeave(InDragDropEvent, InOperation);
 	DrawDropLocation = false;
 }
 
-FReply UInventory_GridWidget::NativeOnPreviewKeyDown(const FGeometry& InGeometry, const FKeyEvent& InKeyEvent)
+void UInventory_GridWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
-	Super::NativeOnPreviewKeyDown(InGeometry, InKeyEvent);
+	Super::NativeTick(MyGeometry, InDeltaTime);
 
-	/*if (InKeyEvent.GetKey() == EKeys::R)
-	{
-		UDragDropOperation* CurrentOp = UWidgetBlueprintLibrary::GetDragDroppingContent();
-		UItemObject* ItemObject = GetPayLoad(CurrentOp);
-		if (IsValid(ItemObject))
-		{
-			ItemObject->Rotate();
-
-			UInventory_ItemWidget* ItemWidget = Cast<UInventory_ItemWidget>(CurrentOp->DefaultDragVisual);
-			if (ItemWidget)
-			{
-				ItemWidget->ItemObject = ItemObject;
-				ItemWidget->Refresh();
-			}
-		}
-	}
-	*/
-	return FReply::Handled();
 }
 
 bool UInventory_GridWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
@@ -267,6 +294,7 @@ bool UInventory_GridWidget::NativeOnDrop(const FGeometry& InGeometry, const FDra
 	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
 
 	//bIsFocusable = false;
+	if (!IsCurrentlyHovered()) return false;
 
 	UItemObject* ItemObject = GetPayLoad(InOperation);
 	FInventoryTile TempTile;
