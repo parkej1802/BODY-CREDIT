@@ -41,4 +41,6 @@ public:
 	void Rotate();
 	bool IsRotated();
 	FIntPoint GetStartPosition();
+
+	int32 ID = 0;
 };

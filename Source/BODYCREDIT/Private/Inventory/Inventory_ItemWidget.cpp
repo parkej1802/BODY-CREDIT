@@ -91,9 +91,6 @@ void UInventory_ItemWidget::NativeOnDragDetected(const FGeometry& InGeometry, co
 	DragOperation->Pivot = EDragPivot::CenterCenter;
 	DragOperation->Payload = ItemObject;
 
-	SetFocus();
-	bIsFocusable = true;
-
 	if (ItemObject)
 	{
 		CallOnRemoved();

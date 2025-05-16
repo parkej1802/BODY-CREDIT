@@ -7,6 +7,8 @@
 #include "Engine/StaticMesh.h"
 #include "Characters/CNox_Runner.h"
 #include "Inventory/AC_InventoryComponent.h"
+#include "Item/ItemDT.h"
+#include "Games/CMainGM.h"
 
 // Sets default values
 AItem_Base::AItem_Base()
@@ -21,24 +23,74 @@ AItem_Base::AItem_Base()
 
 	SphereComp->SetGenerateOverlapEvents(true);
 
-	ConstructorHelpers::FObjectFinder<UDataTable> TempDT(
-		TEXT("/Script/Engine.DataTable'/Game/Item/DT_ItemData.DT_ItemData'"));
+	ItemObject = CreateDefaultSubobject<UItemObject>(TEXT("ItemObject"));
+	
 
-	if (TempDT.Succeeded()) {
-		ItemDataTable = TempDT.Object;
+}
+
+void AItem_Base::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+
+	ItemDataTable = LoadObject<UDataTable>(nullptr, TEXT("/Game/Item/DT_ItemData.DT_ItemData"));
+
+	if (ItemDataTable)
+	{
+		FItemData* TempData = ItemDataTable->FindRow<FItemData>(ItemName, ContextString);
+		if (TempData && TempData->Mesh)
+		{
+			ItemData = *TempData;
+			StaticMeshComp->SetStaticMesh(ItemData.Mesh);
+
+			GetDefaultItemObject();
+		}
 	}
 }
+
+
+//#if WITH_EDITOR
+//void AItem_Base::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
+//{
+//	Super::PostEditChangeProperty(PropertyChangedEvent);
+//
+//	ItemDataTable = LoadObject<UDataTable>(nullptr, TEXT("/Game/Item/DT_ItemData.DT_ItemData"));
+//
+//	if (ItemDataTable)
+//	{
+//		FItemData* TempData = ItemDataTable->FindRow<FItemData>(ItemName, ContextString);
+//		if (TempData && TempData->Mesh)
+//		{
+//			ItemData = *TempData;
+//			StaticMeshComp->SetStaticMesh(ItemData.Mesh);
+//		}
+//	}
+//
+//
+//	Dimensions.X = ItemData.Dimensions.X;
+//	Dimensions.Y = ItemData.Dimensions.Y;
+//	Icon = ItemData.Icon;
+//	RotatedIcon = ItemData.RotatedIcon;
+//	ItemClass = ItemData.ItemClass;
+//	
+//
+//	if (GEditor)
+//	{
+//		GEditor->RedrawAllViewports();
+//	}
+//}
+//#endif
+
 
 // Called when the game starts or when spawned
 void AItem_Base::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (!IsValid(ItemObject)) {
-		ItemObject = GetDefaultItemObject();
-	}
-
 	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &AItem_Base::OnSphereBeginOverlap);
+
+	GameMode = Cast<ACMainGM>(GetWorld()->GetAuthGameMode());
+	
+	ItemObject->ID = GameMode->GetItemIndex();
 }
 
 // Called every frame
@@ -60,13 +112,11 @@ void AItem_Base::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 
 }
 
-UItemObject* AItem_Base::GetDefaultItemObject()
+void AItem_Base::GetDefaultItemObject()
 {
-	return NewObject<UItemObject>(this);
+	ItemObject->Dimensions.X = ItemData.Dimensions.X;
+	ItemObject->Dimensions.Y = ItemData.Dimensions.Y;
+	ItemObject->Icon = ItemData.Icon;
+	ItemObject->RotatedIcon = ItemData.RotatedIcon;
+	ItemObject->ItemClass = ItemData.ItemClass;
 }
-
-void AItem_Base::LoadItemData()
-{
-
-}
-

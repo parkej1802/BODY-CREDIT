@@ -2,6 +2,8 @@
 
 
 #include "Inventory/AC_InventoryBaseComponent.h"
+#include "Item/Item_Base.h"
+#include "Games/CMainGM.h"
 
 // Sets default values for this component's properties
 UAC_InventoryBaseComponent::UAC_InventoryBaseComponent()
@@ -10,9 +12,6 @@ UAC_InventoryBaseComponent::UAC_InventoryBaseComponent()
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
 
-	if (ItemBase) {
-		
-	}
 }
 
 
@@ -23,6 +22,14 @@ void UAC_InventoryBaseComponent::BeginPlay()
 
 	// ...
 	Items.SetNum(Columns * Rows);
+	if (GetWorld())
+	{
+		GameMode = Cast<ACMainGM>(GetWorld()->GetAuthGameMode());
+		if (GameMode)
+		{
+			PreAddItem();
+		}
+	}
 }
 
 
@@ -48,6 +55,7 @@ bool UAC_InventoryBaseComponent::TryAddItem(UItemObject* ItemObject)
 			if (IsRoomAvailable(ItemObject, i))
 			{
 				AddItemAt(ItemObject, i);
+				//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, FString::Printf(TEXT("ItemObject Index : %d"), ItemObject->ID));
 				return true;
 			}
 		}
@@ -97,14 +105,16 @@ void UAC_InventoryBaseComponent::AddItemAt(class UItemObject* ItemObject, int32 
 			ResultTile.Y = j;
 			if (IsTileValid(ResultTile))
 			{
-				Items[TileToIndex(ResultTile)] = ItemObject;
+				int32 CurrentIndex = TileToIndex(ResultTile);
+				Items[CurrentIndex] = ItemObject;
+				IndexToObject.Add(CurrentIndex, ItemObject);
 				ItemObject->StartPosition = FIntPoint(TempTile.X, TempTile.Y);
 
 				// GEngine->AddOnScreenDebugMessage(3, 1.f, FColor::Green, FString::Printf(TEXT("Item Index %d"), TileToIndex(ResultTile)));
 			}
 		}
 	}
-
+	
 	IsDirty = true;
 }
 
@@ -175,6 +185,22 @@ UItemObject* UAC_InventoryBaseComponent::GetItemAtIndex(int32 Index)
 	return nullptr;
 }
 
+//TMap<int32, FInventoryTile> UAC_InventoryBaseComponent::GetAllItems()
+//{
+//	TMap<int32, FInventoryTile> AllItem;
+//	for (int32 i = 0; i < Items.Num(); ++i)
+//	{
+//		if (IsValid(Items[i]))
+//		{
+//			if (!AllItem.Contains(Items[i]->ID))
+//			{
+//				AllItem.Add(Items[i]->ID, IndexToTile(i));
+//			}
+//		}
+//	}
+//	return AllItem;
+//}
+
 TMap<UItemObject*, FInventoryTile> UAC_InventoryBaseComponent::GetAllItems()
 {
 	TMap<UItemObject*, FInventoryTile> AllItem;
@@ -190,6 +216,8 @@ TMap<UItemObject*, FInventoryTile> UAC_InventoryBaseComponent::GetAllItems()
 	}
 	return AllItem;
 }
+
+
 
 void UAC_InventoryBaseComponent::RemoveItem(UItemObject* ItemObject)
 {
@@ -209,4 +237,20 @@ void UAC_InventoryBaseComponent::RemoveItem(UItemObject* ItemObject)
 void UAC_InventoryBaseComponent::OnInventoryChanged()
 {
 	InventoryChanged.Broadcast();
+}
+
+void UAC_InventoryBaseComponent::PreAddItem()
+{
+	for (auto& ItemPair : ItemAddMap)
+	{
+		AItem_Base* TempItemBase = GetWorld()->SpawnActor<AItem_Base>(ItemPair.Value);
+		if (IsValid(TempItemBase) && IsValid(TempItemBase->ItemObject))
+		{
+			// int32 CurrentIndex = GameMode->GetItemIndex();
+			//TempItemBase->ItemObject->ID = CurrentIndex;
+			//IndexToObject.Add(CurrentIndex, TempItemBase->ItemObject);
+			TryAddItem(TempItemBase->ItemObject);
+			TempItemBase->Destroy();
+		}
+	}
 }

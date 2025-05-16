@@ -18,23 +18,23 @@ AItem_Grenade::AItem_Grenade()
 		RotatedIcon = Temp_MatR.Object;
 	}*/
 
-	ItemData = ItemDataTable->FindRow<FItemData>("Grenade", ContextString);
+	ItemName = "Grenade";
 
 	Width = 1;
 	Height = 1;
 }
 
-UItemObject* AItem_Grenade::GetDefaultItemObject()
-{
-	UItemObject* NewItem = NewObject<UItemObject>(this, UItemObject::StaticClass());
-
-	NewItem->Dimensions.X = Width;
-	NewItem->Dimensions.Y = Height;
-	NewItem->Icon = Icon;
-	NewItem->RotatedIcon = RotatedIcon;
-	NewItem->ItemClass = GetClass();
-
-	return NewItem;
-
-}
+//UItemObject* AItem_Grenade::GetDefaultItemObject()
+//{
+//	UItemObject* NewItem = NewObject<UItemObject>(this, UItemObject::StaticClass());
+//
+//	/*NewItem->Dimensions.X = Width;
+//	NewItem->Dimensions.Y = Height;
+//	NewItem->Icon = Icon;
+//	NewItem->RotatedIcon = RotatedIcon;
+//	NewItem->ItemClass = GetClass();*/
+//
+//	return NewItem;
+//
+//}
 

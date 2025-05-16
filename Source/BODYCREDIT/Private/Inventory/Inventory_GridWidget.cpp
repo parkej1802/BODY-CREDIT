@@ -131,17 +131,20 @@ void UInventory_GridWidget::Refresh()
 {
 	Canvas_Grid->ClearChildren();
 
-	TMap<UItemObject*, FInventoryTile> AllItem = InventoryBaseComp->GetAllItems();
+	 TMap<UItemObject*, FInventoryTile> AllItem = InventoryBaseComp->GetAllItems();
+	// TArray<TPair<UItemObject*, FInventoryTile>> AllItem = InventoryBaseComp->GetAllItems();
+	// TMap<int32, FInventoryTile> AllItem = InventoryBaseComp->GetAllItems();
 
 	for (auto& Item : AllItem)
 	{
-		FInventoryTile& InvenTile = *AllItem.Find(Item.Key);
+		// FInventoryTile& InvenTile = *AllItem.Find(Item.Key);
 		if (InventoryItemWidget)
 		{
 			InventoryItemUI = CreateWidget<UInventory_ItemWidget>(GetWorld(), InventoryItemWidget);
 			InventoryItemUI->OnItemRemoved.AddDynamic(this, &UInventory_GridWidget::OnItemRemoved);
 			InventoryItemUI->TileSize = TileSize;
 			InventoryItemUI->ItemObject = Item.Key;
+			//InventoryItemUI->ItemObject = InventoryBaseComp->IndexToObject[Item.Key];
 			InventoryItemUI->MainInventoryWidget = OwningInventoryWidget;
 
 			UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Canvas_Grid->AddChild(InventoryItemUI));
@@ -197,7 +200,7 @@ TPair<bool, bool> UInventory_GridWidget::MousePositionInTile(FVector2D MousePosi
 bool UInventory_GridWidget::IsCurrentlyHovered() const
 {
 	if (!OwningInventoryWidget || !OwningInventoryWidget->CurrentHoveredGrid) return false;
-	GEngine->AddOnScreenDebugMessage(2, 2.0f, FColor::Red, FString::Printf(TEXT("Currently Hovered %d"), OwningInventoryWidget->CurrentHoveredGrid->GridID));
+	//GEngine->AddOnScreenDebugMessage(2, 2.0f, FColor::Red, FString::Printf(TEXT("Currently Hovered %d"), OwningInventoryWidget->CurrentHoveredGrid->GridID));
 	return OwningInventoryWidget->CurrentHoveredGrid == this;
 }
 
@@ -310,7 +313,7 @@ bool UInventory_GridWidget::NativeOnDrop(const FGeometry& InGeometry, const FDra
 		TempTile.X = ItemObject->StartPosition.X;
 		TempTile.Y = ItemObject->StartPosition.Y;
 
-		InventoryBaseComp->AddItemAt(ItemObject, InventoryBaseComp->TileToIndex(TempTile));
+		InventoryBaseComp->TryAddItem(ItemObject);
 	}
 	
 	return true;

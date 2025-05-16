@@ -131,14 +131,14 @@ void UInventory_Widget::IsMouseOnGrid()
                 ItemObject->StartPosition.Y = 0;
             }
 
-            GEngine->AddOnScreenDebugMessage(
+            /*GEngine->AddOnScreenDebugMessage(
                 -1, 1.f, FColor::Green,
-                FString::Printf(TEXT("Hovered Grid ID: %d"), CurrentHoveredGrid->GridID));
+                FString::Printf(TEXT("Hovered Grid ID: %d"), CurrentHoveredGrid->GridID));*/
         }
         else
         {
-            GEngine->AddOnScreenDebugMessage(
-                -1, 1.f, FColor::Red, TEXT("No Grid Hovered"));
+			/* GEngine->AddOnScreenDebugMessage(
+				 -1, 1.f, FColor::Red, TEXT("No Grid Hovered"));*/
         }
    }
 }

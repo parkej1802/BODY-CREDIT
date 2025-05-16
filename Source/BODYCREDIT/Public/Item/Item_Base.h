@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "ItemDT.h"
 #include "Engine/DataTable.h"
+#include "ItemObject.h"
 #include "Item_Base.generated.h"
 
 UCLASS()
@@ -41,13 +42,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UDataTable* ItemDataTable;
 
-	FItemData* ItemData;
+	FItemData ItemData = FItemData();
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UMaterialInterface* Icon;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//class UMaterialInterface* Icon;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UMaterialInterface* RotatedIcon;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//class UMaterialInterface* RotatedIcon;
 
 	FString ContextString = TEXT("Item Data");
 public:
@@ -57,7 +58,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UItemObject* ItemObject;
 
-	virtual UItemObject* GetDefaultItemObject();
+	//UItemObject* GetDefaultItemObject();
+	void GetDefaultItemObject();
 
-	void LoadItemData();
+	virtual void OnConstruction(const FTransform& Transform) override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName ItemName;
+
+		
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class ACMainGM* GameMode;
+
+//#if WITH_EDITOR
+//	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+//#endif
 };

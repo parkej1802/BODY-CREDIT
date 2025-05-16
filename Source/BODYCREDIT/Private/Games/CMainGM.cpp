@@ -8,3 +8,8 @@ ACMainGM::ACMainGM()
 		DefaultPawnClass = pawn.Class;
 
 }
+
+int32 ACMainGM::GetItemIndex()
+{
+	return ++ItemIndex;
+}

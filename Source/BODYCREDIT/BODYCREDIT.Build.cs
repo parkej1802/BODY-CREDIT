@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 using UnrealBuildTool;
 
@@ -25,7 +25,8 @@ public class BODYCREDIT : ModuleRules
             "Json",
             "JsonUtilities",
             "OnlineSubsystem",
-            "OnlineSubsystemSteam"
+            "OnlineSubsystemSteam",
+            "UnrealEd"
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[]

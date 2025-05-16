@@ -58,7 +58,12 @@ public:
 
 	bool IsDirty = false;
 
-	TMap<UItemObject*, FInventoryTile> GetAllItems();
+	TMap<class UItemObject*, FInventoryTile> GetAllItems();
+	// TArray<TPair<UItemObject*, FInventoryTile>> GetAllItems();
+	// TMap<int32, FInventoryTile> GetAllItems();
+
+	UPROPERTY()
+	TMap<int32, class UItemObject*> IndexToObject;
 
 	void RemoveItem(class UItemObject* ItemObject);
 
@@ -67,10 +72,17 @@ public:
     UPROPERTY(BlueprintAssignable)
 	FOnInventoryChanged InventoryChanged;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class AItem_Base* ItemBase;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//class AItem_Base* ItemBase;
 
 	UFUNCTION()
 	void OnInventoryChanged();
-		
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TMap<int32, TSubclassOf<class AItem_Base>> ItemAddMap;
+
+	void PreAddItem();
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class ACMainGM* GameMode;
 };
