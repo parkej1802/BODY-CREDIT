@@ -119,7 +119,7 @@ private:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Speed")
-	float Speed[(int32)ESpeedType::MAX] = { 200, 400, 600, 200, 300, 600 };
+	float Speed[(int32)ESpeedType::MAX] = { 200, 400, 500, 300, 350, 600 };
 
 	UPROPERTY(EditAnywhere, Replicated, Category = "Speed")
 	int32 Pressed[(int32)ESpeedType::MAX];
