@@ -128,4 +128,7 @@ public:
 	}
 	virtual void GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed, float& OutNewAccelSpeed){};
 	void SetMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed);
+
+public:
+	bool IsPlayerInForwardRange(ACNox* InTarget, float InForwardRange);
 };

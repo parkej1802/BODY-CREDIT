@@ -119,3 +119,41 @@ void ACNox_EBase::SetMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed)
 	GetCharacterMovement()->MaxWalkSpeed = newSpeed;
 	GetCharacterMovement()->MaxAcceleration = newAccelSpeed;
 }
+
+bool ACNox_EBase::IsPlayerInForwardRange(ACNox* InTarget, float InForwardRange)
+{
+	FVector Start = GetActorLocation();
+	FVector End = Start + GetActorForwardVector() * InForwardRange;
+	FCollisionQueryParams Params;
+	Params.bTraceComplex = true;
+
+	TArray<FHitResult> HitResults;
+	bool bHit = GetWorld()->LineTraceMultiByChannel(
+		HitResults,
+		Start,
+		End,
+		ECC_Visibility,
+		Params
+	);
+	// DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 0.1f, 0, 2.f);
+
+	for (const FHitResult& Hit : HitResults)
+	{
+		if (Hit.GetActor())
+		{
+			UE_LOG(LogTemp, Log, TEXT("Hit: %s"), *Hit.GetActor()->GetName());
+
+			// 특정 물체에 닿았으면 그 뒤는 검사하지 않음
+			if (Hit.GetActor()->ActorHasTag("BlockTrace"))
+			{
+				break;
+			}
+			else if (Hit.GetActor() == InTarget)
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
