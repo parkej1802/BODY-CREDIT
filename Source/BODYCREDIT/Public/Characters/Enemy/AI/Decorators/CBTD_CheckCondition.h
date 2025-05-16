@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/BTDecorator.h"
-#include "CBT_CheckCondition.generated.h"
+#include "CBTD_CheckCondition.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class BODYCREDIT_API UCBT_CheckCondition : public UBTDecorator
+class BODYCREDIT_API UCBTD_CheckCondition : public UBTDecorator
 {
 	GENERATED_BODY()
 
 private:
-	UCBT_CheckCondition();
+	UCBTD_CheckCondition();
 	virtual bool CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const override;
 
 private:

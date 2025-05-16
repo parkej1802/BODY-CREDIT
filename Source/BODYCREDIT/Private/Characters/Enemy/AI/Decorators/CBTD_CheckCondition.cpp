@@ -1,18 +1,18 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Characters/Enemy/AI/Decorators/CBT_CheckCondition.h"
+#include "Characters/Enemy/AI/Decorators/CBTD_CheckCondition.h"
 
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Utilities/CLog.h"
 
-UCBT_CheckCondition::UCBT_CheckCondition()
+UCBTD_CheckCondition::UCBTD_CheckCondition()
 {
 	FlowAbortMode = EBTFlowAbortMode::Self;
 	bCreateNodeInstance = true;
 }
 
-bool UCBT_CheckCondition::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
+bool UCBTD_CheckCondition::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
 {
 	if (KeyArray.Num() != ConditionArray.Num()) return false;
 	UBlackboardComponent* Blackboard = OwnerComp.GetBlackboardComponent();
