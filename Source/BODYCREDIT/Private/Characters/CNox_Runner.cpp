@@ -5,6 +5,7 @@
 #include "InputMappingContext.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+//#include "CharacterTrajectoryComponent.h"
 #include "Components/CStateComponent.h"
 #include "Components/CMovementComponent.h"
 #include "Components/CWeaponComponent.h"
@@ -115,7 +116,7 @@ void ACNox_Runner::Init()
 
 	// TPSCamera
 	CHelpers::CreateComponent<UCameraComponent>(this, &TPSCamera, "TPSCamera", SpringArm);
-	TPSCamera->SetRelativeLocation(FVector(~79, 30, 100));
+	TPSCamera->SetRelativeLocation(FVector(~79, 60, 100));
 	TPSCamera->bUsePawnControlRotation = false;
 
 	// FPSCamera
@@ -124,6 +125,9 @@ void ACNox_Runner::Init()
 
 	// MappingContext
 	CHelpers::GetAsset<UInputMappingContext>(&MappingContext, TEXT("/Script/EnhancedInput.InputMappingContext'/Game/Inputs/IMC_Runner.IMC_Runner'"));
+
+	// Trajectory
+	//CHelpers::CreateActorComponent<UCharacterTrajectoryComponent>(this, &Trajectory, "Trajectory");
 
 	// State
 	CHelpers::CreateActorComponent<UCStateComponent>(this, &State, "State");

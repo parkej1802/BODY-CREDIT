@@ -15,7 +15,7 @@ public:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 protected:
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	class ACNox* OwnerCharacter;
 
 protected:
