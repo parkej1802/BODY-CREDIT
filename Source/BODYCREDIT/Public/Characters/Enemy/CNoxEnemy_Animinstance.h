@@ -43,6 +43,8 @@ public:
 	UAnimMontage* GrenadeMontage;
 	UPROPERTY(VisibleAnywhere)
 	UAnimMontage* ShieldMontage;
+	UPROPERTY(VisibleAnywhere)
+	UAnimMontage* AttackMontage;
 
 	const FName ShieldStartSection = "ShieldStart";
 	const FName ShieldEndSection = "ShieldEnd";
@@ -55,10 +57,16 @@ public:
 	UFUNCTION()
 	void AnimNotify_PlayIdleMontage();
 
+private:
+	UFUNCTION()
+	void AnimNotify_DistanceToPlayer();
+
 public:
 	void PlayGrenadeMontage();
 
 public:
 	void PlayShieldMontage(const bool bInShieldStart);
 	void JumpShieldMontage();
+	void PlayAttackMontage();
+	bool IsAttacking() const;
 };

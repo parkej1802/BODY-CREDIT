@@ -73,4 +73,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UAC_InventoryComponent* InventoryComp;
 
+/**
+ *	Memory Piece Add Function - LHJ (2025.05.12)
+ */
+public:	
+	UFUNCTION(BlueprintCallable)
+	void MakeMemoryPiece();
 };

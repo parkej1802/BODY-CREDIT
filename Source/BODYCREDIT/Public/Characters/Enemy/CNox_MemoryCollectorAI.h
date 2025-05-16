@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Characters/Enemy/CNox_EBase.h"
+#include "Data/CMemoryData.h"
 #include "CNox_MemoryCollectorAI.generated.h"
 
 /**
@@ -19,4 +20,17 @@ public:
 
 private:
 	virtual void BeginPlay() override;
+	virtual void SetPerceptionInfo() override;
+
+private:
+	UPROPERTY(EditAnywhere, Category="Memory")
+	TArray<FMemoryFragment> MemoryQueue;
+
+	UPROPERTY(EditAnywhere, Category="Memory")
+	FMemoryFragment CurrentTargetMemory;
+
+	float MemoryExpireTime = 15.0f; // TTL 기준
+	
+public:
+	void RegisterMemory(const FMemoryFragment& InNewMemory);
 };

@@ -3,6 +3,7 @@
 
 #include "Characters/Enemy/CNoxEnemy_Animinstance.h"
 
+#include "Characters/Enemy/CNox_MedicAndroid.h"
 #include "Utilities/CLog.h"
 
 void UCNoxEnemy_Animinstance::NativeInitializeAnimation()
@@ -38,6 +39,12 @@ void UCNoxEnemy_Animinstance::AnimNotify_PlayIdleMontage()
 	OwnerEnemy->PlayAnimMontage(IdleMontage, 1.0f);
 }
 
+void UCNoxEnemy_Animinstance::AnimNotify_DistanceToPlayer()
+{
+	if(!OwnerEnemy->IsPlayerInDistance())
+		Montage_Stop(0.25f, AttackMontage);
+}
+
 void UCNoxEnemy_Animinstance::PlayGrenadeMontage()
 {
 	OwnerEnemy->SetGrenadeEnded(false);
@@ -47,7 +54,7 @@ void UCNoxEnemy_Animinstance::PlayGrenadeMontage()
 void UCNoxEnemy_Animinstance::PlayShieldMontage(const bool bInShieldStart)
 {
 	// CLog::Log(FString::Printf(TEXT("bUsingShield: %d"), bInShieldStart));
-	
+
 	BehaviorComponent->SetShieldEnded(false);
 
 	if (bInShieldStart)
@@ -60,4 +67,28 @@ void UCNoxEnemy_Animinstance::JumpShieldMontage()
 {
 	if (ShieldMontage && Montage_IsPlaying(ShieldMontage))
 		Montage_JumpToSection(FName("ShieldEnd"), ShieldMontage);
+}
+
+void UCNoxEnemy_Animinstance::PlayAttackMontage()
+{
+	if (OwnerEnemy->IsA(ACNox_MedicAndroid::StaticClass()))
+	{
+		if (AttackMontage)
+		{
+			OwnerEnemy->PlayAnimMontage(AttackMontage, 1.0f);
+		}
+	}
+}
+
+bool UCNoxEnemy_Animinstance::IsAttacking() const
+{
+	if (OwnerEnemy->IsA(ACNox_MedicAndroid::StaticClass()))
+	{
+		if (AttackMontage && Montage_IsPlaying(AttackMontage))
+		{
+			return true;
+		}
+	}
+
+	return false;
 }

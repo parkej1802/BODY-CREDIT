@@ -2,6 +2,7 @@
 
 #include "AIController.h"
 #include "Global.h"
+#include "Games/CMainGM.h"
 
 ACNox::ACNox()
 {
@@ -14,7 +15,7 @@ ACNox::ACNox()
 void ACNox::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	MainGM = Cast<ACMainGM>(GetWorld()->GetAuthGameMode());
 }
 
 void ACNox::Tick(float DeltaTime)

@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Characters/Enemy/CNox_EBase.h"
 
 #include "global.h"
@@ -8,7 +5,9 @@
 #include "Components/Enemy/CNox_BehaviorComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "BehaviorTree/behaviorTree.h"
+#include "Characters/Enemy/AI/CEnemyController.h"
 #include "Components/Enemy/CNoxEnemyHPComponent.h"
+#include "Navigation/PathFollowingComponent.h"
 
 ACNox_EBase::ACNox_EBase()
 {
@@ -34,11 +33,12 @@ void ACNox_EBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	GetCharacterMovement()->MaxAcceleration = AccelValue; // 가속도 설정
+
 	if (bUseBehaviorTree)
 	{
 		BehaviorComp->SetEnemyType(EnemyType);
 	}
-
 
 	if (auto Anim = GetMesh()->GetAnimInstance())
 	{
@@ -55,11 +55,51 @@ void ACNox_EBase::BeginPlay()
 void ACNox_EBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (bAutoMove && Target)
+	{
+		float dist = FVector::Dist(GetActorLocation(), Target->GetActorLocation());
+		if (dist > MoveDistance)
+		{
+			// CLog::Log(FString::Printf(TEXT("MoveDistance: %f, dist: %f"), MoveDistance, dist));
+			FAIMoveRequest request;
+			request.SetGoalActor(Target);
+			request.SetAcceptanceRadius(MoveDistance);
+			FPathFollowingRequestResult result = EnemyController->MoveTo(request);
+			// FVector DirectionVector = (Target->GetActorLocation() - GetActorLocation()).GetSafeNormal();
+			// AddMovementInput(DirectionVector);
+		}
+	}
+}
+
+void ACNox_EBase::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+	EnemyController = Cast<ACEnemyController>(NewController);
 }
 
 void ACNox_EBase::SetTarget(ACNox* InTarget)
 {
 	BehaviorComp->SetTarget(InTarget);
+}
+
+void ACNox_EBase::HandleAttack(float InAttackDistance)
+{
+	AttackDistance = InAttackDistance;
+	EnemyAnim->PlayAttackMontage();
+}
+
+bool ACNox_EBase::IsAttacking()
+{
+	return EnemyAnim->IsAttacking();
+}
+
+bool ACNox_EBase::IsPlayerInDistance()
+{
+	if (!Target) return false;
+	float dist = FVector::Dist(GetActorLocation(), Target->GetActorLocation());
+	//CLog::Log(FString::Printf(TEXT("dist <= AttackDistance: %d"), dist <= AttackDistance));
+	return dist <= AttackDistance;
 }
 
 void ACNox_EBase::HealHP()
@@ -70,4 +110,12 @@ void ACNox_EBase::HealHP()
 void ACNox_EBase::SetGrenadeEnded(bool InbEndedAnim)
 {
 	BehaviorComp->SetGrenadeEnded(InbEndedAnim);
+}
+
+void ACNox_EBase::SetMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed)
+{
+	float newSpeed=0.f, newAccelSpeed=0.f;
+	GetNewMovementSpeed(InMovementSpeed, newSpeed, newAccelSpeed);
+	GetCharacterMovement()->MaxWalkSpeed = newSpeed;
+	GetCharacterMovement()->MaxAcceleration = newAccelSpeed;
 }

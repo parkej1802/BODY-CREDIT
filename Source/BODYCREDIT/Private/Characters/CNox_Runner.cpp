@@ -11,6 +11,9 @@
 #include "Components/CWeaponComponent.h"
 #include "Inventory/AC_InventoryComponent.h"
 #include "Components/CNoxHPComponent.h"
+#include "Games/CMainGM.h"
+
+#include "Data/CMemoryData.h"
 
 ACNox_Runner::ACNox_Runner()
 {
@@ -138,4 +141,9 @@ void ACNox_Runner::Init()
 	// Weapon
 	CHelpers::CreateActorComponent<UCWeaponComponent>(this, &Weapon, "Weapon");
 
+}
+
+void ACNox_Runner::MakeMemoryPiece()
+{
+	MainGM->RegisterMemoryFromPlayer(this, EMemoryTriggerType::Intrusion);
 }
