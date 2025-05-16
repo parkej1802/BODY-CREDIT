@@ -21,6 +21,9 @@ private:
 	class UCameraComponent* FPSCamera;
 
 private:
+	//UPROPERTY(VisibleAnywhere, Category = "Components")
+	//class UCharacterTrajectoryComponent* Trajectory;
+
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UCStateComponent* State;
 
