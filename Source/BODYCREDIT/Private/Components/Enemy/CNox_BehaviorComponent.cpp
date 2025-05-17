@@ -58,3 +58,13 @@ void UCNox_BehaviorComponent::SetHealFlag(bool bInHealFlag)
 {
 	Blackboard->SetValueAsBool(HealFlagKey, bInHealFlag);
 }
+
+void UCNox_BehaviorComponent::SetPatrolRandomLocation(const FVector& InNewLoc)
+{
+	Blackboard->SetValueAsVector(PatrolRandomLocationKey, InNewLoc);
+}
+
+FVector UCNox_BehaviorComponent::GetPatrolRandomLocation()
+{
+	return Blackboard->GetValueAsVector(PatrolRandomLocationKey);
+}

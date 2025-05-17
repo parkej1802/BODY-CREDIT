@@ -35,6 +35,8 @@ private:
 	const FName ShieldKey = "ShieldAnimEnd";
 	const FName HealFlagKey = "bHealFlag";
 	const FName EquipShieldKey = "bIsEquipShield";
+
+	const FName PatrolRandomLocationKey = "PatrolRandomLocation";
 	
 private:
 	UPROPERTY()
@@ -55,4 +57,8 @@ public:	// For Medic Android
 	void SetEquipShield(bool bInEquipShield);
 	void SetShieldEnded(bool InbEndedAnim);
 	void SetHealFlag(bool bInHealFlag);
+
+public: // For Memory Collector
+	void SetPatrolRandomLocation(const FVector& InNewLoc);
+	FVector GetPatrolRandomLocation();
 };

@@ -5,6 +5,8 @@
 
 #include "Characters/Enemy/CNoxEnemy_Animinstance.h"
 #include "Global.h"
+#include "Characters/Enemy/AI/CEnemyController.h"
+#include "Navigation/PathFollowingComponent.h"
 
 ACNox_MemoryCollectorAI::ACNox_MemoryCollectorAI()
 {
@@ -94,4 +96,26 @@ void ACNox_MemoryCollectorAI::RegisterMemory(const FMemoryFragment& InNewMemory)
 		CurrentTargetMemory = MemoryQueue[0];
 		// Blackboard에 등록된 위치 갱신 등 추가 가능
 	}
+}
+
+void ACNox_MemoryCollectorAI::SetPatrolLocation(const FVector& InPatrolLocation)
+{
+	BehaviorComp->SetPatrolRandomLocation(InPatrolLocation);
+
+	// FAIMoveRequest MoveRequest;
+	// MoveRequest.SetGoalLocation(InPatrolLocation);
+	// MoveRequest.SetAcceptanceRadius(10.0f); // ← 이 값을 넉넉히 주세요
+	//
+	// FNavPathSharedPtr NavPath;
+	// auto Result = EnemyController->MoveTo(MoveRequest, &NavPath);
+	// DrawDebugSphere(GetWorld(), InPatrolLocation, 30.f, 12, FColor::Green, false, 5.f);
+	// if (Result != EPathFollowingRequestResult::Type::RequestSuccessful)
+	// {
+	// 	CLog::Log(FString::Printf(TEXT("Request Failed")));
+	// }
+}
+
+FVector ACNox_MemoryCollectorAI::GetPatrolLocation()
+{
+	return BehaviorComp->GetPatrolRandomLocation();
 }
