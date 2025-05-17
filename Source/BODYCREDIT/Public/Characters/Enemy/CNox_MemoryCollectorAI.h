@@ -33,4 +33,5 @@ private:
 	
 public:
 	void RegisterMemory(const FMemoryFragment& InNewMemory);
+	FORCEINLINE bool IsMemoryEmpty() { return MemoryQueue.Num() > 0; }
 };
