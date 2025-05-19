@@ -7,11 +7,13 @@
 #include "Global.h"
 #include "Characters/Enemy/AI/CEnemyController.h"
 #include "Navigation/PathFollowingComponent.h"
+#include "Transportation/CStair.h"
+#include "Transportation/CVent.h"
 
 ACNox_MemoryCollectorAI::ACNox_MemoryCollectorAI()
 {
 	ConstructorHelpers::FObjectFinder<USkeletalMesh> tmpMesh(TEXT(
-			"/Game/Assets/Sci_Fi_Characters_Pack/Mesh/Sci_Fi_Character_04/SK_Sci_Fi_Character_04_Full.SK_Sci_Fi_Character_04_Full"));
+		"/Game/Assets/Sci_Fi_Characters_Pack/Mesh/Sci_Fi_Character_04/SK_Sci_Fi_Character_04_Full.SK_Sci_Fi_Character_04_Full"));
 	if (tmpMesh.Succeeded())
 		GetMesh()->SetSkeletalMesh(tmpMesh.Object);
 
@@ -33,6 +35,8 @@ ACNox_MemoryCollectorAI::ACNox_MemoryCollectorAI()
 void ACNox_MemoryCollectorAI::BeginPlay()
 {
 	Super::BeginPlay();
+	CHelpers::FindActors<ACVent>(GetWorld(), AllVent);
+	CHelpers::FindActors<ACStair>(GetWorld(), AllStair);
 }
 
 void ACNox_MemoryCollectorAI::SetPerceptionInfo()
@@ -98,24 +102,76 @@ void ACNox_MemoryCollectorAI::RegisterMemory(const FMemoryFragment& InNewMemory)
 	}
 }
 
+void ACNox_MemoryCollectorAI::EvaluateMemory()
+{
+	float Now = GetWorld()->GetTimeSeconds();
+	float BestScore = -1.0f;
+	FMemoryFragment* BestMemory = nullptr;
+
+	// TTL 검사: 유효하지 않은 기억 제거
+	MemoryQueue.RemoveAll([Now, this](const FMemoryFragment& Mem)
+	{
+		return (Now - Mem.TimeStamp) > MemoryExpireTime;
+	});
+
+	for (FMemoryFragment& Mem : MemoryQueue)
+	{
+		float Score = 0.0f;
+
+		// 기억의 종류에 따라 가중치 부여
+		switch (Mem.TriggerType)
+		{
+		case EMemoryTriggerType::Intrusion:
+			Score += 20.f;
+			break;
+		case EMemoryTriggerType::Combat:
+			Score += 40.f;
+			break;
+		case EMemoryTriggerType::Loitering:
+			Score += 15.f;
+			break;
+		default:
+			break;
+		}
+
+		// 거리 기반 가중치 (가까울수록 점수 증가)
+		const float Distance = FVector::Dist(Mem.Location, GetActorLocation());
+		Score += FMath::Clamp(1000.f - Distance, 0.f, 1000.f) * 0.01f; // 최대 +10
+
+		// 최신성 가중치 (최근일수록 점수 증가)
+		const float Age = Now - Mem.TimeStamp;
+		Score += FMath::Clamp(10.f - Age, 0.f, 10.f); // 최대 +10
+
+		// 최고 점수 기억 업데이트
+		if (Score > BestScore)
+		{
+			BestScore = Score;
+			BestMemory = &Mem;
+		}
+	}
+
+	if (BestMemory)
+	{
+		BehaviorComp->SetMemoryTarget(*BestMemory);
+		BehaviorComp->SetHasMemoryTarget(true);
+	}
+	else
+	{
+		BehaviorComp->SetHasMemoryTarget(false);
+	}
+}
+
+const FMemoryFragment ACNox_MemoryCollectorAI::GetMemoryTarget()
+{
+	return BehaviorComp->GetMemoryTarget();
+}
+
 void ACNox_MemoryCollectorAI::SetPatrolLocation(const FVector& InPatrolLocation)
 {
-	BehaviorComp->SetPatrolRandomLocation(InPatrolLocation);
-
-	// FAIMoveRequest MoveRequest;
-	// MoveRequest.SetGoalLocation(InPatrolLocation);
-	// MoveRequest.SetAcceptanceRadius(10.0f); // ← 이 값을 넉넉히 주세요
-	//
-	// FNavPathSharedPtr NavPath;
-	// auto Result = EnemyController->MoveTo(MoveRequest, &NavPath);
-	// DrawDebugSphere(GetWorld(), InPatrolLocation, 30.f, 12, FColor::Green, false, 5.f);
-	// if (Result != EPathFollowingRequestResult::Type::RequestSuccessful)
-	// {
-	// 	CLog::Log(FString::Printf(TEXT("Request Failed")));
-	// }
+	BehaviorComp->SetPatrolLocation(InPatrolLocation);
 }
 
 FVector ACNox_MemoryCollectorAI::GetPatrolLocation()
 {
-	return BehaviorComp->GetPatrolRandomLocation();
+	return BehaviorComp->GetPatrolLocation();
 }

@@ -36,7 +36,9 @@ private:
 	const FName HealFlagKey = "bHealFlag";
 	const FName EquipShieldKey = "bIsEquipShield";
 
-	const FName PatrolRandomLocationKey = "PatrolRandomLocation";
+	const FName PatrolLocationKey = "PatrolLocation";
+	const FName MemoryTargetKey = "MemoryTarget";
+	const FName HasMemoryTargetKey = "bHasMemoryTarget";
 	
 private:
 	UPROPERTY()
@@ -59,6 +61,10 @@ public:	// For Medic Android
 	void SetHealFlag(bool bInHealFlag);
 
 public: // For Memory Collector
-	void SetPatrolRandomLocation(const FVector& InNewLoc);
-	FVector GetPatrolRandomLocation();
+	void SetPatrolLocation(const FVector& InNewLoc);
+	FVector GetPatrolLocation();
+	void SetMemoryTarget(struct FMemoryFragment InMemoryTarget);
+	struct FMemoryFragment GetMemoryTarget();
+	void SetHasMemoryTarget(bool bInHasMemoryTarget);
+	bool GetHasMemoryTarget();
 };

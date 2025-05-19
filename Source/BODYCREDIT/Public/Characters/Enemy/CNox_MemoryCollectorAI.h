@@ -30,12 +30,24 @@ private:
 	FMemoryFragment CurrentTargetMemory;
 
 	float MemoryExpireTime = 15.0f; // TTL 기준
-	
+
 public:
 	void RegisterMemory(const FMemoryFragment& InNewMemory);
+	void EvaluateMemory();
+	const FMemoryFragment GetMemoryTarget();
 	FORCEINLINE bool IsMemoryEmpty() { return MemoryQueue.Num() > 0; }
 
 public:
 	void SetPatrolLocation(const FVector& InPatrolLocation);
 	FVector GetPatrolLocation();
+
+private:
+	UPROPERTY()
+	TArray<class ACStair*> AllStair;
+	UPROPERTY()
+	TArray<class ACVent*> AllVent;
+
+public:
+	TArray<class ACStair*> GetAllStair() const { return AllStair; }
+	TArray<class ACVent*> GetAllVent() const { return AllVent; }
 };
