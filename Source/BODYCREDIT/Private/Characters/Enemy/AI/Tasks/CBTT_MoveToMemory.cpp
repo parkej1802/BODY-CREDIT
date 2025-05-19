@@ -49,6 +49,8 @@ void UCBTT_MoveToMemory::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 				break;
 			}
 		}
+		else
+			FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
 	}
 	else
 		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
