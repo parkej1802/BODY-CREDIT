@@ -22,8 +22,17 @@ private:
 	class UCameraComponent* FPSCamera;
 
 private:
+	//UPROPERTY(VisibleAnywhere, Category = "Components")
+	//class UCharacterTrajectoryComponent* Trajectory;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	class UCStateComponent* State;
+
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UCMovementComponent* Movement;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	class UCWeaponComponent* Weapon;
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "EnhancedInput")
@@ -64,6 +73,13 @@ private:
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UAC_InventoryComponent* InventoryComp;
+
+/**
+ *	Memory Piece Add Function - LHJ (2025.05.12)
+ */
+public:	
+	UFUNCTION(BlueprintCallable)
+	void MakeMemoryPiece();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UAC_LootingInventoryComponent* LootableInventoryComp;

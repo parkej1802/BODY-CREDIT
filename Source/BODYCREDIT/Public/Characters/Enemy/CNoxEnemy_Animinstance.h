@@ -43,6 +43,8 @@ public:
 	UAnimMontage* GrenadeMontage;
 	UPROPERTY(VisibleAnywhere)
 	UAnimMontage* ShieldMontage;
+	UPROPERTY(VisibleAnywhere)
+	UAnimMontage* AttackMontage;
 
 	const FName ShieldStartSection = "ShieldStart";
 	const FName ShieldEndSection = "ShieldEnd";
@@ -56,12 +58,15 @@ public:
 	void AnimNotify_PlayIdleMontage();
 
 private:
-	UPROPERTY(BlueprintReadWrite, Category = "Anim", meta=(AllowPrivateAccess=true))
-	bool bUsingShield = false;
+	UFUNCTION()
+	void AnimNotify_DistanceToPlayer();
 
 public:
 	void PlayGrenadeMontage();
 
 public:
 	void PlayShieldMontage(const bool bInShieldStart);
+	void JumpShieldMontage();
+	void PlayAttackMontage();
+	bool IsAttacking() const;
 };

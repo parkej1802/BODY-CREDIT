@@ -124,6 +124,7 @@ void ACEnemyController::OnAITargetPerceptionInfoUpdate(const FActorPerceptionUpd
 			}
 		}
 
+		StopMovement();
 		EnemyBase->SetTarget(TargetPlayer);
 	}
 	else

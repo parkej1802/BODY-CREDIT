@@ -24,20 +24,31 @@ private:
 
 public:
 	virtual void SetTarget(class ACNox* InTarget) override;
+	void GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed, float& OutNewAccelSpeed) override;
 
 public:
-	float CurElectricGrenadeCoolTime = 0.f;
-	float ElectricGrenadeCoolTimeMax = 3.f;
+	void HandleIdleMotion();
 
+public:
 	void HandleElectricGrenade();
 
 public:
 	bool bIsEquipShield = false;
 	float CurShieldTime = 0.f;
 	float ShieldInterval = 2.f;
-	
+
 	void HandleEquipShield(const bool bInEquipShield);
 
 private:
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+	                         class AController* EventInstigator, AActor* DamageCauser) override;
+
+private:
+	UPROPERTY(EditDefaultsOnly, Category=Heal)
+	float HealStdValue = 0.4f;
+	
+public:
+	bool IsLowHealth();
+	void SetHealFlag(bool bHealFlag);
+	void HealEnd();
 };

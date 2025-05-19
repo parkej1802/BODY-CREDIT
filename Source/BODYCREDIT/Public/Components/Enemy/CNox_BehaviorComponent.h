@@ -27,11 +27,16 @@ public:
 
 private:
 	const FName AIStateTypeKey = "AIType";
-	const FName PatrolRoute = "PatrolRoute";
 	const FName TargetPlayer = "Target";
+	
+	const FName PatrolRoute = "PatrolRoute";
+	
 	const FName GrenadeKey = "GrenadeAnimEnd";
 	const FName ShieldKey = "ShieldAnimEnd";
-	const FName HitDamageKey = "bHitDamage";
+	const FName HealFlagKey = "bHealFlag";
+	const FName EquipShieldKey = "bIsEquipShield";
+
+	const FName PatrolRandomLocationKey = "PatrolRandomLocation";
 	
 private:
 	UPROPERTY()
@@ -49,6 +54,11 @@ public:	// For Zero
 
 public:	// For Medic Android
 	void SetGrenadeEnded(bool InbEndedAnim);
+	void SetEquipShield(bool bInEquipShield);
 	void SetShieldEnded(bool InbEndedAnim);
-	void SetDamageTaken(bool bInDamageTaken);
+	void SetHealFlag(bool bInHealFlag);
+
+public: // For Memory Collector
+	void SetPatrolRandomLocation(const FVector& InNewLoc);
+	FVector GetPatrolRandomLocation();
 };

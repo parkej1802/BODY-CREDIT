@@ -18,6 +18,10 @@ private:
 	UPROPERTY()
 	class ACNox_EBase* OwnerEnemy;
 
+private:
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction *ThisTickFunction) override;
+	
 public:
 	void SetEnemy(class ACNox_EBase* InNewOwner);
+	void HealHP(float InHealAmount);
 };
