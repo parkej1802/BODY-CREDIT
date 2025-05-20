@@ -15,6 +15,9 @@ UCWeaponComponent::UCWeaponComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
+	CHelpers::GetAsset<UInputAction>(&IA_Action, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Action.IA_Action'"));
+	CHelpers::GetAsset<UInputAction>(&IA_SubAction, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_SubAction.IA_SubAction'"));
+
 	CHelpers::GetAsset<UInputAction>(&IA_FirstWeapon, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_FirstWeapon.IA_FirstWeapon'"));
 
 }
@@ -173,5 +176,10 @@ void UCWeaponComponent::ChangeType(EWeaponType InType)
 void UCWeaponComponent::BindInput(UEnhancedInputComponent* InEnhancedInputComponent)
 {
 	InEnhancedInputComponent->BindAction(IA_FirstWeapon, ETriggerEvent::Started, this, &UCWeaponComponent::SetSniperMode);
+
+	InEnhancedInputComponent->BindAction(IA_Action, ETriggerEvent::Started, this, &UCWeaponComponent::DoAction);
+
+	InEnhancedInputComponent->BindAction(IA_SubAction, ETriggerEvent::Started, this, &UCWeaponComponent::SubAction_Pressed);
+	InEnhancedInputComponent->BindAction(IA_SubAction, ETriggerEvent::Completed, this, &UCWeaponComponent::SubAction_Released);
 
 }
