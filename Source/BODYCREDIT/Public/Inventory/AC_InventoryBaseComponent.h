@@ -43,7 +43,7 @@ public:
 
 	bool IsRoomAvailable(class UItemObject* ItemObject, int32 TopLeftIndex);
 
-	FInventoryTile IndexToTile(int32 Index); 
+	FInventoryTile IndexToTile(int32 Index);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<class UItemObject*> Items;

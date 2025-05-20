@@ -42,13 +42,15 @@ public:
 public:
 	UPROPERTY()
     UAC_InventoryBaseComponent* InventoryBaseComp;
-
+	
 	float TileSize = 50.f;
 
 	int32 InventoryRows = 0;
 	int32 InventoryColumns = 0;
 	int32 LootRows = 0;
 	int32 LootColumns = 0;
+
+	bool IsEquipment = false;
 
 	TArray<FInventoryLine> Lines;
 
@@ -84,6 +86,8 @@ public:
 public:
 	UPROPERTY(EditAnywhere, Category = Widget)
 	TSubclassOf<UUserWidget> InventoryItemWidget;
+
+	void InitEquipment(class UAC_InventoryBaseComponent* InventoryComponent, float Equipment_TileSize);
 
 	class UInventory_ItemWidget* InventoryItemUI;
 

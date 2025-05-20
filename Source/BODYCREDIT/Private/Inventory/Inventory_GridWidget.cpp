@@ -19,12 +19,11 @@
 void UInventory_GridWidget::InitInventory(class UAC_InventoryBaseComponent* InventoryComponent, float Inventoy_TileSize)
 {
 	InventoryBaseComp = InventoryComponent;
-	TileSize = Inventoy_TileSize;
 	InventoryRows = InventoryBaseComp->Rows;
 	InventoryColumns = InventoryBaseComp->Columns;
 
 	UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Border_Grid->Slot);
-	CanvasSlot->SetSize(FVector2D(InventoryColumns * TileSize, InventoryRows * TileSize));
+	CanvasSlot->SetSize(FVector2D(InventoryColumns * Inventoy_TileSize, InventoryRows * Inventoy_TileSize));
 
 	CreateLineSegment();
 
@@ -32,6 +31,25 @@ void UInventory_GridWidget::InitInventory(class UAC_InventoryBaseComponent* Inve
 	
 	InventoryBaseComp->InventoryChanged.AddDynamic(this, &UInventory_GridWidget::Refresh);
 }	
+
+void UInventory_GridWidget::InitEquipment(UAC_InventoryBaseComponent* InventoryComponent, float Equipment_TileSize)
+{
+	InventoryBaseComp = InventoryComponent;
+	InventoryRows = 1;
+	InventoryColumns = 1;
+	TileSize = Equipment_TileSize;
+
+	IsEquipment = true;
+
+	UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Border_Grid->Slot);
+	CanvasSlot->SetSize(FVector2D(InventoryColumns * Equipment_TileSize, InventoryRows * Equipment_TileSize));
+
+	CreateLineSegment();
+
+	Refresh();
+
+	InventoryBaseComp->InventoryChanged.AddDynamic(this, &UInventory_GridWidget::Refresh);
+}
 
 void UInventory_GridWidget::CreateLineSegment()
 {
@@ -66,32 +84,33 @@ int32 UInventory_GridWidget::NativePaint(const FPaintArgs& Args, const FGeometry
 {
 	Super::NativePaint(Args, AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);
 
-	FVector2D GridSize(InventoryColumns * TileSize, InventoryRows * TileSize);
+	if (!IsEquipment) {
+		FVector2D GridSize(InventoryColumns * TileSize, InventoryRows * TileSize);
 
-	FPaintGeometry GridGeom = AllottedGeometry.ToPaintGeometry(
-		FVector2D::ZeroVector,
-		GridSize
-	);
-
-	for (const FInventoryLine& Line : Lines)
-	{
-		TArray<FVector2D> Points;
-		Points.Add(Line.Start);
-		Points.Add(Line.End);
-
-		FSlateDrawElement::MakeLines(
-			OutDrawElements,
-			LayerId,
-			//AllottedGeometry.ToPaintGeometry(),
-			GridGeom,
-			Points,
-			ESlateDrawEffect::None,
-			FLinearColor::White,
-			true,
-			1.0f
+		FPaintGeometry GridGeom = AllottedGeometry.ToPaintGeometry(
+			FVector2D::ZeroVector,
+			GridSize
 		);
-	}
 
+		for (const FInventoryLine& Line : Lines)
+		{
+			TArray<FVector2D> Points;
+			Points.Add(Line.Start);
+			Points.Add(Line.End);
+
+			FSlateDrawElement::MakeLines(
+				OutDrawElements,
+				LayerId,
+				GridGeom,
+				Points,
+				ESlateDrawEffect::None,
+				FLinearColor::White,
+				true,
+				1.0f
+			);
+		}
+
+	}
 
 	if (!IsCurrentlyHovered()) {
 		return LayerId + 1;
@@ -204,6 +223,8 @@ bool UInventory_GridWidget::IsCurrentlyHovered() const
 	return OwningInventoryWidget->CurrentHoveredGrid == this;
 }
 
+
+
 FGeometry UInventory_GridWidget::GetGridContentGeometry()
 {
 	if (Canvas_Grid)
@@ -234,12 +255,9 @@ FReply UInventory_GridWidget::NativeOnMouseButtonDown(const FGeometry& InGeometr
 bool UInventory_GridWidget::NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
 	Super::NativeOnDragOver(InGeometry, InDragDropEvent, InOperation);
-	//SetFocus();
-	//bIsFocusable = true;
-	//SetKeyboardFocus();
 
 	if (!IsValid(InOperation)) {
-		GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, FString::Printf(TEXT("NativeOnDragOver : %s"), GridID));
+		//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, FString::Printf(TEXT("NativeOnDragOver : %s"), GridID));
 		return false;
 	}
 
@@ -266,8 +284,6 @@ bool UInventory_GridWidget::NativeOnDragOver(const FGeometry& InGeometry, const 
 	TempResult.Y = FMath::TruncToInt(TempResult.Y);
 
 	DraggedItemTopLeftTile = FIntPoint(TempResult.X, TempResult.Y) - ResultIntPoint;
-
-
 
 	return false;
 }
@@ -296,7 +312,6 @@ bool UInventory_GridWidget::NativeOnDrop(const FGeometry& InGeometry, const FDra
 {
 	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
 
-	//bIsFocusable = false;
 	if (!IsCurrentlyHovered()) return false;
 
 	UItemObject* ItemObject = GetPayLoad(InOperation);

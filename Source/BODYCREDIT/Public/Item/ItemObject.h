@@ -7,9 +7,18 @@
 #include "Materials/MaterialInterface.h"
 #include "ItemObject.generated.h"
 
-/**
- * 
- */
+UENUM(BlueprintType)
+enum class EPlayerPart : uint8
+{
+	Basic	 UMETA(DisplayName = "Basic"),
+    Head     UMETA(DisplayName = "Head"),
+    Body     UMETA(DisplayName = "Body"),
+	Arm		 UMETA(DisplayName = "Arm"),
+	Leg      UMETA(DisplayName = "Leg"),
+    Weapon   UMETA(DisplayName = "Weapon"),
+	Bag		UMETA(DisplayName = "Bag"),
+};
+
 UCLASS(BlueprintType, Blueprintable)
 class BODYCREDIT_API UItemObject : public UObject
 {
@@ -43,4 +52,7 @@ public:
 	FIntPoint GetStartPosition();
 
 	int32 ID = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EPlayerPart ItemType = EPlayerPart::Basic;
 };

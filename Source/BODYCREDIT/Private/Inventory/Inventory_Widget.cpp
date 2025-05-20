@@ -26,6 +26,11 @@ void UInventory_Widget::NativeConstruct()
     InventoryGridWidget->PlayerController = PC;
     InventoryGridWidget->OwningInventoryWidget = this;
 
+	//Inventory_GridBody->InitEquipment(InventoryComp, 150);
+	//Inventory_GridBody->GridID = 2;
+	//Inventory_GridBody->PlayerController = PC;
+	//Inventory_GridBody->OwningInventoryWidget = this;
+
     if (bIsLootable) {
         LootingInventoryComp = PlayerCharacter->LootableInventoryComp;
         InventoryItemGridWidget->SetVisibility(ESlateVisibility::Visible);

@@ -119,4 +119,5 @@ void AItem_Base::GetDefaultItemObject()
 	ItemObject->Icon = ItemData.Icon;
 	ItemObject->RotatedIcon = ItemData.RotatedIcon;
 	ItemObject->ItemClass = ItemData.ItemClass;
+	ItemObject->ItemType = ItemData.ItemType;
 }

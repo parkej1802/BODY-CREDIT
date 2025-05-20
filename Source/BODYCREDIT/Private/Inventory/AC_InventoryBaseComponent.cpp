@@ -246,9 +246,6 @@ void UAC_InventoryBaseComponent::PreAddItem()
 		AItem_Base* TempItemBase = GetWorld()->SpawnActor<AItem_Base>(ItemPair.Value);
 		if (IsValid(TempItemBase) && IsValid(TempItemBase->ItemObject))
 		{
-			// int32 CurrentIndex = GameMode->GetItemIndex();
-			//TempItemBase->ItemObject->ID = CurrentIndex;
-			//IndexToObject.Add(CurrentIndex, TempItemBase->ItemObject);
 			TryAddItem(TempItemBase->ItemObject);
 			TempItemBase->Destroy();
 		}

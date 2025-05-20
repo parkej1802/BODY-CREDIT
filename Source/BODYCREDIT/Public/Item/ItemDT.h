@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "ItemObject.h"
 #include "ItemDT.generated.h"
 
 UENUM(BlueprintType)
@@ -65,6 +66,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
     FIntPoint StartPosition;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+    EPlayerPart ItemType;
+
     FItemData()
         : ID(0)
         , Mesh(nullptr)
@@ -80,6 +84,7 @@ public:
         , ItemClass(nullptr)
         , Rotated(false)
         , StartPosition(0, 0)
+        , ItemType(EPlayerPart::Basic)
     {
     }
 };

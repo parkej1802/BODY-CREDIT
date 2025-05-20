@@ -74,6 +74,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UAC_InventoryComponent* InventoryComp;
 
+
+// Equip Item
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UAC_EquipComponent* EquipComp;
+
 /**
  *	Memory Piece Add Function - LHJ (2025.05.12)
  */

@@ -21,6 +21,9 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UInventory_GridWidget* InventoryItemGridWidget;
 
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UInventory_EquipmentWidget* Equip_Head;
+
 	UPROPERTY(EditAnywhere)
 	class UAC_InventoryComponent* InventoryComp;
 
