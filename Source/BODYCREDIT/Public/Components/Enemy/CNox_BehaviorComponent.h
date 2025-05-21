@@ -50,6 +50,7 @@ public:
 public:
 	void SetEnemyType(EEnemyType InType);
 	void SetTarget(class ACNox* InTarget);
+	ACNox* GetTarget();
 
 public:	// For Zero
 	void SetPatrolRoute(class ACPatrolRoute* InPatrolRoute);

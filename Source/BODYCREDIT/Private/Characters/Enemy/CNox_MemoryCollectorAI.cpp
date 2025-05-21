@@ -6,6 +6,7 @@
 #include "Characters/Enemy/CNoxEnemy_Animinstance.h"
 #include "Global.h"
 #include "Characters/Enemy/AI/CEnemyController.h"
+#include "Characters/Enemy/AttackActor/CBeam.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "Transportation/CStair.h"
 #include "Transportation/CVent.h"
@@ -23,6 +24,8 @@ ACNox_MemoryCollectorAI::ACNox_MemoryCollectorAI()
 	GetCapsuleComponent()->SetCapsuleHalfHeight(95.f);
 	GetCapsuleComponent()->SetCapsuleRadius(34.f);
 
+	CHelpers::GetClass<ACBeam>(&BeamOrgCls, TEXT("/Game/Characters/Enemy/AttackActor/BP_LaserBeam.BP_LaserBeam_C"));
+
 	ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClass(
 		TEXT("/Game/Characters/Enemy/Anim/MemoryAnim/ABP_MemoryAnim.ABP_MemoryAnim_C"));
 	if (AnimInstanceClass.Succeeded())
@@ -37,6 +40,50 @@ void ACNox_MemoryCollectorAI::BeginPlay()
 	Super::BeginPlay();
 	CHelpers::FindActors<ACVent>(GetWorld(), AllVent);
 	CHelpers::FindActors<ACStair>(GetWorld(), AllStair);
+
+	CHelpers::GetAssetDynamic(&(EnemyAnim->Attack1Montage),
+	                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_Attack1.AM_Attack1"));
+	CHelpers::GetAssetDynamic(&(EnemyAnim->Attack2Montage),
+	                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_Attack2.AM_Attack2"));
+	CHelpers::GetAssetDynamic(&(EnemyAnim->Attack3Montage),
+	                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_Attack3.AM_Attack3"));
+	CHelpers::GetAssetDynamic(&(EnemyAnim->Attack4Montage),
+	                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_Attack4.AM_Attack4"));
+	CHelpers::GetAssetDynamic(&(EnemyAnim->BeamMontage),
+	                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_Beam.AM_Beam"));
+	CHelpers::GetAssetDynamic(&(EnemyAnim->WavePulseMontage),
+	                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_WavePulse.AM_WavePulse"));
+
+	{
+		// Beam
+		FVector SpawnLocation = FVector::ZeroVector;
+		FRotator SpawnRotation = FRotator::ZeroRotator;
+
+		FActorSpawnParameters params;
+		params.Owner = this;
+		Beam = GetWorld()->SpawnActor<ACBeam>(BeamOrgCls, SpawnLocation, SpawnRotation, params);
+		if (Beam)
+		{
+			Beam->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, FName("BeamSocket"));
+			Beam->SetActorHiddenInGame(true);
+		}
+	}
+}
+
+void ACNox_MemoryCollectorAI::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (bRotateToTarget)
+	{
+		FVector TargetLoc = BehaviorComp->GetTarget()->GetActorLocation();
+		float newYaw = (TargetLoc - GetActorLocation()).GetSafeNormal().Rotation().Yaw;
+		FRotator TargetRot = FRotator(0, newYaw, 0);
+
+		// 보간
+		FRotator NewRot = FMath::RInterpTo(GetActorRotation(), TargetRot, DeltaTime, 5.f);
+		SetActorRotation(NewRot);
+	}
 }
 
 void ACNox_MemoryCollectorAI::SetPerceptionInfo()
@@ -44,6 +91,30 @@ void ACNox_MemoryCollectorAI::SetPerceptionInfo()
 	Super::SetPerceptionInfo();
 
 	RetentionTime = 0.f;
+}
+
+void ACNox_MemoryCollectorAI::GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed,
+                                                  float& OutNewAccelSpeed)
+{
+	switch (InMovementSpeed)
+	{
+	case EEnemyMovementSpeed::Idle:
+		OutNewSpeed = 0.f;
+		OutNewAccelSpeed = 0.f;
+		break;
+	case EEnemyMovementSpeed::Walking:
+		OutNewSpeed = 400.f;
+		OutNewAccelSpeed = 450.f;
+		break;
+	case EEnemyMovementSpeed::Jogging:
+		OutNewSpeed = 500.f;
+		OutNewAccelSpeed = 800.f;
+		break;
+	case EEnemyMovementSpeed::Sprinting:
+		OutNewSpeed = 500.f;
+		OutNewAccelSpeed = 600.f;
+		break;
+	}
 }
 
 void ACNox_MemoryCollectorAI::RegisterMemory(const FMemoryFragment& InNewMemory)
@@ -174,4 +245,20 @@ void ACNox_MemoryCollectorAI::SetPatrolLocation(const FVector& InPatrolLocation)
 FVector ACNox_MemoryCollectorAI::GetPatrolLocation()
 {
 	return BehaviorComp->GetPatrolLocation();
+}
+
+void ACNox_MemoryCollectorAI::ShutBeam()
+{
+	EnemyAnim->PlayBeamAttack();
+}
+
+bool ACNox_MemoryCollectorAI::IsPlayBeam()
+{
+	return EnemyAnim->IsBeamAttacking();
+}
+
+void ACNox_MemoryCollectorAI::BeamAttack()
+{
+	Beam->SetBeamActive(true, BehaviorComp->GetTarget());
+	bRotateToTarget = true;
 }

@@ -69,4 +69,25 @@ public:
 	void JumpShieldMontage();
 	void PlayAttackMontage();
 	bool IsAttacking() const;
+
+public:
+	UPROPERTY(VisibleAnywhere)
+	UAnimMontage* Attack1Montage;
+	UPROPERTY(VisibleAnywhere)
+	UAnimMontage* Attack2Montage;
+	UPROPERTY(VisibleAnywhere)
+	UAnimMontage* Attack3Montage;
+	UPROPERTY(VisibleAnywhere)
+	UAnimMontage* Attack4Montage;
+	UPROPERTY(VisibleAnywhere)
+	UAnimMontage* BeamMontage;
+	UPROPERTY(VisibleAnywhere)
+	UAnimMontage* WavePulseMontage;
+
+public:
+	void PlayBeamAttack();
+	bool IsBeamAttacking() const;
+
+	UFUNCTION()
+	void AnimNotify_BeamStart();
 };

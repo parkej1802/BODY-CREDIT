@@ -4,6 +4,7 @@
 #include "Characters/Enemy/CNoxEnemy_Animinstance.h"
 
 #include "Characters/Enemy/CNox_MedicAndroid.h"
+#include "Characters/Enemy/CNox_MemoryCollectorAI.h"
 #include "Utilities/CLog.h"
 
 void UCNoxEnemy_Animinstance::NativeInitializeAnimation()
@@ -91,4 +92,19 @@ bool UCNoxEnemy_Animinstance::IsAttacking() const
 	}
 
 	return false;
+}
+
+void UCNoxEnemy_Animinstance::PlayBeamAttack()
+{
+	OwnerEnemy->PlayAnimMontage(BeamMontage, 1.0f);
+}
+
+bool UCNoxEnemy_Animinstance::IsBeamAttacking() const
+{
+	return Montage_IsPlaying(BeamMontage);
+}
+
+void UCNoxEnemy_Animinstance::AnimNotify_BeamStart()
+{
+	Cast<ACNox_MemoryCollectorAI>(OwnerEnemy)->BeamAttack();
 }

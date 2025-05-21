@@ -19,8 +19,18 @@ public:
 	ACNox_MemoryCollectorAI();
 
 private:
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class ACBeam> BeamOrgCls;
+	UPROPERTY(visibleAnywhere)
+	class ACBeam* Beam;
+	
+private:
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
 	virtual void SetPerceptionInfo() override;
+
+public:
+	void GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed, float& OutNewAccelSpeed) override;
 
 private:
 	UPROPERTY(EditAnywhere, Category="Memory")
@@ -50,4 +60,11 @@ private:
 public:
 	TArray<class ACStair*> GetAllStair() const { return AllStair; }
 	TArray<class ACVent*> GetAllVent() const { return AllVent; }
+
+public:
+	bool bRotateToTarget = false;
+	
+	void ShutBeam();
+	bool IsPlayBeam();
+	void BeamAttack();
 };

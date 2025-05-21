@@ -34,6 +34,11 @@ void UCNox_BehaviorComponent::SetTarget(class ACNox* InTarget)
 	Blackboard->SetValueAsObject(TargetPlayer, InTarget);
 }
 
+ACNox* UCNox_BehaviorComponent::GetTarget()
+{
+	return Cast<ACNox>(Blackboard->GetValueAsObject(TargetPlayer));
+}
+
 void UCNox_BehaviorComponent::SetPatrolRoute(class ACPatrolRoute* InPatrolRoute)
 {
 	Blackboard->SetValueAsObject(PatrolRoute, InPatrolRoute);
