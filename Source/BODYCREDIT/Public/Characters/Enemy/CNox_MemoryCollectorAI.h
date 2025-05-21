@@ -67,4 +67,5 @@ public:
 	void ShutBeam();
 	bool IsPlayBeam();
 	void BeamAttack();
+	void BeamAttackEnd();
 };

@@ -262,3 +262,10 @@ void ACNox_MemoryCollectorAI::BeamAttack()
 	Beam->SetBeamActive(true, BehaviorComp->GetTarget());
 	bRotateToTarget = true;
 }
+
+void ACNox_MemoryCollectorAI::BeamAttackEnd()
+{
+	EnemyAnim->StopBeamAttack();
+	Beam->SetBeamActive(false, BehaviorComp->GetTarget());
+	bRotateToTarget = false;
+}

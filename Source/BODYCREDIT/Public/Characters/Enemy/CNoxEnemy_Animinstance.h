@@ -86,8 +86,18 @@ public:
 
 public:
 	void PlayBeamAttack();
+	void StopBeamAttack();
 	bool IsBeamAttacking() const;
 
 	UFUNCTION()
 	void AnimNotify_BeamStart();
+
+private:
+	bool loopCheck = false;
+	double LoopStartTime;
+	UPROPERTY(EditDefaultsOnly)
+	float MaxLoopDuration = 2.f;
+
+	UFUNCTION()
+	void AnimNotify_UsingBeamTimeChecker();
 };

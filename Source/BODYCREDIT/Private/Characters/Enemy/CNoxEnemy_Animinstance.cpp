@@ -25,6 +25,17 @@ void UCNoxEnemy_Animinstance::NativeUpdateAnimation(float DeltaSeconds)
 	if (!OwnerEnemy) return;
 
 	Speed = OwnerEnemy->GetVelocity().Size();
+
+	if (loopCheck)
+	{
+		float Elapsed = GetWorld()->GetTimeSeconds() - LoopStartTime;
+		CLog::Print(FString::Printf(TEXT("Elapsed : %.2f"), Elapsed));
+		if (Elapsed >= MaxLoopDuration)
+		{
+			loopCheck = false;
+			Cast<ACNox_MemoryCollectorAI>(OwnerEnemy)->BeamAttackEnd();
+		}
+	}
 }
 
 void UCNoxEnemy_Animinstance::OnAnimMontageEnded(UAnimMontage* Montage, bool bInterrupted)
@@ -42,7 +53,7 @@ void UCNoxEnemy_Animinstance::AnimNotify_PlayIdleMontage()
 
 void UCNoxEnemy_Animinstance::AnimNotify_DistanceToPlayer()
 {
-	if(!OwnerEnemy->IsPlayerInDistance())
+	if (!OwnerEnemy->IsPlayerInDistance())
 		Montage_Stop(0.25f, AttackMontage);
 }
 
@@ -99,6 +110,11 @@ void UCNoxEnemy_Animinstance::PlayBeamAttack()
 	OwnerEnemy->PlayAnimMontage(BeamMontage, 1.0f);
 }
 
+void UCNoxEnemy_Animinstance::StopBeamAttack()
+{
+	OwnerEnemy->StopAnimMontage(BeamMontage);
+}
+
 bool UCNoxEnemy_Animinstance::IsBeamAttacking() const
 {
 	return Montage_IsPlaying(BeamMontage);
@@ -107,4 +123,10 @@ bool UCNoxEnemy_Animinstance::IsBeamAttacking() const
 void UCNoxEnemy_Animinstance::AnimNotify_BeamStart()
 {
 	Cast<ACNox_MemoryCollectorAI>(OwnerEnemy)->BeamAttack();
+}
+
+void UCNoxEnemy_Animinstance::AnimNotify_UsingBeamTimeChecker()
+{
+	loopCheck = true;
+	LoopStartTime = GetWorld()->GetTimeSeconds();
 }

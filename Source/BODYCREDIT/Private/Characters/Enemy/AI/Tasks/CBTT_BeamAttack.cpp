@@ -29,7 +29,10 @@ void UCBTT_BeamAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 		ACNox_MemoryCollectorAI>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(FName("SelfActor"))))
 	{
 		if (!MyEnemy->IsPlayBeam())
+		{
+			OwnerComp.GetBlackboardComponent()->SetValueAsFloat(FName("BeamCoolTime"), 0.f);
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+		}
 	}
 	else
 	{
