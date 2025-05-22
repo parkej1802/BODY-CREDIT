@@ -96,7 +96,7 @@ private:
 	bool loopCheck = false;
 	double LoopStartTime;
 	UPROPERTY(EditDefaultsOnly)
-	float MaxLoopDuration = 2.f;
+	float MaxLoopDuration = 5.f;
 
 	UFUNCTION()
 	void AnimNotify_UsingBeamTimeChecker();

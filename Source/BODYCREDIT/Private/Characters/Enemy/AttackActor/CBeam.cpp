@@ -136,21 +136,26 @@ void ACBeam::SetBeamActive(bool bInActive, AActor* InTarget)
 	TargetActor = InTarget;
 	if (bInActive)
 	{
-		CurPitch = (InTarget->GetActorLocation() - GetActorLocation()).GetSafeNormal().Rotation().Pitch;
-		FireBallVFX->Activate();
+		CurPitch = (InTarget->GetActorLocation() - GetActorLocation()).GetSafeNormal().Rotation().Pitch;		
+		FireBallVFX->Activate(true);
 
 		GetWorldTimerManager().SetTimer(ActiveTimer, [this]()
 		{
-			AttackStart = true;
-			LaserBeamVFX->Activate();
-			HitVFX->Activate();
+			AttackStart = true;			
+			LaserBeamVFX->Activate(true);			
+			HitVFX->Activate(true);
 		}, ActiveDelay, false);
 	}
 	else
 	{
 		AttackStart = false;
-		LaserBeamVFX->Deactivate();
+		FireBallVFX->ResetSystem();
 		FireBallVFX->Deactivate();
+		
+		LaserBeamVFX->ResetSystem();
+		LaserBeamVFX->Deactivate();
+		
+		HitVFX->ResetSystem();
 		HitVFX->Deactivate();
 	}
 }

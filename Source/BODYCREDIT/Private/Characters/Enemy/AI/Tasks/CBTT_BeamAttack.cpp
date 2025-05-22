@@ -1,6 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Characters/Enemy/AI/Tasks/CBTT_BeamAttack.h"
 
 #include "BehaviorTree/BlackboardComponent.h"
@@ -36,6 +33,7 @@ void UCBTT_BeamAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMe
 	}
 	else
 	{
+		OwnerComp.GetBlackboardComponent()->SetValueAsFloat(FName("BeamCoolTime"), 0.f);
 		FinishLatentTask(OwnerComp, EBTNodeResult::Failed);
 	}
 }
