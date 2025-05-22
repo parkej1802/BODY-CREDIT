@@ -89,8 +89,17 @@ public:
 	void StopBeamAttack();
 	bool IsBeamAttacking() const;
 
+private:
 	UFUNCTION()
 	void AnimNotify_BeamStart();
+
+public:
+	void PlayWavePulse();
+	bool IsWavePulseAttacking() const;
+
+private:
+	UFUNCTION()
+	void AnimNotify_WavePulseStart();
 
 private:
 	bool loopCheck = false;

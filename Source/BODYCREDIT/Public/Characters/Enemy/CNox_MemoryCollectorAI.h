@@ -23,6 +23,12 @@ private:
 	TSubclassOf<class ACBeam> BeamOrgCls;
 	UPROPERTY(visibleAnywhere)
 	class ACBeam* Beam;
+
+private:
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class ACWavePulse> WavePulseOrgCls;
+	UPROPERTY(visibleAnywhere)
+	class ACWavePulse* WavePulse;
 	
 private:
 	virtual void BeginPlay() override;
@@ -61,11 +67,17 @@ public:
 	TArray<class ACStair*> GetAllStair() const { return AllStair; }
 	TArray<class ACVent*> GetAllVent() const { return AllVent; }
 
-public:
+private:
 	bool bRotateToTarget = false;
 	
+public:
 	void ShutBeam();
 	bool IsPlayBeam();
 	void BeamAttack();
 	void BeamAttackEnd();
+
+public:
+	void ShutPulseWave();
+	bool IsPlayPulseWave();
+	void PulseWaveAttack();
 };

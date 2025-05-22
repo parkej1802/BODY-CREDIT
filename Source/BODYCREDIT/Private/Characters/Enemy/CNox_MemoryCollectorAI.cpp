@@ -7,6 +7,7 @@
 #include "Global.h"
 #include "Characters/Enemy/AI/CEnemyController.h"
 #include "Characters/Enemy/AttackActor/CBeam.h"
+#include "Characters/Enemy/AttackActor/CWavePulse.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "Transportation/CStair.h"
 #include "Transportation/CVent.h"
@@ -25,6 +26,7 @@ ACNox_MemoryCollectorAI::ACNox_MemoryCollectorAI()
 	GetCapsuleComponent()->SetCapsuleRadius(34.f);
 
 	CHelpers::GetClass<ACBeam>(&BeamOrgCls, TEXT("/Game/Characters/Enemy/AttackActor/BP_LaserBeam.BP_LaserBeam_C"));
+	CHelpers::GetClass<ACWavePulse>(&WavePulseOrgCls, TEXT("/Game/Characters/Enemy/AttackActor/BP_WavePulse.BP_WavePulse_C"));
 
 	ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClass(
 		TEXT("/Game/Characters/Enemy/Anim/MemoryAnim/ABP_MemoryAnim.ABP_MemoryAnim_C"));
@@ -66,6 +68,21 @@ void ACNox_MemoryCollectorAI::BeginPlay()
 		{
 			Beam->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, FName("BeamSocket"));
 			Beam->SetActorHiddenInGame(true);
+		}
+	}
+
+	{
+		// WavePulse
+		FVector SpawnLocation = FVector::ZeroVector;
+		FRotator SpawnRotation = FRotator::ZeroRotator;
+
+		FActorSpawnParameters params;
+		params.Owner = this;
+		WavePulse = GetWorld()->SpawnActor<ACWavePulse>(WavePulseOrgCls, SpawnLocation, SpawnRotation, params);
+		if (WavePulse)
+		{
+			WavePulse->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, FName("PulseWaveSocket"));
+			WavePulse->SetActorHiddenInGame(true);
 		}
 	}
 }
@@ -268,4 +285,19 @@ void ACNox_MemoryCollectorAI::BeamAttackEnd()
 	EnemyAnim->StopBeamAttack();
 	Beam->SetBeamActive(false, BehaviorComp->GetTarget());
 	bRotateToTarget = false;
+}
+
+void ACNox_MemoryCollectorAI::ShutPulseWave()
+{
+	EnemyAnim->PlayWavePulse();
+}
+
+bool ACNox_MemoryCollectorAI::IsPlayPulseWave()
+{
+	return EnemyAnim->IsWavePulseAttacking();
+}
+
+void ACNox_MemoryCollectorAI::PulseWaveAttack()
+{
+	WavePulse->StartWave();
 }

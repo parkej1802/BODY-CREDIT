@@ -130,3 +130,18 @@ void UCNoxEnemy_Animinstance::AnimNotify_UsingBeamTimeChecker()
 	loopCheck = true;
 	LoopStartTime = GetWorld()->GetTimeSeconds();
 }
+
+void UCNoxEnemy_Animinstance::PlayWavePulse()
+{
+	OwnerEnemy->PlayAnimMontage(WavePulseMontage, 1.0f);
+}
+
+bool UCNoxEnemy_Animinstance::IsWavePulseAttacking() const
+{
+	return Montage_IsPlaying(WavePulseMontage);
+}
+
+void UCNoxEnemy_Animinstance::AnimNotify_WavePulseStart()
+{
+	Cast<ACNox_MemoryCollectorAI>(OwnerEnemy)->PulseWaveAttack();
+}
