@@ -21,6 +21,7 @@ void UInventory_GridWidget::InitInventory(class UAC_InventoryBaseComponent* Inve
 	InventoryBaseComp = InventoryComponent;
 	InventoryRows = InventoryBaseComp->Rows;
 	InventoryColumns = InventoryBaseComp->Columns;
+	TileSize = Inventoy_TileSize;
 
 	UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Border_Grid->Slot);
 	CanvasSlot->SetSize(FVector2D(InventoryColumns * Inventoy_TileSize, InventoryRows * Inventoy_TileSize));

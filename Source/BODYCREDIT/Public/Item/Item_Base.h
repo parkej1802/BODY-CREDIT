@@ -13,6 +13,10 @@ UCLASS()
 class BODYCREDIT_API AItem_Base : public AActor
 {
 	GENERATED_BODY()
+
+protected:
+	UPROPERTY(EditAnywhere)
+	class USceneComponent* Root;
 	
 public:	
 	// Sets default values for this actor's properties

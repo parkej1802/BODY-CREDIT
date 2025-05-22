@@ -8,6 +8,7 @@
 #include "Components/Border.h"
 #include "Inventory/Inventory_EquipmentWidget.h"
 #include "Inventory/AC_EquipComponent.h"
+#include "Components/SizeBox.h"
 
 void UInventory_EquipmentTile::NativeConstruct()
 {
@@ -19,7 +20,16 @@ FSlateBrush UInventory_EquipmentTile::GetIconImage()
 
 	FSlateBrush Brush;
 	Brush.SetResourceObject(Material);
-	Brush.ImageSize = FVector2D(100.f, 100.f);
+	/*if (ItemObject && EquipMainWidget)
+	{
+		Brush.ImageSize = NewSize;
+	}
+	else
+	{
+		Brush.ImageSize = FVector2D(BorderSize);
+	}*/
+
+	Brush.ImageSize = FVector2D(BorderSize);
 	return Brush;
 }
 
@@ -29,10 +39,20 @@ void UInventory_EquipmentTile::SetItem(UItemObject* NewItem)
 
 	ItemObject = NewItem;
 
-	if (ItemObject)
+	if (ItemObject && EquipMainWidget)
 	{
+		FIntPoint ItemDim = ItemObject->GetDimension();
+		NewSize = FVector2D(ItemDim.X * EquipMainWidget->TileSize, ItemDim.Y * EquipMainWidget->TileSize);
+		UCanvasPanelSlot* BorderSlot = Cast<UCanvasPanelSlot>(EquipMainWidget->Border_Grid->Slot);
+
+		BorderSize = BorderSlot->GetSize();
+
+		/*SizeBox_BackGround->SetWidthOverride(NewSize.X);
+		SizeBox_BackGround->SetHeightOverride(NewSize.Y);*/
+		
 		UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Image_Item->Slot);
-		CanvasSlot->SetSize(FVector2D(100.f, 100.f));
+		// CanvasSlot->SetSize(NewSize);
+		CanvasSlot->SetSize(BorderSize);
 
 		if (Image_Item)
 		{
@@ -83,6 +103,23 @@ void UInventory_EquipmentTile::NativeOnDragDetected(const FGeometry& InGeometry,
 
 	UDragDropOperation* DragOperation = UWidgetBlueprintLibrary::CreateDragDropOperation(UDragDropOperation::StaticClass());
 	if (!DragOperation) return;
+
+	SizeBox_BackGround->SetWidthOverride(NewSize.X);
+	SizeBox_BackGround->SetHeightOverride(NewSize.Y);
+
+	if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Image_Item->Slot))
+	{
+		CanvasSlot->SetSize(NewSize);
+	}
+
+	if (Image_Item)
+	{
+		FSlateBrush IconBrush;
+		IconBrush.SetResourceObject(ItemObject->GetIcon());
+		IconBrush.ImageSize = NewSize;
+		Image_Item->SetBrush(IconBrush);
+	}
+	
 
 	DragOperation->DefaultDragVisual = this;
 	DragOperation->Pivot = EDragPivot::CenterCenter;

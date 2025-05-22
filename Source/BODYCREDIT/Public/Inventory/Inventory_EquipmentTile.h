@@ -48,6 +48,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EPlayerPart ItemType;
 
+	FVector2D BorderSize;
+
+	FVector2D NewSize;
+
 	FVector2D Size;
 
 	FSlateBrush GetIconImage();

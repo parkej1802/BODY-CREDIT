@@ -24,8 +24,23 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UInventory_EquipmentWidget* Equip_Head;
 
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UInventory_EquipmentWidget* Equip_Arm;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UInventory_EquipmentWidget* Equip_Body;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UInventory_EquipmentWidget* Equip_Leg;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UInventory_EquipmentWidget* Equip_Weapon;
+
 	UPROPERTY(EditAnywhere)
 	class UAC_InventoryComponent* InventoryComp;
+
+	UPROPERTY(EditAnywhere)
+	class UAC_EquipComponent* EquipComp;
 
 	UPROPERTY(EditAnywhere)
 	class UAC_LootingInventoryComponent* LootingInventoryComp;
@@ -33,8 +48,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ACNox_Runner* PlayerCharacter;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	float TileSize = 50.f;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	// float TileSize = 50.f;
 
 	virtual void NativeConstruct() override;
 

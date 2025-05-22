@@ -19,6 +19,10 @@ class BODYCREDIT_API UInventory_EquipmentWidget : public UUserWidget
 public:
 	UItemObject* GetPayLoad(class UDragDropOperation* Operation);
 	
+	
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UBorder* Border_Grid;
+
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UCanvasPanel* Canvas_Grid;
 
@@ -39,6 +43,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UItemObject* ItemObject;
 
+	FVector2D NewSize;
+
+	float TileSize;
+
+	bool DrawDropLocation = false;
+
+	bool IsValidItemType(class UItemObject* TempItemObject) const;
+
+	void InitEquipment();
+
 public:
 	virtual void NativeConstruct() override;
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
@@ -46,4 +60,15 @@ public:
 	virtual bool NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 	virtual void NativeOnDragEnter(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 	virtual void NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+
+	virtual int32 NativePaint(
+		const FPaintArgs& Args,
+		const FGeometry& AllottedGeometry,
+		const FSlateRect& MyCullingRect,
+		FSlateWindowElementList& OutDrawElements,
+		int32 LayerId,
+		const FWidgetStyle& InWidgetStyle,
+		bool bParentEnabled
+	) const override;
+
 };

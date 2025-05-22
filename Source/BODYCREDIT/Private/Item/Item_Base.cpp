@@ -2,6 +2,7 @@
 
 
 #include "Item/Item_Base.h"
+#include "Global.h"
 #include "Item/ItemObject.h"
 #include "Components/SphereComponent.h"
 #include "Engine/StaticMesh.h"
@@ -15,8 +16,11 @@ AItem_Base::AItem_Base()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	
+	CHelpers::CreateComponent<USceneComponent>(this, &Root, "Root");
+
 	SphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
-	RootComponent = SphereComp;
+	SphereComp->SetupAttachment(RootComponent);
 
 	StaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComp"));
 	StaticMeshComp->SetupAttachment(RootComponent);
@@ -47,41 +51,6 @@ void AItem_Base::OnConstruction(const FTransform& Transform)
 	}
 }
 
-
-//#if WITH_EDITOR
-//void AItem_Base::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
-//{
-//	Super::PostEditChangeProperty(PropertyChangedEvent);
-//
-//	ItemDataTable = LoadObject<UDataTable>(nullptr, TEXT("/Game/Item/DT_ItemData.DT_ItemData"));
-//
-//	if (ItemDataTable)
-//	{
-//		FItemData* TempData = ItemDataTable->FindRow<FItemData>(ItemName, ContextString);
-//		if (TempData && TempData->Mesh)
-//		{
-//			ItemData = *TempData;
-//			StaticMeshComp->SetStaticMesh(ItemData.Mesh);
-//		}
-//	}
-//
-//
-//	Dimensions.X = ItemData.Dimensions.X;
-//	Dimensions.Y = ItemData.Dimensions.Y;
-//	Icon = ItemData.Icon;
-//	RotatedIcon = ItemData.RotatedIcon;
-//	ItemClass = ItemData.ItemClass;
-//	
-//
-//	if (GEditor)
-//	{
-//		GEditor->RedrawAllViewports();
-//	}
-//}
-//#endif
-
-
-// Called when the game starts or when spawned
 void AItem_Base::BeginPlay()
 {
 	Super::BeginPlay();
@@ -109,7 +78,6 @@ void AItem_Base::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 			Destroy();
 		}
 	}
-
 }
 
 void AItem_Base::GetDefaultItemObject()

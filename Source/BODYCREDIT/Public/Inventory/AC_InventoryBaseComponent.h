@@ -43,6 +43,9 @@ public:
 
 	bool IsRoomAvailable(class UItemObject* ItemObject, int32 TopLeftIndex);
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float InventoryTileSize = 50.f;
+
 	FInventoryTile IndexToTile(int32 Index);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

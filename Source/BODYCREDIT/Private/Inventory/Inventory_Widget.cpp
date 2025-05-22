@@ -8,6 +8,7 @@
 #include "Item/ItemObject.h"
 #include "GameState_BodyCredit.h"
 #include "Inventory/AC_InventoryComponent.h"
+#include "Inventory/Inventory_EquipmentWidget.h"
 
 void UInventory_Widget::NativeConstruct()
 {
@@ -21,7 +22,7 @@ void UInventory_Widget::NativeConstruct()
 
     InventoryComp = PlayerCharacter->InventoryComp;
 
-    InventoryGridWidget->InitInventory(InventoryComp, TileSize);
+    InventoryGridWidget->InitInventory(InventoryComp, InventoryComp->InventoryTileSize);
     InventoryGridWidget->GridID = 0;
     InventoryGridWidget->PlayerController = PC;
     InventoryGridWidget->OwningInventoryWidget = this;
@@ -31,10 +32,26 @@ void UInventory_Widget::NativeConstruct()
 	//Inventory_GridBody->PlayerController = PC;
 	//Inventory_GridBody->OwningInventoryWidget = this;
 
+    Equip_Head->PlayerCharacter = PlayerCharacter;
+    Equip_Head->InitEquipment();
+
+    Equip_Arm->PlayerCharacter = PlayerCharacter;
+    Equip_Arm->InitEquipment();
+
+    Equip_Body->PlayerCharacter = PlayerCharacter;
+    Equip_Body->InitEquipment();
+
+    Equip_Leg->PlayerCharacter = PlayerCharacter;
+    Equip_Leg->InitEquipment();
+
+    Equip_Weapon->PlayerCharacter = PlayerCharacter;
+    Equip_Weapon->InitEquipment();
+
+
     if (bIsLootable) {
         LootingInventoryComp = PlayerCharacter->LootableInventoryComp;
         InventoryItemGridWidget->SetVisibility(ESlateVisibility::Visible);
-        InventoryItemGridWidget->InitInventory(LootingInventoryComp, TileSize);
+        InventoryItemGridWidget->InitInventory(LootingInventoryComp, InventoryComp->InventoryTileSize);
         InventoryItemGridWidget->GridID = 1;
         InventoryItemGridWidget->OwningInventoryWidget = this;
         InventoryItemGridWidget->PlayerController = PC;
@@ -100,7 +117,7 @@ void UInventory_Widget::IsMouseOnGrid()
         FGeometry GridGeo = InventoryGridWidget->GetGridContentGeometry();
         FVector2D Local = GridGeo.AbsoluteToLocal(MouseScreen);
 
-        if (Local.X >= 0 && Local.Y >= 0&&
+        if (Local.X >= 0 && Local.Y >= 0 &&
             Local.X < GridGeo.GetLocalSize().X &&
             Local.Y < GridGeo.GetLocalSize().Y)
         {
