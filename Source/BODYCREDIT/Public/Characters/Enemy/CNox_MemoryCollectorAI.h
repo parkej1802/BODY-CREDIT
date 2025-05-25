@@ -29,14 +29,15 @@ private:
 	TSubclassOf<class ACWavePulse> WavePulseOrgCls;
 	UPROPERTY(visibleAnywhere)
 	class ACWavePulse* WavePulse;
-	
+
 private:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetPerceptionInfo() override;
 
 public:
-	void GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed, float& OutNewAccelSpeed) override;
+	void GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed,
+	                         float& OutNewAccelSpeed) override;
 
 private:
 	UPROPERTY(EditAnywhere, Category="Memory")
@@ -69,7 +70,7 @@ public:
 
 private:
 	bool bRotateToTarget = false;
-	
+
 public:
 	void ShutBeam();
 	bool IsPlayBeam();
@@ -80,4 +81,23 @@ public:
 	void ShutPulseWave();
 	bool IsPlayPulseWave();
 	void PulseWaveAttack();
+
+private:
+	FCriticalSection ProjectileArrayCriticalSection;
+
+	UPROPERTY()
+	TSubclassOf<class ACRangeProjectile> RangeProjectileCls;
+	UPROPERTY(VisibleAnywhere)
+	TArray<class ACRangeProjectile*> RangeProjectileArray;
+	UPROPERTY(EditAnywhere)
+	int32 SpawnProjectileCount = 16;
+
+	UPROPERTY(EditAnywhere)
+	FVector SpawnScale=FVector(1);
+	
+	void SpawnRangeProjectile();
+
+public:
+	void StartRangeAttack(bool bIsRight);
+	void ReturnToPool(class ACRangeProjectile* ReturnedProjectile);
 };

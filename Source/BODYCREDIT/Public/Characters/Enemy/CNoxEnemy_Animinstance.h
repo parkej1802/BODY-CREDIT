@@ -109,4 +109,14 @@ private:
 
 	UFUNCTION()
 	void AnimNotify_UsingBeamTimeChecker();
+
+private:
+	int8 AttackCombo = 0;
+
+	UFUNCTION()
+	void AnimNotify_SaveAttack();
+	UFUNCTION()
+	void AnimNotify_ResetCombo();
+	UFUNCTION()
+	void AnimNotify_RangeAttack();
 };

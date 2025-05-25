@@ -11,6 +11,7 @@
 #include "Navigation/PathFollowingComponent.h"
 #include "Transportation/CStair.h"
 #include "Transportation/CVent.h"
+#include "Characters/Enemy/AttackActor/CRangeProjectile.h"
 
 ACNox_MemoryCollectorAI::ACNox_MemoryCollectorAI()
 {
@@ -26,7 +27,11 @@ ACNox_MemoryCollectorAI::ACNox_MemoryCollectorAI()
 	GetCapsuleComponent()->SetCapsuleRadius(34.f);
 
 	CHelpers::GetClass<ACBeam>(&BeamOrgCls, TEXT("/Game/Characters/Enemy/AttackActor/BP_LaserBeam.BP_LaserBeam_C"));
-	CHelpers::GetClass<ACWavePulse>(&WavePulseOrgCls, TEXT("/Game/Characters/Enemy/AttackActor/BP_WavePulse.BP_WavePulse_C"));
+	CHelpers::GetClass<ACWavePulse>(&WavePulseOrgCls,
+	                                TEXT("/Game/Characters/Enemy/AttackActor/BP_WavePulse.BP_WavePulse_C"));
+	CHelpers::GetClass<ACRangeProjectile>(&RangeProjectileCls,
+	                                      TEXT(
+		                                      "/Game/Characters/Enemy/AttackActor/BP_RangeProjectile.BP_RangeProjectile_C"));
 
 	ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClass(
 		TEXT("/Game/Characters/Enemy/Anim/MemoryAnim/ABP_MemoryAnim.ABP_MemoryAnim_C"));
@@ -81,9 +86,15 @@ void ACNox_MemoryCollectorAI::BeginPlay()
 		WavePulse = GetWorld()->SpawnActor<ACWavePulse>(WavePulseOrgCls, SpawnLocation, SpawnRotation, params);
 		if (WavePulse)
 		{
-			WavePulse->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, FName("PulseWaveSocket"));
+			WavePulse->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform,
+			                             FName("PulseWaveSocket"));
 			WavePulse->SetActorHiddenInGame(true);
 		}
+	}
+
+	{
+		// RangeProjectile
+		SpawnRangeProjectile();
 	}
 }
 
@@ -300,4 +311,53 @@ bool ACNox_MemoryCollectorAI::IsPlayPulseWave()
 void ACNox_MemoryCollectorAI::PulseWaveAttack()
 {
 	WavePulse->StartWave();
+}
+
+void ACNox_MemoryCollectorAI::SpawnRangeProjectile()
+{
+	// RangeProjectileArray.Reserve(RangeProjectileArray.Max() + SpawnProjectileCount);
+	for (int32 i = 0; i < SpawnProjectileCount; ++i)
+	{
+		FTransform Transform(FRotator::ZeroRotator, FVector::ZeroVector, SpawnScale);
+		FActorSpawnParameters SpawnParam;
+		SpawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		ACRangeProjectile* PoolObj = GetWorld()->SpawnActorDeferred<ACRangeProjectile>(
+			RangeProjectileCls, Transform, this, nullptr,
+			ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+		PoolObj->SetActorEnableCollision(false);
+		PoolObj->SetActorHiddenInGame(true);
+		PoolObj->SetActorTickEnabled(false);
+
+		UGameplayStatics::FinishSpawningActor(PoolObj, Transform);
+		RangeProjectileArray.Emplace(PoolObj);
+	}
+}
+
+void ACNox_MemoryCollectorAI::StartRangeAttack(bool bIsRight)
+{
+	if (RangeProjectileArray.Num() == 0) SpawnRangeProjectile();
+
+	FTransform SpawnTransform = bIsRight
+		                            ? GetMesh()->GetSocketTransform(FName("RangeAttackSocket_r"), RTS_World)
+		                            : GetMesh()->GetSocketTransform(FName("RangeAttackSocket_l"), RTS_World);
+	SpawnTransform.SetScale3D(SpawnScale);
+
+	auto* PoolObj = RangeProjectileArray.Pop();
+	PoolObj->InitializeProjectile(SpawnTransform.GetLocation(), BehaviorComp->GetTarget());
+	PoolObj->SetActorTransform(SpawnTransform);
+	PoolObj->SetActorEnableCollision(true);
+	PoolObj->SetActorHiddenInGame(false);
+	PoolObj->SetActorTickEnabled(true);
+}
+
+void ACNox_MemoryCollectorAI::ReturnToPool(class ACRangeProjectile* ReturnedProjectile)
+{
+	if (RangeProjectileArray.Num() == 0 || !RangeProjectileArray.Contains(ReturnedProjectile))
+	{
+		RangeProjectileArray.Emplace(ReturnedProjectile);
+	}
+
+	ReturnedProjectile->SetActorHiddenInGame(true);
+	ReturnedProjectile->SetActorEnableCollision(false);
+	ReturnedProjectile->SetActorTickEnabled(false);
 }

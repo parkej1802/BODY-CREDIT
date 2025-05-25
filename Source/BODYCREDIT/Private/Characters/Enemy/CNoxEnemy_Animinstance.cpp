@@ -85,9 +85,14 @@ void UCNoxEnemy_Animinstance::PlayAttackMontage()
 {
 	if (OwnerEnemy->IsA(ACNox_MedicAndroid::StaticClass()))
 	{
-		if (AttackMontage)
+		if (AttackMontage) OwnerEnemy->PlayAnimMontage(AttackMontage, 1.0f);
+	}
+	else if (OwnerEnemy->IsA(ACNox_MemoryCollectorAI::StaticClass()))
+	{
+		if (Attack1Montage)
 		{
-			OwnerEnemy->PlayAnimMontage(AttackMontage, 1.0f);
+			AttackCombo = 1;
+			OwnerEnemy->PlayAnimMontage(Attack1Montage, 1.0f);
 		}
 	}
 }
@@ -96,10 +101,14 @@ bool UCNoxEnemy_Animinstance::IsAttacking() const
 {
 	if (OwnerEnemy->IsA(ACNox_MedicAndroid::StaticClass()))
 	{
-		if (AttackMontage && Montage_IsPlaying(AttackMontage))
-		{
+		if (AttackMontage && Montage_IsPlaying(AttackMontage)) return true;
+	}
+	else if (OwnerEnemy->IsA(ACNox_MemoryCollectorAI::StaticClass()))
+	{
+		UAnimMontage* curMontage = OwnerEnemy->GetCurrentMontage();
+		if (curMontage != Attack1Montage || curMontage != Attack2Montage || curMontage != Attack3Montage || curMontage
+			!= Attack4Montage)
 			return true;
-		}
 	}
 
 	return false;
@@ -144,4 +153,52 @@ bool UCNoxEnemy_Animinstance::IsWavePulseAttacking() const
 void UCNoxEnemy_Animinstance::AnimNotify_WavePulseStart()
 {
 	Cast<ACNox_MemoryCollectorAI>(OwnerEnemy)->PulseWaveAttack();
+}
+
+void UCNoxEnemy_Animinstance::AnimNotify_SaveAttack()
+{
+	UAnimMontage* tmpMontage = nullptr;
+	switch (AttackCombo)
+	{
+	case 0:
+		tmpMontage = Attack1Montage;
+		break;
+	case 1:
+		tmpMontage = Attack2Montage;
+		break;
+	case 2:
+		tmpMontage = Attack3Montage;
+		break;
+	case 3:
+		tmpMontage = Attack4Montage;
+		break;
+	default:
+		break;
+	}
+
+	if (tmpMontage)
+	{
+		OwnerEnemy->PlayAnimMontage(tmpMontage, 1.0f);
+		AttackCombo = (AttackCombo + 1) % 4;
+	}
+}
+
+void UCNoxEnemy_Animinstance::AnimNotify_ResetCombo()
+{
+	AttackCombo = 0;
+}
+
+void UCNoxEnemy_Animinstance::AnimNotify_RangeAttack()
+{
+	UAnimMontage* curMontage = OwnerEnemy->GetCurrentMontage();
+	if (curMontage == Attack1Montage || curMontage == Attack3Montage)
+	{
+		// 왼손
+		Cast<ACNox_MemoryCollectorAI>(OwnerEnemy)->StartRangeAttack(false);
+	}
+	else if (curMontage == Attack2Montage || curMontage == Attack4Montage)
+	{
+		// 오른손
+		Cast<ACNox_MemoryCollectorAI>(OwnerEnemy)->StartRangeAttack(true);
+	}
 }
