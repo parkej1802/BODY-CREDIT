@@ -48,7 +48,7 @@ private:
 	UFUNCTION()
 	void OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-protected:
+public:
 	UFUNCTION(BlueprintCallable, Category = "Attach")
 	void AttachTo(FName InSocketName);
 

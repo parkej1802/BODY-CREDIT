@@ -23,6 +23,12 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Enhanced")
 	class UInputAction* IA_FirstWeapon;
 
+	UPROPERTY(VisibleAnywhere, Category = "Enhanced")
+	class UInputAction* IA_Action;
+
+	UPROPERTY(VisibleAnywhere, Category = "Enhanced")
+	class UInputAction* IA_SubAction;
+
 private:
 	UPROPERTY(EditAnywhere, Category = "DataAsset")
 	class UCWeapon_Asset* DataAssets[(int32)EWeaponType::MAX];
