@@ -14,6 +14,7 @@
 #include "Games/CMainGM.h"
 
 #include "Data/CMemoryData.h"
+#include "Inventory/AC_EquipComponent.h"
 
 ACNox_Runner::ACNox_Runner()
 {
@@ -23,6 +24,7 @@ ACNox_Runner::ACNox_Runner()
 	Init();
 
 	InventoryComp = CreateDefaultSubobject<UAC_InventoryComponent>(TEXT("InventoryComp"));
+	EquipComp = CreateDefaultSubobject<UAC_EquipComponent>(TEXT("EquipComp"));
 }
 
 void ACNox_Runner::BeginPlay()

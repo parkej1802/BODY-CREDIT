@@ -56,7 +56,8 @@ void ACNox_MedicAndroid::SetTarget(class ACNox* InTarget)
 	EnemyAnim->StopAllMontages(0.25f);
 }
 
-void ACNox_MedicAndroid::GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed, float& OutNewAccelSpeed)
+void ACNox_MedicAndroid::GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed,
+                                             float& OutNewAccelSpeed)
 {
 	OutNewSpeed = 0.f;
 	OutNewAccelSpeed = 600.f;
@@ -65,6 +66,7 @@ void ACNox_MedicAndroid::GetNewMovementSpeed(const EEnemyMovementSpeed& InMoveme
 	{
 	case EEnemyMovementSpeed::Idle:
 		OutNewSpeed = 0.f;
+		OutNewAccelSpeed = 0.f;
 		break;
 	case EEnemyMovementSpeed::Walking:
 		OutNewSpeed = 400.f;

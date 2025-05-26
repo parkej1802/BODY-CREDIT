@@ -5,6 +5,12 @@
 
 FIntPoint UItemObject::GetDimension()
 {
+	FIntPoint Reverse;
+	if (Rotated) {
+		Reverse.X = Dimensions.Y;
+		Reverse.Y = Dimensions.X;
+		return Reverse;
+	}
 	return Dimensions;
 }
 
@@ -20,5 +26,20 @@ UMaterialInterface* UItemObject::GetIcon()
 TSubclassOf<AItem_Base> UItemObject::GetItemClass()
 {
 	return ItemClass;
+}
+
+void UItemObject::Rotate()
+{
+	Rotated = !Rotated;
+}
+
+bool UItemObject::IsRotated()
+{
+	return Rotated;
+}
+
+FIntPoint UItemObject::GetStartPosition()
+{
+	return StartPosition;
 }
 

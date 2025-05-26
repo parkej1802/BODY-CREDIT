@@ -12,6 +12,7 @@ enum class EMemoryTriggerType : uint8
 	None,
 	Intrusion,
 	Combat,
+	Loitering,
 	Max
 };
 
@@ -79,4 +80,12 @@ struct FMemoryFragment
 			   SourcePlayer == Other.SourcePlayer &&
 			   FMath::IsNearlyEqual(TimeStamp, Other.TimeStamp, 0.01f);
 	}
+};
+
+UENUM(BlueprintType)
+enum class EMovementPathType : uint8
+{
+	None,
+	Vent,
+	Stairs
 };

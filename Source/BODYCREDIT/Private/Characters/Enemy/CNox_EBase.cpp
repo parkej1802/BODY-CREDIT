@@ -27,6 +27,8 @@ ACNox_EBase::ACNox_EBase()
 	CHelpers::GetAsset(&BehaviorTree,
 	                   TEXT("/Game/Characters/Enemy/AI/BT_Nox.BT_Nox"));
 	CHelpers::CreateActorComponent<UCNoxEnemyHPComponent>(this, &HPComp, "HPComp");
+
+	GetCapsuleComponent()->SetCollisionProfileName(FName("Enemy"));
 }
 
 void ACNox_EBase::BeginPlay()
@@ -125,6 +127,7 @@ bool ACNox_EBase::IsPlayerInForwardRange(ACNox* InTarget, float InForwardRange)
 	FVector Start = GetActorLocation();
 	FVector End = Start + GetActorForwardVector() * InForwardRange;
 	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
 	Params.bTraceComplex = true;
 
 	TArray<FHitResult> HitResults;

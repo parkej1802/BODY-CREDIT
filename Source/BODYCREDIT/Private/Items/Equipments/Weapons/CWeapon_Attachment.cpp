@@ -7,7 +7,7 @@
 ACWeapon_Attachment::ACWeapon_Attachment()
 {
 	PrimaryActorTick.bCanEverTick = true;
-
+	
 }
 
 void ACWeapon_Attachment::BeginPlay()
@@ -63,7 +63,7 @@ void ACWeapon_Attachment::OffCollisions()
 void ACWeapon_Attachment::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	CheckTrue(OwnerCharacter == OtherActor);
-	CheckTrue(OwnerCharacter->GetClass() == OtherActor->GetClass());
+	//CheckTrue(OwnerCharacter->GetClass() == OtherActor->GetClass());
 
 	if (OnWeaponAttachmentBeginOverlap.IsBound())
 		OnWeaponAttachmentBeginOverlap.Broadcast(OwnerCharacter, this, Cast<ACNox>(OtherActor));
@@ -73,7 +73,7 @@ void ACWeapon_Attachment::OnComponentBeginOverlap(UPrimitiveComponent* Overlappe
 void ACWeapon_Attachment::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	CheckTrue(OwnerCharacter == OtherActor);
-	CheckTrue(OwnerCharacter->GetClass() == OtherActor->GetClass());
+	//CheckTrue(OwnerCharacter->GetClass() == OtherActor->GetClass());
 
 	if (OnWeaponAttachmentEndOverlap.IsBound())
 		OnWeaponAttachmentEndOverlap.Broadcast(OwnerCharacter, Cast<ACNox>(OtherActor));

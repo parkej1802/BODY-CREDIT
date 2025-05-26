@@ -18,17 +18,48 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UInventory_GridWidget* InventoryGridWidget;
 
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UInventory_GridWidget* InventoryItemGridWidget;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UInventory_EquipmentWidget* Equip_Head;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UInventory_EquipmentWidget* Equip_Arm;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UInventory_EquipmentWidget* Equip_Body;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UInventory_EquipmentWidget* Equip_Leg;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UInventory_EquipmentWidget* Equip_Weapon;
+
 	UPROPERTY(EditAnywhere)
 	class UAC_InventoryComponent* InventoryComp;
+
+	UPROPERTY(EditAnywhere)
+	class UAC_EquipComponent* EquipComp;
+
+	UPROPERTY(EditAnywhere)
+	class UAC_LootingInventoryComponent* LootingInventoryComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ACNox_Runner* PlayerCharacter;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (BindWidget))
-	float TileSize = 50.f;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	// float TileSize = 50.f;
 
 	virtual void NativeConstruct() override;
 
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	virtual bool NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+
+	class UInventory_GridWidget* CurrentHoveredGrid = nullptr;
+	bool bIsLootable = false;
+
+	void IsMouseOnGrid();
 };

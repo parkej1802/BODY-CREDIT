@@ -17,6 +17,6 @@ class BODYCREDIT_API AItem_Sniper : public AItem_Base
 public:
 	AItem_Sniper();
 	
-	virtual UItemObject* GetDefaultItemObject() override;
+	// virtual UItemObject* GetDefaultItemObject() override;
 
 };

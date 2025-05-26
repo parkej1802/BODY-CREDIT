@@ -18,5 +18,5 @@ public:
 	AItem_Grenade();
 
 
-	virtual UItemObject* GetDefaultItemObject() override;
+	// virtual UItemObject* GetDefaultItemObject() override;
 };

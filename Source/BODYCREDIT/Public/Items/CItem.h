@@ -1,17 +1,17 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
+#include "Item/Item_Base.h"
 #include "CItem.generated.h"
 
 UCLASS()
-class BODYCREDIT_API ACItem : public AActor
+class BODYCREDIT_API ACItem : public AItem_Base
 {
 	GENERATED_BODY()
 
-protected:
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere)
-	class USceneComponent* Root;
+//protected:
+//	UPROPERTY(EditAnywhere)
+//	class USceneComponent* Root;
 	
 public:	
 	ACItem();

@@ -19,8 +19,25 @@ public:
 	ACNox_MemoryCollectorAI();
 
 private:
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class ACBeam> BeamOrgCls;
+	UPROPERTY(visibleAnywhere)
+	class ACBeam* Beam;
+
+private:
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class ACWavePulse> WavePulseOrgCls;
+	UPROPERTY(visibleAnywhere)
+	class ACWavePulse* WavePulse;
+
+private:
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
 	virtual void SetPerceptionInfo() override;
+
+public:
+	void GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed,
+	                         float& OutNewAccelSpeed) override;
 
 private:
 	UPROPERTY(EditAnywhere, Category="Memory")
@@ -30,7 +47,57 @@ private:
 	FMemoryFragment CurrentTargetMemory;
 
 	float MemoryExpireTime = 15.0f; // TTL 기준
-	
+
 public:
 	void RegisterMemory(const FMemoryFragment& InNewMemory);
+	void EvaluateMemory();
+	const FMemoryFragment GetMemoryTarget();
+	FORCEINLINE bool IsMemoryEmpty() { return MemoryQueue.Num() > 0; }
+
+public:
+	void SetPatrolLocation(const FVector& InPatrolLocation);
+	FVector GetPatrolLocation();
+
+private:
+	UPROPERTY()
+	TArray<class ACStair*> AllStair;
+	UPROPERTY()
+	TArray<class ACVent*> AllVent;
+
+public:
+	TArray<class ACStair*> GetAllStair() const { return AllStair; }
+	TArray<class ACVent*> GetAllVent() const { return AllVent; }
+
+private:
+	bool bRotateToTarget = false;
+
+public:
+	void ShutBeam();
+	bool IsPlayBeam();
+	void BeamAttack();
+	void BeamAttackEnd();
+
+public:
+	void ShutPulseWave();
+	bool IsPlayPulseWave();
+	void PulseWaveAttack();
+
+private:
+	FCriticalSection ProjectileArrayCriticalSection;
+
+	UPROPERTY()
+	TSubclassOf<class ACRangeProjectile> RangeProjectileCls;
+	UPROPERTY(VisibleAnywhere)
+	TArray<class ACRangeProjectile*> RangeProjectileArray;
+	UPROPERTY(EditAnywhere)
+	int32 SpawnProjectileCount = 16;
+
+	UPROPERTY(EditAnywhere)
+	FVector SpawnScale=FVector(1);
+	
+	void SpawnRangeProjectile();
+
+public:
+	void StartRangeAttack(bool bIsRight);
+	void ReturnToPool(class ACRangeProjectile* ReturnedProjectile);
 };
