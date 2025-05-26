@@ -42,6 +42,11 @@ void ACMainGM::RegisterMemoryFromPlayer(ACNox_Runner* Player, EMemoryTriggerType
 	MemoryCollectorAI->RegisterMemory(NewMemory); // AI에 직접 등록
 }
 
+int32 ACMainGM::GetItemIndex()
+{
+	return ++ItemIndex;
+}
+
 FName ACMainGM::GetZoneID(class ACNox_Runner* Player)
 {
 	if (!Player) return NAME_None;

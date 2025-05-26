@@ -10,11 +10,35 @@
 #include "Materials/MaterialInterface.h"
 #include "Styling/SlateBrush.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Inventory/Inventory_Widget.h"
 
 void UInventory_ItemWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	Refresh();
+	
+}
+
+FSlateBrush UInventory_ItemWidget::GetIconImage()
+{
+	UMaterialInterface* Material = ItemObject->GetIcon();
+
+	FSlateBrush Brush;
+	Brush.SetResourceObject(Material);
+	Brush.ImageSize = FVector2D(FMath::TruncToInt(Size.X), FMath::TruncToInt(Size.Y));
+
+	return Brush;
+}
+
+void UInventory_ItemWidget::CallOnRemoved()
+{
+	OnItemRemoved.Broadcast(ItemObject);
+}
+
+
+void UInventory_ItemWidget::Refresh()
+{
 	if (!IsValid(ItemObject)) return;
 	FIntPoint IntPoint = ItemObject->GetDimension();
 	Size.X = FMath::TruncToInt(IntPoint.X * TileSize - 1);
@@ -32,28 +56,6 @@ void UInventory_ItemWidget::NativeConstruct()
 		Image_Item->SetBrush(IconBrush);
 	}
 }
-
-FSlateBrush UInventory_ItemWidget::GetIconImage()
-{
-	UMaterialInterface* Material = ItemObject->GetIcon();
-
-	FSlateBrush Brush;
-	Brush.SetResourceObject(Material);
-	Brush.ImageSize = FVector2D(FMath::TruncToInt(Size.X), FMath::TruncToInt(Size.Y));
-
-	return Brush;
-}
-
-//void UInventory_ItemWidget::OnRemoved(UItemObject* IObject)
-//{
-//	OnItemRemoved.Broadcast(IObject);
-//}
-
-void UInventory_ItemWidget::CallOnRemoved()
-{
-	OnItemRemoved.Broadcast(ItemObject);
-}
-
 
 FReply UInventory_ItemWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
@@ -97,5 +99,4 @@ void UInventory_ItemWidget::NativeOnDragDetected(const FGeometry& InGeometry, co
 	RemoveFromParent();
 
 	OutOperation = DragOperation;
-
 }

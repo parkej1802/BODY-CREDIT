@@ -7,10 +7,19 @@
 #include "Materials/MaterialInterface.h"
 #include "ItemObject.generated.h"
 
-/**
- * 
- */
-UCLASS()
+UENUM(BlueprintType)
+enum class EPlayerPart : uint8
+{
+	Basic	 UMETA(DisplayName = "Basic"),
+    Head     UMETA(DisplayName = "Head"),
+    Body     UMETA(DisplayName = "Body"),
+	Arm		 UMETA(DisplayName = "Arm"),
+	Leg      UMETA(DisplayName = "Leg"),
+    Weapon   UMETA(DisplayName = "Weapon"),
+	Bag		UMETA(DisplayName = "Bag"),
+};
+
+UCLASS(BlueprintType, Blueprintable)
 class BODYCREDIT_API UItemObject : public UObject
 {
 	GENERATED_BODY()
@@ -35,4 +44,15 @@ public:
 	UMaterialInterface* GetIcon();
 
 	TSubclassOf<AItem_Base> GetItemClass();
+
+	FIntPoint StartPosition;
+
+	void Rotate();
+	bool IsRotated();
+	FIntPoint GetStartPosition();
+
+	int32 ID = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EPlayerPart ItemType = EPlayerPart::Basic;
 };

@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GenericTeamAgentInterface.h"
 #include "Characters/CNox.h"
+#include "AC_LootingInventoryComponent.h"
 #include "CNox_Runner.generated.h"
 
 UCLASS()
@@ -73,10 +74,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UAC_InventoryComponent* InventoryComp;
 
+
+// Equip Item
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UAC_EquipComponent* EquipComp;
+
 /**
  *	Memory Piece Add Function - LHJ (2025.05.12)
  */
 public:	
 	UFUNCTION(BlueprintCallable)
 	void MakeMemoryPiece();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UAC_LootingInventoryComponent* LootableInventoryComp;
 };

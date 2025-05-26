@@ -4,12 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "ItemDT.h"
+#include "Engine/DataTable.h"
+#include "ItemObject.h"
 #include "Item_Base.generated.h"
 
 UCLASS()
 class BODYCREDIT_API AItem_Base : public AActor
 {
 	GENERATED_BODY()
+
+protected:
+	UPROPERTY(EditAnywhere)
+	class USceneComponent* Root;
 	
 public:	
 	// Sets default values for this actor's properties
@@ -36,13 +43,18 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 Height = 1.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UDataTable* ItemDataTable;
+
+	FItemData ItemData = FItemData();
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UMaterialInterface* Icon;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//class UMaterialInterface* Icon;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UMaterialInterface* RotatedIcon;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//class UMaterialInterface* RotatedIcon;
 
+	FString ContextString = TEXT("Item Data");
 public:
 	UFUNCTION()
     void OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -50,7 +62,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UItemObject* ItemObject;
 
-	virtual UItemObject* GetDefaultItemObject();
+	//UItemObject* GetDefaultItemObject();
+	void GetDefaultItemObject();
 
+	virtual void OnConstruction(const FTransform& Transform) override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FName ItemName;
+
+		
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class ACMainGM* GameMode;
+
+//#if WITH_EDITOR
+//	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+//#endif
 };

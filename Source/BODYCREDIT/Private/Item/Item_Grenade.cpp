@@ -6,7 +6,7 @@
 
 AItem_Grenade::AItem_Grenade()
 {
-	ConstructorHelpers::FObjectFinder<UMaterialInterface>Temp_Mat(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Item/Icons/M_Icon_Grenade.M_Icon_Grenade'"));
+	/*ConstructorHelpers::FObjectFinder<UMaterialInterface>Temp_Mat(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Item/Icons/M_Icon_Grenade.M_Icon_Grenade'"));
 	if (Temp_Mat.Succeeded())
 	{
 		Icon = Temp_Mat.Object;
@@ -16,23 +16,25 @@ AItem_Grenade::AItem_Grenade()
 	if (Temp_MatR.Succeeded())
 	{
 		RotatedIcon = Temp_MatR.Object;
-	}
+	}*/
+
+	ItemName = "Grenade";
 
 	Width = 1;
 	Height = 1;
 }
 
-UItemObject* AItem_Grenade::GetDefaultItemObject()
-{
-	UItemObject* NewItem = NewObject<UItemObject>(this, UItemObject::StaticClass());
-
-	NewItem->Dimensions.X = Width;
-	NewItem->Dimensions.Y = Height;
-	NewItem->Icon = Icon;
-	NewItem->RotatedIcon = RotatedIcon;
-	NewItem->ItemClass = GetClass();
-
-	return NewItem;
-
-}
+//UItemObject* AItem_Grenade::GetDefaultItemObject()
+//{
+//	UItemObject* NewItem = NewObject<UItemObject>(this, UItemObject::StaticClass());
+//
+//	/*NewItem->Dimensions.X = Width;
+//	NewItem->Dimensions.Y = Height;
+//	NewItem->Icon = Icon;
+//	NewItem->RotatedIcon = RotatedIcon;
+//	NewItem->ItemClass = GetClass();*/
+//
+//	return NewItem;
+//
+//}
 

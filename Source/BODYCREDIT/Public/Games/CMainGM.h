@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
@@ -12,6 +12,10 @@ class BODYCREDIT_API ACMainGM : public AGameModeBase
 
 public:
 	ACMainGM();
+
+	int32 ItemIndex = 0;
+
+	int32 GetItemIndex();
 
 private:
 	virtual void BeginPlay() override;

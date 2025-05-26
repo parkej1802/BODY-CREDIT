@@ -6,7 +6,7 @@
 
 AItem_Sniper::AItem_Sniper()
 {
-	ConstructorHelpers::FObjectFinder<UMaterialInterface>Temp_Mat(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Item/Icons/M_Icon_Weapon.M_Icon_Weapon'"));
+	/*ConstructorHelpers::FObjectFinder<UMaterialInterface>Temp_Mat(TEXT("/Script/Engine.MaterialInstanceConstant'/Game/Item/Icons/M_Icon_Weapon.M_Icon_Weapon'"));
 	if (Temp_Mat.Succeeded())
 	{
 		Icon = Temp_Mat.Object;
@@ -16,21 +16,20 @@ AItem_Sniper::AItem_Sniper()
 	if (Temp_MatR.Succeeded())
 	{
 		RotatedIcon = Temp_MatR.Object;
-	}
-	
-	Width = 4;
-	Height = 4;
+	}*/
+
+	ItemName = "Sniper";
 }
 
-UItemObject* AItem_Sniper::GetDefaultItemObject()
-{
-	UItemObject* NewItem = NewObject<UItemObject>(this, UItemObject::StaticClass());
-
-	NewItem->Dimensions.X = Width;
-	NewItem->Dimensions.Y = Height;
-	NewItem->Icon = Icon;
-	NewItem->RotatedIcon = RotatedIcon;
-	NewItem->ItemClass = GetClass();
-
-	return NewItem;
-}
+//UItemObject* AItem_Sniper::GetDefaultItemObject()
+//{
+//	UItemObject* NewItem = NewObject<UItemObject>(this, UItemObject::StaticClass());
+//
+//	NewItem->Dimensions.X = Width;
+//	NewItem->Dimensions.Y = Height;
+//	NewItem->Icon = Icon;
+//	NewItem->RotatedIcon = RotatedIcon;
+//	NewItem->ItemClass = GetClass();
+//
+//	return NewItem;
+//}

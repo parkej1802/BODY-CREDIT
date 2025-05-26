@@ -37,13 +37,20 @@ public:
 
 	FSlateBrush GetIconImage();
 
+	UPROPERTY()
+    class UInventory_Widget* MainInventoryWidget;
+
     UPROPERTY(BlueprintAssignable)
     FOnItemRemoved OnItemRemoved;
 
 	UFUNCTION(BlueprintCallable)
     void CallOnRemoved();
 
+	void Refresh();
+
 	virtual void NativeConstruct() override;
+
+	FIntPoint StartTilePosition;
 
 public:
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
