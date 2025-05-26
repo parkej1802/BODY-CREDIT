@@ -69,4 +69,54 @@ public:
 	void JumpShieldMontage();
 	void PlayAttackMontage();
 	bool IsAttacking() const;
+
+public:
+	UPROPERTY(VisibleAnywhere)
+	UAnimMontage* Attack1Montage;
+	UPROPERTY(VisibleAnywhere)
+	UAnimMontage* Attack2Montage;
+	UPROPERTY(VisibleAnywhere)
+	UAnimMontage* Attack3Montage;
+	UPROPERTY(VisibleAnywhere)
+	UAnimMontage* Attack4Montage;
+	UPROPERTY(VisibleAnywhere)
+	UAnimMontage* BeamMontage;
+	UPROPERTY(VisibleAnywhere)
+	UAnimMontage* WavePulseMontage;
+
+public:
+	void PlayBeamAttack();
+	void StopBeamAttack();
+	bool IsBeamAttacking() const;
+
+private:
+	UFUNCTION()
+	void AnimNotify_BeamStart();
+
+public:
+	void PlayWavePulse();
+	bool IsWavePulseAttacking() const;
+
+private:
+	UFUNCTION()
+	void AnimNotify_WavePulseStart();
+
+private:
+	bool loopCheck = false;
+	double LoopStartTime;
+	UPROPERTY(EditDefaultsOnly)
+	float MaxLoopDuration = 5.f;
+
+	UFUNCTION()
+	void AnimNotify_UsingBeamTimeChecker();
+
+private:
+	int8 AttackCombo = 0;
+
+	UFUNCTION()
+	void AnimNotify_SaveAttack();
+	UFUNCTION()
+	void AnimNotify_ResetCombo();
+	UFUNCTION()
+	void AnimNotify_RangeAttack();
 };

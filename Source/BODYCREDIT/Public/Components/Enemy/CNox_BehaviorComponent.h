@@ -36,7 +36,9 @@ private:
 	const FName HealFlagKey = "bHealFlag";
 	const FName EquipShieldKey = "bIsEquipShield";
 
-	const FName PatrolRandomLocationKey = "PatrolRandomLocation";
+	const FName PatrolLocationKey = "PatrolLocation";
+	const FName MemoryTargetKey = "MemoryTarget";
+	const FName HasMemoryTargetKey = "bHasMemoryTarget";
 	
 private:
 	UPROPERTY()
@@ -48,6 +50,7 @@ public:
 public:
 	void SetEnemyType(EEnemyType InType);
 	void SetTarget(class ACNox* InTarget);
+	ACNox* GetTarget();
 
 public:	// For Zero
 	void SetPatrolRoute(class ACPatrolRoute* InPatrolRoute);
@@ -59,6 +62,10 @@ public:	// For Medic Android
 	void SetHealFlag(bool bInHealFlag);
 
 public: // For Memory Collector
-	void SetPatrolRandomLocation(const FVector& InNewLoc);
-	FVector GetPatrolRandomLocation();
+	void SetPatrolLocation(const FVector& InNewLoc);
+	FVector GetPatrolLocation();
+	void SetMemoryTarget(struct FMemoryFragment InMemoryTarget);
+	struct FMemoryFragment GetMemoryTarget();
+	void SetHasMemoryTarget(bool bInHasMemoryTarget);
+	bool GetHasMemoryTarget();
 };
