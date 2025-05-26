@@ -127,6 +127,7 @@ bool ACNox_EBase::IsPlayerInForwardRange(ACNox* InTarget, float InForwardRange)
 	FVector Start = GetActorLocation();
 	FVector End = Start + GetActorForwardVector() * InForwardRange;
 	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
 	Params.bTraceComplex = true;
 
 	TArray<FHitResult> HitResults;

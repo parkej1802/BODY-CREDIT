@@ -102,13 +102,15 @@ bool UCNoxEnemy_Animinstance::IsAttacking() const
 	if (OwnerEnemy->IsA(ACNox_MedicAndroid::StaticClass()))
 	{
 		if (AttackMontage && Montage_IsPlaying(AttackMontage)) return true;
+		else return false;
 	}
 	else if (OwnerEnemy->IsA(ACNox_MemoryCollectorAI::StaticClass()))
 	{
 		UAnimMontage* curMontage = OwnerEnemy->GetCurrentMontage();
-		if (curMontage != Attack1Montage || curMontage != Attack2Montage || curMontage != Attack3Montage || curMontage
-			!= Attack4Montage)
+		if (curMontage == Attack1Montage || curMontage == Attack2Montage || curMontage == Attack3Montage || curMontage
+			== Attack4Montage)
 			return true;
+		else return false;
 	}
 
 	return false;
@@ -161,7 +163,7 @@ void UCNoxEnemy_Animinstance::AnimNotify_SaveAttack()
 	switch (AttackCombo)
 	{
 	case 0:
-		tmpMontage = Attack1Montage;
+		// tmpMontage = Attack1Montage;
 		break;
 	case 1:
 		tmpMontage = Attack2Montage;
