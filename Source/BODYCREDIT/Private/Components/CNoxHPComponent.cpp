@@ -37,10 +37,17 @@ void UCNoxHPComponent::TakeDamage(float Amount, bool ActiveShield, bool& OutIsSh
 	}
 	else
 	{
-		Health = FMath::Max(0.f, Health - Amount);		
+		Health = FMath::Max(0.f, Health - Amount);
 	}
 }
 
 void UCNoxHPComponent::Die()
 {
+	bIsDead = true;
+}
+
+void UCNoxHPComponent::SetStatus(float newHP, float newDefense)
+{
+	Health = newHP;
+	Defense = newDefense;
 }

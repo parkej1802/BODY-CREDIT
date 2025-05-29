@@ -80,21 +80,39 @@ void ACEnemyController::OnPossess(APawn* InPawn)
 	}
 
 	InitPerception();
-	Perception->OnPerceptionUpdated.AddDynamic(this, &ACEnemyController::OnPerceptionUpdated);
+	// Perception->OnPerceptionUpdated.AddDynamic(this, &ACEnemyController::OnPerceptionUpdated);
 	Perception->OnTargetPerceptionInfoUpdated.AddDynamic(this, &ACEnemyController::OnAITargetPerceptionInfoUpdate);
+	// Perception->OnTargetPerceptionForgotten.AddDynamic(this, &ACEnemyController::OnAITargetPerceptionForgotten);
 }
 
 void ACEnemyController::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
 {
 	if (TargetPlayer) return;
 
+	float MinDistance = FLT_MAX;
+	FVector MyLoc = EnemyBase->GetActorLocation();
+
 	// UpdatedActors는 모든 변경 사항에 대해 적용되어 추가된건지 제외된건지 알기 어렵다.
 	TArray<AActor*> actors;
 	Perception->GetCurrentlyPerceivedActors(nullptr, actors);
 	for (auto& actor : actors)
 	{
-		// CLog::Log(actor);
+		if (auto nox = Cast<ACNox>(actor))
+		{
+			float tmpDist = FVector::Dist(MyLoc, actor->GetActorLocation());
+			if (tmpDist < MinDistance)
+			{
+				MinDistance = tmpDist;
+				TargetPlayer = nox;
+			}
+		}
 	}
+
+	StopMovement();
+	EnemyBase->SetTarget(TargetPlayer);
+
+	if (TargetPlayer)
+		OnDetectPlayer.ExecuteIfBound(TargetPlayer);
 }
 
 void ACEnemyController::OnAITargetPerceptionInfoUpdate(const FActorPerceptionUpdateInfo& UpdateInfo)
@@ -126,6 +144,13 @@ void ACEnemyController::OnAITargetPerceptionInfoUpdate(const FActorPerceptionUpd
 
 		StopMovement();
 		EnemyBase->SetTarget(TargetPlayer);
+
+		if (TargetPlayer)
+		{
+			CLog::Log(FString::Printf(
+				TEXT("Origin Actor : %s\tActor Sensed: %s"), *EnemyBase->GetName(), *TargetPlayer->GetName()));
+			OnDetectPlayer.ExecuteIfBound(TargetPlayer);
+		}
 	}
 	else
 	{
@@ -138,10 +163,18 @@ void ACEnemyController::OnAITargetPerceptionInfoUpdate(const FActorPerceptionUpd
 	}
 }
 
+void ACEnemyController::OnAITargetPerceptionForgotten(AActor* Actor)
+{
+	if (TargetPlayer != Actor) return;
+	StopMovement();
+	EnemyBase->SetTarget(TargetPlayer);
+}
+
 void ACEnemyController::UpdateExpiredStimuli(float DeltaTime)
 {
-	if (!bExpiredStimuli) return;
+	// if (!bExpiredStimuli) return;
 	if (!TargetPlayer) return;
+	if (FVector::Dist(TargetPlayer->GetActorLocation(), EnemyBase->GetActorLocation()) < Sight->LoseSightRadius) return;
 	if (EnemyBase->GetRetentionTime() == KINDA_SMALL_NUMBER) return;
 
 	CurExpiredTime += DeltaTime;
@@ -151,5 +184,6 @@ void ACEnemyController::UpdateExpiredStimuli(float DeltaTime)
 		TargetPlayer = nullptr;
 		CurExpiredTime = 0.f;
 		EnemyBase->SetTarget(TargetPlayer);
+		StopMovement();
 	}
 }

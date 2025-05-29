@@ -13,10 +13,13 @@ UCBTD_CheckCondition::UCBTD_CheckCondition()
 }
 
 bool UCBTD_CheckCondition::CalculateRawConditionValue(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) const
-{
+{	
 	if (KeyArray.Num() != ConditionArray.Num()) return false;
 	UBlackboardComponent* Blackboard = OwnerComp.GetBlackboardComponent();
 	if (!Blackboard) return false;
+
+	// auto self = Cast<AActor>(Blackboard->GetValueAsObject(FName("SelfActor")));
+	// CLog::Log(TEXT("self: " + self->GetName()));
 
 	int32 ArrayNum = KeyArray.Num();
 	for (int i = 0; i < ArrayNum; ++i)
