@@ -76,7 +76,7 @@ void ACNox_Zero::GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed,
 		OutNewAccelSpeed = 0.f;
 		break;
 	case EEnemyMovementSpeed::Sprinting:
-		OutNewSpeed = 300.f;
+		OutNewSpeed = 310.f;
 		OutNewAccelSpeed = 1024.f;
 		break;
 	}

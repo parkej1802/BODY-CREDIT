@@ -41,6 +41,8 @@ private: // Sensing Delegate Function
 	void OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors);
 	UFUNCTION()
 	void OnAITargetPerceptionInfoUpdate(const FActorPerceptionUpdateInfo& UpdateInfo);
+	UFUNCTION()
+	void OnAITargetPerceptionForgotten(AActor* Actor);
 
 private:
 	bool bExpiredStimuli = false;
@@ -56,7 +58,7 @@ private:
 
 	void InitPerception();
 
-private:
+public:
 	UPROPERTY()
 	class ACNox* TargetPlayer;
 

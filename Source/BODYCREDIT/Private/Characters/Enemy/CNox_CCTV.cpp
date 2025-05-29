@@ -52,6 +52,7 @@ void ACNox_CCTV::Tick(float DeltaTime)
 void ACNox_CCTV::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
+	CLog::Log(FString::Printf(TEXT("PossessedBy Controller %s"), *NewController->GetName()));
 	if (auto* con = Cast<ACEnemyController>(NewController))
 		con->OnDetectPlayer.BindUObject(this, &ACNox_CCTV::BroadCastDetectPlayer);
 }
@@ -98,35 +99,34 @@ void ACNox_CCTV::RotateCCTV(float DeltaTime)
 void ACNox_CCTV::BroadCastDetectPlayer(ACNox* DetectPlayer)
 {
 	FVector Origin = GetActorLocation();
-	
+
 	TArray<FOverlapResult> OverlapResults;
 	FCollisionQueryParams QueryParams;
-	QueryParams.AddIgnoredActor(this);  // 자기 자신은 제외
-	
+	QueryParams.AddIgnoredActor(this); // 자기 자신은 제외
+
 	bool bHit = GetWorld()->OverlapMultiByObjectType(
 		OverlapResults,
 		Origin,
 		FQuat::Identity,
-		FCollisionObjectQueryParams(ECollisionChannel::ECC_Pawn),  // 폰만 검색
-		FCollisionShape::MakeSphere(300.f),
+		FCollisionObjectQueryParams(ECollisionChannel::ECC_GameTraceChannel3), // 폰만 검색
+		FCollisionShape::MakeSphere(3000.f),
 		QueryParams
 	);
-	
+	// (선택) 디버그 표시
+	DrawDebugSphere(GetWorld(), Origin, 3000.f, 8, FColor::Red, false, 1.0f);
 	if (bHit)
 	{
 		for (auto& Result : OverlapResults)
 		{
 			ACNox_EBase* Enemy = Cast<ACNox_EBase>(Result.GetActor());
 			if (!Enemy) continue;
-	
-			float ZDiff = FMath::Abs(Enemy->GetActorLocation().Z - Origin.Z);
-			if (ZDiff <= 100.f)
+
+			float ZDiff = Enemy->GetActorLocation().Z - Origin.Z;
+			if (FMath::Abs(ZDiff) <= 300.f && ZDiff <= 0.f)
 			{
 				// 플레이어 감지 정보 전달
-				Enemy->SetTarget(DetectPlayer);
-	
-				// (선택) 디버그 표시
-				// DrawDebugSphere(GetWorld(), Enemy->GetActorLocation(), 50.f, 8, FColor::Red, false, 1.0f);
+				// Enemy->SetTarget(DetectPlayer);
+				Enemy->SetTargetCallByDelegate(DetectPlayer);
 			}
 		}
 	}

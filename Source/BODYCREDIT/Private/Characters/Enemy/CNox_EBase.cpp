@@ -86,6 +86,13 @@ void ACNox_EBase::SetTarget(ACNox* InTarget)
 		BehaviorComp->SetTarget(InTarget);
 }
 
+void ACNox_EBase::SetTargetCallByDelegate(ACNox* InTarget)
+{
+	EnemyController->TargetPlayer = InTarget;
+	if (bUseBehaviorTree)
+		BehaviorComp->SetTarget(InTarget);
+}
+
 void ACNox_EBase::HandleAttack(float InAttackDistance)
 {
 	AttackDistance = InAttackDistance;
@@ -159,6 +166,6 @@ bool ACNox_EBase::IsPlayerInForwardRange(ACNox* InTarget, float InForwardRange)
 		}
 	}
 
-	CLog::Log(FString::Printf(TEXT("No Hit")));
+	// CLog::Log(FString::Printf(TEXT("No Hit")));
 	return false;
 }
