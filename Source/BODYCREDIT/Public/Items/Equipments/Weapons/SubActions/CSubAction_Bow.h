@@ -24,7 +24,7 @@ public:
 	FVector CameraLocation;
 };
 
-UCLASS()
+UCLASS(Blueprintable)
 class BODYCREDIT_API UCSubAction_Bow : public UCWeapon_SubAction
 {
 	GENERATED_BODY()

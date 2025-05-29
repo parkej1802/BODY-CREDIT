@@ -1,5 +1,6 @@
 ﻿#include "Items/Equipments/Weapons/SubActions/CSubAction_Bow.h"
 #include "Global.h"
+#include "Curves/CurveVector.h"
 #include "Characters/CNox.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -10,7 +11,7 @@
 
 UCSubAction_Bow::UCSubAction_Bow()
 {
-	//CHelpers::GetAsset<UCurveVector>(&Curve, "CurveVector'/Game/Weapons/Bow/Curve_Aiming.Curve_Aiming'");
+	CHelpers::GetAsset<UCurveVector>(&Curve, "/Script/Engine.CurveVector'/Game/Items/Equipments/Weapons/Bow/Curve_Aiming.Curve_Aiming'");
 
 }
 
@@ -26,7 +27,6 @@ void UCSubAction_Bow::BeginPlay(ACNox* InOwner, ACWeapon_Attachment* InAttachmen
 
 	Timeline.AddInterpVector(Curve, timeline);
 	Timeline.SetPlayRate(AimingSpeed);
-
 
 	ACAttachment_Bow* bow = Cast<ACAttachment_Bow>(InAttachment);
 
