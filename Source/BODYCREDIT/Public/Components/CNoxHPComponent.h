@@ -50,6 +50,8 @@ public:
 	 */
 	virtual void TakeDamage(float Amount, bool ActiveShield, bool& OutIsShieldCrash);
 	virtual void Die();
+	void SetStatus(float newHP, float newDefense);
+	bool IsDead() const { return bIsDead; }
 
 protected:
 	virtual void InitStatus();

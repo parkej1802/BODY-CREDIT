@@ -5,6 +5,7 @@
 
 #include "Characters/Enemy/CNox_MedicAndroid.h"
 #include "Characters/Enemy/CNox_MemoryCollectorAI.h"
+#include "Characters/Enemy/CNox_Zero.h"
 #include "Utilities/CLog.h"
 
 void UCNoxEnemy_Animinstance::NativeInitializeAnimation()
@@ -16,6 +17,7 @@ void UCNoxEnemy_Animinstance::NativeBeginPlay()
 {
 	Super::NativeBeginPlay();
 	this->OnMontageEnded.AddDynamic(this, &UCNoxEnemy_Animinstance::OnAnimMontageEnded);
+	IdleIdx = FMath::RandRange(0, 8);
 }
 
 void UCNoxEnemy_Animinstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -35,6 +37,12 @@ void UCNoxEnemy_Animinstance::NativeUpdateAnimation(float DeltaSeconds)
 			loopCheck = false;
 			Cast<ACNox_MemoryCollectorAI>(OwnerEnemy)->BeamAttackEnd();
 		}
+	}
+
+	if (DesiredRotation != FRotator::ZeroRotator)
+	{
+		float CurrentYaw = OwnerEnemy->GetActorRotation().Yaw;
+		DeltaYaw = FMath::FindDeltaAngleDegrees(CurrentYaw, DesiredRotation.Yaw);
 	}
 }
 
@@ -83,7 +91,8 @@ void UCNoxEnemy_Animinstance::JumpShieldMontage()
 
 void UCNoxEnemy_Animinstance::PlayAttackMontage()
 {
-	if (OwnerEnemy->IsA(ACNox_MedicAndroid::StaticClass()))
+	if (OwnerEnemy->IsA(ACNox_MedicAndroid::StaticClass())||
+		OwnerEnemy->IsA(ACNox_Zero::StaticClass()))
 	{
 		if (AttackMontage) OwnerEnemy->PlayAnimMontage(AttackMontage, 1.0f);
 	}
@@ -99,7 +108,7 @@ void UCNoxEnemy_Animinstance::PlayAttackMontage()
 
 bool UCNoxEnemy_Animinstance::IsAttacking() const
 {
-	if (OwnerEnemy->IsA(ACNox_MedicAndroid::StaticClass()))
+	if (OwnerEnemy->IsA(ACNox_MedicAndroid::StaticClass())||OwnerEnemy->IsA(ACNox_Zero::StaticClass()))
 	{
 		if (AttackMontage && Montage_IsPlaying(AttackMontage)) return true;
 		else return false;

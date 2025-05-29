@@ -6,6 +6,8 @@
 #include "AIController.h"
 #include "CEnemyController.generated.h"
 
+DECLARE_DELEGATE_OneParam(FDetectPlayer, class ACNox*);
+
 /**
  * Enemy AI Controller
  */
@@ -57,4 +59,7 @@ private:
 private:
 	UPROPERTY()
 	class ACNox* TargetPlayer;
+
+public: // CCTV BroadCasting
+	FDetectPlayer OnDetectPlayer;
 };

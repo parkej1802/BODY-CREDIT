@@ -17,6 +17,7 @@ namespace
 
 UCBTT_MoveAlongPatrolRoute::UCBTT_MoveAlongPatrolRoute()
 {
+	bCreateNodeInstance = true;
 	bNotifyTick = true;
 }
 

@@ -20,6 +20,7 @@ public:
 private:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+	virtual void PossessedBy(AController* NewController) override;
 
 private:
 	FRotator InitialRotation;
@@ -47,4 +48,7 @@ private:
 private:
 	UPROPERTY(EditDefaultsOnly)
 	class UStaticMeshComponent* CCTVMesh;
+
+	UFUNCTION()
+	void BroadCastDetectPlayer(ACNox* DetectPlayer);	// 주변 적에게 정보 전달
 };

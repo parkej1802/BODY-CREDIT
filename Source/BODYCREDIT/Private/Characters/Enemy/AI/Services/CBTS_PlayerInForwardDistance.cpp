@@ -6,6 +6,7 @@
 #include "AIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Characters/Enemy/CNox_EBase.h"
+#include "Utilities/CLog.h"
 
 UCBTS_PlayerInForwardDistance::UCBTS_PlayerInForwardDistance()
 {
