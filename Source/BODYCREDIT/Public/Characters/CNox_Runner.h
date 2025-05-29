@@ -34,6 +34,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UCWeaponComponent* Weapon;
 
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	class UCZoomComponent* Zoom;
+
 private:
 	UPROPERTY(VisibleAnywhere, Category = "EnhancedInput")
 	class UInputMappingContext* MappingContext;
