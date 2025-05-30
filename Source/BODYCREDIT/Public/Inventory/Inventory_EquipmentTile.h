@@ -45,6 +45,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UItemObject* ItemObject;
 
+	UPROPERTY(EditAnywhere)
+	class UAC_LootingInventoryComponent* EquipBackpackInventoryComp;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EPlayerPart ItemType;
 

@@ -28,7 +28,7 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UImage* Image_Item;
 
-	float TileSize = 0.f;
+	float TileSize = 75.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UItemObject* ItemObject;

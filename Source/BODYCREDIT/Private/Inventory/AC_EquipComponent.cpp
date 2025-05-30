@@ -3,6 +3,8 @@
 
 #include "Inventory/AC_EquipComponent.h"
 #include "Characters/CNox_Runner.h"
+#include "Inventory/AC_InventoryComponent.h"
+#include "Inventory/Inventory_Widget.h"
 
 // Sets default values for this component's properties
 UAC_EquipComponent::UAC_EquipComponent()
@@ -20,7 +22,7 @@ void UAC_EquipComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-
+	 
 	AActor* OwnerActor = GetOwner();
 
 	if (OwnerActor)
@@ -36,7 +38,10 @@ void UAC_EquipComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// ...
+	if (IsChanged) {
+		IsChanged = false;
+		OnEquipmentChanged();
+	}
 }
 
 void UAC_EquipComponent::EquipItem(EPlayerPart Part, UItemObject* Item)
@@ -61,3 +66,17 @@ bool UAC_EquipComponent::IsEquip(EPlayerPart Part)
 	return false;
 }
 
+void UAC_EquipComponent::SetHasBackpack()
+{
+	if (EquippedItems.Contains(EPlayerPart::Backpack)) {
+		PlayerCharacter->InventoryComp->InventoryMainUI->bHasBackpack = true;
+	}
+	else {
+		PlayerCharacter->InventoryComp->InventoryMainUI->bHasBackpack = false;
+	}
+}
+
+void UAC_EquipComponent::OnEquipmentChanged()
+{
+	EquipmentChanged.Broadcast();
+}

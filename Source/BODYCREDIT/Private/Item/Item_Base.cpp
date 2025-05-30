@@ -10,6 +10,7 @@
 #include "Inventory/AC_InventoryComponent.h"
 #include "Item/ItemDT.h"
 #include "Games/CMainGM.h"
+#include "Item/Functions/ItemStrategy.h"
 
 // Sets default values
 AItem_Base::AItem_Base()
@@ -29,7 +30,7 @@ AItem_Base::AItem_Base()
 
 	ItemObject = CreateDefaultSubobject<UItemObject>(TEXT("ItemObject"));
 	
-
+	ItemStrategy = nullptr;
 }
 
 void AItem_Base::OnConstruction(const FTransform& Transform)
@@ -89,3 +90,19 @@ void AItem_Base::GetDefaultItemObject()
 	ItemObject->ItemClass = ItemData.ItemClass;
 	ItemObject->ItemType = ItemData.ItemType;
 }
+
+void AItem_Base::SetItemStrategy(class UItemStrategy* NewStrategy)
+{
+	if (ItemStrategy != NewStrategy) {
+		ItemStrategy = NewStrategy;
+	}
+}
+
+void AItem_Base::UseItem()
+{
+	if (ItemStrategy)
+	{
+		ItemStrategy->Use(this);
+	}
+}
+

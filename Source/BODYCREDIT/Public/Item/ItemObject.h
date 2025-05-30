@@ -16,7 +16,8 @@ enum class EPlayerPart : uint8
 	Arm		 UMETA(DisplayName = "Arm"),
 	Leg      UMETA(DisplayName = "Leg"),
     Weapon   UMETA(DisplayName = "Weapon"),
-	Bag		UMETA(DisplayName = "Bag"),
+	Backpack	UMETA(DisplayName = "Backpack"),
+	ChestRigs	UMETA(DisplayName = "ChestRigs")
 };
 
 UCLASS(BlueprintType, Blueprintable)
@@ -38,6 +39,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class AItem_Base> ItemClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UAC_LootingInventoryComponent* InventoryComp;
 
 	bool Rotated = false;
 

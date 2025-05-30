@@ -9,12 +9,16 @@
 #include "GameState_BodyCredit.h"
 #include "Inventory/AC_InventoryComponent.h"
 #include "Inventory/Inventory_EquipmentWidget.h"
+#include "Components/CanvasPanelSlot.h"
+#include "Inventory/AC_EquipComponent.h"
+#include "Components/Border.h"
+#include "Inventory/AC_InventoryEquipmentComponent.h"
 
 void UInventory_Widget::NativeConstruct()
 {
     Super::NativeConstruct();
 
-    APlayerController* PC = GetOwningPlayer();
+    PC = GetOwningPlayer();
 
     APawn* Pawn = PC->GetPawn();
 
@@ -22,15 +26,14 @@ void UInventory_Widget::NativeConstruct()
 
     InventoryComp = PlayerCharacter->InventoryComp;
 
+    EquipComp = PlayerCharacter->EquipComp;
+
     InventoryGridWidget->InitInventory(InventoryComp, InventoryComp->InventoryTileSize);
     InventoryGridWidget->GridID = 0;
     InventoryGridWidget->PlayerController = PC;
     InventoryGridWidget->OwningInventoryWidget = this;
 
-	//Inventory_GridBody->InitEquipment(InventoryComp, 150);
-	//Inventory_GridBody->GridID = 2;
-	//Inventory_GridBody->PlayerController = PC;
-	//Inventory_GridBody->OwningInventoryWidget = this;
+    SetItemInventory();
 
     Equip_Head->PlayerCharacter = PlayerCharacter;
     Equip_Head->InitEquipment();
@@ -44,9 +47,17 @@ void UInventory_Widget::NativeConstruct()
     Equip_Leg->PlayerCharacter = PlayerCharacter;
     Equip_Leg->InitEquipment();
 
-    Equip_Weapon->PlayerCharacter = PlayerCharacter;
-    Equip_Weapon->InitEquipment();
+    Equip_Weapon_1->PlayerCharacter = PlayerCharacter;
+    Equip_Weapon_1->InitEquipment();
 
+    Equip_Weapon_2->PlayerCharacter = PlayerCharacter;
+    Equip_Weapon_2->InitEquipment();
+
+    Equip_ChestRigs->PlayerCharacter = PlayerCharacter;
+    Equip_ChestRigs->InitEquipment();
+
+    Equip_Backpack->PlayerCharacter = PlayerCharacter;
+    Equip_Backpack->InitEquipment();
 
     if (bIsLootable) {
         LootingInventoryComp = PlayerCharacter->LootableInventoryComp;
@@ -60,6 +71,8 @@ void UInventory_Widget::NativeConstruct()
 
         InventoryItemGridWidget->SetVisibility(ESlateVisibility::Hidden);
     }
+
+    EquipComp->EquipmentChanged.AddDynamic(this, &UInventory_Widget::SetItemInventory);
 }
 
 void UInventory_Widget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -67,7 +80,6 @@ void UInventory_Widget::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
     Super::NativeTick(MyGeometry, InDeltaTime);
     
     IsMouseOnGrid();
-    
 }
 
 
@@ -138,6 +150,19 @@ void UInventory_Widget::IsMouseOnGrid()
         }
     }
 
+    if (InventoryEquipGridWidget)
+    {
+        FGeometry GridGeo = InventoryEquipGridWidget->GetGridContentGeometry();
+        FVector2D Local = GridGeo.AbsoluteToLocal(MouseScreen);
+
+        if (Local.X > 0 && Local.Y >= 0 &&
+            Local.X < GridGeo.GetLocalSize().X &&
+            Local.Y < GridGeo.GetLocalSize().Y)
+        {
+            NewHoveredGrid = InventoryEquipGridWidget;
+        }
+    }
+
     if (CurrentHoveredGrid != NewHoveredGrid)
     {
         CurrentHoveredGrid = NewHoveredGrid;
@@ -153,13 +178,13 @@ void UInventory_Widget::IsMouseOnGrid()
                 ItemObject->StartPosition.Y = 0;
             }
 
-            /*GEngine->AddOnScreenDebugMessage(
-                -1, 1.f, FColor::Green,
-                FString::Printf(TEXT("Hovered Grid ID: %d"), CurrentHoveredGrid->GridID));*/
+			/* GEngine->AddOnScreenDebugMessage(
+				 -1, 1.f, FColor::Green,
+				 FString::Printf(TEXT("Hovered Grid ID: %d"), CurrentHoveredGrid->GridID));*/
         }
         else
         {
-			/* GEngine->AddOnScreenDebugMessage(
+			/*GEngine->AddOnScreenDebugMessage(
 				 -1, 1.f, FColor::Red, TEXT("No Grid Hovered"));*/
         }
    }
@@ -192,4 +217,33 @@ bool UInventory_Widget::NativeOnDrop(const FGeometry& InGeometry, const FDragDro
     MyGameState->SpawnItemFromActor(ItemObject, InventoryComp->GetOwner(), true);
 
     return true;
+}
+
+void UInventory_Widget::SetItemInventory()
+{
+    if (EquipComp->EquippedItems.Contains(EPlayerPart::Backpack)) {
+        bHasBackpack = true;
+        //if (InventoryGridWidgetClass)
+        //{
+            //InventoryEquipGridWidget = CreateWidget<UInventory_GridWidget>(GetWorld(), InventoryGridWidgetClass);
+
+            if (InventoryEquipGridWidget)
+            {   
+                BackpackItem = EquipComp->EquippedItems[EPlayerPart::Backpack];
+
+                if (BackpackItem && BackpackItem->InventoryComp)
+                {
+                    EquipBackpackInventoryComp = BackpackItem->InventoryComp;
+                    InventoryEquipGridWidget->SetVisibility(ESlateVisibility::Visible);
+                    InventoryEquipGridWidget->InitInventory(EquipBackpackInventoryComp, InventoryComp->InventoryTileSize);
+					InventoryEquipGridWidget->GridID = 2;
+					InventoryEquipGridWidget->PlayerController = PC;
+					InventoryEquipGridWidget->OwningInventoryWidget = this;
+                }
+            }
+        //}
+	}
+    else {
+        InventoryEquipGridWidget->SetVisibility(ESlateVisibility::Hidden);
+    }
 }

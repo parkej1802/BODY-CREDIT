@@ -217,8 +217,6 @@ TMap<UItemObject*, FInventoryTile> UAC_InventoryBaseComponent::GetAllItems()
 	return AllItem;
 }
 
-
-
 void UAC_InventoryBaseComponent::RemoveItem(UItemObject* ItemObject)
 {
 	if (IsValid(ItemObject))

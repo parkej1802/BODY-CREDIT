@@ -34,7 +34,6 @@ void UInventory_EquipmentWidget::InitEquipment()
 			if (CanvasSlot) {
 				//CanvasSlot->SetSize(NewSize);
 				CanvasSlot->SetAutoSize(true);
-
 				/*UCanvasPanelSlot* BorderSlot = Cast<UCanvasPanelSlot>(Border_Grid->Slot);
 				if (BorderSlot)
 				{
@@ -45,6 +44,7 @@ void UInventory_EquipmentWidget::InitEquipment()
 		}
 	}
 }
+
 
 void UInventory_EquipmentWidget::NativeConstruct()
 {
@@ -107,6 +107,7 @@ bool UInventory_EquipmentWidget::NativeOnDrop(const FGeometry& InGeometry, const
 		InventoryItemTileUI = CreateWidget<UInventory_EquipmentTile>(GetWorld(), InventoryItemTileWidget);
 		InventoryItemTileUI->ItemType = ItemType;
 		InventoryItemTileUI->EquipMainWidget = this;
+		InventoryItemTileUI->EquipBackpackInventoryComp = DroppedItem->InventoryComp; 
 		InventoryItemTileUI->SetItem(DroppedItem);
 		EquipComp->EquippedItems.Add(ItemType, DroppedItem);
 
@@ -121,6 +122,7 @@ bool UInventory_EquipmentWidget::NativeOnDrop(const FGeometry& InGeometry, const
 			}*/
 		}
 		DrawDropLocation = false;
+		EquipComp->IsChanged = true;
 		return true;
 	}
 

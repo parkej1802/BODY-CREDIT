@@ -128,6 +128,6 @@ void UInventory_EquipmentTile::NativeOnDragDetected(const FGeometry& InGeometry,
 	RemoveFromParent();
 
 	EquipMainWidget->EquipComp->EquippedItems.Remove(ItemType);
-
+	EquipMainWidget->EquipComp->IsChanged = true;
 	OutOperation = DragOperation;
 }

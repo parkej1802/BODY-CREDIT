@@ -34,7 +34,41 @@ public:
 	class UInventory_EquipmentWidget* Equip_Leg;
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UInventory_EquipmentWidget* Equip_Weapon;
+	class UInventory_EquipmentWidget* Equip_Weapon_1;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UInventory_EquipmentWidget* Equip_Weapon_2;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UInventory_EquipmentWidget* Equip_Backpack;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UInventory_EquipmentWidget* Equip_ChestRigs;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UBorder* Border_Head;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UBorder* Border_Arm;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UBorder* Border_Body;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UBorder* Border_Leg;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UBorder* Border_Weapon_1;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UBorder* Border_Weapon_2;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UBorder* Border_ChestRigs;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UBorder* Border_Backpack;
+
 
 	UPROPERTY(EditAnywhere)
 	class UAC_InventoryComponent* InventoryComp;
@@ -45,9 +79,20 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UAC_LootingInventoryComponent* LootingInventoryComp;
 
+	UPROPERTY(EditAnywhere)
+	class UAC_LootingInventoryComponent* EquipBackpackInventoryComp;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ACNox_Runner* PlayerCharacter;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class APlayerController* PC;
+
+	UPROPERTY()
+	class UItemObject* BackpackItem;
+
+	UFUNCTION()
+	void SetItemInventory();
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	// float TileSize = 50.f;
 
@@ -62,4 +107,12 @@ public:
 	bool bIsLootable = false;
 
 	void IsMouseOnGrid();
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//TSubclassOf<class UInventory_GridWidget> InventoryGridWidgetClass;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UInventory_GridWidget* InventoryEquipGridWidget;
+
+	bool bHasBackpack = false;
 };

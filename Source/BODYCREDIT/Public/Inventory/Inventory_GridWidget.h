@@ -43,7 +43,7 @@ public:
 	UPROPERTY()
     UAC_InventoryBaseComponent* InventoryBaseComp;
 	
-	float TileSize = 50.f;
+	float TileSize = 75.f;
 
 	int32 InventoryRows = 0;
 	int32 InventoryColumns = 0;

@@ -13,10 +13,6 @@ UCLASS()
 class BODYCREDIT_API AItem_Base : public AActor
 {
 	GENERATED_BODY()
-
-protected:
-	UPROPERTY(EditAnywhere)
-	class USceneComponent* Root;
 	
 public:	
 	// Sets default values for this actor's properties
@@ -31,6 +27,10 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USceneComponent* Root;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UStaticMeshComponent* StaticMeshComp;
 
@@ -73,6 +73,15 @@ public:
 		
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ACMainGM* GameMode;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Strategy")
+	class UItemStrategy* ItemStrategy;
+
+	UFUNCTION(BlueprintCallable, Category="Item")
+	void SetItemStrategy(class UItemStrategy* NewStrategy);
+
+	UFUNCTION(BlueprintCallable, Category="Item")
+	void UseItem();
 
 //#if WITH_EDITOR
 //	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
