@@ -223,27 +223,31 @@ void UInventory_Widget::SetItemInventory()
 {
     if (EquipComp->EquippedItems.Contains(EPlayerPart::Backpack)) {
         bHasBackpack = true;
-        //if (InventoryGridWidgetClass)
-        //{
-            //InventoryEquipGridWidget = CreateWidget<UInventory_GridWidget>(GetWorld(), InventoryGridWidgetClass);
 
-            if (InventoryEquipGridWidget)
-            {   
-                BackpackItem = EquipComp->EquippedItems[EPlayerPart::Backpack];
+        if (InventoryEquipGridWidget) {
+            BackpackItem = EquipComp->EquippedItems[EPlayerPart::Backpack];
 
-                if (BackpackItem && BackpackItem->InventoryComp)
-                {
+            if (BackpackItem && BackpackItem->InventoryComp) {
+
+                if (EquipBackpackInventoryComp != BackpackItem->InventoryComp) {
                     EquipBackpackInventoryComp = BackpackItem->InventoryComp;
+
                     InventoryEquipGridWidget->SetVisibility(ESlateVisibility::Visible);
                     InventoryEquipGridWidget->InitInventory(EquipBackpackInventoryComp, InventoryComp->InventoryTileSize);
-					InventoryEquipGridWidget->GridID = 2;
-					InventoryEquipGridWidget->PlayerController = PC;
-					InventoryEquipGridWidget->OwningInventoryWidget = this;
+                    InventoryEquipGridWidget->GridID = 2;
+                    InventoryEquipGridWidget->PlayerController = PC;
+                    InventoryEquipGridWidget->OwningInventoryWidget = this;
+                }
+                else {
+
+                    InventoryEquipGridWidget->SetVisibility(ESlateVisibility::Visible);
                 }
             }
-        //}
-	}
+        }
+    }
     else {
+        EquipBackpackInventoryComp = nullptr;
         InventoryEquipGridWidget->SetVisibility(ESlateVisibility::Hidden);
+        InventoryEquipGridWidget->ClearInventory();
     }
 }

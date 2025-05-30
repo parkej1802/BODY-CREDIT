@@ -15,7 +15,8 @@ enum class EPlayerPart : uint8
     Body     UMETA(DisplayName = "Body"),
 	Arm		 UMETA(DisplayName = "Arm"),
 	Leg      UMETA(DisplayName = "Leg"),
-    Weapon   UMETA(DisplayName = "Weapon"),
+    Weapon1   UMETA(DisplayName = "Weapon1"),
+	Weapon2  UMETA(DisplayName = "Weapon2"),
 	Backpack	UMETA(DisplayName = "Backpack"),
 	ChestRigs	UMETA(DisplayName = "ChestRigs")
 };

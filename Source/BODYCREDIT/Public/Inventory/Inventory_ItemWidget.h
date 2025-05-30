@@ -52,6 +52,8 @@ public:
 
 	FIntPoint StartTilePosition;
 
+	bool IsMoving = false;
+
 public:
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;

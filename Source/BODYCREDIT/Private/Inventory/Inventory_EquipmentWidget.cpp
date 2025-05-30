@@ -97,6 +97,25 @@ bool UInventory_EquipmentWidget::NativeOnDrop(const FGeometry& InGeometry, const
 
 	UItemObject* DroppedItem = GetPayLoad(InOperation);
 
+	//if (EquipComp && EquipComp->EquippedItems.Contains(EPlayerPart::Backpack))
+	//{
+	//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Backpack is equipped!"));
+	//}
+	//else
+	//{
+	//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Backpack is NOT equipped."));
+	//}
+
+	if (ItemType == EPlayerPart::Weapon2 && DroppedItem->ItemType == EPlayerPart::Weapon1)
+	{
+		DroppedItem->ItemType = EPlayerPart::Weapon2;
+	}
+
+	if (ItemType == EPlayerPart::Weapon1 && DroppedItem->ItemType == EPlayerPart::Weapon2)
+	{
+		DroppedItem->ItemType = EPlayerPart::Weapon1;
+	}
+
 	if (DroppedItem->ItemType != ItemType || EquipComp->EquippedItems.Contains(ItemType)) {
 		DrawDropLocation = false;
 		return false;
@@ -123,8 +142,11 @@ bool UInventory_EquipmentWidget::NativeOnDrop(const FGeometry& InGeometry, const
 		}
 		DrawDropLocation = false;
 		EquipComp->IsChanged = true;
+		InventoryItemTileUI->IsMoving = false;
 		return true;
 	}
+	EquipComp->IsChanged = true;
+	InventoryItemTileUI->IsMoving = false;
 
 	return false;
 }
@@ -163,6 +185,14 @@ bool UInventory_EquipmentWidget::IsValidItemType(class UItemObject* TempItemObje
 	if (!TempItemObject || !EquipComp)
 	{
 		return false;
+	}
+
+	bool bIsWeaponSlot = (ItemType == EPlayerPart::Weapon1 || ItemType == EPlayerPart::Weapon2);
+	bool bIsWeaponItem = (TempItemObject->ItemType == EPlayerPart::Weapon1 || TempItemObject->ItemType == EPlayerPart::Weapon2);
+
+	if (bIsWeaponSlot && bIsWeaponItem)
+	{
+		return !EquipComp->EquippedItems.Contains(ItemType);
 	}
 
 	bool bTypeMatch = TempItemObject->ItemType == ItemType;

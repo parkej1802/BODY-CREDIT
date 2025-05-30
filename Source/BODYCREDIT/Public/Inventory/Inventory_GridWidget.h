@@ -93,6 +93,7 @@ public:
 
 	FGeometry GetGridContentGeometry();
 
+	void ClearInventory();
 public:
 
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;

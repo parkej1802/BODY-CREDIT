@@ -69,6 +69,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
     EPlayerPart ItemType;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+    float Weight;
+
     FItemData()
         : ID(0)
         , Mesh(nullptr)
@@ -85,6 +88,7 @@ public:
         , Rotated(false)
         , StartPosition(0, 0)
         , ItemType(EPlayerPart::Basic)
+        , Weight(1)
     {
     }
 };

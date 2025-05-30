@@ -33,6 +33,7 @@ FSlateBrush UInventory_ItemWidget::GetIconImage()
 
 void UInventory_ItemWidget::CallOnRemoved()
 {
+	if (!ItemObject) return;
 	OnItemRemoved.Broadcast(ItemObject);
 }
 
@@ -41,8 +42,8 @@ void UInventory_ItemWidget::Refresh()
 {
 	if (!IsValid(ItemObject)) return;
 	FIntPoint IntPoint = ItemObject->GetDimension();
-	Size.X = FMath::TruncToInt(IntPoint.X * TileSize - 1);
-	Size.Y = FMath::TruncToInt(IntPoint.Y * TileSize - 1);
+	Size.X = FMath::TruncToInt(IntPoint.X * TileSize);
+	Size.Y = FMath::TruncToInt(IntPoint.Y * TileSize);
 
 	SizeBox_BackGround->SetWidthOverride(Size.X);
 	SizeBox_BackGround->SetHeightOverride(Size.Y);
@@ -86,6 +87,9 @@ void UInventory_ItemWidget::NativeOnDragDetected(const FGeometry& InGeometry, co
 
 	UDragDropOperation* DragOperation = UWidgetBlueprintLibrary::CreateDragDropOperation(UDragDropOperation::StaticClass());
 	if (!DragOperation) return;
+
+	if (IsMoving) return;
+	IsMoving = true;
 
 	DragOperation->DefaultDragVisual = this;
 	DragOperation->Pivot = EDragPivot::CenterCenter;

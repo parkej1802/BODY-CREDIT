@@ -85,7 +85,9 @@ int32 UInventory_GridWidget::NativePaint(const FPaintArgs& Args, const FGeometry
 {
 	Super::NativePaint(Args, AllottedGeometry, MyCullingRect, OutDrawElements, LayerId, InWidgetStyle, bParentEnabled);
 
-	if (!IsEquipment) {
+	if (Lines.Num() > 0) 
+	{
+
 		FVector2D GridSize = FVector2D(InventoryColumns * TileSize, InventoryRows * TileSize);
 		FVector2f GridSizeF = FVector2f(GridSize);
 
@@ -111,42 +113,42 @@ int32 UInventory_GridWidget::NativePaint(const FPaintArgs& Args, const FGeometry
 				1.0f
 			);
 		}
-	}
+	
 
-	if (!IsCurrentlyHovered()) {
-		return LayerId + 1;
-	}
-
-	if (UWidgetBlueprintLibrary::IsDragDropping() && DrawDropLocation)
-	{
-		UDragDropOperation* CurrentOp = UWidgetBlueprintLibrary::GetDragDroppingContent();
-		UItemObject* ItemObject = CurrentOp ? Cast<UItemObject>(CurrentOp->Payload) : nullptr;
-
-		if (!ItemObject) {
+		if (!IsCurrentlyHovered()) {
 			return LayerId + 1;
 		}
 
-		FLinearColor PossibleTint = IsRoomAvailableForPayload(ItemObject) ? FLinearColor(0.f, 1.f, 0.f, 0.3f) : FLinearColor(1.f, 0.f, 0.f, 0.3f);
+		if (UWidgetBlueprintLibrary::IsDragDropping() && DrawDropLocation)
+		{
+			UDragDropOperation* CurrentOp = UWidgetBlueprintLibrary::GetDragDroppingContent();
+			UItemObject* ItemObject = CurrentOp ? Cast<UItemObject>(CurrentOp->Payload) : nullptr;
 
-		FVector2D BoxPosition = FVector2D(DraggedItemTopLeftTile.X * TileSize, DraggedItemTopLeftTile.Y * TileSize);
-		FIntPoint Dim = ItemObject->GetDimension();
-		FVector2D BoxSize = FVector2D(Dim.X * TileSize, Dim.Y * TileSize);
+			if (!ItemObject) {
+				return LayerId + 1;
+			}
 
-		FPaintGeometry BoxGeom = AllottedGeometry.ToPaintGeometry(
-			FVector2f(BoxSize),
-			FSlateLayoutTransform(FVector2f(BoxPosition))
-		);
+			FLinearColor PossibleTint = IsRoomAvailableForPayload(ItemObject) ? FLinearColor(0.f, 1.f, 0.f, 0.3f) : FLinearColor(1.f, 0.f, 0.f, 0.3f);
 
-		FSlateDrawElement::MakeBox(
-			OutDrawElements,
-			LayerId + 1,
-			BoxGeom,
-			FCoreStyle::Get().GetBrush("WhiteBrush"),
-			ESlateDrawEffect::None,
-			PossibleTint
-		);
+			FVector2D BoxPosition = FVector2D(DraggedItemTopLeftTile.X * TileSize, DraggedItemTopLeftTile.Y * TileSize);
+			FIntPoint Dim = ItemObject->GetDimension();
+			FVector2D BoxSize = FVector2D(Dim.X * TileSize, Dim.Y * TileSize);
+
+			FPaintGeometry BoxGeom = AllottedGeometry.ToPaintGeometry(
+				FVector2f(BoxSize),
+				FSlateLayoutTransform(FVector2f(BoxPosition))
+			);
+
+			FSlateDrawElement::MakeBox(
+				OutDrawElements,
+				LayerId + 1,
+				BoxGeom,
+				FCoreStyle::Get().GetBrush("WhiteBrush"),
+				ESlateDrawEffect::None,
+				PossibleTint
+			);
+		}
 	}
-
 	return LayerId + 2;
 }
 
@@ -181,7 +183,7 @@ void UInventory_GridWidget::Refresh()
 
 void UInventory_GridWidget::OnItemRemoved(UItemObject* ItemObject)
 {
-	if (!IsCurrentlyHovered()) return;
+	if (!IsCurrentlyHovered() || !ItemObject) return;
 	InventoryBaseComp->RemoveItem(ItemObject);
 }
 
@@ -222,7 +224,7 @@ TPair<bool, bool> UInventory_GridWidget::MousePositionInTile(FVector2D MousePosi
 bool UInventory_GridWidget::IsCurrentlyHovered() const
 {
 	if (!OwningInventoryWidget || !OwningInventoryWidget->CurrentHoveredGrid) return false;
-	GEngine->AddOnScreenDebugMessage(2, 2.0f, FColor::Red, FString::Printf(TEXT("Currently Hovered %d"), OwningInventoryWidget->CurrentHoveredGrid->GridID));
+	// GEngine->AddOnScreenDebugMessage(2, 2.0f, FColor::Red, FString::Printf(TEXT("Currently Hovered %d"), OwningInventoryWidget->CurrentHoveredGrid->GridID));
 	return OwningInventoryWidget->CurrentHoveredGrid == this;
 }
 
@@ -255,6 +257,13 @@ FGeometry UInventory_GridWidget::GetGridContentGeometry()
 	}
 
 	return GetCachedGeometry();
+}
+
+void UInventory_GridWidget::ClearInventory()
+{
+	Lines.Empty();
+	Canvas_Grid->ClearChildren();
+	InventoryBaseComp = nullptr;
 }
 
 FReply UInventory_GridWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -336,6 +345,11 @@ bool UInventory_GridWidget::NativeOnDrop(const FGeometry& InGeometry, const FDra
 
 	if (!IsCurrentlyHovered()) return false;
 
+	if (UInventory_ItemWidget* DraggedWidget = Cast<UInventory_ItemWidget>(InOperation->DefaultDragVisual))
+	{
+		DraggedWidget->IsMoving = false;
+	}
+
 	UItemObject* ItemObject = GetPayLoad(InOperation);
 	FInventoryTile TempTile;
 	if (IsRoomAvailableForPayload(ItemObject))
@@ -351,6 +365,8 @@ bool UInventory_GridWidget::NativeOnDrop(const FGeometry& InGeometry, const FDra
 
 		InventoryBaseComp->TryAddItem(ItemObject);
 	}
+
+	InventoryBaseComp->OnInventoryChanged();
 	
 	return true;
 

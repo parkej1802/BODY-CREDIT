@@ -104,6 +104,9 @@ void UInventory_EquipmentTile::NativeOnDragDetected(const FGeometry& InGeometry,
 	UDragDropOperation* DragOperation = UWidgetBlueprintLibrary::CreateDragDropOperation(UDragDropOperation::StaticClass());
 	if (!DragOperation) return;
 
+	if (IsMoving) return;
+	IsMoving = true;
+
 	SizeBox_BackGround->SetWidthOverride(NewSize.X);
 	SizeBox_BackGround->SetHeightOverride(NewSize.Y);
 

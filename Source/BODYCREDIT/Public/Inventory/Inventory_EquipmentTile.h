@@ -63,6 +63,8 @@ public:
 
 	void SetItem(class UItemObject* NewItem);
 
+	bool IsMoving = false;
+
 public:
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual bool NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
