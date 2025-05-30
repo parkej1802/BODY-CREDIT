@@ -9,7 +9,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FWeaponEquipmentEquip);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FWeaponEquipmentBeginEquip);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FWeaponEquipmentUnequip);
 
-UCLASS()
+UCLASS(Blueprintable)
 class BODYCREDIT_API UCWeapon_Equipment : public UObject
 {
 	GENERATED_BODY()

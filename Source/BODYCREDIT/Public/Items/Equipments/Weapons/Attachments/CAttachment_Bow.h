@@ -13,7 +13,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "View")
 	FVector2D ViewPitchRange = FVector2D(-40, +30);
 
-private:
+public:
 	UPROPERTY(VisibleAnywhere)
 	class USkeletalMeshComponent* SkeletalMesh;
 

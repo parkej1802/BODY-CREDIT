@@ -4,6 +4,7 @@
 #include "EnhancedInputComponent.h"
 #include "Characters/CNox.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CWeaponComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Net/UnrealNetwork.h"
 
@@ -26,6 +27,9 @@ void UCMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	UpdateSpeed();
+
+	if (UCWeaponComponent* weapon = CHelpers::GetComponent<UCWeaponComponent>(OwnerCharacter))
+		if (weapon->IsBowMode()) return;
 
 	if (UCameraComponent* camera = CHelpers::GetComponent<UCameraComponent>(OwnerCharacter))
 		camera->SetFieldOfView(FMath::FInterpTo(camera->FieldOfView, TargetFOV, DeltaTime, FOVInterpSpeed));

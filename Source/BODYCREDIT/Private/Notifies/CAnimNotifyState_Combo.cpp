@@ -1,7 +1,7 @@
 ﻿#include "Notifies/CAnimNotifyState_Combo.h"
 #include "Global.h"
 #include "Components/CWeaponComponent.h"
-#include "Items/Equipments/Weapons/CWeapon_DoAction_Combo.h"
+#include "Items/Equipments/Weapons/DoActions/CWeapon_DoAction_Combo.h"
 
 FString UCAnimNotifyState_Combo::GetNotifyName_Implementation() const
 {
@@ -17,7 +17,6 @@ void UCAnimNotifyState_Combo::NotifyBegin(USkeletalMeshComponent* MeshComp, UAni
 	UCWeaponComponent* weapon = CHelpers::GetComponent<UCWeaponComponent>(MeshComp->GetOwner());
 	CheckNull(weapon);
 	CheckNull(weapon->GetDoAction());
-
 
 	UCWeapon_DoAction_Combo* combo = Cast<UCWeapon_DoAction_Combo>(weapon->GetDoAction());
 	CheckNull(combo);
@@ -35,7 +34,6 @@ void UCAnimNotifyState_Combo::NotifyEnd(USkeletalMeshComponent* MeshComp, UAnimS
 	UCWeaponComponent* weapon = CHelpers::GetComponent<UCWeaponComponent>(MeshComp->GetOwner());
 	CheckNull(weapon);
 	CheckNull(weapon->GetDoAction());
-
 
 	UCWeapon_DoAction_Combo* combo = Cast<UCWeapon_DoAction_Combo>(weapon->GetDoAction());
 	CheckNull(combo);

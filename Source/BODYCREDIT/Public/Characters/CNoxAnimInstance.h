@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+#include "Components/CWeaponComponent.h"
 #include "CNoxAnimInstance.generated.h"
 
 UCLASS()
@@ -14,9 +15,20 @@ public:
 
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
+private:
+	UFUNCTION()
+	void OnWeaponTypeChanged(EWeaponType InPrevType, EWeaponType InNewType);
+
 protected:
 	UPROPERTY(BlueprintReadOnly)
 	class ACNox* OwnerCharacter;
+
+	UPROPERTY()
+	class UCWeaponComponent* Weapon;
+
+protected:
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Animation")
+	EWeaponType WeaponType = EWeaponType::MAX;
 
 protected:
 	UPROPERTY(BlueprintReadOnly)
@@ -27,6 +39,9 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly)
 	bool bFalling;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	bool bAiming;
 
 private:
 	FRotator PrevRotation;
