@@ -14,6 +14,7 @@
 #include "AC_LootingInventoryComponent.h"
 #include "Inventory/AC_InventoryBaseComponent.h"
 #include "Inventory/Inventory_Widget.h"
+#include "Inventory/Inventory_EquipmentTile.h"
 
 
 void UInventory_GridWidget::InitInventory(class UAC_InventoryBaseComponent* InventoryComponent, float Inventoy_TileSize)
@@ -168,7 +169,9 @@ void UInventory_GridWidget::Refresh()
 		if (InventoryItemWidget)
 		{
 			InventoryItemUI = CreateWidget<UInventory_ItemWidget>(GetWorld(), InventoryItemWidget);
-			InventoryItemUI->OnItemRemoved.AddDynamic(this, &UInventory_GridWidget::OnItemRemoved);
+			if (!InventoryItemUI->OnItemRemoved.IsAlreadyBound(this, &UInventory_GridWidget::OnItemRemoved)) {
+				InventoryItemUI->OnItemRemoved.AddDynamic(this, &UInventory_GridWidget::OnItemRemoved);
+			}
 			InventoryItemUI->TileSize = TileSize;
 			InventoryItemUI->ItemObject = Item.Key;
 			InventoryItemUI->MainInventoryWidget = OwningInventoryWidget;
@@ -348,6 +351,10 @@ bool UInventory_GridWidget::NativeOnDrop(const FGeometry& InGeometry, const FDra
 	if (UInventory_ItemWidget* DraggedWidget = Cast<UInventory_ItemWidget>(InOperation->DefaultDragVisual))
 	{
 		DraggedWidget->IsMoving = false;
+	}
+
+	if (UInventory_EquipmentTile* InventoryItemTileUI = Cast<UInventory_EquipmentTile>(InOperation->DefaultDragVisual)) {
+		InventoryItemTileUI->IsMoving = false;
 	}
 
 	if (!IsCurrentlyHovered()) return false;

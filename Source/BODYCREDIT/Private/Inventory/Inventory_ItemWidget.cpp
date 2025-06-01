@@ -42,8 +42,8 @@ void UInventory_ItemWidget::Refresh()
 {
 	if (!IsValid(ItemObject)) return;
 	FIntPoint IntPoint = ItemObject->GetDimension();
-	Size.X = FMath::TruncToInt(IntPoint.X * TileSize);
-	Size.Y = FMath::TruncToInt(IntPoint.Y * TileSize);
+	Size.X = FMath::RoundToInt(IntPoint.X * TileSize);
+	Size.Y = FMath::RoundToInt(IntPoint.Y * TileSize);
 
 	SizeBox_BackGround->SetWidthOverride(Size.X);
 	SizeBox_BackGround->SetHeightOverride(Size.Y);

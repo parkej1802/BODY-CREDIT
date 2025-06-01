@@ -138,6 +138,19 @@ void UInventory_Widget::IsMouseOnGrid()
         }
     }
 
+    if (InventoryEquipChestRigsGridWidget)
+    {
+        FGeometry GridGeo = InventoryEquipChestRigsGridWidget->GetGridContentGeometry();
+        FVector2D Local = GridGeo.AbsoluteToLocal(MouseScreen);
+
+        if (Local.X > 0 && Local.Y >= 0 &&
+            Local.X < GridGeo.GetLocalSize().X &&
+            Local.Y < GridGeo.GetLocalSize().Y)
+        {
+            NewHoveredGrid = InventoryEquipChestRigsGridWidget;
+        }
+    }
+
     if (CurrentHoveredGrid != NewHoveredGrid)
     {
         CurrentHoveredGrid = NewHoveredGrid;
@@ -205,13 +218,42 @@ bool UInventory_Widget::NativeOnDrop(const FGeometry& InGeometry, const FDragDro
 
 void UInventory_Widget::SetItemInventory()
 {
+    if (UItemObject** FoundChestRigs = EquipComp->EquippedItems.Find(EPlayerPart::ChestRigs)) {
+        if (FoundChestRigs && InventoryEquipGridWidget) {
+            ChestRigsItem = *FoundChestRigs;
+
+            if (ChestRigsItem) {
+                if (ChestRigsItem->ItemActorOwner->LootInventoryComp) {
+                    if (EquipBackpackInventoryComp != ChestRigsItem->ItemActorOwner->LootInventoryComp) {
+                        EquipBackpackInventoryComp = ChestRigsItem->ItemActorOwner->LootInventoryComp;
+
+                        InventoryEquipChestRigsGridWidget->SetVisibility(ESlateVisibility::Visible);
+                        InventoryEquipChestRigsGridWidget->InitInventory(EquipChestRigsInventoryComp, InventoryComp->InventoryTileSize);
+                        InventoryEquipChestRigsGridWidget->GridID = 3;
+                        InventoryEquipChestRigsGridWidget->PlayerController = PC;
+                        InventoryEquipChestRigsGridWidget->OwningInventoryWidget = this;
+                    }
+                    else {
+                        InventoryEquipChestRigsGridWidget->SetVisibility(ESlateVisibility::Visible);
+                    }
+                }
+            }
+        }
+    }
+    else {
+        ChestRigsItem = nullptr;
+        EquipBackpackInventoryComp = nullptr;
+        InventoryEquipChestRigsGridWidget->SetVisibility(ESlateVisibility::Hidden);
+        InventoryEquipChestRigsGridWidget->ClearInventory();
+    }
+
 	if (UItemObject** FoundBackpack = EquipComp->EquippedItems.Find(EPlayerPart::Backpack)) {
 
 		if (FoundBackpack && InventoryEquipGridWidget) {
 			BackpackItem = *FoundBackpack;
 
 			if (BackpackItem) {
-				FString Msg = FString::Printf(TEXT("BackpackItem Info:"));
+				/*FString Msg = FString::Printf(TEXT("BackpackItem Info:"));
 
 				Msg += FString::Printf(TEXT("\n- Dimensions: (%d, %d)"), BackpackItem->Dimensions.X, BackpackItem->Dimensions.Y);
 				Msg += FString::Printf(TEXT("\n- Icon: %s"), BackpackItem->Icon ? *BackpackItem->Icon->GetName() : TEXT("nullptr"));
@@ -227,9 +269,9 @@ void UInventory_Widget::SetItemInventory()
 
 				Msg = FString::Printf(TEXT("[SetItemInventory] BackpackItem ptr: %p, InventoryComp ptr: %p"),
 					BackpackItem,
-                    BackpackItem->ItemActorOwner->LootInventoryComp);
+					BackpackItem->ItemActorOwner->LootInventoryComp);
 
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, Msg);
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, Msg);*/
 
 				if (BackpackItem->ItemActorOwner->LootInventoryComp) {
 

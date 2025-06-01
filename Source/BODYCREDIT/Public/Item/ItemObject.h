@@ -33,8 +33,6 @@ public:
 
 	FIntPoint GetDimension();
 
-	void InitializeItemObject();
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UMaterialInterface* Icon;
 
@@ -44,8 +42,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class AItem_Base> ItemClass;
 
-	UPROPERTY()
-	class UAC_LootingInventoryComponent* ItemObjectInventoryComp;
+	//UPROPERTY()
+	//class UAC_LootingInventoryComponent* ItemObjectInventoryComp;
 
 	UPROPERTY()
 	bool Rotated = false;

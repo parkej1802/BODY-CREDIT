@@ -16,14 +16,6 @@ FIntPoint UItemObject::GetDimension()
 	return Dimensions;
 }
 
-void UItemObject::InitializeItemObject()
-{
-	if (!ItemObjectInventoryComp)
-	{
-		ItemObjectInventoryComp = NewObject<UAC_LootingInventoryComponent>(this, UAC_LootingInventoryComponent::StaticClass());
-	}
-}
-
 UMaterialInterface* UItemObject::GetIcon()
 {
 	if (Rotated)

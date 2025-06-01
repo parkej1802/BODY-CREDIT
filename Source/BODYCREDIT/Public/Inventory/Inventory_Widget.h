@@ -82,6 +82,10 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UAC_LootingInventoryComponent* EquipBackpackInventoryComp;
 
+	
+	UPROPERTY(EditAnywhere)
+	class UAC_LootingInventoryComponent* EquipChestRigsInventoryComp;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ACNox_Runner* PlayerCharacter;
 
@@ -90,6 +94,9 @@ public:
 
 	UPROPERTY()
 	class UItemObject* BackpackItem;
+
+	UPROPERTY()
+	class UItemObject* ChestRigsItem;
 
 	UFUNCTION()
 	void SetItemInventory();
@@ -116,6 +123,9 @@ public:
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UInventory_GridWidget* InventoryEquipGridWidget;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UInventory_GridWidget* InventoryEquipChestRigsGridWidget;
 
 	bool bHasBackpack = false;
 };

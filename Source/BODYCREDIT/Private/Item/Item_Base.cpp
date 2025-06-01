@@ -64,7 +64,7 @@ void AItem_Base::BeginPlay()
 		ItemObject = NewObject<UItemObject>(this, TEXT("ItemObject"));
 	}
 	ItemObject->ItemActorOwner = this;
-	ItemObject->InitializeItemObject();
+
 	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &AItem_Base::OnSphereBeginOverlap);
 
 	GameMode = Cast<ACMainGM>(GetWorld()->GetAuthGameMode());

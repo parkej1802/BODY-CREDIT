@@ -42,7 +42,7 @@ void UAC_EquipComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 		IsChanged = false;
 		OnEquipmentChanged();
 	}
-	if (UItemObject** FoundBackpack = EquippedItems.Find(EPlayerPart::Backpack))
+	/*if (UItemObject** FoundBackpack = EquippedItems.Find(EPlayerPart::Backpack))
 	{
 		BackpackItem = *FoundBackpack;
 		if (BackpackItem) {
@@ -62,7 +62,7 @@ void UAC_EquipComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 				}
 			}
 		}
-	}
+	}*/
 	
 }
 
@@ -72,12 +72,12 @@ void UAC_EquipComponent::EquipItem(EPlayerPart Part, UItemObject* Item)
 
 	EquippedItems.Add(Part, Item);
 
-	FString Msg = FString::Printf(TEXT("[EquipItem] Part: %d, ItemObject ptr: %p, InventoryComp ptr: %p"),
-		(int)Part,
-		Item,
-		Item->ItemObjectInventoryComp);
-	if (GEngine)
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, Msg);
+	//FString Msg = FString::Printf(TEXT("[EquipItem] Part: %d, ItemObject ptr: %p, InventoryComp ptr: %p"),
+	//	(int)Part,
+	//	Item,
+	//	Item->ItemObjectInventoryComp);
+	//if (GEngine)
+	//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, Msg);
 }
 
 void UAC_EquipComponent::UnequipItem(EPlayerPart Part)

@@ -10,6 +10,7 @@
 #include "../../Public/Inventory/AC_EquipComponent.h"
 #include "Inventory/AC_InventoryComponent.h"
 #include "Components/Border.h"
+#include "Inventory/Inventory_ItemWidget.h"
 
 void UInventory_EquipmentWidget::InitEquipment()
 {
@@ -98,6 +99,11 @@ bool UInventory_EquipmentWidget::NativeOnDrop(const FGeometry& InGeometry, const
 
 	UItemObject* DroppedItem = GetPayLoad(InOperation);
 
+	if (UInventory_ItemWidget* DraggedWidget = Cast<UInventory_ItemWidget>(InOperation->DefaultDragVisual))
+	{
+		DraggedWidget->IsMoving = false;
+	}
+
 	//if (EquipComp && EquipComp->EquippedItems.Contains(EPlayerPart::Backpack))
 	//{
 	//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Backpack is equipped!"));
@@ -126,12 +132,12 @@ bool UInventory_EquipmentWidget::NativeOnDrop(const FGeometry& InGeometry, const
 		return false;
 	}
 
-	if (DroppedItem)
+	/*if (DroppedItem)
 	{
 		FString Msg = FString::Printf(TEXT("[NativeOnDrop] DroppedItem ptr: %p, InventoryComp ptr: %p"), DroppedItem, DroppedItem->ItemObjectInventoryComp);
 		if (GEngine)
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, Msg);
-	}
+	}*/
 
 	if (DroppedItem && InventoryItemTileWidget)
 	{

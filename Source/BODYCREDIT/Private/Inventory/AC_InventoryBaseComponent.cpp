@@ -40,8 +40,8 @@ void UAC_InventoryBaseComponent::TickComponent(float DeltaTime, ELevelTick TickT
 
 	if (IsDirty)
 	{
-		IsDirty = false;
 		OnInventoryChanged();
+		IsDirty = false;
 	}
 }
 
