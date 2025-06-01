@@ -43,6 +43,7 @@ public:
 	UPROPERTY()
     UAC_InventoryBaseComponent* InventoryBaseComp;
 	
+	UPROPERTY()
 	float TileSize = 75.f;
 
 	int32 InventoryRows = 0;
@@ -50,8 +51,10 @@ public:
 	int32 LootRows = 0;
 	int32 LootColumns = 0;
 
+	UPROPERTY()
 	bool IsEquipment = false;
 
+	UPROPERTY()
 	TArray<FInventoryLine> Lines;
 
 	virtual int32 NativePaint(
@@ -75,20 +78,24 @@ public:
 
 	bool IsRoomAvailableForPayload(class UItemObject* ItemObject) const;
 
+	UPROPERTY()
 	FIntPoint DraggedItemTopLeftTile;
+
+	UPROPERTY()
 	bool DrawDropLocation = false;
 
 	TPair<bool, bool> MousePositionInTile(FVector2D MousePosition);
 
 	bool IsCurrentlyHovered() const;
 
-
+	
 public:
 	UPROPERTY(EditAnywhere, Category = Widget)
 	TSubclassOf<UUserWidget> InventoryItemWidget;
 
 	void InitEquipment(class UAC_InventoryBaseComponent* InventoryComponent, float Equipment_TileSize);
 
+	UPROPERTY()
 	class UInventory_ItemWidget* InventoryItemUI;
 
 	FGeometry GetGridContentGeometry();

@@ -2,6 +2,8 @@
 
 
 #include "Item/ItemObject.h"
+#include "AC_LootingInventoryComponent.h"
+
 
 FIntPoint UItemObject::GetDimension()
 {
@@ -12,6 +14,14 @@ FIntPoint UItemObject::GetDimension()
 		return Reverse;
 	}
 	return Dimensions;
+}
+
+void UItemObject::InitializeItemObject()
+{
+	if (!ItemObjectInventoryComp)
+	{
+		ItemObjectInventoryComp = NewObject<UAC_LootingInventoryComponent>(this, UAC_LootingInventoryComponent::StaticClass());
+	}
 }
 
 UMaterialInterface* UItemObject::GetIcon()

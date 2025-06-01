@@ -56,11 +56,19 @@ void AItem_Base::BeginPlay()
 {
 	Super::BeginPlay();
 
+	ItemObject = NewObject<UItemObject>(this, TEXT("ItemObject"));
+	GetDefaultItemObject();
+	if (!ItemObject)
+	{
+		ItemObject = NewObject<UItemObject>(this, TEXT("ItemObject"));
+	}
+	ItemObject->ItemActorOwner = this;
+	ItemObject->InitializeItemObject();
 	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &AItem_Base::OnSphereBeginOverlap);
 
 	GameMode = Cast<ACMainGM>(GetWorld()->GetAuthGameMode());
 	
-	ItemObject->ID = GameMode->GetItemIndex();
+	// ItemObject->ID = GameMode->GetItemIndex();
 }
 
 // Called every frame
@@ -76,7 +84,9 @@ void AItem_Base::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 	{
 		if (PlayerCharacter->InventoryComp->TryAddItem(ItemObject)) 
 		{
-			Destroy();
+			/*Destroy();*/
+			SetActorHiddenInGame(true);
+			SetActorEnableCollision(false);
 		}
 	}
 }

@@ -16,7 +16,8 @@ void UInventory_EquipmentWidget::InitEquipment()
 	TileSize = PlayerCharacter->InventoryComp->InventoryTileSize;
 	EquipComp = PlayerCharacter->EquipComp;
 
-	if (EquipComp->EquippedItems.Contains(ItemType)) {
+	UItemObject** FoundItem = EquipComp->EquippedItems.Find(ItemType);
+	if (FoundItem && *FoundItem) {
 		if (InventoryItemTileWidget)
 		{
 			InventoryItemTileUI = CreateWidget<UInventory_EquipmentTile>(GetWorld(), InventoryItemTileWidget);
@@ -116,17 +117,30 @@ bool UInventory_EquipmentWidget::NativeOnDrop(const FGeometry& InGeometry, const
 		DroppedItem->ItemType = EPlayerPart::Weapon1;
 	}
 
-	if (DroppedItem->ItemType != ItemType || EquipComp->EquippedItems.Contains(ItemType)) {
+	UItemObject** FoundItem = EquipComp->EquippedItems.Find(ItemType);
+	bool bSlot = (FoundItem && *FoundItem);
+
+	if (DroppedItem->ItemType != ItemType || bSlot)
+	{
 		DrawDropLocation = false;
 		return false;
 	}
 
-	if (InventoryItemTileWidget)
+	if (DroppedItem)
+	{
+		FString Msg = FString::Printf(TEXT("[NativeOnDrop] DroppedItem ptr: %p, InventoryComp ptr: %p"), DroppedItem, DroppedItem->ItemObjectInventoryComp);
+		if (GEngine)
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Cyan, Msg);
+	}
+
+	if (DroppedItem && InventoryItemTileWidget)
 	{
 		InventoryItemTileUI = CreateWidget<UInventory_EquipmentTile>(GetWorld(), InventoryItemTileWidget);
 		InventoryItemTileUI->ItemType = ItemType;
 		InventoryItemTileUI->EquipMainWidget = this;
-		InventoryItemTileUI->EquipBackpackInventoryComp = DroppedItem->InventoryComp; 
+		/*if (DroppedItem->ItemType == EPlayerPart::Backpack) {
+			InventoryItemTileUI->EquipBackpackInventoryComp = DroppedItem->ItemObjectInventoryComp;
+		}*/
 		InventoryItemTileUI->SetItem(DroppedItem);
 		EquipComp->EquippedItems.Add(ItemType, DroppedItem);
 
@@ -190,15 +204,15 @@ bool UInventory_EquipmentWidget::IsValidItemType(class UItemObject* TempItemObje
 	bool bIsWeaponSlot = (ItemType == EPlayerPart::Weapon1 || ItemType == EPlayerPart::Weapon2);
 	bool bIsWeaponItem = (TempItemObject->ItemType == EPlayerPart::Weapon1 || TempItemObject->ItemType == EPlayerPart::Weapon2);
 
+	UItemObject** FoundItem = EquipComp->EquippedItems.Find(ItemType);
+	bool bSlotEmpty = !(FoundItem && *FoundItem);
+
 	if (bIsWeaponSlot && bIsWeaponItem)
 	{
-		return !EquipComp->EquippedItems.Contains(ItemType);
+		return bSlotEmpty;
 	}
 
 	bool bTypeMatch = TempItemObject->ItemType == ItemType;
 
-	bool bSlotEmpty = !EquipComp->EquippedItems.Contains(ItemType);
-
 	return bTypeMatch && bSlotEmpty;
 }
-

@@ -83,13 +83,13 @@ void UInventory_ItemWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent
 
 void UInventory_ItemWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
 {
+	if (IsMoving) return;
+	IsMoving = true;
+
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
 
 	UDragDropOperation* DragOperation = UWidgetBlueprintLibrary::CreateDragDropOperation(UDragDropOperation::StaticClass());
 	if (!DragOperation) return;
-
-	if (IsMoving) return;
-	IsMoving = true;
 
 	DragOperation->DefaultDragVisual = this;
 	DragOperation->Pivot = EDragPivot::CenterCenter;

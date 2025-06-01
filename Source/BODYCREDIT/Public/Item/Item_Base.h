@@ -46,6 +46,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UDataTable* ItemDataTable;
 
+	UPROPERTY()
 	FItemData ItemData = FItemData();
 	
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -54,12 +55,13 @@ public:
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	//class UMaterialInterface* RotatedIcon;
 
+	UPROPERTY()
 	FString ContextString = TEXT("Item Data");
 public:
 	UFUNCTION()
     void OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY()
 	class UItemObject* ItemObject;
 
 	//UItemObject* GetDefaultItemObject();
@@ -82,6 +84,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="Item")
 	void UseItem();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UAC_LootingInventoryComponent* LootInventoryComp;
 
 //#if WITH_EDITOR
 //	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;

@@ -106,8 +106,10 @@ void UAC_InventoryBaseComponent::AddItemAt(class UItemObject* ItemObject, int32 
 			if (IsTileValid(ResultTile))
 			{
 				int32 CurrentIndex = TileToIndex(ResultTile);
-				Items[CurrentIndex] = ItemObject;
-				IndexToObject.Add(CurrentIndex, ItemObject);
+				//if (Items.IsValidIndex(CurrentIndex)) {
+					Items[CurrentIndex] = ItemObject;
+					IndexToObject.Add(CurrentIndex, ItemObject);
+				//}
 				ItemObject->StartPosition = FIntPoint(TempTile.X, TempTile.Y);
 
 				// GEngine->AddOnScreenDebugMessage(3, 1.f, FColor::Green, FString::Printf(TEXT("Item Index %d"), TileToIndex(ResultTile)));
@@ -245,7 +247,9 @@ void UAC_InventoryBaseComponent::PreAddItem()
 		if (IsValid(TempItemBase) && IsValid(TempItemBase->ItemObject))
 		{
 			TryAddItem(TempItemBase->ItemObject);
-			TempItemBase->Destroy();
+			/*TempItemBase->Destroy();*/
+			TempItemBase->SetActorHiddenInGame(true);
+			TempItemBase->SetActorEnableCollision(false);
 		}
 	}
 }

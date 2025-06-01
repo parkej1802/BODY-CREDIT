@@ -30,7 +30,9 @@ void UInventory_GridWidget::InitInventory(class UAC_InventoryBaseComponent* Inve
 
 	Refresh();
 	
-	InventoryBaseComp->InventoryChanged.AddDynamic(this, &UInventory_GridWidget::Refresh);
+	if (!InventoryBaseComp->InventoryChanged.IsAlreadyBound(this, &UInventory_GridWidget::Refresh)) {
+		InventoryBaseComp->InventoryChanged.AddDynamic(this, &UInventory_GridWidget::Refresh);
+	}
 }	
 
 //void UInventory_GridWidget::InitEquipment(UAC_InventoryBaseComponent* InventoryComponent, float Equipment_TileSize)
@@ -343,20 +345,21 @@ bool UInventory_GridWidget::NativeOnDrop(const FGeometry& InGeometry, const FDra
 {
 	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
 
-	if (!IsCurrentlyHovered()) return false;
-
 	if (UInventory_ItemWidget* DraggedWidget = Cast<UInventory_ItemWidget>(InOperation->DefaultDragVisual))
 	{
 		DraggedWidget->IsMoving = false;
 	}
 
+	if (!IsCurrentlyHovered()) return false;
+
 	UItemObject* ItemObject = GetPayLoad(InOperation);
 	FInventoryTile TempTile;
+
 	if (IsRoomAvailableForPayload(ItemObject))
 	{
 		TempTile.X = DraggedItemTopLeftTile.X;
 		TempTile.Y = DraggedItemTopLeftTile.Y;
-		InventoryBaseComp->AddItemAt(GetPayLoad(InOperation), InventoryBaseComp->TileToIndex(TempTile));
+		InventoryBaseComp->AddItemAt(ItemObject, InventoryBaseComp->TileToIndex(TempTile));
 	}
 	else
 	{

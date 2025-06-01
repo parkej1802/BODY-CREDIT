@@ -33,6 +33,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UItemObject* ItemObject;
 
+	UPROPERTY()
 	FVector2D Size;
 
 	FSlateBrush GetIconImage();
@@ -50,8 +51,10 @@ public:
 
 	virtual void NativeConstruct() override;
 
+	UPROPERTY()
 	FIntPoint StartTilePosition;
 
+	UPROPERTY()
 	bool IsMoving = false;
 
 public:

@@ -27,10 +27,13 @@ class BODYCREDIT_API UItemObject : public UObject
 	GENERATED_BODY()
 	
 public:
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FIntPoint Dimensions;
 
 	FIntPoint GetDimension();
+
+	void InitializeItemObject();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UMaterialInterface* Icon;
@@ -41,15 +44,24 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class AItem_Base> ItemClass;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UAC_LootingInventoryComponent* InventoryComp;
+	UPROPERTY()
+	class UAC_LootingInventoryComponent* ItemObjectInventoryComp;
 
+	UPROPERTY()
 	bool Rotated = false;
+
+	//UPROPERTY()
+	//TWeakObjectPtr<class AItem_Backpack> ItemActorOwner;
+
+	
+	UPROPERTY()
+	TWeakObjectPtr<class AItem_Base> ItemActorOwner;
 
 	UMaterialInterface* GetIcon();
 
 	TSubclassOf<AItem_Base> GetItemClass();
 
+	UPROPERTY()
 	FIntPoint StartPosition;
 
 	void Rotate();

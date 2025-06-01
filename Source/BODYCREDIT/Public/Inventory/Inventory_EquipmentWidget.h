@@ -32,6 +32,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = Widget)
 	TSubclassOf<UUserWidget> InventoryItemTileWidget;
 
+	UPROPERTY()
 	class UInventory_EquipmentTile* InventoryItemTileUI;
 
 	UPROPERTY(EditAnywhere)
@@ -40,13 +41,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EPlayerPart ItemType;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY()
 	class UItemObject* ItemObject;
 
+	UPROPERTY()
 	FVector2D NewSize;
 
+	UPROPERTY()
 	float TileSize;
 
+	UPROPERTY()
 	bool DrawDropLocation = false;
 
 	bool IsValidItemType(class UItemObject* TempItemObject) const;

@@ -39,7 +39,7 @@ public:
 	void UnequipItem(EPlayerPart Part);
 
 	bool IsEquip(EPlayerPart Part);
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ACNox_Runner* PlayerCharacter;
 
@@ -53,7 +53,10 @@ public:
 	UFUNCTION()
 	void OnEquipmentChanged();
 	
+	UPROPERTY()
 	bool IsChanged = false;
 
+	UPROPERTY()
+	class UItemObject* BackpackItem;
 
 };

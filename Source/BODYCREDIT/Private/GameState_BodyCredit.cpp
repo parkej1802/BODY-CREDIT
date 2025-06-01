@@ -27,7 +27,21 @@ void AGameState_BodyCredit::SpawnItemFromActor(UItemObject* ItemObject, AActor* 
 		}
 	}
 
-	AItem_Base* SpawnedItem = GetWorld()->SpawnActor<AItem_Base>(ItemObject->GetItemClass(), SpawnLocation, FRotator::ZeroRotator);
-	
-	SpawnedItem->ItemObject = ItemObject;
+	/*AItem_Base* SpawnedItem = GetWorld()->SpawnActor<AItem_Base>(ItemObject->GetItemClass(), SpawnLocation, FRotator::ZeroRotator);
+
+	if (SpawnedItem)
+	{
+		SpawnedItem->ItemObject = ItemObject;
+	}*/
+
+	AItem_Base* ItemActor = Cast<AItem_Base>(ItemObject->ItemActorOwner.Get());
+
+	if (ItemActor)
+	{
+		ItemActor->SetActorLocation(SpawnLocation);
+		ItemActor->SetActorHiddenInGame(false);
+		ItemActor->SetActorEnableCollision(true);
+	}
+
+
 }

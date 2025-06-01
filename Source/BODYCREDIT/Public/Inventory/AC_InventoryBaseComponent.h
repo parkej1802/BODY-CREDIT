@@ -59,6 +59,7 @@ public:
 
 	void AddItemAt(class UItemObject* ItemObject, int32 TopLeftIndex);
 
+	UPROPERTY()
 	bool IsDirty = false;
 
 	TMap<class UItemObject*, FInventoryTile> GetAllItems();

@@ -19,11 +19,12 @@ public:
 
 	virtual void BeginPlay() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UAC_LootingInventoryComponent* LootInventoryComp;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//class UAC_LootingInventoryComponent* LootInventoryComp;
 
 	//UPROPERTY(EditAnywhere
 	//TSubclassOf<UUserWidget> InventoryBackpackWidget;
 
+	UPROPERTY()
 	class UInventory_Widget* InventoryBackpackUI;
 };

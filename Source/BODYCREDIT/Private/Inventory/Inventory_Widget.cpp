@@ -13,6 +13,7 @@
 #include "Inventory/AC_EquipComponent.h"
 #include "Components/Border.h"
 #include "Inventory/AC_InventoryEquipmentComponent.h"
+#include "Item/Lootable/Item_Backpack.h"
 
 void UInventory_Widget::NativeConstruct()
 {
@@ -78,7 +79,6 @@ void UInventory_Widget::NativeConstruct()
 void UInventory_Widget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
     Super::NativeTick(MyGeometry, InDeltaTime);
-    
     IsMouseOnGrid();
 }
 
@@ -86,37 +86,12 @@ void UInventory_Widget::NativeTick(const FGeometry& MyGeometry, float InDeltaTim
 bool UInventory_Widget::NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
     Super::NativeOnDragOver(InGeometry, InDragDropEvent, InOperation);
-
-    // IsMouseOnGrid();
-
     return true;
 }
 
 void UInventory_Widget::IsMouseOnGrid()
 {
     FVector2D MouseScreen;
-	/*auto pc = GetWorld()->GetFirstPlayerController();
-	if(!pc)
-		GEngine->AddOnScreenDebugMessage(
-			-1, 1.f, FColor::Green,
-			TEXT("!pc"));
-
-	auto mp = pc->GetMousePosition(MouseScreen.X, MouseScreen.Y);
-	if (!mp)
-		GEngine->AddOnScreenDebugMessage(
-			-1, 1.f, FColor::Green,
-			TEXT("!mp"));
-
-
-	if (!GetWorld() ||
-		!pc ||
-		!mp)
-	{
-		GEngine->AddOnScreenDebugMessage(
-			-1, 1.f, FColor::Green,
-			TEXT("IsMouseOnGrid"));
-		return;
-	}*/
 
     MouseScreen = FSlateApplication::Get().GetCursorPos() -
         FVector2D(GEngine->GameViewport->GetWindow()->GetPositionInScreen());
@@ -178,7 +153,7 @@ void UInventory_Widget::IsMouseOnGrid()
                 ItemObject->StartPosition.Y = 0;
             }
 
-			/* GEngine->AddOnScreenDebugMessage(
+			/*GEngine->AddOnScreenDebugMessage(
 				 -1, 1.f, FColor::Green,
 				 FString::Printf(TEXT("Hovered Grid ID: %d"), CurrentHoveredGrid->GridID));*/
         }
@@ -202,7 +177,6 @@ FReply UInventory_Widget::NativeOnMouseButtonDown(const FGeometry& InGeometry, c
     }
 
     return reply.NativeReply;*/
-    IsMouseOnGrid();
     return FReply::Handled();
 }
 
@@ -212,6 +186,14 @@ bool UInventory_Widget::NativeOnDrop(const FGeometry& InGeometry, const FDragDro
 
     UItemObject* ItemObject = Cast<UItemObject>(InOperation->Payload);
 
+    if (UInventory_ItemWidget* DraggedWidget = Cast<UInventory_ItemWidget>(InOperation->DefaultDragVisual))
+    {
+        DraggedWidget->IsMoving = false;
+    }
+    if (UInventory_EquipmentTile* InventoryItemTileUI = Cast<UInventory_EquipmentTile>(InOperation->DefaultDragVisual)) {
+        InventoryItemTileUI->IsMoving = false;
+
+    }
     AGameState_BodyCredit* MyGameState = GetWorld()->GetGameState<AGameState_BodyCredit>();
 
     MyGameState->SpawnItemFromActor(ItemObject, InventoryComp->GetOwner(), true);
@@ -221,33 +203,112 @@ bool UInventory_Widget::NativeOnDrop(const FGeometry& InGeometry, const FDragDro
 
 void UInventory_Widget::SetItemInventory()
 {
-    if (EquipComp->EquippedItems.Contains(EPlayerPart::Backpack)) {
-        bHasBackpack = true;
+	if (UItemObject** FoundBackpack = EquipComp->EquippedItems.Find(EPlayerPart::Backpack)) {
 
-        if (InventoryEquipGridWidget) {
-            BackpackItem = EquipComp->EquippedItems[EPlayerPart::Backpack];
+		if (FoundBackpack && InventoryEquipGridWidget) {
+			BackpackItem = *FoundBackpack;
 
-            if (BackpackItem && BackpackItem->InventoryComp) {
+			if (BackpackItem) {
+				FString Msg = FString::Printf(TEXT("BackpackItem Info:"));
 
-                if (EquipBackpackInventoryComp != BackpackItem->InventoryComp) {
-                    EquipBackpackInventoryComp = BackpackItem->InventoryComp;
+				Msg += FString::Printf(TEXT("\n- Dimensions: (%d, %d)"), BackpackItem->Dimensions.X, BackpackItem->Dimensions.Y);
+				Msg += FString::Printf(TEXT("\n- Icon: %s"), BackpackItem->Icon ? *BackpackItem->Icon->GetName() : TEXT("nullptr"));
+				Msg += FString::Printf(TEXT("\n- RotatedIcon: %s"), BackpackItem->RotatedIcon ? *BackpackItem->RotatedIcon->GetName() : TEXT("nullptr"));
+				Msg += FString::Printf(TEXT("\n- InventoryComp: %s"), BackpackItem->ItemObjectInventoryComp ? *BackpackItem->ItemObjectInventoryComp->GetName() : TEXT("nullptr"));
 
-                    InventoryEquipGridWidget->SetVisibility(ESlateVisibility::Visible);
-                    InventoryEquipGridWidget->InitInventory(EquipBackpackInventoryComp, InventoryComp->InventoryTileSize);
-                    InventoryEquipGridWidget->GridID = 2;
-                    InventoryEquipGridWidget->PlayerController = PC;
-                    InventoryEquipGridWidget->OwningInventoryWidget = this;
-                }
-                else {
+				if (!BackpackItem->ItemObjectInventoryComp)
+				{
+					Msg += TEXT("\n!!! InventoryComp is nullptr !!!");
+				}
 
-                    InventoryEquipGridWidget->SetVisibility(ESlateVisibility::Visible);
-                }
-            }
-        }
-    }
-    else {
-        EquipBackpackInventoryComp = nullptr;
-        InventoryEquipGridWidget->SetVisibility(ESlateVisibility::Hidden);
-        InventoryEquipGridWidget->ClearInventory();
-    }
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, Msg);
+
+				Msg = FString::Printf(TEXT("[SetItemInventory] BackpackItem ptr: %p, InventoryComp ptr: %p"),
+					BackpackItem,
+					BackpackItem->ItemObjectInventoryComp);
+
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, Msg);
+
+				if (BackpackItem->ItemActorOwner->LootInventoryComp) {
+
+					if (EquipBackpackInventoryComp != BackpackItem->ItemActorOwner->LootInventoryComp) {
+						EquipBackpackInventoryComp = BackpackItem->ItemActorOwner->LootInventoryComp;
+
+						InventoryEquipGridWidget->SetVisibility(ESlateVisibility::Visible);
+						InventoryEquipGridWidget->InitInventory(BackpackItem->ItemObjectInventoryComp, InventoryComp->InventoryTileSize);
+						InventoryEquipGridWidget->GridID = 2;
+						InventoryEquipGridWidget->PlayerController = PC;
+						InventoryEquipGridWidget->OwningInventoryWidget = this;
+					}
+					else {
+
+						InventoryEquipGridWidget->SetVisibility(ESlateVisibility::Visible);
+					}
+				}
+			}
+		}
+	}
+	else {
+		BackpackItem = nullptr;
+		EquipBackpackInventoryComp = nullptr;
+		InventoryEquipGridWidget->SetVisibility(ESlateVisibility::Hidden);
+		InventoryEquipGridWidget->ClearInventory();
+	}
 }
+
+//void UInventory_Widget::SetItemInventory()
+//{
+//    if (UItemObject** FoundBackpack = EquipComp->EquippedItems.Find(EPlayerPart::Backpack)) {
+//
+//        if (FoundBackpack && InventoryEquipGridWidget) {
+//            BackpackItem = *FoundBackpack;
+//
+//            if (BackpackItem) {
+//                FString Msg = FString::Printf(TEXT("BackpackItem Info:"));
+//
+//                Msg += FString::Printf(TEXT("\n- Dimensions: (%d, %d)"), BackpackItem->Dimensions.X, BackpackItem->Dimensions.Y);
+//                Msg += FString::Printf(TEXT("\n- Icon: %s"), BackpackItem->Icon ? *BackpackItem->Icon->GetName() : TEXT("nullptr"));
+//                Msg += FString::Printf(TEXT("\n- RotatedIcon: %s"), BackpackItem->RotatedIcon ? *BackpackItem->RotatedIcon->GetName() : TEXT("nullptr"));
+//                Msg += FString::Printf(TEXT("\n- InventoryComp: %s"), BackpackItem->ItemObjectInventoryComp ? *BackpackItem->ItemObjectInventoryComp->GetName() : TEXT("nullptr"));
+//
+//                if (!BackpackItem->ItemObjectInventoryComp)
+//                {
+//                    Msg += TEXT("\n!!! InventoryComp is nullptr !!!");
+//                }
+//
+//                GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, Msg);
+//
+//                Msg = FString::Printf(TEXT("[SetItemInventory] BackpackItem ptr: %p, InventoryComp ptr: %p"),
+//                    BackpackItem,
+//                    BackpackItem->ItemObjectInventoryComp);
+//
+//                GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, Msg);
+//
+//                if (BackpackItem && BackpackItem->ItemActorOwner.IsValid())
+//                {
+//                    if (EquipBackpackInventoryComp != BackpackItem->ItemActorOwner->LootInventoryComp)
+//                    {
+//                        EquipBackpackInventoryComp = BackpackItem->ItemActorOwner->LootInventoryComp;
+//
+//                        InventoryEquipGridWidget->SetVisibility(ESlateVisibility::Visible);
+//                        InventoryEquipGridWidget->InitInventory(EquipBackpackInventoryComp, InventoryComp->InventoryTileSize);
+//                        InventoryEquipGridWidget->GridID = 2;
+//                        InventoryEquipGridWidget->PlayerController = PC;
+//                        InventoryEquipGridWidget->OwningInventoryWidget = this;
+//                    }
+//                    else {
+//
+//                        InventoryEquipGridWidget->SetVisibility(ESlateVisibility::Visible);
+//                    }
+//                }
+//             
+//            }
+//        }
+//    }
+//    else {
+//        //BackpackItem = nullptr;
+//        //EquipBackpackInventoryComp = nullptr;
+//        InventoryEquipGridWidget->SetVisibility(ESlateVisibility::Hidden);
+//        InventoryEquipGridWidget->ClearInventory();
+//    }
+//}

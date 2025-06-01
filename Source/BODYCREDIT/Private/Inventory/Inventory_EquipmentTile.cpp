@@ -99,13 +99,14 @@ void UInventory_EquipmentTile::NativeOnMouseLeave(const FPointerEvent& InMouseEv
 
 void UInventory_EquipmentTile::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
 {
+	if (IsMoving) return;
+	IsMoving = true;
+
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
 
 	UDragDropOperation* DragOperation = UWidgetBlueprintLibrary::CreateDragDropOperation(UDragDropOperation::StaticClass());
 	if (!DragOperation) return;
 
-	if (IsMoving) return;
-	IsMoving = true;
 
 	SizeBox_BackGround->SetWidthOverride(NewSize.X);
 	SizeBox_BackGround->SetHeightOverride(NewSize.Y);
