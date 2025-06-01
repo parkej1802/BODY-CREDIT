@@ -58,6 +58,7 @@ void AItem_Base::BeginPlay()
 
 	ItemObject = NewObject<UItemObject>(this, TEXT("ItemObject"));
 	GetDefaultItemObject();
+
 	if (!ItemObject)
 	{
 		ItemObject = NewObject<UItemObject>(this, TEXT("ItemObject"));

@@ -190,10 +190,12 @@ bool UInventory_Widget::NativeOnDrop(const FGeometry& InGeometry, const FDragDro
     {
         DraggedWidget->IsMoving = false;
     }
+
     if (UInventory_EquipmentTile* InventoryItemTileUI = Cast<UInventory_EquipmentTile>(InOperation->DefaultDragVisual)) {
         InventoryItemTileUI->IsMoving = false;
 
     }
+
     AGameState_BodyCredit* MyGameState = GetWorld()->GetGameState<AGameState_BodyCredit>();
 
     MyGameState->SpawnItemFromActor(ItemObject, InventoryComp->GetOwner(), true);
@@ -214,9 +216,9 @@ void UInventory_Widget::SetItemInventory()
 				Msg += FString::Printf(TEXT("\n- Dimensions: (%d, %d)"), BackpackItem->Dimensions.X, BackpackItem->Dimensions.Y);
 				Msg += FString::Printf(TEXT("\n- Icon: %s"), BackpackItem->Icon ? *BackpackItem->Icon->GetName() : TEXT("nullptr"));
 				Msg += FString::Printf(TEXT("\n- RotatedIcon: %s"), BackpackItem->RotatedIcon ? *BackpackItem->RotatedIcon->GetName() : TEXT("nullptr"));
-				Msg += FString::Printf(TEXT("\n- InventoryComp: %s"), BackpackItem->ItemObjectInventoryComp ? *BackpackItem->ItemObjectInventoryComp->GetName() : TEXT("nullptr"));
+				Msg += FString::Printf(TEXT("\n- InventoryComp: %s"), BackpackItem->ItemActorOwner->LootInventoryComp ? *BackpackItem->ItemObjectInventoryComp->GetName() : TEXT("nullptr"));
 
-				if (!BackpackItem->ItemObjectInventoryComp)
+				if (!BackpackItem->ItemActorOwner->LootInventoryComp)
 				{
 					Msg += TEXT("\n!!! InventoryComp is nullptr !!!");
 				}
@@ -225,7 +227,7 @@ void UInventory_Widget::SetItemInventory()
 
 				Msg = FString::Printf(TEXT("[SetItemInventory] BackpackItem ptr: %p, InventoryComp ptr: %p"),
 					BackpackItem,
-					BackpackItem->ItemObjectInventoryComp);
+                    BackpackItem->ItemActorOwner->LootInventoryComp);
 
 				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, Msg);
 
@@ -235,7 +237,7 @@ void UInventory_Widget::SetItemInventory()
 						EquipBackpackInventoryComp = BackpackItem->ItemActorOwner->LootInventoryComp;
 
 						InventoryEquipGridWidget->SetVisibility(ESlateVisibility::Visible);
-						InventoryEquipGridWidget->InitInventory(BackpackItem->ItemObjectInventoryComp, InventoryComp->InventoryTileSize);
+						InventoryEquipGridWidget->InitInventory(EquipBackpackInventoryComp, InventoryComp->InventoryTileSize);
 						InventoryEquipGridWidget->GridID = 2;
 						InventoryEquipGridWidget->PlayerController = PC;
 						InventoryEquipGridWidget->OwningInventoryWidget = this;
