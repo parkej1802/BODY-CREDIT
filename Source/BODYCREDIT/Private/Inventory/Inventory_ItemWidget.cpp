@@ -50,6 +50,7 @@ void UInventory_ItemWidget::Refresh()
 
 	UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Image_Item->Slot);
 	CanvasSlot->SetSize(Size);
+	CanvasSlot->SetZOrder(10);
 
 	if (Image_Item)
 	{

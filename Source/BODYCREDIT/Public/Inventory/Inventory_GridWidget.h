@@ -20,6 +20,12 @@ public:
 	UPROPERTY()
     class UInventory_Widget* OwningInventoryWidget;
 
+	UPROPERTY()
+    class ULobbyWidget_Market* OwningMarketInventoryWidget;
+
+	UPROPERTY()
+    class ULobbyWidget_WorkShop* OwningWorkShopInventoryWidget;
+
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UBorder* Border_Grid;
 

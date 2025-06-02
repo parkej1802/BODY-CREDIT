@@ -15,6 +15,7 @@
 #include "Inventory/AC_InventoryBaseComponent.h"
 #include "Inventory/Inventory_Widget.h"
 #include "Inventory/Inventory_EquipmentTile.h"
+#include "Lobby/LobbyWidget_Market.h"
 
 
 void UInventory_GridWidget::InitInventory(class UAC_InventoryBaseComponent* InventoryComponent, float Inventoy_TileSize)
@@ -107,7 +108,7 @@ int32 UInventory_GridWidget::NativePaint(const FPaintArgs& Args, const FGeometry
 
 			FSlateDrawElement::MakeLines(
 				OutDrawElements,
-				LayerId,
+				LayerId - 3,
 				GridGeom,
 				Points,
 				ESlateDrawEffect::None,
@@ -174,12 +175,12 @@ void UInventory_GridWidget::Refresh()
 			}
 			InventoryItemUI->TileSize = TileSize;
 			InventoryItemUI->ItemObject = Item.Key;
-			InventoryItemUI->MainInventoryWidget = OwningInventoryWidget;
 
 			UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Canvas_Grid->AddChild(InventoryItemUI));
 
 			if (CanvasSlot) {
 				CanvasSlot->SetAutoSize(true);
+				CanvasSlot->SetZOrder(10);
 				CanvasSlot->SetPosition(FVector2D(Item.Value.X * TileSize, Item.Value.Y * TileSize));
 			}
 		}
@@ -228,6 +229,10 @@ TPair<bool, bool> UInventory_GridWidget::MousePositionInTile(FVector2D MousePosi
 
 bool UInventory_GridWidget::IsCurrentlyHovered() const
 {
+	if (OwningMarketInventoryWidget) {
+		return true;
+	}
+
 	if (!OwningInventoryWidget || !OwningInventoryWidget->CurrentHoveredGrid) return false;
 	// GEngine->AddOnScreenDebugMessage(2, 2.0f, FColor::Red, FString::Printf(TEXT("Currently Hovered %d"), OwningInventoryWidget->CurrentHoveredGrid->GridID));
 	return OwningInventoryWidget->CurrentHoveredGrid == this;

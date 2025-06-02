@@ -14,6 +14,5 @@ void AItem_ChestRigs::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ItemObject->ItemActorOwner = this;
 	ItemObject->ItemActorOwner->LootInventoryComp = LootInventoryComp;
 }

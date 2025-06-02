@@ -69,7 +69,6 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UBorder* Border_Backpack;
 
-
 	UPROPERTY(EditAnywhere)
 	class UAC_InventoryComponent* InventoryComp;
 
@@ -82,7 +81,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UAC_LootingInventoryComponent* EquipBackpackInventoryComp;
 
-	
 	UPROPERTY(EditAnywhere)
 	class UAC_LootingInventoryComponent* EquipChestRigsInventoryComp;
 
@@ -128,4 +126,26 @@ public:
 	class UInventory_GridWidget* InventoryEquipChestRigsGridWidget;
 
 	bool bHasBackpack = false;
+
+// Player Stat
+public:
+	
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* Text_Power;
+	
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* Text_Health;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* Text_Speed;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* Text_Weight;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* Text_Humanity;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* Text_Energy;
+
 };

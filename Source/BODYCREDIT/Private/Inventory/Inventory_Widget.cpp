@@ -29,10 +29,10 @@ void UInventory_Widget::NativeConstruct()
 
     EquipComp = PlayerCharacter->EquipComp;
 
-    InventoryGridWidget->InitInventory(InventoryComp, InventoryComp->InventoryTileSize);
-    InventoryGridWidget->GridID = 0;
-    InventoryGridWidget->PlayerController = PC;
-    InventoryGridWidget->OwningInventoryWidget = this;
+	/* InventoryGridWidget->InitInventory(InventoryComp, InventoryComp->InventoryTileSize);
+	 InventoryGridWidget->GridID = 0;
+	 InventoryGridWidget->PlayerController = PC;
+	 InventoryGridWidget->OwningInventoryWidget = this;*/
 
     SetItemInventory();
 
@@ -224,8 +224,8 @@ void UInventory_Widget::SetItemInventory()
 
             if (ChestRigsItem) {
                 if (ChestRigsItem->ItemActorOwner->LootInventoryComp) {
-                    if (EquipBackpackInventoryComp != ChestRigsItem->ItemActorOwner->LootInventoryComp) {
-                        EquipBackpackInventoryComp = ChestRigsItem->ItemActorOwner->LootInventoryComp;
+                    if (EquipChestRigsInventoryComp != ChestRigsItem->ItemActorOwner->LootInventoryComp) {
+                        EquipChestRigsInventoryComp = ChestRigsItem->ItemActorOwner->LootInventoryComp;
 
                         InventoryEquipChestRigsGridWidget->SetVisibility(ESlateVisibility::Visible);
                         InventoryEquipChestRigsGridWidget->InitInventory(EquipChestRigsInventoryComp, InventoryComp->InventoryTileSize);
@@ -242,7 +242,7 @@ void UInventory_Widget::SetItemInventory()
     }
     else {
         ChestRigsItem = nullptr;
-        EquipBackpackInventoryComp = nullptr;
+        EquipChestRigsInventoryComp = nullptr;
         InventoryEquipChestRigsGridWidget->SetVisibility(ESlateVisibility::Hidden);
         InventoryEquipChestRigsGridWidget->ClearInventory();
     }
