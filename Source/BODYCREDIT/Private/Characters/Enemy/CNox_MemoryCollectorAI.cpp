@@ -23,8 +23,10 @@ ACNox_MemoryCollectorAI::ACNox_MemoryCollectorAI()
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -85), FRotator(0, -90, 0));
 	GetMesh()->SetRelativeScale3D(FVector(1.1));
 
-	GetCapsuleComponent()->SetCapsuleHalfHeight(95.f);
+	GetCapsuleComponent()->SetCapsuleHalfHeight(100.f);
 	GetCapsuleComponent()->SetCapsuleRadius(34.f);
+
+	GetMesh()->SetRelativeLocation(FVector(0, 0, -100));
 
 	CHelpers::GetClass<ACBeam>(&BeamOrgCls, TEXT("/Game/Characters/Enemy/AttackActor/BP_LaserBeam.BP_LaserBeam_C"));
 	CHelpers::GetClass<ACWavePulse>(&WavePulseOrgCls,

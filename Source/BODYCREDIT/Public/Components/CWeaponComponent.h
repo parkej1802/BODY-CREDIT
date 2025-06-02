@@ -8,7 +8,7 @@
 UENUM(BlueprintType)
 enum class EWeaponType : uint8
 {
-	REVOLVER, RIFLE, SNIPER, MAX,
+	KATANA, BOW, RIFLE, MAX,
 };
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWeaponTypeChanged, EWeaponType, InPrevType, EWeaponType, InNewType);
 
@@ -21,7 +21,19 @@ class BODYCREDIT_API UCWeaponComponent
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Enhanced")
-	class UInputAction* IA_FirstWeapon;
+	class UInputAction* IA_Bow;
+
+	UPROPERTY(VisibleAnywhere, Category = "Enhanced")
+	class UInputAction* IA_Rifle;
+
+	UPROPERTY(VisibleAnywhere, Category = "Enhanced")
+	class UInputAction* IA_Katana;
+
+	UPROPERTY(VisibleAnywhere, Category = "Enhanced")
+	class UInputAction* IA_Action;
+
+	UPROPERTY(VisibleAnywhere, Category = "Enhanced")
+	class UInputAction* IA_SubAction;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "DataAsset")
@@ -31,9 +43,9 @@ public:
 	FORCEINLINE EWeaponType GetWeaponType() { return Type; }
 
 public:
-	FORCEINLINE bool IsRevovlerMode() { return Type == EWeaponType::REVOLVER; }
+	FORCEINLINE bool IsKatanaMode() { return Type == EWeaponType::KATANA; }
+	FORCEINLINE bool IsBowMode() { return Type == EWeaponType::BOW; }
 	FORCEINLINE bool IsRifleMode() { return Type == EWeaponType::RIFLE; }
-	FORCEINLINE bool IsSniperMode() { return Type == EWeaponType::SNIPER; }
 	FORCEINLINE bool IsUnarmedMode() { return Type == EWeaponType::MAX; }
 
 public:
@@ -61,9 +73,9 @@ public:
 	class UCWeapon_SubAction* GetSubAction();
 
 public:
-	void SetRevolverMode();
+	void SetKatanaMode();
+	void SetBowMode();
 	void SetRifleMode();
-	void SetSniperMode();
 	void SetUnarmedMode();
 
 	void DoAction();

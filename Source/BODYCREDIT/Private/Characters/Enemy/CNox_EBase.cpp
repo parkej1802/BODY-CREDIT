@@ -82,7 +82,15 @@ void ACNox_EBase::PossessedBy(AController* NewController)
 
 void ACNox_EBase::SetTarget(ACNox* InTarget)
 {
-	BehaviorComp->SetTarget(InTarget);
+	if (bUseBehaviorTree)
+		BehaviorComp->SetTarget(InTarget);
+}
+
+void ACNox_EBase::SetTargetCallByDelegate(ACNox* InTarget)
+{
+	EnemyController->TargetPlayer = InTarget;
+	if (bUseBehaviorTree)
+		BehaviorComp->SetTarget(InTarget);
 }
 
 void ACNox_EBase::HandleAttack(float InAttackDistance)
@@ -127,6 +135,7 @@ bool ACNox_EBase::IsPlayerInForwardRange(ACNox* InTarget, float InForwardRange)
 	FVector Start = GetActorLocation();
 	FVector End = Start + GetActorForwardVector() * InForwardRange;
 	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
 	Params.bTraceComplex = true;
 
 	TArray<FHitResult> HitResults;
@@ -143,7 +152,7 @@ bool ACNox_EBase::IsPlayerInForwardRange(ACNox* InTarget, float InForwardRange)
 	{
 		if (Hit.GetActor())
 		{
-			UE_LOG(LogTemp, Log, TEXT("Hit: %s"), *Hit.GetActor()->GetName());
+			// UE_LOG(LogTemp, Log, TEXT("Hit: %s"), *Hit.GetActor()->GetName());
 
 			// 특정 물체에 닿았으면 그 뒤는 검사하지 않음
 			if (Hit.GetActor()->ActorHasTag("BlockTrace"))
@@ -157,5 +166,6 @@ bool ACNox_EBase::IsPlayerInForwardRange(ACNox* InTarget, float InForwardRange)
 		}
 	}
 
+	// CLog::Log(FString::Printf(TEXT("No Hit")));
 	return false;
 }

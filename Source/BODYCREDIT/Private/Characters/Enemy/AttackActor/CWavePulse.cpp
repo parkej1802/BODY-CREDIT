@@ -6,9 +6,8 @@ ACWavePulse::ACWavePulse()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	CHelpers::CreateComponent<UStaticMeshComponent>(this, &SphereComp, "SphereComp");
-	SphereComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
 	CHelpers::GetStaticAsset<UStaticMeshComponent>(&SphereComp, TEXT("/Engine/BasicShapes/Sphere.Sphere"));
+	SphereComp->SetCollisionProfileName(FName("EnemyWeapon"));
 }
 
 void ACWavePulse::BeginPlay()

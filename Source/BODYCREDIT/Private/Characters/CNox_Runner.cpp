@@ -15,6 +15,10 @@
 
 #include "Data/CMemoryData.h"
 #include "Inventory/AC_EquipComponent.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Perception/AISense_Damage.h"
+#include "Perception/AISense_Hearing.h"
+#include "Perception/AISense_Sight.h"
 
 ACNox_Runner::ACNox_Runner()
 {
@@ -32,7 +36,6 @@ void ACNox_Runner::BeginPlay()
 	Super::BeginPlay();
 
 	Movement->EnableControlRotation();
-
 	// 서버 관련 메시 숨김 처리 함수
 	//GetMesh()->SetOnlyOwnerSee();
 	//GetMesh()->SetOwnerNoSee();
@@ -41,7 +44,6 @@ void ACNox_Runner::BeginPlay()
 	//FPSCamera->bUsePawnControlRotation = true;
 	//// 머리 본 숨김
 	//GetMesh()->HideBoneByName(FName("neck_01"), EPhysBodyOp::PBO_None);
-
 }
 
 void ACNox_Runner::Tick(float DeltaTime)
@@ -56,26 +58,26 @@ void ACNox_Runner::Tick(float DeltaTime)
 	const FVector ActorDir = ActorRot.Vector() * 300.0f;
 	DrawDebugDirectionalArrow(GetWorld(), Location, Location + ActorDir, 100.f, FColor::Cyan, false, -1.f, 0, 2.f);
 	DrawDebugString(GetWorld(), Location + ActorDir + FVector(0, 0, 20.f),
-		FString::Printf(TEXT("ActorYaw: %.1f"), ActorRot.Yaw), nullptr, FColor::Cyan, 0.f, true);
+	                FString::Printf(TEXT("ActorYaw: %.1f"), ActorRot.Yaw), nullptr, FColor::Cyan, 0.f, true);
 
 	// 2. Control Rotation (노란색)
 	const FRotator ControlRot = GetControlRotation();
 	const FVector ControlDir = ControlRot.Vector() * 300.0f;
 	DrawDebugDirectionalArrow(GetWorld(), Location, Location + ControlDir, 100.f, FColor::Yellow, false, -1.f, 0, 2.f);
 	DrawDebugString(GetWorld(), Location + ControlDir + FVector(0, 0, 40.f),
-		FString::Printf(TEXT("ControlYaw: %.1f"), ControlRot.Yaw), nullptr, FColor::Yellow, 0.f, true);
+	                FString::Printf(TEXT("ControlYaw: %.1f"), ControlRot.Yaw), nullptr, FColor::Yellow, 0.f, true);
 
 	// 3. Velocity Rotation (빨간색)
 	if (!GetVelocity().IsNearlyZero())
 	{
 		const FRotator VelocityRot = GetVelocity().ToOrientationRotator();
 		const FVector VelocityDir = VelocityRot.Vector() * 300.0f;
-		DrawDebugDirectionalArrow(GetWorld(), Location, Location + VelocityDir, 100.f, FColor::Red, false, -1.f, 0, 2.f);
+		DrawDebugDirectionalArrow(GetWorld(), Location, Location + VelocityDir, 100.f, FColor::Red, false, -1.f, 0,
+		                          2.f);
 		DrawDebugString(GetWorld(), Location + VelocityDir + FVector(0, 0, 60.f),
-			FString::Printf(TEXT("VelocityYaw: %.1f"), VelocityRot.Yaw), nullptr, FColor::Red, 0.f, true);
+		                FString::Printf(TEXT("VelocityYaw: %.1f"), VelocityRot.Yaw), nullptr, FColor::Red, 0.f, true);
 	}
 #endif
-
 }
 
 void ACNox_Runner::NotifyControllerChanged()
@@ -85,10 +87,10 @@ void ACNox_Runner::NotifyControllerChanged()
 	// MappingContext
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
+			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 			Subsystem->AddMappingContext(MappingContext, 0);
 	}
-
 }
 
 void ACNox_Runner::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -103,7 +105,6 @@ void ACNox_Runner::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		// Weapon
 		Weapon->BindInput(input);
 	}
-
 }
 
 void ACNox_Runner::Init()
@@ -129,7 +130,9 @@ void ACNox_Runner::Init()
 	FPSCamera->bUsePawnControlRotation = false;
 
 	// MappingContext
-	CHelpers::GetAsset<UInputMappingContext>(&MappingContext, TEXT("/Script/EnhancedInput.InputMappingContext'/Game/Inputs/IMC_Runner.IMC_Runner'"));
+	CHelpers::GetAsset<UInputMappingContext>(&MappingContext,
+	                                         TEXT(
+		                                         "/Script/EnhancedInput.InputMappingContext'/Game/Inputs/IMC_Runner.IMC_Runner'"));
 
 	// Trajectory
 	//CHelpers::CreateActorComponent<UCharacterTrajectoryComponent>(this, &Trajectory, "Trajectory");
@@ -142,7 +145,6 @@ void ACNox_Runner::Init()
 
 	// Weapon
 	CHelpers::CreateActorComponent<UCWeaponComponent>(this, &Weapon, "Weapon");
-
 }
 
 void ACNox_Runner::MakeMemoryPiece()

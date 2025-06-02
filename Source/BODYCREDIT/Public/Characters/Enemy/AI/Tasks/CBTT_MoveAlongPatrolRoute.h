@@ -24,6 +24,8 @@ public:
 private:
 	UPROPERTY()
 	UBehaviorTreeComponent* OwnerBT;
+	UPROPERTY()
+	class ACPatrolRoute* PatrolRoute;
 	
 	UFUNCTION()
 	void OnPatrolResult(FAIRequestID RequestID, EPathFollowingResult::Type Result);

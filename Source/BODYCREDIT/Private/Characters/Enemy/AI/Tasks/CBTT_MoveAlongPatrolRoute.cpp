@@ -17,13 +17,14 @@ namespace
 
 UCBTT_MoveAlongPatrolRoute::UCBTT_MoveAlongPatrolRoute()
 {
+	bCreateNodeInstance = true;
 	bNotifyTick = true;
 }
 
 EBTNodeResult::Type UCBTT_MoveAlongPatrolRoute::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	OwnerBT = &OwnerComp;
-	auto PatrolRoute = GetPatrolRoute(OwnerComp);
+	PatrolRoute = GetPatrolRoute(OwnerComp);
 	if (!PatrolRoute)
 	{
 		return EBTNodeResult::Failed;
@@ -54,7 +55,9 @@ void UCBTT_MoveAlongPatrolRoute::TickTask(UBehaviorTreeComponent& OwnerComp, uin
 void UCBTT_MoveAlongPatrolRoute::OnPatrolResult(FAIRequestID RequestID, EPathFollowingResult::Type Result)
 {
 	// CLog::Log(FString::Printf(TEXT("PatrolRouteIndex: %d"), GetPatrolRoute(*OwnerBT)->PatrolRouteIndex));
-	GetPatrolRoute(*OwnerBT)->IncrementPatrolRoute();
+	// auto PatrolRoute = GetPatrolRoute(*OwnerBT);
+	// if (!PatrolRoute || !IsValid(PatrolRoute)) FinishLatentTask(*OwnerBT, EBTNodeResult::Failed);
+	PatrolRoute->IncrementPatrolRoute();
 	FinishLatentTask(*OwnerBT, EBTNodeResult::Succeeded);
 }
 

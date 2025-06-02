@@ -9,6 +9,7 @@ ACRangeProjectile::ACRangeProjectile()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	CHelpers::CreateComponent<UBoxComponent>(this, &BoxComp, "BoxComp");
+	BoxComp->SetCollisionProfileName(FName("EnemyWeapon"));
 	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &ACRangeProjectile::OnOverlap);
 }
 

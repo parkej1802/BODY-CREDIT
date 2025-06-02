@@ -22,7 +22,7 @@ void UCWeapon_Asset::BeginPlay(ACNox* InOwner, UCWeapon_Data** OutWeaponData)
 		FActorSpawnParameters params;
 		params.Owner = InOwner;
 
-		//attachment = InOwner->GetWorld()->SpawnActor<ACWeapon_Attachment>(WeaponAttachmentClass, params);
+		attachment = InOwner->GetWorld()->SpawnActor<ACWeapon_Attachment>(WeaponAttachmentClass, params);
 	}
 
 	UCWeapon_Equipment* equipment = nullptr;

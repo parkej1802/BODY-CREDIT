@@ -10,12 +10,18 @@
 #include "Items/Equipments/Weapons/CWeapon_Equipment.h"
 #include "Items/Equipments/Weapons/CWeapon_DoAction.h"
 #include "Items/Equipments/Weapons/CWeapon_SubAction.h"
+#include "Components/CZoomComponent.h"
 
 UCWeaponComponent::UCWeaponComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 
-	CHelpers::GetAsset<UInputAction>(&IA_FirstWeapon, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_FirstWeapon.IA_FirstWeapon'"));
+	CHelpers::GetAsset<UInputAction>(&IA_Action, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Action.IA_Action'"));
+	CHelpers::GetAsset<UInputAction>(&IA_SubAction, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_SubAction.IA_SubAction'"));
+
+	CHelpers::GetAsset<UInputAction>(&IA_Bow, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Bow.IA_Bow'"));
+	CHelpers::GetAsset<UInputAction>(&IA_Rifle, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Rifle.IA_Rifle'"));
+	CHelpers::GetAsset<UInputAction>(&IA_Katana, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Katana.IA_Katana'"));
 
 }
 
@@ -85,11 +91,19 @@ UCWeapon_SubAction* UCWeaponComponent::GetSubAction()
 
 }
 
-void UCWeaponComponent::SetRevolverMode()
+void UCWeaponComponent::SetKatanaMode()
 {
 	CheckFalse(IsIdleMode());
 
-	SetMode(EWeaponType::REVOLVER);
+	SetMode(EWeaponType::KATANA);
+
+}
+
+void UCWeaponComponent::SetBowMode()
+{
+	CheckFalse(IsIdleMode());
+
+	SetMode(EWeaponType::BOW);
 
 }
 
@@ -98,14 +112,6 @@ void UCWeaponComponent::SetRifleMode()
 	CheckFalse(IsIdleMode());
 
 	SetMode(EWeaponType::RIFLE);
-
-}
-
-void UCWeaponComponent::SetSniperMode()
-{
-	CheckFalse(IsIdleMode());
-
-	SetMode(EWeaponType::SNIPER);
 
 }
 
@@ -126,6 +132,9 @@ void UCWeaponComponent::DoAction()
 
 void UCWeaponComponent::SubAction_Pressed()
 {
+	if (IsBowMode())
+		CHelpers::GetComponent<UCZoomComponent>(OwnerCharacter)->SetComponentTickEnabled(false);
+
 	if (!!GetSubAction())
 		GetSubAction()->Pressed();
 
@@ -133,6 +142,9 @@ void UCWeaponComponent::SubAction_Pressed()
 
 void UCWeaponComponent::SubAction_Released()
 {
+	if (IsBowMode())
+		CHelpers::GetComponent<UCZoomComponent>(OwnerCharacter)->SetComponentTickEnabled(true);
+
 	if (!!GetSubAction())
 		GetSubAction()->Released();
 
@@ -172,6 +184,13 @@ void UCWeaponComponent::ChangeType(EWeaponType InType)
 
 void UCWeaponComponent::BindInput(UEnhancedInputComponent* InEnhancedInputComponent)
 {
-	InEnhancedInputComponent->BindAction(IA_FirstWeapon, ETriggerEvent::Started, this, &UCWeaponComponent::SetSniperMode);
+	InEnhancedInputComponent->BindAction(IA_Bow, ETriggerEvent::Started, this, &UCWeaponComponent::SetBowMode);
+	InEnhancedInputComponent->BindAction(IA_Rifle, ETriggerEvent::Started, this, &UCWeaponComponent::SetRifleMode);
+	InEnhancedInputComponent->BindAction(IA_Katana, ETriggerEvent::Started, this, &UCWeaponComponent::SetKatanaMode);
+
+	InEnhancedInputComponent->BindAction(IA_Action, ETriggerEvent::Started, this, &UCWeaponComponent::DoAction);
+
+	InEnhancedInputComponent->BindAction(IA_SubAction, ETriggerEvent::Started, this, &UCWeaponComponent::SubAction_Pressed);
+	InEnhancedInputComponent->BindAction(IA_SubAction, ETriggerEvent::Completed, this, &UCWeaponComponent::SubAction_Released);
 
 }
