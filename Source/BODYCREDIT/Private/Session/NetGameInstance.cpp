@@ -62,11 +62,12 @@ void UNetGameInstance::CreateMySession(FString roomName, int32 playerCount)
 	// netID
 	FUniqueNetIdPtr netID = GetWorld()->GetFirstLocalPlayerFromController()->GetUniqueNetIdForPlatformUser().GetUniqueNetId();
 
-	PRINTLOG(TEXT("Create Session Strat : %s"), *mySessionName);
+	//PRINTLOG(TEXT("Create Session Strat : %s"), *mySessionName);
 	sessionInterface->CreateSession(*netID, FName(mySessionName), sessionSettings);
 }
 
 void UNetGameInstance::OnCreateSessionComplete(FName SessionName, bool bWasSuccessful)
 {
-	PRINTLOG(TEXT("SessionName : %s, bWasSuccessful : %d"), *SessionName.ToString(), bWasSuccessful);
+	//PRINTLOG(TEXT("SessionName : %s, bWasSuccessful : %d"), *SessionName.ToString(), bWasSuccessful);
 }
+

@@ -28,17 +28,18 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UImage* Image_Item;
 
-	float TileSize = 0.f;
+	float TileSize = 75.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UItemObject* ItemObject;
 
+	UPROPERTY()
 	FVector2D Size;
 
 	FSlateBrush GetIconImage();
 
-	UPROPERTY()
-    class UInventory_Widget* MainInventoryWidget;
+	//UPROPERTY()
+ //   class UInventory_Widget* MainInventoryWidget;
 
     UPROPERTY(BlueprintAssignable)
     FOnItemRemoved OnItemRemoved;
@@ -50,7 +51,11 @@ public:
 
 	virtual void NativeConstruct() override;
 
+	UPROPERTY()
 	FIntPoint StartTilePosition;
+
+	UPROPERTY()
+	bool IsMoving = false;
 
 public:
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;

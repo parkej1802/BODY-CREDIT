@@ -9,6 +9,7 @@
 #include "Inventory/Inventory_EquipmentWidget.h"
 #include "Inventory/AC_EquipComponent.h"
 #include "Components/SizeBox.h"
+#include "Characters/CNox_Runner.h"
 
 void UInventory_EquipmentTile::NativeConstruct()
 {
@@ -99,10 +100,14 @@ void UInventory_EquipmentTile::NativeOnMouseLeave(const FPointerEvent& InMouseEv
 
 void UInventory_EquipmentTile::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
 {
+	if (IsMoving) return;
+	IsMoving = true;
+
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
 
 	UDragDropOperation* DragOperation = UWidgetBlueprintLibrary::CreateDragDropOperation(UDragDropOperation::StaticClass());
 	if (!DragOperation) return;
+
 
 	SizeBox_BackGround->SetWidthOverride(NewSize.X);
 	SizeBox_BackGround->SetHeightOverride(NewSize.Y);
@@ -127,7 +132,8 @@ void UInventory_EquipmentTile::NativeOnDragDetected(const FGeometry& InGeometry,
 
 	RemoveFromParent();
 
-	EquipMainWidget->EquipComp->EquippedItems.Remove(ItemType);
-
+	EquipMainWidget->PlayerCharacter->EquipComp->EquippedItems.Remove(ItemType);
+	
+	EquipMainWidget->PlayerCharacter->EquipComp->IsChanged = true;
 	OutOperation = DragOperation;
 }

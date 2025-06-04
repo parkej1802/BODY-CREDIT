@@ -27,6 +27,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ACNox_Runner* PlayerCharacter;
 
+	UPROPERTY()
 	class APlayerController* pc;
 
 	void SetupInputBinding(class UEnhancedInputComponent* Input);
@@ -36,6 +37,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = Widget)
 	TSubclassOf<UUserWidget> InventoryWidget;
 
+	UPROPERTY()
 	class UInventory_Widget* InventoryMainUI;
 
 // Input

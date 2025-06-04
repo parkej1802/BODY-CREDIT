@@ -19,6 +19,9 @@
 #include "Perception/AISense_Damage.h"
 #include "Perception/AISense_Hearing.h"
 #include "Perception/AISense_Sight.h"
+#include "Session/NetGameInstance.h"
+#include "GameState_BodyCredit.h"
+#include "Inventory/AC_MarketComponent.h"
 
 ACNox_Runner::ACNox_Runner()
 {
@@ -29,6 +32,7 @@ ACNox_Runner::ACNox_Runner()
 
 	InventoryComp = CreateDefaultSubobject<UAC_InventoryComponent>(TEXT("InventoryComp"));
 	EquipComp = CreateDefaultSubobject<UAC_EquipComponent>(TEXT("EquipComp"));
+	MarketComp = CreateDefaultSubobject<UAC_MarketComponent>(TEXT("MarketComp"));
 }
 
 void ACNox_Runner::BeginPlay()
@@ -36,6 +40,45 @@ void ACNox_Runner::BeginPlay()
 	Super::BeginPlay();
 
 	Movement->EnableControlRotation();
+
+	UNetGameInstance* GI = Cast<UNetGameInstance>(GetGameInstance());
+	if (GI && EquipComp)
+	{
+		if (GEngine)
+		{
+			AGameState_BodyCredit* MyGameState = GetWorld()->GetGameState<AGameState_BodyCredit>();
+			for (auto& Pair : GI->SavedEquippedItems)
+			{
+				EquipComp->EquippedItems.Add(Pair.Key, CreateItemFromData(Pair.Value));
+
+				MyGameState->SpawnItemHiddenFromActor(EquipComp->EquippedItems[Pair.Key], this, true);
+			}
+
+
+
+			/*for (const FItemSaveData& Data : GI->SavedInventoryItems)
+			{
+				UItemObject* Item = CreateItemFromData(Data);
+
+				if (Item->IsRotated() != Data.bRotated)
+					Item->Rotate();
+
+				FInventoryTile StartTile(Data.StartPosition.X, Data.StartPosition.Y);
+				int32 Index = InventoryComp->TileToIndex(StartTile);
+
+				if (InventoryComp->IsRoomAvailable(Item, Index))
+				{
+					InventoryComp->AddItemAt(Item, Index);
+					MyGameState->SpawnItemHiddenFromActor(Item, this, true);
+				}
+				else
+				{
+					InventoryComp->TryAddItem(Item);
+				}
+			}*/
+		}
+	}
+
 	// 서버 관련 메시 숨김 처리 함수
 	//GetMesh()->SetOnlyOwnerSee();
 	//GetMesh()->SetOwnerNoSee();
@@ -150,4 +193,11 @@ void ACNox_Runner::Init()
 void ACNox_Runner::MakeMemoryPiece()
 {
 	MainGM->RegisterMemoryFromPlayer(this, EMemoryTriggerType::Intrusion);
+}
+
+UItemObject* ACNox_Runner::CreateItemFromData(const FItemSaveData& Data)
+{
+	UItemObject* NewItem = NewObject<UItemObject>();
+	NewItem->ImportData(Data);
+	return NewItem;
 }
