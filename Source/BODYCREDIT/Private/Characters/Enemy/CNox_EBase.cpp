@@ -74,7 +74,7 @@ void ACNox_EBase::Tick(float DeltaTime)
 			GetWorld(), FVector(GetActorLocation().X, GetActorLocation().Y,
 			                    GetActorLocation().Z - 50), myState, nullptr, FColor::Yellow, 0);
 	}
-	
+
 	// if (bAutoMove && Target)
 	// {
 	// 	float dist = FVector::Dist(GetActorLocation(), Target->GetActorLocation());
@@ -99,8 +99,8 @@ void ACNox_EBase::PossessedBy(AController* NewController)
 
 void ACNox_EBase::SetTarget(ACNox* InTarget)
 {
-	if (bUseBehaviorTree)
-		BehaviorComp->SetTarget(InTarget);
+	Target = InTarget;
+	Target ? FSMComp->SetEnemyState(EEnemyState::Sense) : FSMComp->SetEnemyState(EEnemyState::IDLE);
 }
 
 void ACNox_EBase::SetTargetCallByDelegate(ACNox* InTarget)

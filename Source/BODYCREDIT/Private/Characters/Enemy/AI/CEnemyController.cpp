@@ -109,7 +109,7 @@ void ACEnemyController::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors
 	}
 
 	StopMovement();
-	// EnemyBase->SetTarget(TargetPlayer);
+	EnemyBase->SetTarget(TargetPlayer);
 
 	if (TargetPlayer)
 		OnDetectPlayer.ExecuteIfBound(TargetPlayer);
@@ -143,7 +143,7 @@ void ACEnemyController::OnAITargetPerceptionInfoUpdate(const FActorPerceptionUpd
 		}
 
 		StopMovement();
-		// EnemyBase->SetTarget(TargetPlayer);
+		EnemyBase->SetTarget(TargetPlayer);
 
 		if (TargetPlayer)
 		{
@@ -183,7 +183,7 @@ void ACEnemyController::UpdateExpiredStimuli(float DeltaTime)
 		bExpiredStimuli = false;
 		TargetPlayer = nullptr;
 		CurExpiredTime = 0.f;
-		// EnemyBase->SetTarget(TargetPlayer);
+		EnemyBase->SetTarget(TargetPlayer);
 		StopMovement();
 	}
 }
