@@ -161,7 +161,15 @@ void AGameState_BodyCredit::SpawnItemPlayerInventory(class UItemObject* ItemObje
 		ItemActor->SetActorEnableCollision(false);
 	}
 
-	/*if (ItemObject->ItemActorOwner.IsValid())
+	/*PC = GetOwningPlayer();
+
+	APawn* Pawn = PC->GetPawn();
+
+	PlayerCharacter = Cast<ACNox_Runner>(Pawn);
+
+	InventoryComp = PlayerCharacter->InventoryComp;
+
+	if (ItemObject->ItemActorOwner.IsValid())
 	{
 		UAC_InventoryBaseComponent* PlayerInventory = ;
 
