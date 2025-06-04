@@ -2,7 +2,6 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Global.h"
 
-UE_DISABLE_OPTIMIZATION
 void UCBTS_TargetInDegree::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
@@ -26,4 +25,3 @@ void UCBTS_TargetInDegree::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 	// CLog::Log(FString::Printf(TEXT("Dot: %f, Degree: %f"), Dot, Degree));
 	OwnerComp.GetBlackboardComponent()->SetValueAsBool(ConditionKey.SelectedKeyName, Dot <= Degree);
 }
-UE_ENABLE_OPTIMIZATION 
