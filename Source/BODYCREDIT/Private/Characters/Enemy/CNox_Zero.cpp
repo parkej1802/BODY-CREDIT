@@ -1,12 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Characters/Enemy/CNox_Zero.h"
 
 #include "EngineUtils.h"
-#include "StaticMeshAttributes.h"
 #include "Components/Enemy/CNox_BehaviorComponent.h"
-#include "Engine/OverlapResult.h"
 #include "Patrol/CPatrolRoute.h"
 #include "Global.h"
 #include "Characters/Enemy/CNoxEnemy_Animinstance.h"
@@ -31,8 +26,6 @@ void ACNox_Zero::BeginPlay()
 
 	CHelpers::GetAssetDynamic(&(EnemyAnim->AttackMontage),
 	                          TEXT("/Game/Assets/Cyber_Zombie_Arm/Anim/Attack/AM_Attack.AM_Attack"));
-
-	// GetNearPatrolRoute();
 }
 
 void ACNox_Zero::Tick(float DeltaTime)
@@ -54,7 +47,6 @@ ACPatrolRoute* ACNox_Zero::GetNearPatrolRoute()
 			}
 		}
 	}
-	// BehaviorComp->SetPatrolRoute(NearPatrolRoute);
 	return NearPatrolRoute;
 }
 
@@ -71,18 +63,18 @@ void ACNox_Zero::GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed,
 		OutNewSpeed = 40.f;
 		OutNewAccelSpeed = 128.f;
 		break;
-	// case EEnemyMovementSpeed::Jogging:
-	// 	OutNewSpeed = 0.f;
-	// 	OutNewAccelSpeed = 0.f;
-	// 	break;
 	case EEnemyMovementSpeed::Sprinting:
+		OutNewSpeed = 310.f;
+		OutNewAccelSpeed = 1024.f;
+		break;
+	case EEnemyMovementSpeed::Combat:
 		OutNewSpeed = 310.f;
 		OutNewAccelSpeed = 1024.f;
 		break;
 	}
 }
 
-void ACNox_Zero::SetDesiredRotation(const FRotator& InDesiredRotation)
+void ACNox_Zero::SetDesiredRotation(const FRotator& InDesiredRotation) const
 {
 	EnemyAnim->SetDesiredRotation(InDesiredRotation);
 }

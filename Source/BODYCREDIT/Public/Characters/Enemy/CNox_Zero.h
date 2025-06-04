@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -27,7 +25,7 @@ private:
 
 public:
 	class ACPatrolRoute* GetNearPatrolRoute();
-	void GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed,
+	virtual void GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed,
 							 float& OutNewAccelSpeed) override;
-	void SetDesiredRotation(const FRotator& InDesiredRotation);
+	void SetDesiredRotation(const FRotator& InDesiredRotation) const;
 };

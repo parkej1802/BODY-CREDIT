@@ -1,14 +1,6 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Characters/Enemy/AI/CEnemyController.h"
-
-#include "global.h"
-#include "BehaviorTree/BehaviorTree.h"
-#include "BehaviorTree/BlackboardComponent.h"
-#include "Characters/Enemy/CNox_CCTV.h"
+#include "Global.h"
 #include "Characters/Enemy/CNox_EBase.h"
-#include "Components/Enemy/CNox_BehaviorComponent.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Hearing.h"
 #include "Perception/AISenseConfig_Sight.h"
@@ -56,43 +48,44 @@ void ACEnemyController::InitPerception()
 	Perception->RequestStimuliListenerUpdate();
 }
 
+void ACEnemyController::SetTargetPlayer(ACNox* InTargetPlayer)
+{
+	TargetPlayer = InTargetPlayer;
+}
+
 void ACEnemyController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 
 	EnemyBase = Cast<ACNox_EBase>(InPawn);
-	if (EnemyBase)
-		SetGenericTeamId(EnemyBase->TeamID);
+	if (EnemyBase) SetGenericTeamId(EnemyBase->TeamID);	// TeamID 설정
 
-	// if (EnemyBase->bUseBehaviorTree)
-	// {
-	// 	BT_Behavior = CHelpers::GetComponent<UCNox_BehaviorComponent>(EnemyBase);
-	//
-	// 	check(EnemyBase->GetBehaviorTree());
-	//
-	// 	UBlackboardComponent* blackboard = Blackboard.Get();
-	// 	if (UseBlackboard(EnemyBase->GetBehaviorTree()->BlackboardAsset, blackboard))
-	// 		this->Blackboard = blackboard;
-	//
-	// 	BT_Behavior->SetBlackboard(Blackboard);
-	//
-	// 	RunBehaviorTree(NoxBehaviorTree);
-	// }
-
-	InitPerception();
-	// Perception->OnPerceptionUpdated.AddDynamic(this, &ACEnemyController::OnPerceptionUpdated);
+	InitPerception();	// Perception Settings
 	Perception->OnTargetPerceptionInfoUpdated.AddDynamic(this, &ACEnemyController::OnAITargetPerceptionInfoUpdate);
-	// Perception->OnTargetPerceptionForgotten.AddDynamic(this, &ACEnemyController::OnAITargetPerceptionForgotten);
 }
 
-void ACEnemyController::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors)
+void ACEnemyController::OnAITargetPerceptionInfoUpdate(const FActorPerceptionUpdateInfo& UpdateInfo)
 {
-	if (TargetPlayer) return;
+	if (UpdateInfo.Stimulus.WasSuccessfullySensed())
+	{
+		if (TargetPlayer) return;
+		TargetPlayer = GetNearTargetPlayer();
 
+		StopMovement();
+		EnemyBase->SetTarget(TargetPlayer);
+
+		// CCTV가 플레이어를 발견하면 주변의 Enemy에게 알린다
+		if (TargetPlayer) OnDetectPlayer.ExecuteIfBound(TargetPlayer);
+	}
+}
+
+// 가까운 플레이어 구하기 (멀티플레이 고려)
+ACNox* ACEnemyController::GetNearTargetPlayer()
+{
+	ACNox* NearTarget = nullptr;
 	float MinDistance = FLT_MAX;
 	FVector MyLoc = EnemyBase->GetActorLocation();
 
-	// UpdatedActors는 모든 변경 사항에 대해 적용되어 추가된건지 제외된건지 알기 어렵다.
 	TArray<AActor*> actors;
 	Perception->GetCurrentlyPerceivedActors(nullptr, actors);
 	for (auto& actor : actors)
@@ -103,84 +96,27 @@ void ACEnemyController::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors
 			if (tmpDist < MinDistance)
 			{
 				MinDistance = tmpDist;
-				TargetPlayer = nox;
+				NearTarget = nox;
 			}
 		}
 	}
-
-	StopMovement();
-	EnemyBase->SetTarget(TargetPlayer);
-
-	if (TargetPlayer)
-		OnDetectPlayer.ExecuteIfBound(TargetPlayer);
+	return NearTarget;
 }
 
-void ACEnemyController::OnAITargetPerceptionInfoUpdate(const FActorPerceptionUpdateInfo& UpdateInfo)
-{
-	if (UpdateInfo.Stimulus.WasSuccessfullySensed())
-	{
-		if (TargetPlayer) return;
-		bExpiredStimuli = false;
-		// 적이 갱신되거나 재감지되었을 때
-		CLog::Log(FString::Printf(TEXT("Actor Sensed: %s"), *UpdateInfo.Target.Get()->GetName()));
-
-		float MinDistance = FLT_MAX;
-		FVector MyLoc = EnemyBase->GetActorLocation();
-
-		TArray<AActor*> actors;
-		Perception->GetCurrentlyPerceivedActors(nullptr, actors);
-		for (auto& actor : actors)
-		{
-			if (auto nox = Cast<ACNox>(actor))
-			{
-				float tmpDist = FVector::Dist(MyLoc, actor->GetActorLocation());
-				if (tmpDist < MinDistance)
-				{
-					MinDistance = tmpDist;
-					TargetPlayer = nox;
-				}
-			}
-		}
-
-		StopMovement();
-		EnemyBase->SetTarget(TargetPlayer);
-
-		if (TargetPlayer)
-		{
-			CLog::Log(FString::Printf(
-				TEXT("Origin Actor : %s\tActor Sensed: %s"), *EnemyBase->GetName(), *TargetPlayer->GetName()));
-			OnDetectPlayer.ExecuteIfBound(TargetPlayer);
-		}
-	}
-	else
-	{
-		if (!TargetPlayer) return;
-		if (TargetPlayer != UpdateInfo.Target.Get()) return;
-
-		bExpiredStimuli = true;
-		// 적이 잊혀졌을 때
-		CLog::Log(FString::Printf(TEXT("Actor Forgotten: %s"), *UpdateInfo.Target.Get()->GetName()));
-	}
-}
-
-void ACEnemyController::OnAITargetPerceptionForgotten(AActor* Actor)
-{
-	if (TargetPlayer != Actor) return;
-	StopMovement();
-	// EnemyBase->SetTarget(TargetPlayer);
-}
-
+// 타겟 잃어버리기
 void ACEnemyController::UpdateExpiredStimuli(float DeltaTime)
 {
-	// if (!bExpiredStimuli) return;
 	if (!TargetPlayer) return;
-	if (FVector::Dist(TargetPlayer->GetActorLocation(), EnemyBase->GetActorLocation()) < Sight->LoseSightRadius) return;
+	if (FVector::Dist(TargetPlayer->GetActorLocation(), EnemyBase->GetActorLocation()) < Sight->LoseSightRadius)
+	{
+		CurExpiredTime = 0.f;
+		return;
+	}
 	if (EnemyBase->GetRetentionTime() == KINDA_SMALL_NUMBER) return;
 
 	CurExpiredTime += DeltaTime;
 	if (CurExpiredTime >= Sight->GetMaxAge())
 	{
-		bExpiredStimuli = false;
 		TargetPlayer = nullptr;
 		CurExpiredTime = 0.f;
 		EnemyBase->SetTarget(TargetPlayer);

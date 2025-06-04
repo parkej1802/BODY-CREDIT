@@ -105,9 +105,7 @@ void ACNox_EBase::SetTarget(ACNox* InTarget)
 
 void ACNox_EBase::SetTargetCallByDelegate(ACNox* InTarget)
 {
-	EnemyController->TargetPlayer = InTarget;
-	if (bUseBehaviorTree)
-		BehaviorComp->SetTarget(InTarget);
+	EnemyController->SetTargetPlayer(InTarget);
 }
 
 void ACNox_EBase::HandleAttack(float InAttackDistance)
