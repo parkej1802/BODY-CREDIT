@@ -24,9 +24,9 @@ private:
 private:
 	UPROPERTY(VisibleAnywhere)
 	class ACPatrolRoute* NearPatrolRoute;
-	void GetNearPatrolRoute();
 
 public:
+	class ACPatrolRoute* GetNearPatrolRoute();
 	void GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed,
 							 float& OutNewAccelSpeed) override;
 	void SetDesiredRotation(const FRotator& InDesiredRotation);

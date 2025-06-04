@@ -1,6 +1,7 @@
 #include "Components/Enemy/CFSMComponent.h"
 #include "../../../Public/Interfaces/Enemy/CEnemyStateStrategy.h"
 #include "Characters/Enemy/CNox_EBase.h"
+#include "Characters/Enemy/CNox_Zero.h"
 #include "State/CCTV/CDieState_CCTV.h"
 #include "State/CCTV/CIdleState_CCTV.h"
 #include "State/CCTV/CSenseState_CCTV.h"
@@ -17,6 +18,7 @@
 #include "State/ZERO/CDieState_ZERO.h"
 #include "State/ZERO/CIdleState_ZERO.h"
 #include "State/ZERO/CSenseState_ZERO.h"
+#include "State/ZERO/CSplineMoveStrategy.h"
 
 UCFSMComponent::UCFSMComponent()
 {
@@ -51,7 +53,10 @@ TMap<EEnemyState, TSharedPtr<ICEnemyStateStrategy>> UCFSMComponent::CreateStrate
 		Result.Add(EEnemyState::Die, MakeShared<CDieState_CCTV>());
 		break;
 	case EEnemyType::Zero:
-		Result.Add(EEnemyState::IDLE, MakeShared<CIdleState_ZERO>());
+		{
+			TUniquePtr<CSplineMoveStrategy> MoveStrategy = MakeUnique<CSplineMoveStrategy>(Cast<ACNox_Zero>(OwnerEnemy)->GetNearPatrolRoute());
+			Result.Add(EEnemyState::IDLE, MakeShared<CIdleState_ZERO>(MoveTemp(MoveStrategy)));
+		}
 		Result.Add(EEnemyState::Sense, MakeShared<CSenseState_ZERO>());
 		Result.Add(EEnemyState::Combat, MakeShared<CCombatState_ZERO>());
 		Result.Add(EEnemyState::Die, MakeShared<CDieState_ZERO>());

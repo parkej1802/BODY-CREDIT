@@ -64,6 +64,16 @@ void ACNox_EBase::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	if (FSMComp) FSMComp->UpdateState();
+
+	if (FSMComp)
+	{
+		FString myState = UEnum::GetValueOrBitfieldAsString(FSMComp->GetEnemyState());
+		DrawDebugString(GetWorld(), GetActorLocation(), myState, nullptr, FColor::Yellow, 0);
+		myState = UEnum::GetValueOrBitfieldAsString(FSMComp->GetCombatState());
+		DrawDebugString(
+			GetWorld(), FVector(GetActorLocation().X, GetActorLocation().Y,
+			                    GetActorLocation().Z - 50), myState, nullptr, FColor::Yellow, 0);
+	}
 	
 	// if (bAutoMove && Target)
 	// {

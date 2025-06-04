@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/SplineComponent.h"
 #include "GameFramework/Actor.h"
 #include "CPatrolRoute.generated.h"
 
@@ -34,4 +35,7 @@ public:
 	int32 Direction{1};
 	void IncrementPatrolRoute();
 	FVector GetNextPointAsPosition();
+	int32 GetNumberOfSplinePoints() const { return SplineComp->GetNumberOfSplinePoints(); }
+	float GetDistanceAlongSplineAtSplinePoint(const int32 idx) const { return SplineComp->GetDistanceAlongSplineAtSplinePoint(idx); }
+	FVector GetLocationAtDistanceAlongSpline(const float InDistance, const ESplineCoordinateSpace::Type& CoordinateSpace) const;
 };

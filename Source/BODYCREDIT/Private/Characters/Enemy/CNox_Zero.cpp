@@ -32,7 +32,7 @@ void ACNox_Zero::BeginPlay()
 	CHelpers::GetAssetDynamic(&(EnemyAnim->AttackMontage),
 	                          TEXT("/Game/Assets/Cyber_Zombie_Arm/Anim/Attack/AM_Attack.AM_Attack"));
 
-	GetNearPatrolRoute();
+	// GetNearPatrolRoute();
 }
 
 void ACNox_Zero::Tick(float DeltaTime)
@@ -40,7 +40,7 @@ void ACNox_Zero::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
-void ACNox_Zero::GetNearPatrolRoute()
+ACPatrolRoute* ACNox_Zero::GetNearPatrolRoute()
 {
 	for (TActorIterator<ACPatrolRoute> It(GetWorld(), ACPatrolRoute::StaticClass()); It; ++It)
 	{
@@ -54,8 +54,8 @@ void ACNox_Zero::GetNearPatrolRoute()
 			}
 		}
 	}
-
 	// BehaviorComp->SetPatrolRoute(NearPatrolRoute);
+	return NearPatrolRoute;
 }
 
 void ACNox_Zero::GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed,
