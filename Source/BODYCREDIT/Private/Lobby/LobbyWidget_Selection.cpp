@@ -11,6 +11,12 @@ void ULobbyWidget_Selection::NativeConstruct()
 {
     Super::NativeConstruct();
 
+
+    PC = GetOwningPlayer();
+    FInputModeUIOnly InputMode;
+    PC->SetInputMode(InputMode);
+    PC->bShowMouseCursor = true;
+
     if (Button_Play)
     {
         Button_Play->OnClicked.AddDynamic(this, &ThisClass::OnPlayClicked);
@@ -31,6 +37,10 @@ void ULobbyWidget_Selection::OnPlayClicked()
 {
     UGameplayStatics::OpenLevel(this, FName(TEXT("/Game/Levels/Untitled")));
     this->RemoveFromParent();
+    PC = GetWorld()->GetFirstPlayerController();
+    PC->SetInputMode(FInputModeGameOnly());
+    PC->bShowMouseCursor = false;
+
 }
 
 void ULobbyWidget_Selection::OnMarketClicked()

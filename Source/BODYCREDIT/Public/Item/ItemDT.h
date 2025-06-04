@@ -81,6 +81,7 @@ public:
         , Thumbnail(nullptr)
         , Index(-1)
         , Rarity(EItemRarity::Common)
+        , Price(0)
         , Description(TEXT(""))
         , Icon(nullptr)
         , RotatedIcon(nullptr)

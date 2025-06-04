@@ -56,12 +56,13 @@ void AItem_Base::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ItemObject = NewObject<UItemObject>(this, TEXT("ItemObject"));
-	GetDefaultItemObject();
+	//ItemObject = NewObject<UItemObject>(this, TEXT("ItemObject"));
+	//GetDefaultItemObject();
 
 	if (!ItemObject)
 	{
 		ItemObject = NewObject<UItemObject>(this, TEXT("ItemObject"));
+		GetDefaultItemObject();
 	}
 	ItemObject->ItemActorOwner = this;
 

@@ -29,10 +29,11 @@ void UInventory_Widget::NativeConstruct()
 
     EquipComp = PlayerCharacter->EquipComp;
 
-	/* InventoryGridWidget->InitInventory(InventoryComp, InventoryComp->InventoryTileSize);
-	 InventoryGridWidget->GridID = 0;
-	 InventoryGridWidget->PlayerController = PC;
-	 InventoryGridWidget->OwningInventoryWidget = this;*/
+	/*InventoryGridWidget->InitInventory(InventoryComp, InventoryComp->InventoryTileSize);
+	InventoryGridWidget->GridID = 0;
+	InventoryGridWidget->PlayerController = PC;*/
+	 // InventoryGridWidget->OwningInventoryWidget = this;
+    InventoryGridWidget->SetVisibility(ESlateVisibility::Hidden);
 
     SetItemInventory();
 
@@ -65,7 +66,7 @@ void UInventory_Widget::NativeConstruct()
         InventoryItemGridWidget->SetVisibility(ESlateVisibility::Visible);
         InventoryItemGridWidget->InitInventory(LootingInventoryComp, InventoryComp->InventoryTileSize);
         InventoryItemGridWidget->GridID = 1;
-        InventoryItemGridWidget->OwningInventoryWidget = this;
+        // InventoryItemGridWidget->OwningInventoryWidget = this;
         InventoryItemGridWidget->PlayerController = PC;
     }
     else {
@@ -79,7 +80,7 @@ void UInventory_Widget::NativeConstruct()
 void UInventory_Widget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
     Super::NativeTick(MyGeometry, InDeltaTime);
-    IsMouseOnGrid();
+    // IsMouseOnGrid();
 }
 
 
@@ -89,94 +90,94 @@ bool UInventory_Widget::NativeOnDragOver(const FGeometry& InGeometry, const FDra
     return true;
 }
 
-void UInventory_Widget::IsMouseOnGrid()
-{
-    FVector2D MouseScreen;
-
-    MouseScreen = FSlateApplication::Get().GetCursorPos() -
-        FVector2D(GEngine->GameViewport->GetWindow()->GetPositionInScreen());
-
-
-    UInventory_GridWidget* NewHoveredGrid = nullptr;
-
-    if (InventoryGridWidget)
-    {
-        FGeometry GridGeo = InventoryGridWidget->GetGridContentGeometry();
-        FVector2D Local = GridGeo.AbsoluteToLocal(MouseScreen);
-
-        if (Local.X >= 0 && Local.Y >= 0 &&
-            Local.X < GridGeo.GetLocalSize().X &&
-            Local.Y < GridGeo.GetLocalSize().Y)
-        {
-            NewHoveredGrid = InventoryGridWidget;
-        }
-    }
-
-    if (InventoryItemGridWidget)
-    {
-        FGeometry GridGeo = InventoryItemGridWidget->GetGridContentGeometry();
-        FVector2D Local = GridGeo.AbsoluteToLocal(MouseScreen);
-
-        if (Local.X > 0 && Local.Y >= 0 &&
-            Local.X < GridGeo.GetLocalSize().X &&
-            Local.Y < GridGeo.GetLocalSize().Y)
-        {
-            NewHoveredGrid = InventoryItemGridWidget;
-        }
-    }
-
-    if (InventoryEquipGridWidget)
-    {
-        FGeometry GridGeo = InventoryEquipGridWidget->GetGridContentGeometry();
-        FVector2D Local = GridGeo.AbsoluteToLocal(MouseScreen);
-
-        if (Local.X > 0 && Local.Y >= 0 &&
-            Local.X < GridGeo.GetLocalSize().X &&
-            Local.Y < GridGeo.GetLocalSize().Y)
-        {
-            NewHoveredGrid = InventoryEquipGridWidget;
-        }
-    }
-
-    if (InventoryEquipChestRigsGridWidget)
-    {
-        FGeometry GridGeo = InventoryEquipChestRigsGridWidget->GetGridContentGeometry();
-        FVector2D Local = GridGeo.AbsoluteToLocal(MouseScreen);
-
-        if (Local.X > 0 && Local.Y >= 0 &&
-            Local.X < GridGeo.GetLocalSize().X &&
-            Local.Y < GridGeo.GetLocalSize().Y)
-        {
-            NewHoveredGrid = InventoryEquipChestRigsGridWidget;
-        }
-    }
-
-    if (CurrentHoveredGrid != NewHoveredGrid)
-    {
-        CurrentHoveredGrid = NewHoveredGrid;
-        if (CurrentHoveredGrid)
-        {
-            UDragDropOperation* CurrentOp = UWidgetBlueprintLibrary::GetDragDroppingContent();
-            if (!CurrentOp) return;
-
-            UItemObject* ItemObject = Cast<UItemObject>(CurrentOp->Payload);
-            if (IsValid(ItemObject))
-            {
-                ItemObject->StartPosition.X = 0;
-                ItemObject->StartPosition.Y = 0;
-            }
-
-			/*GEngine->AddOnScreenDebugMessage(
-				 -1, 1.f, FColor::Green,
-				 FString::Printf(TEXT("Hovered Grid ID: %d"), CurrentHoveredGrid->GridID));*/
-        }
-        else
-        {
-			/*GEngine->AddOnScreenDebugMessage(
-				 -1, 1.f, FColor::Red, TEXT("No Grid Hovered"));*/
-        }
-   }
-}
+//void UInventory_Widget::IsMouseOnGrid()
+//{
+//    FVector2D MouseScreen;
+//
+//    MouseScreen = FSlateApplication::Get().GetCursorPos() -
+//        FVector2D(GEngine->GameViewport->GetWindow()->GetPositionInScreen());
+//
+//
+//    UInventory_GridWidget* NewHoveredGrid = nullptr;
+//
+//    if (InventoryGridWidget)
+//    {
+//        FGeometry GridGeo = InventoryGridWidget->GetGridContentGeometry();
+//        FVector2D Local = GridGeo.AbsoluteToLocal(MouseScreen);
+//
+//        if (Local.X >= 0 && Local.Y >= 0 &&
+//            Local.X < GridGeo.GetLocalSize().X &&
+//            Local.Y < GridGeo.GetLocalSize().Y)
+//        {
+//            NewHoveredGrid = InventoryGridWidget;
+//        }
+//    }
+//
+//    if (InventoryItemGridWidget)
+//    {
+//        FGeometry GridGeo = InventoryItemGridWidget->GetGridContentGeometry();
+//        FVector2D Local = GridGeo.AbsoluteToLocal(MouseScreen);
+//
+//        if (Local.X > 0 && Local.Y >= 0 &&
+//            Local.X < GridGeo.GetLocalSize().X &&
+//            Local.Y < GridGeo.GetLocalSize().Y)
+//        {
+//            NewHoveredGrid = InventoryItemGridWidget;
+//        }
+//    }
+//
+//    if (InventoryEquipGridWidget)
+//    {
+//        FGeometry GridGeo = InventoryEquipGridWidget->GetGridContentGeometry();
+//        FVector2D Local = GridGeo.AbsoluteToLocal(MouseScreen);
+//
+//        if (Local.X > 0 && Local.Y >= 0 &&
+//            Local.X < GridGeo.GetLocalSize().X &&
+//            Local.Y < GridGeo.GetLocalSize().Y)
+//        {
+//            NewHoveredGrid = InventoryEquipGridWidget;
+//        }
+//    }
+//
+//    if (InventoryEquipChestRigsGridWidget)
+//    {
+//        FGeometry GridGeo = InventoryEquipChestRigsGridWidget->GetGridContentGeometry();
+//        FVector2D Local = GridGeo.AbsoluteToLocal(MouseScreen);
+//
+//        if (Local.X > 0 && Local.Y >= 0 &&
+//            Local.X < GridGeo.GetLocalSize().X &&
+//            Local.Y < GridGeo.GetLocalSize().Y)
+//        {
+//            NewHoveredGrid = InventoryEquipChestRigsGridWidget;
+//        }
+//    }
+//
+//    if (CurrentHoveredGrid != NewHoveredGrid)
+//    {
+//        CurrentHoveredGrid = NewHoveredGrid;
+//        if (CurrentHoveredGrid)
+//        {
+//            UDragDropOperation* CurrentOp = UWidgetBlueprintLibrary::GetDragDroppingContent();
+//            if (!CurrentOp) return;
+//
+//            UItemObject* ItemObject = Cast<UItemObject>(CurrentOp->Payload);
+//            if (IsValid(ItemObject))
+//            {
+//                ItemObject->StartPosition.X = 0;
+//                ItemObject->StartPosition.Y = 0;
+//            }
+//
+//			/*GEngine->AddOnScreenDebugMessage(
+//				 -1, 1.f, FColor::Green,
+//				 FString::Printf(TEXT("Hovered Grid ID: %d"), CurrentHoveredGrid->GridID));*/
+//        }
+//        else
+//        {
+//			/*GEngine->AddOnScreenDebugMessage(
+//				 -1, 1.f, FColor::Red, TEXT("No Grid Hovered"));*/
+//        }
+//   }
+//}
 
 FReply UInventory_Widget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
@@ -231,7 +232,7 @@ void UInventory_Widget::SetItemInventory()
                         InventoryEquipChestRigsGridWidget->InitInventory(EquipChestRigsInventoryComp, InventoryComp->InventoryTileSize);
                         InventoryEquipChestRigsGridWidget->GridID = 3;
                         InventoryEquipChestRigsGridWidget->PlayerController = PC;
-                        InventoryEquipChestRigsGridWidget->OwningInventoryWidget = this;
+                        // InventoryEquipChestRigsGridWidget->OwningInventoryWidget = this;
                     }
                     else {
                         InventoryEquipChestRigsGridWidget->SetVisibility(ESlateVisibility::Visible);
@@ -282,7 +283,7 @@ void UInventory_Widget::SetItemInventory()
 						InventoryEquipGridWidget->InitInventory(EquipBackpackInventoryComp, InventoryComp->InventoryTileSize);
 						InventoryEquipGridWidget->GridID = 2;
 						InventoryEquipGridWidget->PlayerController = PC;
-						InventoryEquipGridWidget->OwningInventoryWidget = this;
+						// InventoryEquipGridWidget->OwningInventoryWidget = this;
 					}
 					else {
 

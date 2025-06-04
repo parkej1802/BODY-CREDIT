@@ -6,6 +6,7 @@
 #include "Inventory/AC_InventoryComponent.h"
 #include "Inventory/Inventory_Widget.h"
 #include "Misc/EnumRange.h"
+#include "Session/NetGameInstance.h"
 
 // Sets default values for this component's properties
 UAC_EquipComponent::UAC_EquipComponent()
@@ -29,7 +30,6 @@ void UAC_EquipComponent::BeginPlay()
 	{
 		PlayerCharacter = Cast<ACNox_Runner>(OwnerActor);
 	}
-
 }
 
 
@@ -108,4 +108,14 @@ void UAC_EquipComponent::SetHasBackpack()
 void UAC_EquipComponent::OnEquipmentChanged()
 {
 	EquipmentChanged.Broadcast();
+}
+
+UItemObject* UAC_EquipComponent::CreateItemFromData(const FItemSaveData& Data)
+{
+	UItemObject* NewItem = NewObject<UItemObject>(this);
+	if (NewItem)
+	{
+		NewItem->ImportData(Data);
+	}
+	return NewItem;
 }

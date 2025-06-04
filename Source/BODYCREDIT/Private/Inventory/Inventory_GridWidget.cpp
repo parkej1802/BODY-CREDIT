@@ -229,13 +229,27 @@ TPair<bool, bool> UInventory_GridWidget::MousePositionInTile(FVector2D MousePosi
 
 bool UInventory_GridWidget::IsCurrentlyHovered() const
 {
-	if (OwningMarketInventoryWidget) {
-		return true;
-	}
+	//if (OwningMarketInventoryWidget) {
+	//	return true;
+	//}
 
-	if (!OwningInventoryWidget || !OwningInventoryWidget->CurrentHoveredGrid) return false;
-	// GEngine->AddOnScreenDebugMessage(2, 2.0f, FColor::Red, FString::Printf(TEXT("Currently Hovered %d"), OwningInventoryWidget->CurrentHoveredGrid->GridID));
-	return OwningInventoryWidget->CurrentHoveredGrid == this;
+	//if (!OwningInventoryWidget || !OwningInventoryWidget->CurrentHoveredGrid) return false;
+	//// GEngine->AddOnScreenDebugMessage(2, 2.0f, FColor::Red, FString::Printf(TEXT("Currently Hovered %d"), OwningInventoryWidget->CurrentHoveredGrid->GridID));
+	//return OwningInventoryWidget->CurrentHoveredGrid == this;
+	return CurrentlyHovered;
+}
+
+void UInventory_GridWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
+
+	CurrentlyHovered = true;
+}
+void UInventory_GridWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseLeave(InMouseEvent);
+
+	CurrentlyHovered = false;
 }
 
 //bool UInventory_GridWidget::IsCurrentlyHovered() const
@@ -333,6 +347,7 @@ void UInventory_GridWidget::NativeOnDragEnter(const FGeometry& InGeometry, const
 {
 	//if (!IsCurrentlyHovered()) return;
 	Super::NativeOnDragEnter(InGeometry, InDragDropEvent, InOperation);
+	CurrentlyHovered = true;
 	DrawDropLocation = true;
 }
 
@@ -340,6 +355,7 @@ void UInventory_GridWidget::NativeOnDragLeave(const FDragDropEvent& InDragDropEv
 {
 	//if (!IsCurrentlyHovered()) return;
 	Super::NativeOnDragLeave(InDragDropEvent, InOperation);
+	CurrentlyHovered = false;
 	DrawDropLocation = false;
 }
 

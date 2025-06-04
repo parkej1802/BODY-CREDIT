@@ -6,6 +6,7 @@
 #include "Engine/GameInstance.h"
 #include "OnlineSessionSettings.h"
 #include "../../../../Plugins/Online/OnlineSubsystem/Source/Public/Interfaces/OnlineSessionInterface.h"
+#include "Item/ItemObject.h"
 #include "NetGameInstance.generated.h"
 
 /**
@@ -17,6 +18,7 @@ class BODYCREDIT_API UNetGameInstance : public UGameInstance
 	GENERATED_BODY()
 	
 public:
+	
 	virtual void Init() override;
 
 public:
@@ -28,4 +30,10 @@ public:
 
 	UFUNCTION()
 	void OnCreateSessionComplete(FName SessionName, bool bWasSuccessful);
+
+	UPROPERTY()
+	TMap<EPlayerPart, FItemSaveData> SavedEquippedItems;
+
+	UPROPERTY()	
+	TArray<FItemSaveData> SavedInventoryItems;
 };

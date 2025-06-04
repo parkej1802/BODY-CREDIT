@@ -35,6 +35,9 @@ public:
 	UPROPERTY()
 	class UInventory_EquipmentTile* InventoryItemTileUI;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class APlayerController* PC;
+
 	UPROPERTY(EditAnywhere)
 	class UAC_EquipComponent* EquipComp;
 
@@ -74,5 +77,7 @@ public:
 		const FWidgetStyle& InWidgetStyle,
 		bool bParentEnabled
 	) const override;
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 };

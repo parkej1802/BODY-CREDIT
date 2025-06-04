@@ -108,13 +108,13 @@ public:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	virtual bool NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 
-	UPROPERTY()
-	class UInventory_GridWidget* CurrentHoveredGrid = nullptr;
+	//UPROPERTY()
+	//class UInventory_GridWidget* CurrentHoveredGrid = nullptr;
 
 	UPROPERTY()
 	bool bIsLootable = false;
 
-	void IsMouseOnGrid();
+	// void IsMouseOnGrid();
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	//TSubclassOf<class UInventory_GridWidget> InventoryGridWidgetClass;

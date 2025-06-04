@@ -23,6 +23,42 @@ public:
 	UFUNCTION()
 	void OnBackClicked();
 
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UButton* Button_SelectWeapon;
+
+	UFUNCTION()
+	void OnSelectWeaponClicked();
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UButton* Button_SelectHead;
+
+	UFUNCTION()
+	void OnSelectHeadClicked();
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UButton* Button_SelectBody;
+
+	UFUNCTION()
+	void OnSelectBodyClicked();
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UButton* Button_SelectArm;
+
+	UFUNCTION()
+	void OnSelectArmClicked();
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UButton* Button_SelectLeg;
+
+	UFUNCTION()
+	void OnSelectLegClicked();
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UButton* Button_SelectUtility;
+
+	UFUNCTION()
+	void OnSelectUtilityClicked();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
 	TSubclassOf<UUserWidget> LobbySelectionWidgetClass;
 
@@ -41,6 +77,23 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class APlayerController* PC;
 
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UScrollBox* ScrollBox_Market;
+
 	UPROPERTY()
-	class UInventory_GridWidget* CurrentHoveredGrid = nullptr;
+	class UAC_MarketComponent* MarketComp;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> MarketItemWidget;
+
+	UPROPERTY()
+	class UMarket_ItemTile* MarketItemUI;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UVerticalBox* VerticalBox_MarketItem;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector2D ImageSize = FVector2D(150, 100);
+
+
 };

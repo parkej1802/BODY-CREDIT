@@ -47,6 +47,9 @@ public:
 	UPROPERTY()
 	class ULobbyWidget_WorkShop* LobbyWidget_WorkShop;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class APlayerController* PC;
+
 public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UTextBlock* Text_Debt;

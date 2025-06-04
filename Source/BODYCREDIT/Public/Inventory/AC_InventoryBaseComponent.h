@@ -89,4 +89,6 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ACMainGM* GameMode;
+
+	UItemObject* CreateItemFromData(const FItemSaveData& Data);
 };

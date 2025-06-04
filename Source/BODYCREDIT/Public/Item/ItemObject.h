@@ -21,6 +21,77 @@ enum class EPlayerPart : uint8
 	ChestRigs	UMETA(DisplayName = "ChestRigs")
 };
 
+
+USTRUCT(BlueprintType)
+struct FInventoryItemData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 ID;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FIntPoint Dimensions;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bRotated;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FIntPoint StartPosition;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class AItem_Base> ItemClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UMaterialInterface* Icon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UMaterialInterface* RotatedIcon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EPlayerPart ItemType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 CurrentIndex;
+};
+
+USTRUCT(BlueprintType)
+struct FItemSaveData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 ID;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FIntPoint Dimensions;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bRotated;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FIntPoint StartPosition;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class AItem_Base> ItemClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UMaterialInterface* Icon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UMaterialInterface* RotatedIcon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EPlayerPart ItemType;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 CurrentIndex;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FInventoryItemData> ContainedItems;
+};
+
+
 UCLASS(BlueprintType, Blueprintable)
 class BODYCREDIT_API UItemObject : public UObject
 {
@@ -66,8 +137,17 @@ public:
 	bool IsRotated();
 	FIntPoint GetStartPosition();
 
+	int32 CurrentIndex = 0;
+
 	int32 ID = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EPlayerPart ItemType = EPlayerPart::Basic;
+
+	FItemSaveData ExportData() const;
+	void ImportData(const FItemSaveData& Data);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<FInventoryItemData> ContainedItems;
+
 };

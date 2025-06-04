@@ -82,6 +82,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UAC_EquipComponent* EquipComp;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UAC_MarketComponent* MarketComp;
+
 /**
  *	Memory Piece Add Function - LHJ (2025.05.12)
  */
@@ -91,4 +94,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UAC_LootingInventoryComponent* LootableInventoryComp;
+
+
+	UItemObject* CreateItemFromData(const FItemSaveData& Data);
 };

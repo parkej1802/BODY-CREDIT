@@ -40,4 +40,9 @@ public:
 
 	UPROPERTY()
 	class ULobbyWidget_Selection* LobbyWidget_Selection;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class APlayerController* PC;
+
+
 };

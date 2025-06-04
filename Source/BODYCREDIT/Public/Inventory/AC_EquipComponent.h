@@ -59,4 +59,7 @@ public:
 	UPROPERTY()
 	class UItemObject* BackpackItem;
 
+
+	UItemObject* CreateItemFromData(const FItemSaveData& Data);
+
 };

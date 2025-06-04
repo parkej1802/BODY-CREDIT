@@ -17,7 +17,7 @@ void UInventory_EquipmentWidget::InitEquipment()
 	TileSize = PlayerCharacter->InventoryComp->InventoryTileSize;
 	EquipComp = PlayerCharacter->EquipComp;
 
-	UItemObject** FoundItem = EquipComp->EquippedItems.Find(ItemType);
+	UItemObject** FoundItem = PlayerCharacter->EquipComp->EquippedItems.Find(ItemType);
 	if (FoundItem && *FoundItem) {
 		if (InventoryItemTileWidget)
 		{
@@ -25,9 +25,9 @@ void UInventory_EquipmentWidget::InitEquipment()
 			InventoryItemTileUI->ItemType = ItemType;
 			InventoryItemTileUI->EquipMainWidget = this;
 
-			InventoryItemTileUI->SetItem(EquipComp->EquippedItems[ItemType]);
+			InventoryItemTileUI->SetItem(PlayerCharacter->EquipComp->EquippedItems[ItemType]);
 
-			FIntPoint ItemDim = EquipComp->EquippedItems[ItemType]->GetDimension();
+			FIntPoint ItemDim = PlayerCharacter->EquipComp->EquippedItems[ItemType]->GetDimension();
 			NewSize = FVector2D(ItemDim.X * TileSize, ItemDim.Y * TileSize);
 
 			UCanvasPanelSlot* BorderSlot = Cast<UCanvasPanelSlot>(Border_Grid->Slot);
@@ -52,7 +52,11 @@ void UInventory_EquipmentWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	
+	//PC = GetOwningPlayer();
+
+	//APawn* Pawn = PC->GetPawn();
+
+	//PlayerCharacter = Cast<ACNox_Runner>(Pawn);
 }
 
 int32 UInventory_EquipmentWidget::NativePaint(const FPaintArgs& Args, const FGeometry& AllottedGeometry, const FSlateRect& MyCullingRect, FSlateWindowElementList& OutDrawElements, int32 LayerId, const FWidgetStyle& InWidgetStyle, bool bParentEnabled) const
@@ -62,6 +66,7 @@ int32 UInventory_EquipmentWidget::NativePaint(const FPaintArgs& Args, const FGeo
 	if (UWidgetBlueprintLibrary::IsDragDropping() && DrawDropLocation)
 	{
 		UDragDropOperation* CurrentOp = UWidgetBlueprintLibrary::GetDragDroppingContent();
+
 		UItemObject* TempItemObject = CurrentOp ? Cast<UItemObject>(CurrentOp->Payload) : nullptr;
 
 		if (!TempItemObject)
@@ -86,6 +91,18 @@ int32 UInventory_EquipmentWidget::NativePaint(const FPaintArgs& Args, const FGeo
 	}
 
 	return MaxLayer;
+}
+
+void UInventory_EquipmentWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
+	DrawDropLocation = true;
+}
+
+void UInventory_EquipmentWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
+{
+	Super::NativeOnMouseLeave(InMouseEvent);
+	DrawDropLocation = false;
 }
 
 FReply UInventory_EquipmentWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -123,7 +140,7 @@ bool UInventory_EquipmentWidget::NativeOnDrop(const FGeometry& InGeometry, const
 		DroppedItem->ItemType = EPlayerPart::Weapon1;
 	}
 
-	UItemObject** FoundItem = EquipComp->EquippedItems.Find(ItemType);
+	UItemObject** FoundItem = PlayerCharacter->EquipComp->EquippedItems.Find(ItemType);
 	bool bSlot = (FoundItem && *FoundItem);
 
 	if (DroppedItem->ItemType != ItemType || bSlot)
@@ -148,7 +165,7 @@ bool UInventory_EquipmentWidget::NativeOnDrop(const FGeometry& InGeometry, const
 			InventoryItemTileUI->EquipBackpackInventoryComp = DroppedItem->ItemObjectInventoryComp;
 		}*/
 		InventoryItemTileUI->SetItem(DroppedItem);
-		EquipComp->EquippedItems.Add(ItemType, DroppedItem);
+		PlayerCharacter->EquipComp->EquippedItems.Add(ItemType, DroppedItem);
 
 		UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Canvas_Grid->AddChild(InventoryItemTileUI));
 		if (CanvasSlot) {
@@ -161,11 +178,11 @@ bool UInventory_EquipmentWidget::NativeOnDrop(const FGeometry& InGeometry, const
 			}*/
 		}
 		DrawDropLocation = false;
-		EquipComp->IsChanged = true;
+		PlayerCharacter->EquipComp->IsChanged = true;
 		InventoryItemTileUI->IsMoving = false;
 		return true;
 	}
-	EquipComp->IsChanged = true;
+	PlayerCharacter->EquipComp->IsChanged = true;
 	InventoryItemTileUI->IsMoving = false;
 
 	return false;
@@ -200,17 +217,13 @@ UItemObject* UInventory_EquipmentWidget::GetPayLoad(class UDragDropOperation* Op
 	return nullptr;
 }
 
-bool UInventory_EquipmentWidget::IsValidItemType(class UItemObject* TempItemObject) const
+bool UInventory_EquipmentWidget::IsValidItemType(UItemObject* TempItemObject) const
 {
-	if (!TempItemObject || !EquipComp)
-	{
-		return false;
-	}
 
 	bool bIsWeaponSlot = (ItemType == EPlayerPart::Weapon1 || ItemType == EPlayerPart::Weapon2);
 	bool bIsWeaponItem = (TempItemObject->ItemType == EPlayerPart::Weapon1 || TempItemObject->ItemType == EPlayerPart::Weapon2);
 
-	UItemObject** FoundItem = EquipComp->EquippedItems.Find(ItemType);
+	UItemObject** FoundItem = PlayerCharacter->EquipComp->EquippedItems.Find(ItemType);
 	bool bSlotEmpty = !(FoundItem && *FoundItem);
 
 	if (bIsWeaponSlot && bIsWeaponItem)

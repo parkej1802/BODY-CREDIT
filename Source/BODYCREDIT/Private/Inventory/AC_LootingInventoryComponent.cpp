@@ -19,7 +19,7 @@ void UAC_LootingInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
+	PreAddItem();
 	
 }
 

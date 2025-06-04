@@ -17,14 +17,14 @@ class BODYCREDIT_API UInventory_GridWidget : public UUserWidget
 
 public:
 
-	UPROPERTY()
-    class UInventory_Widget* OwningInventoryWidget;
+	/*UPROPERTY()
+	class UInventory_Widget* OwningInventoryWidget;
 
 	UPROPERTY()
-    class ULobbyWidget_Market* OwningMarketInventoryWidget;
+	class ULobbyWidget_Market* OwningMarketInventoryWidget;
 
 	UPROPERTY()
-    class ULobbyWidget_WorkShop* OwningWorkShopInventoryWidget;
+	class ULobbyWidget_WorkShop* OwningWorkShopInventoryWidget;*/
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UBorder* Border_Grid;
@@ -37,6 +37,8 @@ public:
 	
 	UPROPERTY()
 	class APlayerController* PlayerController;
+
+	bool CurrentlyHovered = false;
 
 // Widget Functions
 public:
@@ -94,6 +96,9 @@ public:
 
 	bool IsCurrentlyHovered() const;
 
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 	
 public:
 	UPROPERTY(EditAnywhere, Category = Widget)

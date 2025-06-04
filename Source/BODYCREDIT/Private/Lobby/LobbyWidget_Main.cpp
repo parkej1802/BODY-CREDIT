@@ -9,6 +9,12 @@ void ULobbyWidget_Main::NativeConstruct()
 {
     Super::NativeConstruct();
 
+
+    PC = GetOwningPlayer();
+    FInputModeUIOnly InputMode;
+    PC->SetInputMode(InputMode);
+    PC->bShowMouseCursor = true;
+
     if (Button_NewGame)
     {
         Button_NewGame->OnClicked.AddDynamic(this, &ThisClass::OnNewGameClicked);
@@ -23,6 +29,8 @@ void ULobbyWidget_Main::NativeConstruct()
     {
         Button_Exit->OnClicked.AddDynamic(this, &ThisClass::OnExitClicked);
     }
+
+
 }
 
 void ULobbyWidget_Main::OnNewGameClicked()

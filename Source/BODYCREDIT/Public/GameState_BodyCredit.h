@@ -17,5 +17,7 @@ class BODYCREDIT_API AGameState_BodyCredit : public AGameStateBase
 public:
 	void SpawnItemFromActor(class UItemObject* ItemObject, AActor* Actor, bool GroundClamp);
 
+	void SpawnItemHiddenFromActor(class UItemObject* ItemObject, AActor* Actor, bool GroundClamp);
 
+	void SpawnItemPlayerInventory(class UItemObject* ItemObject, AActor* Actor, bool GroundClamp);
 };
