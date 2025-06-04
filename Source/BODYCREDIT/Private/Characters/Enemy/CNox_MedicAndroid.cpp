@@ -79,10 +79,10 @@ void ACNox_MedicAndroid::GetNewMovementSpeed(const EEnemyMovementSpeed& InMoveme
 		OutNewSpeed = 280.f;
 		OutNewAccelSpeed = 450.f;
 		break;
-	case EEnemyMovementSpeed::Jogging:
-		OutNewSpeed = 0.f;
-		OutNewAccelSpeed = 0.f;
-		break;
+	// case EEnemyMovementSpeed::Jogging:
+	// 	OutNewSpeed = 0.f;
+	// 	OutNewAccelSpeed = 0.f;
+	// 	break;
 	case EEnemyMovementSpeed::Sprinting:
 		OutNewSpeed = 320.f;
 		OutNewAccelSpeed = 1024.f;
@@ -175,7 +175,8 @@ void ACNox_MedicAndroid::SuggestProjectileVelocityWithLimit(FVector& OutVelocity
 void ACNox_MedicAndroid::LaunchElectricGrenade()
 {
 	FVector startLoc = GetMesh()->GetSocketLocation(FName("GrenadeSocket"));
-	FVector targetLoc = BehaviorComp->GetTarget()->GetActorLocation();
+	// FVector targetLoc = BehaviorComp->GetTarget()->GetActorLocation();
+	FVector targetLoc = FVector::Zero();
 	FVector outVelocity;
 	SuggestProjectileVelocityWithLimit(outVelocity, this->GetActorLocation(), targetLoc);
 	if (ElectricGrenade)	ElectricGrenade->InitializeGrenade(startLoc, targetLoc, outVelocity);

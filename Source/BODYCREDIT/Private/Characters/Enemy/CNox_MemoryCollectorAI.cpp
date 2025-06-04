@@ -104,16 +104,16 @@ void ACNox_MemoryCollectorAI::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (bRotateToTarget)
-	{
-		FVector TargetLoc = BehaviorComp->GetTarget()->GetActorLocation();
-		float newYaw = (TargetLoc - GetActorLocation()).GetSafeNormal().Rotation().Yaw;
-		FRotator TargetRot = FRotator(0, newYaw, 0);
-
-		// 보간
-		FRotator NewRot = FMath::RInterpTo(GetActorRotation(), TargetRot, DeltaTime, 5.f);
-		SetActorRotation(NewRot);
-	}
+	// if (bRotateToTarget)
+	// {
+	// 	FVector TargetLoc = BehaviorComp->GetTarget()->GetActorLocation();
+	// 	float newYaw = (TargetLoc - GetActorLocation()).GetSafeNormal().Rotation().Yaw;
+	// 	FRotator TargetRot = FRotator(0, newYaw, 0);
+	//
+	// 	// 보간
+	// 	FRotator NewRot = FMath::RInterpTo(GetActorRotation(), TargetRot, DeltaTime, 5.f);
+	// 	SetActorRotation(NewRot);
+	// }
 }
 
 void ACNox_MemoryCollectorAI::SetPerceptionInfo()
@@ -136,10 +136,10 @@ void ACNox_MemoryCollectorAI::GetNewMovementSpeed(const EEnemyMovementSpeed& InM
 		OutNewSpeed = 400.f;
 		OutNewAccelSpeed = 450.f;
 		break;
-	case EEnemyMovementSpeed::Jogging:
-		OutNewSpeed = 500.f;
-		OutNewAccelSpeed = 800.f;
-		break;
+	// case EEnemyMovementSpeed::Jogging:
+	// 	OutNewSpeed = 500.f;
+	// 	OutNewAccelSpeed = 800.f;
+	// 	break;
 	case EEnemyMovementSpeed::Sprinting:
 		OutNewSpeed = 500.f;
 		OutNewAccelSpeed = 600.f;
@@ -251,15 +251,15 @@ void ACNox_MemoryCollectorAI::EvaluateMemory()
 		}
 	}
 
-	if (BestMemory)
-	{
-		BehaviorComp->SetMemoryTarget(*BestMemory);
-		BehaviorComp->SetHasMemoryTarget(true);
-	}
-	else
-	{
-		BehaviorComp->SetHasMemoryTarget(false);
-	}
+	// if (BestMemory)
+	// {
+	// 	BehaviorComp->SetMemoryTarget(*BestMemory);
+	// 	BehaviorComp->SetHasMemoryTarget(true);
+	// }
+	// else
+	// {
+	// 	BehaviorComp->SetHasMemoryTarget(false);
+	// }
 }
 
 const FMemoryFragment ACNox_MemoryCollectorAI::GetMemoryTarget()
@@ -289,14 +289,14 @@ bool ACNox_MemoryCollectorAI::IsPlayBeam()
 
 void ACNox_MemoryCollectorAI::BeamAttack()
 {
-	Beam->SetBeamActive(true, BehaviorComp->GetTarget());
+	// Beam->SetBeamActive(true, BehaviorComp->GetTarget());
 	bRotateToTarget = true;
 }
 
 void ACNox_MemoryCollectorAI::BeamAttackEnd()
 {
 	EnemyAnim->StopBeamAttack();
-	Beam->SetBeamActive(false, BehaviorComp->GetTarget());
+	// Beam->SetBeamActive(false, BehaviorComp->GetTarget());
 	bRotateToTarget = false;
 }
 
@@ -345,7 +345,7 @@ void ACNox_MemoryCollectorAI::StartRangeAttack(bool bIsRight)
 	SpawnTransform.SetScale3D(SpawnScale);
 
 	auto* PoolObj = RangeProjectileArray.Pop();
-	PoolObj->InitializeProjectile(SpawnTransform.GetLocation(), BehaviorComp->GetTarget());
+	// PoolObj->InitializeProjectile(SpawnTransform.GetLocation(), BehaviorComp->GetTarget());
 	PoolObj->SetActorTransform(SpawnTransform);
 	PoolObj->SetActorEnableCollision(true);
 	PoolObj->SetActorHiddenInGame(false);

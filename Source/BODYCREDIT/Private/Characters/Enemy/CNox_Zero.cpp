@@ -55,7 +55,7 @@ void ACNox_Zero::GetNearPatrolRoute()
 		}
 	}
 
-	BehaviorComp->SetPatrolRoute(NearPatrolRoute);
+	// BehaviorComp->SetPatrolRoute(NearPatrolRoute);
 }
 
 void ACNox_Zero::GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed,
@@ -71,10 +71,10 @@ void ACNox_Zero::GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed,
 		OutNewSpeed = 40.f;
 		OutNewAccelSpeed = 128.f;
 		break;
-	case EEnemyMovementSpeed::Jogging:
-		OutNewSpeed = 0.f;
-		OutNewAccelSpeed = 0.f;
-		break;
+	// case EEnemyMovementSpeed::Jogging:
+	// 	OutNewSpeed = 0.f;
+	// 	OutNewAccelSpeed = 0.f;
+	// 	break;
 	case EEnemyMovementSpeed::Sprinting:
 		OutNewSpeed = 310.f;
 		OutNewAccelSpeed = 1024.f;

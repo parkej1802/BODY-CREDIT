@@ -48,10 +48,10 @@ void UCNoxEnemy_Animinstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void UCNoxEnemy_Animinstance::OnAnimMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-	if (Montage == GrenadeMontage)
-		OwnerEnemy->SetGrenadeEnded(true);
-	else if (Montage == ShieldMontage)
-		BehaviorComponent->SetShieldEnded(true);
+	// if (Montage == GrenadeMontage)
+	// 	OwnerEnemy->SetGrenadeEnded(true);
+	// else if (Montage == ShieldMontage)
+	// 	BehaviorComponent->SetShieldEnded(true);
 }
 
 void UCNoxEnemy_Animinstance::AnimNotify_PlayIdleMontage()

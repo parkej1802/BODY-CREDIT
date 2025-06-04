@@ -4,25 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Characters/CNox.h"
+#include "Components/Enemy/CEnemyState.h"
 #include "CNox_EBase.generated.h"
-
-UENUM(BlueprintType)
-enum class EEnemyType : uint8
-{
-	Cctv = 0,
-	Zero,
-	MedicAndroid,
-	MemoryCollector,
-};
-
-UENUM(BlueprintType)
-enum class EEnemyMovementSpeed : uint8
-{
-	Idle = 0,
-	Walking,
-	Jogging,
-	Sprinting
-};
 
 /**
  * Enemy Base
@@ -66,6 +49,9 @@ protected: // Status
 	UPROPERTY(EditDefaultsOnly)
 	float AccelValue = 150.f;
 
+public:
+	EEnemyType GetEnemyType() const { return EnemyType; }
+
 protected: // Virtual Function
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
@@ -78,6 +64,8 @@ protected: // Component
 	class UCNoxEnemy_Animinstance* EnemyAnim;
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UCNoxEnemyHPComponent* HPComp;
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	class UCFSMComponent* FSMComp;
 
 protected:
 	UPROPERTY()
@@ -127,7 +115,11 @@ public:
 		Target = InTarget;
 		MoveDistance = InMoveDistance;
 	}
-	virtual void GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed, float& OutNewAccelSpeed){};
+
+	virtual void GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed,
+	                                 float& OutNewAccelSpeed)
+	{
+	};
 	void SetMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed);
 
 public:

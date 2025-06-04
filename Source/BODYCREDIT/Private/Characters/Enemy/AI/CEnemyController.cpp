@@ -64,20 +64,20 @@ void ACEnemyController::OnPossess(APawn* InPawn)
 	if (EnemyBase)
 		SetGenericTeamId(EnemyBase->TeamID);
 
-	if (EnemyBase->bUseBehaviorTree)
-	{
-		BT_Behavior = CHelpers::GetComponent<UCNox_BehaviorComponent>(EnemyBase);
-
-		check(EnemyBase->GetBehaviorTree());
-
-		UBlackboardComponent* blackboard = Blackboard.Get();
-		if (UseBlackboard(EnemyBase->GetBehaviorTree()->BlackboardAsset, blackboard))
-			this->Blackboard = blackboard;
-
-		BT_Behavior->SetBlackboard(Blackboard);
-
-		RunBehaviorTree(NoxBehaviorTree);
-	}
+	// if (EnemyBase->bUseBehaviorTree)
+	// {
+	// 	BT_Behavior = CHelpers::GetComponent<UCNox_BehaviorComponent>(EnemyBase);
+	//
+	// 	check(EnemyBase->GetBehaviorTree());
+	//
+	// 	UBlackboardComponent* blackboard = Blackboard.Get();
+	// 	if (UseBlackboard(EnemyBase->GetBehaviorTree()->BlackboardAsset, blackboard))
+	// 		this->Blackboard = blackboard;
+	//
+	// 	BT_Behavior->SetBlackboard(Blackboard);
+	//
+	// 	RunBehaviorTree(NoxBehaviorTree);
+	// }
 
 	InitPerception();
 	// Perception->OnPerceptionUpdated.AddDynamic(this, &ACEnemyController::OnPerceptionUpdated);
@@ -109,7 +109,7 @@ void ACEnemyController::OnPerceptionUpdated(const TArray<AActor*>& UpdatedActors
 	}
 
 	StopMovement();
-	EnemyBase->SetTarget(TargetPlayer);
+	// EnemyBase->SetTarget(TargetPlayer);
 
 	if (TargetPlayer)
 		OnDetectPlayer.ExecuteIfBound(TargetPlayer);
@@ -143,7 +143,7 @@ void ACEnemyController::OnAITargetPerceptionInfoUpdate(const FActorPerceptionUpd
 		}
 
 		StopMovement();
-		EnemyBase->SetTarget(TargetPlayer);
+		// EnemyBase->SetTarget(TargetPlayer);
 
 		if (TargetPlayer)
 		{
@@ -167,7 +167,7 @@ void ACEnemyController::OnAITargetPerceptionForgotten(AActor* Actor)
 {
 	if (TargetPlayer != Actor) return;
 	StopMovement();
-	EnemyBase->SetTarget(TargetPlayer);
+	// EnemyBase->SetTarget(TargetPlayer);
 }
 
 void ACEnemyController::UpdateExpiredStimuli(float DeltaTime)
@@ -183,7 +183,7 @@ void ACEnemyController::UpdateExpiredStimuli(float DeltaTime)
 		bExpiredStimuli = false;
 		TargetPlayer = nullptr;
 		CurExpiredTime = 0.f;
-		EnemyBase->SetTarget(TargetPlayer);
+		// EnemyBase->SetTarget(TargetPlayer);
 		StopMovement();
 	}
 }

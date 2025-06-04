@@ -4,7 +4,8 @@
 #include "Characters/Enemy/CNoxEnemy_Animinstance.h"
 #include "Components/Enemy/CNox_BehaviorComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "BehaviorTree/behaviorTree.h"
+// #include "BehaviorTree/behaviorTree.h"
+#include "Components/Enemy/CFSMComponent.h"
 #include "Characters/Enemy/AI/CEnemyController.h"
 #include "Components/Enemy/CNoxEnemyHPComponent.h"
 #include "Navigation/PathFollowingComponent.h"
@@ -13,7 +14,7 @@ ACNox_EBase::ACNox_EBase()
 {
 	TeamID = 2;
 
-	CHelpers::CreateActorComponent<UCNox_BehaviorComponent>(this, &BehaviorComp, "Behavior");
+	// CHelpers::CreateActorComponent<UCNox_BehaviorComponent>(this, &BehaviorComp, "Behavior");
 
 	// Controller Setting
 	CHelpers::GetClass(&AIControllerClass, TEXT("/Game/Characters/Enemy/AI/BP_NoxController.BP_NoxController_C"));
@@ -24,9 +25,10 @@ ACNox_EBase::ACNox_EBase()
 	// GetCharacterMovement()->GetNavMovementProperties()->bUseFixedBrakingDistanceForPaths = false;
 	GetCharacterMovement()->GetNavMovementProperties()->FixedPathBrakingDistance = 0;
 
-	CHelpers::GetAsset(&BehaviorTree,
-	                   TEXT("/Game/Characters/Enemy/AI/BT_Nox.BT_Nox"));
+	// CHelpers::GetAsset(&BehaviorTree,
+	//                    TEXT("/Game/Characters/Enemy/AI/BT_Nox.BT_Nox"));
 	CHelpers::CreateActorComponent<UCNoxEnemyHPComponent>(this, &HPComp, "HPComp");
+	CHelpers::CreateActorComponent<UCFSMComponent>(this, &FSMComp, "FSMComp");
 
 	GetCapsuleComponent()->SetCollisionProfileName(FName("Enemy"));
 }
@@ -37,41 +39,46 @@ void ACNox_EBase::BeginPlay()
 
 	GetCharacterMovement()->MaxAcceleration = AccelValue; // 가속도 설정
 
-	if (bUseBehaviorTree)
-	{
-		BehaviorComp->SetEnemyType(EnemyType);
-	}
+	// if (bUseBehaviorTree)
+	// {
+	// 	BehaviorComp->SetEnemyType(EnemyType);
+	// }
 
 	if (auto Anim = GetMesh()->GetAnimInstance())
 	{
 		EnemyAnim = Cast<UCNoxEnemy_Animinstance>(Anim);
 		EnemyAnim->SetEnemy(this);
-		if (bUseBehaviorTree)
-			EnemyAnim->SetBT(BehaviorComp);
+		// if (bUseBehaviorTree)
+		// 	EnemyAnim->SetBT(BehaviorComp);
 	}
 
 	if (HPComp)
 		HPComp->SetEnemy(this);
+
+	if (FSMComp)
+		FSMComp->InitializeFSM(this);
 }
 
 void ACNox_EBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (bAutoMove && Target)
-	{
-		float dist = FVector::Dist(GetActorLocation(), Target->GetActorLocation());
-		if (dist > MoveDistance)
-		{
-			// CLog::Log(FString::Printf(TEXT("MoveDistance: %f, dist: %f"), MoveDistance, dist));
-			FAIMoveRequest request;
-			request.SetGoalActor(Target);
-			request.SetAcceptanceRadius(MoveDistance);
-			FPathFollowingRequestResult result = EnemyController->MoveTo(request);
-			// FVector DirectionVector = (Target->GetActorLocation() - GetActorLocation()).GetSafeNormal();
-			// AddMovementInput(DirectionVector);
-		}
-	}
+	if (FSMComp) FSMComp->UpdateState();
+	
+	// if (bAutoMove && Target)
+	// {
+	// 	float dist = FVector::Dist(GetActorLocation(), Target->GetActorLocation());
+	// 	if (dist > MoveDistance)
+	// 	{
+	// 		// CLog::Log(FString::Printf(TEXT("MoveDistance: %f, dist: %f"), MoveDistance, dist));
+	// 		FAIMoveRequest request;
+	// 		request.SetGoalActor(Target);
+	// 		request.SetAcceptanceRadius(MoveDistance);
+	// 		FPathFollowingRequestResult result = EnemyController->MoveTo(request);
+	// 		// FVector DirectionVector = (Target->GetActorLocation() - GetActorLocation()).GetSafeNormal();
+	// 		// AddMovementInput(DirectionVector);
+	// 	}
+	// }
 }
 
 void ACNox_EBase::PossessedBy(AController* NewController)
@@ -124,7 +131,7 @@ void ACNox_EBase::SetGrenadeEnded(bool InbEndedAnim)
 
 void ACNox_EBase::SetMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed)
 {
-	float newSpeed=0.f, newAccelSpeed=0.f;
+	float newSpeed = 0.f, newAccelSpeed = 0.f;
 	GetNewMovementSpeed(InMovementSpeed, newSpeed, newAccelSpeed);
 	GetCharacterMovement()->MaxWalkSpeed = newSpeed;
 	GetCharacterMovement()->MaxAcceleration = newAccelSpeed;

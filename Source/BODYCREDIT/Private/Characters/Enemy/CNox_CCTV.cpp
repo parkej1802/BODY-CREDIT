@@ -126,7 +126,7 @@ void ACNox_CCTV::BroadCastDetectPlayer(ACNox* DetectPlayer)
 			{
 				// 플레이어 감지 정보 전달
 				// Enemy->SetTarget(DetectPlayer);
-				Enemy->SetTargetCallByDelegate(DetectPlayer);
+				// Enemy->SetTargetCallByDelegate(DetectPlayer);
 			}
 		}
 	}
