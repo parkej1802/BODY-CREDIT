@@ -33,6 +33,7 @@ FSlateBrush UInventory_ItemWidget::GetIconImage()
 
 void UInventory_ItemWidget::CallOnRemoved()
 {
+	if (!ItemObject) return;
 	OnItemRemoved.Broadcast(ItemObject);
 }
 
@@ -41,14 +42,15 @@ void UInventory_ItemWidget::Refresh()
 {
 	if (!IsValid(ItemObject)) return;
 	FIntPoint IntPoint = ItemObject->GetDimension();
-	Size.X = FMath::TruncToInt(IntPoint.X * TileSize - 1);
-	Size.Y = FMath::TruncToInt(IntPoint.Y * TileSize - 1);
+	Size.X = FMath::RoundToInt(IntPoint.X * TileSize);
+	Size.Y = FMath::RoundToInt(IntPoint.Y * TileSize);
 
 	SizeBox_BackGround->SetWidthOverride(Size.X);
 	SizeBox_BackGround->SetHeightOverride(Size.Y);
 
 	UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Image_Item->Slot);
 	CanvasSlot->SetSize(Size);
+	CanvasSlot->SetZOrder(10);
 
 	if (Image_Item)
 	{
@@ -82,6 +84,9 @@ void UInventory_ItemWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent
 
 void UInventory_ItemWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
 {
+	if (IsMoving) return;
+	IsMoving = true;
+
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
 
 	UDragDropOperation* DragOperation = UWidgetBlueprintLibrary::CreateDragDropOperation(UDragDropOperation::StaticClass());

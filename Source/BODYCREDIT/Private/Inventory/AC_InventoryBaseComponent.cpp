@@ -20,17 +20,24 @@ void UAC_InventoryBaseComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
 	Items.SetNum(Columns * Rows);
+
 	if (GetWorld())
 	{
-		GameMode = Cast<ACMainGM>(GetWorld()->GetAuthGameMode());
-		if (GameMode)
+		FString MapName = GetWorld()->GetMapName();
+		MapName.RemoveFromStart(GetWorld()->StreamingLevelsPrefix);
+
+		if (MapName != TEXT("Untitled"))
 		{
-			PreAddItem();
+			GameMode = Cast<ACMainGM>(GetWorld()->GetAuthGameMode());
+			if (GameMode)
+			{
+				PreAddItem();
+			}
 		}
 	}
 }
+
 
 
 // Called every frame
@@ -40,8 +47,8 @@ void UAC_InventoryBaseComponent::TickComponent(float DeltaTime, ELevelTick TickT
 
 	if (IsDirty)
 	{
-		IsDirty = false;
 		OnInventoryChanged();
+		IsDirty = false;
 	}
 }
 
@@ -97,6 +104,8 @@ void UAC_InventoryBaseComponent::AddItemAt(class UItemObject* ItemObject, int32 
 	FInventoryTile TempTile = IndexToTile(TopLeftIndex);
 	FIntPoint TempDimension = ItemObject->GetDimension();
 
+	ItemObject->StartPosition = FIntPoint(TempTile.X, TempTile.Y);
+
 	for (int32 i = TempTile.X; i < (TempDimension.X + TempTile.X); ++i)
 	{
 		for (int32 j = TempTile.Y; j < (TempDimension.Y + TempTile.Y); ++j)
@@ -106,9 +115,12 @@ void UAC_InventoryBaseComponent::AddItemAt(class UItemObject* ItemObject, int32 
 			if (IsTileValid(ResultTile))
 			{
 				int32 CurrentIndex = TileToIndex(ResultTile);
-				Items[CurrentIndex] = ItemObject;
-				IndexToObject.Add(CurrentIndex, ItemObject);
-				ItemObject->StartPosition = FIntPoint(TempTile.X, TempTile.Y);
+				//if (Items.IsValidIndex(CurrentIndex)) {
+					Items[CurrentIndex] = ItemObject;
+					ItemObject->CurrentIndex = CurrentIndex;
+					IndexToObject.Add(CurrentIndex, ItemObject);
+				//}
+				
 
 				// GEngine->AddOnScreenDebugMessage(3, 1.f, FColor::Green, FString::Printf(TEXT("Item Index %d"), TileToIndex(ResultTile)));
 			}
@@ -217,8 +229,6 @@ TMap<UItemObject*, FInventoryTile> UAC_InventoryBaseComponent::GetAllItems()
 	return AllItem;
 }
 
-
-
 void UAC_InventoryBaseComponent::RemoveItem(UItemObject* ItemObject)
 {
 	if (IsValid(ItemObject))
@@ -247,7 +257,50 @@ void UAC_InventoryBaseComponent::PreAddItem()
 		if (IsValid(TempItemBase) && IsValid(TempItemBase->ItemObject))
 		{
 			TryAddItem(TempItemBase->ItemObject);
-			TempItemBase->Destroy();
+			/*TempItemBase->Destroy();*/
+			TempItemBase->SetActorHiddenInGame(true);
+			TempItemBase->SetActorEnableCollision(false);
 		}
 	}
 }
+
+UItemObject* UAC_InventoryBaseComponent::CreateItemFromData(const FItemSaveData& Data)
+{
+	UItemObject* NewItem = NewObject<UItemObject>(this);
+	if (NewItem)
+	{
+		NewItem->ImportData(Data);
+	}
+	return NewItem;
+}
+
+//UItemObject* UAC_InventoryBaseComponent::CreateItemFromData(const FItemSaveData& Data)
+//{
+//	UItemObject* NewItem = NewObject<UItemObject>(this);
+//	if (NewItem)
+//	{
+//		NewItem->ImportData(Data);
+//
+//		if (NewItem->ItemClass)
+//		{
+//			UWorld* World = GetWorld();
+//			if (World)
+//			{
+//				FActorSpawnParameters SpawnParams;
+//				SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+//
+//				AItem_Base* SpawnedActor = World->SpawnActor<AItem_Base>(NewItem->ItemClass, FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+//				if (SpawnedActor)
+//				{
+//					NewItem->ItemActorOwner = SpawnedActor;
+//
+//					if (SpawnedActor->LootInventoryComp)
+//					{
+//						SpawnedActor->LootInventoryComp->InitializeFromSave(Data);
+//					}
+//				}
+//			}
+//		}
+//	}
+//	return NewItem;
+//}

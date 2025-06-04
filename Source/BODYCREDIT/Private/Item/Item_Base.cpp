@@ -10,6 +10,7 @@
 #include "Inventory/AC_InventoryComponent.h"
 #include "Item/ItemDT.h"
 #include "Games/CMainGM.h"
+#include "Item/Functions/ItemStrategy.h"
 
 // Sets default values
 AItem_Base::AItem_Base()
@@ -29,7 +30,7 @@ AItem_Base::AItem_Base()
 
 	ItemObject = CreateDefaultSubobject<UItemObject>(TEXT("ItemObject"));
 	
-
+	ItemStrategy = nullptr;
 }
 
 void AItem_Base::OnConstruction(const FTransform& Transform)
@@ -55,11 +56,21 @@ void AItem_Base::BeginPlay()
 {
 	Super::BeginPlay();
 
+	//ItemObject = NewObject<UItemObject>(this, TEXT("ItemObject"));
+	//GetDefaultItemObject();
+
+	if (!ItemObject)
+	{
+		ItemObject = NewObject<UItemObject>(this, TEXT("ItemObject"));
+		GetDefaultItemObject();
+	}
+	ItemObject->ItemActorOwner = this;
+
 	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &AItem_Base::OnSphereBeginOverlap);
 
 	GameMode = Cast<ACMainGM>(GetWorld()->GetAuthGameMode());
 	
-	ItemObject->ID = GameMode->GetItemIndex();
+	// ItemObject->ID = GameMode->GetItemIndex();
 }
 
 // Called every frame
@@ -75,7 +86,9 @@ void AItem_Base::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 	{
 		if (PlayerCharacter->InventoryComp->TryAddItem(ItemObject)) 
 		{
-			Destroy();
+			/*Destroy();*/
+			SetActorHiddenInGame(true);
+			SetActorEnableCollision(false);
 		}
 	}
 }
@@ -89,3 +102,19 @@ void AItem_Base::GetDefaultItemObject()
 	ItemObject->ItemClass = ItemData.ItemClass;
 	ItemObject->ItemType = ItemData.ItemType;
 }
+
+void AItem_Base::SetItemStrategy(class UItemStrategy* NewStrategy)
+{
+	if (ItemStrategy != NewStrategy) {
+		ItemStrategy = NewStrategy;
+	}
+}
+
+void AItem_Base::UseItem()
+{
+	if (ItemStrategy)
+	{
+		ItemStrategy->Use(this);
+	}
+}
+
