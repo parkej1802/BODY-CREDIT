@@ -22,6 +22,7 @@ EBTNodeResult::Type UCBTT_Grenade::ExecuteTask(UBehaviorTreeComponent& OwnerComp
 		// CLog::Log(FString::Printf(TEXT("GrenadeCanUse: %d"), OwnerComp.GetBlackboardComponent()->GetValueAsBool(GrenadeCanUseKey)));
 		MyEnemy->HandleElectricGrenade(); // 애니메이션 실행
 		OwnerComp.GetBlackboardComponent()->SetValueAsBool(GrenadeCanUseKey, false); // 감전탄 쿨타임 실행
+		OwnerComp.GetBlackboardComponent()->SetValueAsBool(PlayGrenadeKey, false);
 		return EBTNodeResult::InProgress;
 		// return EBTNodeResult::Succeeded;
 	}

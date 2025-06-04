@@ -18,12 +18,16 @@ private:
 	UCBTT_MoveToTarget_AddCondition();
 	
 private:
+	const FName PlayGrenadeKey = "bPlayGrenade";
+	
 	UPROPERTY(EditAnywhere, Category = "Blackboard")
 	FBlackboardKeySelector DirectionRadiusKey;
 	UPROPERTY(EditAnywhere, Category = "Blackboard")
 	FBlackboardKeySelector ConditionKey;
 	UPROPERTY(EditAnywhere, Category = "Blackboard")
 	float ConditionValue = 0.f;
+	UPROPERTY(EditAnywhere, Category = "Blackboard")
+	FBlackboardKeySelector TargetInRadiusCheckKey;
 	
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;

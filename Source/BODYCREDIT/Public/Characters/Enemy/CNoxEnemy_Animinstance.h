@@ -130,4 +130,8 @@ private: //Zero
 
 public:
 	void SetDesiredRotation(const FRotator& InDesiredRotation) { DesiredRotation = InDesiredRotation; }
+
+private:
+	UFUNCTION()
+	void AnimNotify_Grenade();
 };

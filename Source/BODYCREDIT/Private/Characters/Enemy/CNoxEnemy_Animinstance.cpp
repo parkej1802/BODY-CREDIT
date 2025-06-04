@@ -213,3 +213,8 @@ void UCNoxEnemy_Animinstance::AnimNotify_RangeAttack()
 		Cast<ACNox_MemoryCollectorAI>(OwnerEnemy)->StartRangeAttack(true);
 	}
 }
+
+void UCNoxEnemy_Animinstance::AnimNotify_Grenade()
+{
+	Cast<ACNox_MedicAndroid>(OwnerEnemy)->LaunchElectricGrenade();
+}
