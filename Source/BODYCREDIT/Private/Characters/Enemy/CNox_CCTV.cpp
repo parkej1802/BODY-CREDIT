@@ -31,20 +31,12 @@ void ACNox_CCTV::BeginPlay()
 	InitialRotation = GetActorRotation();
 	SumRotYaw = InitialRotation.Yaw;
 
-	HPComp->SetStatus(50, 0);
+	HPComp->SetStatus(30, 0);
 }
 
 void ACNox_CCTV::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (HPComp->IsDead())
-	{
-		// 사망 시 움직이지 않는다.
-	}
-	else
-	{
-		RotateCCTV(DeltaTime);
-	}
 }
 
 void ACNox_CCTV::PossessedBy(AController* NewController)
@@ -81,8 +73,6 @@ void ACNox_CCTV::RotateCCTV(float DeltaTime)
 	SumRotYaw += YawDelta;
 
 	// 회전이 끝점에 도달했는지 확인
-	// CLog::Log(FString::Printf(
-	// 	TEXT("bRotatingRight: %d, SumRotYaw: %.1f, TargetYaw: %.1f"), bRotatingRight, SumRotYaw, TargetYaw));
 	if ((bRotatingRight && SumRotYaw >= TargetYaw) || (!bRotatingRight && SumRotYaw <= TargetYaw))
 	{
 		NewYaw = TargetYaw;

@@ -1,5 +1,12 @@
 #include "State/CCTV/CDieState_CCTV.h"
 
-void CDieState_CCTV::Execute(class ACNox_EBase* Owner, class UCFSMComponent* FSMComp)
+#include "Characters/Enemy/CNox_EBase.h"
+
+void CDieState_CCTV::Execute(ACNox_EBase* Owner, UCFSMComponent* FSMComp)
 {
+	if (!bFired)
+	{
+		Owner->HandleDie();
+		bFired = true;
+	}
 }

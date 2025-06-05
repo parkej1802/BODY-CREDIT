@@ -42,7 +42,8 @@ private:
 	bool bIsPaused = false;
 
 	float SumRotYaw = 0.f;
-	
+
+public:
 	void RotateCCTV(float DeltaTime);
 
 private:

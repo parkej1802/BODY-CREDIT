@@ -181,6 +181,7 @@ void ACNox_EBase::HandleDie(const int32 sectionIdx)
 {
 	GetCapsuleComponent()->SetCollisionProfileName(FName("EnemyDie"));
 	EnemyAnim->PlayDieMontage(sectionIdx);
+	EnemyController->PerceptionDeactive();
 }
 
 void ACNox_EBase::ResetVal()

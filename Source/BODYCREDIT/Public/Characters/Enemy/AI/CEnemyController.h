@@ -53,4 +53,7 @@ private:
 
 public: // CCTV BroadCasting
 	FDetectPlayer OnDetectPlayer;
+
+public: // Die
+	void PerceptionDeactive();
 };

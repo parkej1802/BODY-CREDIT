@@ -123,3 +123,8 @@ void ACEnemyController::UpdateExpiredStimuli(float DeltaTime)
 		StopMovement();
 	}
 }
+
+void ACEnemyController::PerceptionDeactive()
+{
+	PerceptionComponent->Deactivate();
+}

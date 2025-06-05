@@ -4,7 +4,7 @@
 #include "Characters/Enemy/CNox_Zero.h"
 #include "State/CCTV/CDieState_CCTV.h"
 #include "State/CCTV/CIdleState_CCTV.h"
-#include "State/CCTV/CSenseState_CCTV.h"
+#include "State/CCTV/CRotateMoveStrategy.h"
 #include "State/MEDIC/CCombatState_MEDIC.h"
 #include "State/MEDIC/CDieState_MEDIC.h"
 #include "State/MEDIC/CIdleState_MEDIC.h"
@@ -51,8 +51,10 @@ TMap<EEnemyState, TSharedPtr<ICEnemyStateStrategy>> UCFSMComponent::CreateStrate
 	switch (Type)
 	{
 	case EEnemyType::Cctv:
-		Result.Add(EEnemyState::IDLE, MakeShared<CIdleState_CCTV>());
-		Result.Add(EEnemyState::Sense, MakeShared<CSenseState_CCTV>());
+		{
+			TUniquePtr<CRotateMoveStrategy> MoveStrategy = MakeUnique<CRotateMoveStrategy>();
+			Result.Add(EEnemyState::IDLE, MakeShared<CIdleState_CCTV>(MoveTemp(MoveStrategy)));
+		}
 		Result.Add(EEnemyState::Die, MakeShared<CDieState_CCTV>());
 		break;
 	case EEnemyType::Zero:
