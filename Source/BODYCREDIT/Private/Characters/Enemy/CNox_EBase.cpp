@@ -103,6 +103,16 @@ void ACNox_EBase::SetTarget(ACNox* InTarget)
 	Target ? FSMComp->SetEnemyState(EEnemyState::Sense) : FSMComp->SetEnemyState(EEnemyState::IDLE);
 }
 
+void ACNox_EBase::SetEnemyState(EEnemyState NewState)
+{
+	FSMComp->SetEnemyState(NewState);
+}
+
+void ACNox_EBase::SetCombatState(ECombatState NewCombatState)
+{
+	FSMComp->SetCombatState(NewCombatState);
+}
+
 void ACNox_EBase::SetTargetCallByDelegate(ACNox* InTarget)
 {
 	EnemyController->SetTargetPlayer(InTarget);
@@ -183,4 +193,19 @@ bool ACNox_EBase::IsPlayerInForwardRange(ACNox* InTarget, float InForwardRange)
 
 	// CLog::Log(FString::Printf(TEXT("No Hit")));
 	return false;
+}
+
+void ACNox_EBase::UpdateSkillCoolDowns(ESkillCoolDown Skill, float DeltaTime)
+{
+	FSMComp->UpdateSkillCoolDowns(Skill, DeltaTime);
+}
+
+bool ACNox_EBase::IsSkillReady(ESkillCoolDown Skill) const
+{
+	return FSMComp->IsSkillReady(Skill);
+}
+
+void ACNox_EBase::UsingSkill(ESkillCoolDown Skill)
+{
+	FSMComp->UsingSkill(Skill);
 }

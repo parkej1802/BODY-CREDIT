@@ -46,7 +46,7 @@ void CSplineMoveStrategy::SplineMove(ACNox_EBase* Owner)
 	OwnerLocation.Z = 0.f;
 	TargetLocation.Z = 0.f;
 	float DistToTarget = FVector::Dist(OwnerLocation, TargetLocation);
-	if (DistToTarget < AcceptanceThreshold) // 일정 거리에 도달했으면 다음 인덱스 변경
+	if (bMoving && DistToTarget < AcceptanceThreshold) // 일정 거리에 도달했으면 다음 인덱스 변경
 	{
 		CurrentIndex = (++CurrentIndex) % Distances.Num();
 		bMoving = false;
@@ -70,7 +70,7 @@ void CSplineMoveStrategy::RandomMove(ACNox_EBase* Owner)
 
 	if (!bMoving)
 	{
-		RanLocation = GetRandomLocation(Owner);	// 랜덤 위치 구하기
+		RanLocation = GetRandomLocation(Owner); // 랜덤 위치 구하기
 		DrawDebugSphere(Owner->GetWorld(), RanLocation, 10, 10, FColor::Green, true, 5);
 		bMoving = true;
 	}
@@ -78,7 +78,7 @@ void CSplineMoveStrategy::RandomMove(ACNox_EBase* Owner)
 	{
 		// 이동속도 변경
 		Owner->SetMovementSpeed(EEnemyMovementSpeed::Walking);
-		EPathFollowingRequestResult::Type result = AICon->MoveToLocation(RanLocation, AcceptanceThreshold, false);
+		EPathFollowingRequestResult::Type result = AICon->MoveToLocation(RanLocation, AcceptanceThreshold, true);
 		switch (result)
 		{
 		case EPathFollowingRequestResult::Failed:

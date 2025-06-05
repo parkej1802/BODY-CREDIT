@@ -41,3 +41,9 @@ enum class EEnemyMovementSpeed : uint8
 	Sprinting,
 	Combat
 };
+
+enum class ESkillCoolDown
+{
+	Melee,    // 근접 스킬
+	Ranged,   // 원거리 스킬
+};

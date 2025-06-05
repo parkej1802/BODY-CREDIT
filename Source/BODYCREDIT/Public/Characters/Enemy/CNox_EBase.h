@@ -84,6 +84,9 @@ public:
 public:
 	// CCTV에서는 Blackboard에 세팅은 안하고 주변 Enemy에게만 전달한다.
 	virtual void SetTarget(ACNox* InTarget);
+	ACNox* GetTarget() const { return Target; }
+	void SetEnemyState(EEnemyState NewState);
+	void SetCombatState(ECombatState NewCombatState);
 	void SetTargetCallByDelegate(ACNox* InTarget);
 	void HandleAttack(float InAttackDistance);
 	bool IsAttacking();
@@ -117,11 +120,14 @@ public:
 	}
 
 	virtual void GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed,
-	                                 float& OutNewAccelSpeed)
-	{
-	};
+	                                 float& OutNewAccelSpeed) {};
 	void SetMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed);
 
 public:
 	bool IsPlayerInForwardRange(ACNox* InTarget, float InForwardRange);
+
+public:
+	void UpdateSkillCoolDowns(ESkillCoolDown Skill, float DeltaTime);
+	bool IsSkillReady(ESkillCoolDown Skill) const;
+	void UsingSkill(ESkillCoolDown Skill);
 };

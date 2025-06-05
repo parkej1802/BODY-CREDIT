@@ -15,6 +15,7 @@
 #include "State/MEMORY/CMemoryHuntState_MEMORY.h"
 #include "State/MEMORY/CSenseState_MEMORY.h"
 #include "State/ZERO/CCombatState_ZERO.h"
+#include "State/ZERO/CConditionalMoveStrategy.h"
 #include "State/ZERO/CDieState_ZERO.h"
 #include "State/ZERO/CIdleState_ZERO.h"
 #include "State/ZERO/CSenseState_ZERO.h"
@@ -39,6 +40,7 @@ void UCFSMComponent::InitializeFSM(ACNox_EBase* InOwner)
 {
 	OwnerEnemy = InOwner;
 	EnemyStrategies = CreateStrategies(OwnerEnemy->GetEnemyType());
+	InitSkillCoolDowns(OwnerEnemy->GetEnemyType());
 }
 
 TMap<EEnemyState, TSharedPtr<ICEnemyStateStrategy>> UCFSMComponent::CreateStrategies(EEnemyType Type)
@@ -54,10 +56,14 @@ TMap<EEnemyState, TSharedPtr<ICEnemyStateStrategy>> UCFSMComponent::CreateStrate
 		break;
 	case EEnemyType::Zero:
 		{
-			TUniquePtr<CSplineMoveStrategy> MoveStrategy = MakeUnique<CSplineMoveStrategy>(Cast<ACNox_Zero>(OwnerEnemy)->GetNearPatrolRoute());
+			TUniquePtr<CSplineMoveStrategy> MoveStrategy = MakeUnique<CSplineMoveStrategy>(
+				Cast<ACNox_Zero>(OwnerEnemy)->GetNearPatrolRoute());
 			Result.Add(EEnemyState::IDLE, MakeShared<CIdleState_ZERO>(MoveTemp(MoveStrategy)));
 		}
-		Result.Add(EEnemyState::Sense, MakeShared<CSenseState_ZERO>());
+		{
+			TUniquePtr<CConditionalMoveStrategy> ConditionalMove = MakeUnique<CConditionalMoveStrategy>();
+			Result.Add(EEnemyState::Sense, MakeShared<CSenseState_ZERO>(MoveTemp(ConditionalMove)));
+		}
 		Result.Add(EEnemyState::Combat, MakeShared<CCombatState_ZERO>());
 		Result.Add(EEnemyState::Die, MakeShared<CDieState_ZERO>());
 		break;
@@ -91,4 +97,27 @@ void UCFSMComponent::SetEnemyState(EEnemyState NewState)
 void UCFSMComponent::SetCombatState(ECombatState NewCombatState)
 {
 	CurrentCombatState = NewCombatState;
+}
+
+void UCFSMComponent::InitSkillCoolDowns(EEnemyType Type)
+{
+	switch (Type)
+	{
+	case EEnemyType::Zero:
+		SkillCoolDowns.Add(GetSkillName(ESkillCoolDown::Melee), 0.f);
+		SkillMaxCoolDowns.Add(GetSkillName(ESkillCoolDown::Melee), 2.f);
+		break;
+	default:
+		break;
+	}
+}
+
+FName UCFSMComponent::GetSkillName(ESkillCoolDown SkillType) const
+{
+	switch (SkillType)
+	{
+		case ESkillCoolDown::Melee: return FName(TEXT("MeleeCoolDown"));
+		case ESkillCoolDown::Ranged: return FName(TEXT("RangedCoolDown"));
+		default: return FName(TEXT("UnknownCoolDown"));
+	}
 }
