@@ -39,7 +39,9 @@ public: // Get Sensing Function
 	float GetHearingRange() const { return HearingRange; }
 
 protected: // Set Sensing Function
-	virtual void SetPerceptionInfo() {}
+	virtual void SetPerceptionInfo()
+	{
+	}
 
 protected: // Status
 	UPROPERTY(EditDefaultsOnly)
@@ -54,6 +56,8 @@ protected: // Virtual Function
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void PossessedBy(AController* NewController) override;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+							 class AController* EventInstigator, AActor* DamageCauser) override;
 
 protected: // Component
 	UPROPERTY(VisibleDefaultsOnly)
@@ -77,11 +81,19 @@ public:
 	void SetEnemyState(EEnemyState NewState);
 	void SetCombatState(ECombatState NewCombatState);
 	void SetTargetCallByDelegate(ACNox* InTarget);
-	void HandleAttack(float InAttackDistance);	// BT 제거할 때 같이 제거
+	void HandleAttack(float InAttackDistance); // BT 제거할 때 같이 제거
 	void HandleAttack();
 	bool IsAttacking();
 	bool IsPlayerInDistance();
-	virtual void AttackCollision(bool bOn, bool IsRightHand = true) {}
+
+	virtual void AttackCollision(bool bOn, bool IsRightHand = true)
+	{
+	}
+
+	void HandleHit(const int32 sectionIdx = 1);
+	bool IsHitting();
+
+	void ResetVal();
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category=Health)
@@ -111,7 +123,9 @@ public:
 	}
 
 	virtual void GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed,
-	                                 float& OutNewAccelSpeed) {};
+	                                 float& OutNewAccelSpeed)
+	{
+	};
 	void SetMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed);
 
 public:

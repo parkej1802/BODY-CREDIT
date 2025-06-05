@@ -5,7 +5,6 @@
 #include "Characters/Enemy/CNox_Zero.h"
 #include "Utilities/CLog.h"
 #include "Global.h"
-#include "KismetAnimationLibrary.h"
 
 void UCNoxEnemy_Animinstance::NativeInitializeAnimation()
 {
@@ -25,9 +24,15 @@ void UCNoxEnemy_Animinstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	if (!OwnerEnemy) return;
 
-	Speed = OwnerEnemy->GetVelocity().Size();
-	DeltaYaw =UKismetAnimationLibrary::CalculateDirection(OwnerEnemy->GetVelocity(), OwnerEnemy->GetActorRotation());
-	
+	FVector velo = OwnerEnemy->GetVelocity();
+	Speed = velo.Size();
+
+	velo.Z = 0;
+	velo.Normalize();
+	const float Dot = FVector::DotProduct(OwnerEnemy->GetActorForwardVector(), velo);
+	const float CrossZ = FVector::CrossProduct(OwnerEnemy->GetActorForwardVector(), velo).Z;
+	DeltaYaw=FMath::RadiansToDegrees( FMath::Atan2( CrossZ, Dot ) );
+
 	if (loopCheck)
 	{
 		float Elapsed = GetWorld()->GetTimeSeconds() - LoopStartTime;
@@ -100,7 +105,7 @@ void UCNoxEnemy_Animinstance::JumpShieldMontage()
 
 void UCNoxEnemy_Animinstance::PlayAttackMontage()
 {
-	if (OwnerEnemy->IsA(ACNox_MedicAndroid::StaticClass())||
+	if (OwnerEnemy->IsA(ACNox_MedicAndroid::StaticClass()) ||
 		OwnerEnemy->IsA(ACNox_Zero::StaticClass()))
 	{
 		if (AttackMontage) OwnerEnemy->PlayAnimMontage(AttackMontage, 1.0f);
@@ -117,7 +122,7 @@ void UCNoxEnemy_Animinstance::PlayAttackMontage()
 
 bool UCNoxEnemy_Animinstance::IsAttacking() const
 {
-	if (OwnerEnemy->IsA(ACNox_MedicAndroid::StaticClass())||OwnerEnemy->IsA(ACNox_Zero::StaticClass()))
+	if (OwnerEnemy->IsA(ACNox_MedicAndroid::StaticClass()) || OwnerEnemy->IsA(ACNox_Zero::StaticClass()))
 	{
 		if (AttackMontage && Montage_IsPlaying(AttackMontage)) return true;
 		else return false;
@@ -130,6 +135,18 @@ bool UCNoxEnemy_Animinstance::IsAttacking() const
 			return true;
 		else return false;
 	}
+
+	return false;
+}
+
+void UCNoxEnemy_Animinstance::PlayHitMontage(const int32 sectionIdx)
+{
+	OwnerEnemy->PlayAnimMontage(HitMontage, sectionIdx);
+}
+
+bool UCNoxEnemy_Animinstance::IsHitting() const
+{
+	if (AttackMontage && Montage_IsPlaying(AttackMontage)) return true;
 
 	return false;
 }

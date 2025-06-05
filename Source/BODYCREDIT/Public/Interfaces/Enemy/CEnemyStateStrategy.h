@@ -19,4 +19,5 @@ class BODYCREDIT_API ICEnemyStateStrategy
 
 public:
 	virtual void Execute(class ACNox_EBase* Owner, class UCFSMComponent* FSMComp) = 0;
+	virtual void ResetVal(ACNox_EBase* Owner) {};
 };

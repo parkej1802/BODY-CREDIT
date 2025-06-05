@@ -37,6 +37,7 @@ private:
 public:
 	void InitializeFSM(ACNox_EBase* InOwner);
 	void UpdateState();
+	void ResetVal(EEnemyType Type);
 
 	EEnemyState GetEnemyState() const { return CurrentEnemyState; }
 	ECombatState GetCombatState() const { return CurrentCombatState; }

@@ -46,7 +46,7 @@ void UCNoxHPComponent::TakeDamage(float Amount, bool ActiveShield, bool& OutIsSh
 void UCNoxHPComponent::TakeDamage(float Amount)
 {
 	Health = FMath::Max(0.f, Health - Amount);
-	// CLog::Print(FString::Printf(TEXT("TakeDamage: %f"), Amount));
+	CLog::Print(FString::Printf(TEXT("%s TakeDamage: %f"), *GetOwner()->GetName() ,Amount));
 }
 
 void UCNoxHPComponent::Die()

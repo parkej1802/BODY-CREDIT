@@ -44,6 +44,9 @@ void ACNox_Zero::BeginPlay()
 	// Attack Montage 등록
 	CHelpers::GetAssetDynamic(&(EnemyAnim->AttackMontage),
 	                          TEXT("/Game/Assets/Cyber_Zombie_Arm/Anim/Attack/AM_Attack.AM_Attack"));
+	// Hit Montage 등록
+	CHelpers::GetAssetDynamic(&(EnemyAnim->HitMontage),
+							  TEXT("/Game/Assets/Cyber_Zombie_Arm/Anim/Hit/AM_Hit.AM_Hit"));
 	AttackCollision(false); // Attack Collision Off
 }
 

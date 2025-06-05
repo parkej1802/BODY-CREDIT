@@ -25,6 +25,13 @@ void CConditionalMoveStrategy_ZERO::Move(ACNox_EBase* Owner, float DeltaTime)
 	Owner->UpdateSkillCoolDowns(ESkillCoolDown::Melee, DeltaTime);
 }
 
+void CConditionalMoveStrategy_ZERO::ResetVal(ACNox_EBase* Owner)
+{
+	AAIController* AICon = Cast<AAIController>(Owner->GetController());
+	if (!AICon) return;
+	AICon->StopMovement();
+}
+
 void CConditionalMoveStrategy_ZERO::CovertToCombatState(ACNox_EBase* Owner)
 {
 	if (Owner->IsSkillReady(ESkillCoolDown::Melee))

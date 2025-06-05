@@ -129,7 +129,7 @@ void UCDoAction_Bow::CreateArrow()
 		return;
 
 	FTransform transform;
-	ACAddOn_Arrow* arrow = World->SpawnActorDeferred<ACAddOn_Arrow>(ArrowClass, transform, NULL, NULL, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+	ACAddOn_Arrow* arrow = World->SpawnActorDeferred<ACAddOn_Arrow>(ArrowClass, transform, Bow->GetOwner(), NULL, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 	CheckNull(arrow);
 
 	arrow->AddIgnoreActor(OwnerCharacter);

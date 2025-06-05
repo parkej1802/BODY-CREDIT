@@ -17,6 +17,7 @@
 #include "State/ZERO/CCombatState_ZERO.h"
 #include "State/ZERO/CConditionalMoveStrategy_ZERO.h"
 #include "State/ZERO/CDieState_ZERO.h"
+#include "State/ZERO/CHitState_ZERO.h"
 #include "State/ZERO/CIdleState_ZERO.h"
 #include "State/ZERO/CSenseState_ZERO.h"
 #include "State/ZERO/CSplineMoveStrategy.h"
@@ -64,6 +65,7 @@ TMap<EEnemyState, TSharedPtr<ICEnemyStateStrategy>> UCFSMComponent::CreateStrate
 			TUniquePtr<CConditionalMoveStrategy_ZERO> ConditionalMove = MakeUnique<CConditionalMoveStrategy_ZERO>();
 			Result.Add(EEnemyState::Sense, MakeShared<CSenseState_ZERO>(MoveTemp(ConditionalMove)));
 		}
+		Result.Add(EEnemyState::Hit, MakeShared<CHitState_ZERO>());
 		Result.Add(EEnemyState::Combat, MakeShared<CCombatState_ZERO>());
 		Result.Add(EEnemyState::Die, MakeShared<CDieState_ZERO>());
 		break;
@@ -87,6 +89,30 @@ TMap<EEnemyState, TSharedPtr<ICEnemyStateStrategy>> UCFSMComponent::CreateStrate
 void UCFSMComponent::UpdateState()
 {
 	if (EnemyStrategies.Contains(CurrentEnemyState)) EnemyStrategies[CurrentEnemyState]->Execute(OwnerEnemy, this);
+}
+
+void UCFSMComponent::ResetVal(EEnemyType Type)
+{
+	switch (Type)
+	{
+	case EEnemyType::Zero:
+		if (CurrentEnemyState == EEnemyState::Hit)
+		{
+			EnemyStrategies[EEnemyState::IDLE]->ResetVal(OwnerEnemy);
+			EnemyStrategies[EEnemyState::Sense]->ResetVal(OwnerEnemy);
+			EnemyStrategies[EEnemyState::Combat]->ResetVal(OwnerEnemy);
+		}
+		else if (CurrentEnemyState == EEnemyState::Combat)
+		{
+			EnemyStrategies[EEnemyState::IDLE]->ResetVal(OwnerEnemy);
+			EnemyStrategies[EEnemyState::Sense]->ResetVal(OwnerEnemy);
+		}
+		else if (CurrentEnemyState == EEnemyState::Sense)
+		{
+			EnemyStrategies[EEnemyState::IDLE]->ResetVal(OwnerEnemy);
+		}
+		break;
+	}
 }
 
 void UCFSMComponent::SetEnemyState(EEnemyState NewState)
@@ -116,8 +142,8 @@ FName UCFSMComponent::GetSkillName(ESkillCoolDown SkillType) const
 {
 	switch (SkillType)
 	{
-		case ESkillCoolDown::Melee: return FName(TEXT("MeleeCoolDown"));
-		case ESkillCoolDown::Ranged: return FName(TEXT("RangedCoolDown"));
-		default: return FName(TEXT("UnknownCoolDown"));
+	case ESkillCoolDown::Melee: return FName(TEXT("MeleeCoolDown"));
+	case ESkillCoolDown::Ranged: return FName(TEXT("RangedCoolDown"));
+	default: return FName(TEXT("UnknownCoolDown"));
 	}
 }

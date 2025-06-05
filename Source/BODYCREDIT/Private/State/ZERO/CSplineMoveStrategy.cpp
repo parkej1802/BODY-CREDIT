@@ -32,6 +32,11 @@ void CSplineMoveStrategy::Move(ACNox_EBase* Owner, float DeltaTime)
 	}
 }
 
+void CSplineMoveStrategy::ResetVal(ACNox_EBase* Owner)
+{
+	bMoving = false;
+}
+
 void CSplineMoveStrategy::SplineMove(ACNox_EBase* Owner)
 {
 	AAIController* AICon = Cast<AAIController>(Owner->GetController());

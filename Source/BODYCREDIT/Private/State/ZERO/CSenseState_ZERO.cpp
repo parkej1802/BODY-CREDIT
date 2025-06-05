@@ -10,6 +10,10 @@ CSenseState_ZERO::CSenseState_ZERO(TUniquePtr<CConditionalMoveStrategy_ZERO> InM
 
 void CSenseState_ZERO::Execute(class ACNox_EBase* Owner, class UCFSMComponent* FSMComp)
 {
-	if (MoveStrategy)
-		MoveStrategy->Move(Owner, Owner->GetWorld()->GetDeltaSeconds());
+	if (MoveStrategy) MoveStrategy->Move(Owner, Owner->GetWorld()->GetDeltaSeconds());
+}
+
+void CSenseState_ZERO::ResetVal(ACNox_EBase* Owner)
+{
+	if (MoveStrategy) MoveStrategy->ResetVal(Owner);
 }

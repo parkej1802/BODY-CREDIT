@@ -10,6 +10,7 @@ enum class EEnemyState:uint8
 	MemoryHunt,
 	Sense,
 	Combat,
+	Hit,
 	Die
 };
 

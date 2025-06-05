@@ -13,6 +13,7 @@ class BODYCREDIT_API CDefaultAttackStrategy_ZERO : public ICAttackStrategy
 public:
 	virtual void Execute(ACNox_EBase* Owner, UCFSMComponent* FSMComp) override;
 	virtual bool IsFinished() const override;
+	virtual void ResetVal(ACNox_EBase* Owner) override;
 
 private:
 	bool bFired = false;

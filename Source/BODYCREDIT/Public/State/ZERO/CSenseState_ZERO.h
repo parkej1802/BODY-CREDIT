@@ -14,4 +14,5 @@ private:
 public:
 	CSenseState_ZERO(TUniquePtr<class CConditionalMoveStrategy_ZERO> InMoveStrategy);
 	virtual void Execute(class ACNox_EBase* Owner, class UCFSMComponent* FSMComp) override;
+	virtual void ResetVal(ACNox_EBase* Owner) override;
 };

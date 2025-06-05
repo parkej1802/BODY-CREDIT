@@ -55,6 +55,8 @@ public:
 	UAnimMontage* ShieldMontage;
 	UPROPERTY(VisibleAnywhere)
 	UAnimMontage* AttackMontage;
+	UPROPERTY(VisibleAnywhere)
+	UAnimMontage* HitMontage;
 
 	const FName ShieldStartSection = "ShieldStart";
 	const FName ShieldEndSection = "ShieldEnd";
@@ -78,7 +80,8 @@ public:
 	void JumpShieldMontage();
 	void PlayAttackMontage();
 	bool IsAttacking() const;
-
+	void PlayHitMontage(const int32 sectionIdx = 1);
+	bool IsHitting() const;
 	// ==================================================================================
 	// Memory Collector
 public:

@@ -19,4 +19,5 @@ class BODYCREDIT_API ICMoveStrategy
 
 public:
 	virtual void Move(class ACNox_EBase* Owner, float DeltaTime) = 0;
+	virtual void ResetVal(ACNox_EBase* Owner) {};
 };

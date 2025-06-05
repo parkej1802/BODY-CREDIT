@@ -18,4 +18,5 @@ private:
 
 public:
 	virtual void Move(ACNox_EBase* Owner, float DeltaTime) override;
+	virtual void ResetVal(ACNox_EBase* Owner) override;
 };

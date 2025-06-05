@@ -7,10 +7,12 @@ CIdleState_ZERO::CIdleState_ZERO(TUniquePtr<class CSplineMoveStrategy> InMoveStr
 	MoveTemp(InMoveStrategy))
 {}
 
-void CIdleState_ZERO::Execute(class ACNox_EBase* Owner, class UCFSMComponent* FSMComp)
+void CIdleState_ZERO::Execute(ACNox_EBase* Owner, class UCFSMComponent* FSMComp)
 {
-	if (MoveStrategy)
-	{
-		MoveStrategy->Move(Owner, Owner->GetWorld()->GetDeltaSeconds());
-	}
+	if (MoveStrategy) MoveStrategy->Move(Owner, Owner->GetWorld()->GetDeltaSeconds());
+}
+
+void CIdleState_ZERO::ResetVal(ACNox_EBase* Owner)
+{
+	if (MoveStrategy) MoveStrategy->ResetVal(Owner);
 }

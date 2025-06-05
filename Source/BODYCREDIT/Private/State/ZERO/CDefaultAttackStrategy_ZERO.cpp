@@ -36,3 +36,8 @@ bool CDefaultAttackStrategy_ZERO::IsFinished() const
 {
 	return bFired;
 }
+
+void CDefaultAttackStrategy_ZERO::ResetVal(ACNox_EBase* Owner)
+{
+	bFired = false;
+}
