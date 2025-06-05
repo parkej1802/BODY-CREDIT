@@ -177,6 +177,12 @@ bool ACNox_EBase::IsHitting()
 	return EnemyAnim->IsHitting();
 }
 
+void ACNox_EBase::HandleDie(const int32 sectionIdx)
+{
+	GetCapsuleComponent()->SetCollisionProfileName(FName("EnemyDie"));
+	EnemyAnim->PlayDieMontage(sectionIdx);
+}
+
 void ACNox_EBase::ResetVal()
 {
 	FSMComp->ResetVal(EnemyType);

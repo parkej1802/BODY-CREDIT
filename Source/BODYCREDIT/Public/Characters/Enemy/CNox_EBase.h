@@ -93,6 +93,8 @@ public:
 	void HandleHit(const int32 sectionIdx = 1);
 	bool IsHitting();
 
+	void HandleDie(const int32 sectionIdx = 1);
+	
 	void ResetVal();
 
 protected:

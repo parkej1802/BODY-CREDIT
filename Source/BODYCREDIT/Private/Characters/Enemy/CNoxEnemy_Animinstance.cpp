@@ -151,6 +151,11 @@ bool UCNoxEnemy_Animinstance::IsHitting() const
 	return false;
 }
 
+void UCNoxEnemy_Animinstance::PlayDieMontage(const int32 sectionIdx)
+{
+	if (DieMontage) OwnerEnemy->PlayAnimMontage(DieMontage, 1.0f);
+}
+
 void UCNoxEnemy_Animinstance::PlayBeamAttack()
 {
 	OwnerEnemy->PlayAnimMontage(BeamMontage, 1.0f);
