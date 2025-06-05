@@ -23,8 +23,6 @@ ACNox_CCTV::ACNox_CCTV()
 
 	CHelpers::GetStaticAsset<UStaticMeshComponent>(
 		&CCTVMesh, TEXT("/Game/Assets/cctv_prop/source/prop_cctv_cam_01a_001.prop_cctv_cam_01a_001"));
-
-	bUseBehaviorTree = false;
 }
 
 void ACNox_CCTV::BeginPlay()

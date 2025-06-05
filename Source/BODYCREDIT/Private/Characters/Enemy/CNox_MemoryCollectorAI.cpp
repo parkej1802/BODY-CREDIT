@@ -264,17 +264,19 @@ void ACNox_MemoryCollectorAI::EvaluateMemory()
 
 const FMemoryFragment ACNox_MemoryCollectorAI::GetMemoryTarget()
 {
-	return BehaviorComp->GetMemoryTarget();
+	return CurrentTargetMemory;
+	// return BehaviorComp->GetMemoryTarget();
 }
 
 void ACNox_MemoryCollectorAI::SetPatrolLocation(const FVector& InPatrolLocation)
 {
-	BehaviorComp->SetPatrolLocation(InPatrolLocation);
+	// BehaviorComp->SetPatrolLocation(InPatrolLocation);
 }
 
 FVector ACNox_MemoryCollectorAI::GetPatrolLocation()
 {
-	return BehaviorComp->GetPatrolLocation();
+	return FVector::ZeroVector;
+	// return BehaviorComp->GetPatrolLocation();
 }
 
 void ACNox_MemoryCollectorAI::ShutBeam()

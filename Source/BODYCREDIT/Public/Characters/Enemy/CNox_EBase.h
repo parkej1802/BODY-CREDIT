@@ -39,9 +39,7 @@ public: // Get Sensing Function
 	float GetHearingRange() const { return HearingRange; }
 
 protected: // Set Sensing Function
-	virtual void SetPerceptionInfo()
-	{
-	}
+	virtual void SetPerceptionInfo() {}
 
 protected: // Status
 	UPROPERTY(EditDefaultsOnly)
@@ -72,26 +70,17 @@ protected:
 	class ACEnemyController* EnemyController;
 
 public:
-	bool bUseBehaviorTree = true;
-
-private:
-	UPROPERTY(EditDefaultsOnly, Category = "AI")
-	class UBehaviorTree* BehaviorTree;
-
-public:
-	FORCEINLINE class UBehaviorTree* GetBehaviorTree() { return BehaviorTree; }
-
-public:
 	// CCTV에서는 Blackboard에 세팅은 안하고 주변 Enemy에게만 전달한다.
 	virtual void SetTarget(ACNox* InTarget);
 	ACNox* GetTarget() const { return Target; }
 	void SetEnemyState(EEnemyState NewState);
 	void SetCombatState(ECombatState NewCombatState);
 	void SetTargetCallByDelegate(ACNox* InTarget);
-	void HandleAttack(float InAttackDistance);
+	void HandleAttack(float InAttackDistance);	// BT 제거할 때 같이 제거
 	void HandleAttack();
 	bool IsAttacking();
 	bool IsPlayerInDistance();
+	virtual void AttackCollision(bool bOn, bool IsRightHand = true) {}
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category=Health)

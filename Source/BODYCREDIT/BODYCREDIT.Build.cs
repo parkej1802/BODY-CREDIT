@@ -31,7 +31,7 @@ public class BODYCREDIT : ModuleRules
 
 		PrivateDependencyModuleNames.AddRange(new string[]
 		{
-			
+			"AnimGraphRuntime"
 		});
 
 		// Uncomment if you are using Slate UI

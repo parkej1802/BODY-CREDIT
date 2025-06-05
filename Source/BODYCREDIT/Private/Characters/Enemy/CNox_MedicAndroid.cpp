@@ -106,7 +106,7 @@ void ACNox_MedicAndroid::HandleEquipShield(const bool bInEquipShield)
 
 	bIsEquipShield = bInEquipShield;
 	EnemyAnim->PlayShieldMontage(bInEquipShield);
-	BehaviorComp->SetEquipShield(bInEquipShield);
+	// BehaviorComp->SetEquipShield(bInEquipShield);
 }
 
 float ACNox_MedicAndroid::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
@@ -130,7 +130,7 @@ bool ACNox_MedicAndroid::IsLowHealth()
 
 void ACNox_MedicAndroid::SetHealFlag(bool bHealFlag)
 {
-	BehaviorComp->SetHealFlag(bHealFlag);
+	// BehaviorComp->SetHealFlag(bHealFlag);
 }
 
 void ACNox_MedicAndroid::HealEnd()

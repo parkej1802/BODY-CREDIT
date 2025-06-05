@@ -1,11 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
 #include "CNox_EBase.h"
 #include "Animation/AnimInstance.h"
-#include "Components/Enemy/CNox_BehaviorComponent.h"
 #include "CNoxEnemy_Animinstance.generated.h"
 
 /**
@@ -28,8 +25,6 @@ private:
 private:
 	UPROPERTY()
 	ACNox_EBase* OwnerEnemy;
-	UPROPERTY()
-	UCNox_BehaviorComponent* BehaviorComponent;
 
 	UPROPERTY(BlueprintReadOnly, Category=Anim, meta=(AllowPrivateAccess=true))
 	float Speed;
@@ -51,7 +46,6 @@ public:
 
 public:
 	FORCEINLINE void SetEnemy(ACNox_EBase* InOwnerEnemy) { OwnerEnemy = InOwnerEnemy; }
-	FORCEINLINE void SetBT(UCNox_BehaviorComponent* InBT) { BehaviorComponent = InBT; }
 
 public:
 	UFUNCTION()
@@ -123,13 +117,10 @@ private:
 private: //Zero
 	UPROPERTY(BlueprintReadOnly, Category=Anim, meta=(AllowPrivateAccess=true))
 	int32 IdleIdx = 0;
-	UPROPERTY(BlueprintReadOnly, Category=Anim, meta=(AllowPrivateAccess=true))	
+	UPROPERTY(BlueprintReadOnly, Category=Anim, meta=(AllowPrivateAccess=true))
 	FRotator DesiredRotation = FRotator::ZeroRotator;
 	UPROPERTY(BlueprintReadOnly, Category=Anim, meta=(AllowPrivateAccess=true))
 	float DeltaYaw;
-
-public:
-	void SetDesiredRotation(const FRotator& InDesiredRotation) { DesiredRotation = InDesiredRotation; }
 
 private:
 	UFUNCTION()

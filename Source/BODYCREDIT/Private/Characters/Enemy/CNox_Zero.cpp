@@ -5,10 +5,18 @@
 #include "Patrol/CPatrolRoute.h"
 #include "Global.h"
 #include "Characters/Enemy/CNoxEnemy_Animinstance.h"
+#include "Components/BoxComponent.h"
 
 ACNox_Zero::ACNox_Zero()
 {
 	EnemyType = EEnemyType::Zero;
+	CHelpers::CreateComponent<UBoxComponent>(this, &AttackComp_l, "AttackComp_l", GetMesh(), "middle_01_l");
+	CHelpers::CreateComponent<UBoxComponent>(this, &AttackComp_r, "AttackComp_r", GetMesh(), "middle_01_r");
+	AttackComp_l->SetCollisionProfileName("EnemyWeapon");
+	AttackComp_r->SetCollisionProfileName("EnemyWeapon");
+	AttackComp_l->SetBoxExtent(FVector(25));
+	AttackComp_r->SetBoxExtent(FVector(25));
+		
 	ConstructorHelpers::FObjectFinder<USkeletalMesh> tmpMesh(TEXT(
 		"/Game/Assets/Cyber_Zombie_Arm/Cyber_Zombie_Arm_UE4/SKM_Cyber_Zombie_Arm_UE4.SKM_Cyber_Zombie_Arm_UE4"));
 	if (tmpMesh.Succeeded())
@@ -26,6 +34,7 @@ void ACNox_Zero::BeginPlay()
 
 	CHelpers::GetAssetDynamic(&(EnemyAnim->AttackMontage),
 	                          TEXT("/Game/Assets/Cyber_Zombie_Arm/Anim/Attack/AM_Attack.AM_Attack"));
+	AttackCollision(false);
 }
 
 void ACNox_Zero::Tick(float DeltaTime)
@@ -74,7 +83,24 @@ void ACNox_Zero::GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed,
 	}
 }
 
-void ACNox_Zero::SetDesiredRotation(const FRotator& InDesiredRotation) const
+void ACNox_Zero::AttackCollision(bool bOn, bool IsRightHand)
 {
-	EnemyAnim->SetDesiredRotation(InDesiredRotation);
+	if (bOn)
+	{
+		if (IsRightHand)
+		{
+			AttackComp_r->SetCollisionEnabled(ECollisionEnabled::QueryOnly);			
+			AttackComp_l->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		}
+		else
+		{
+			AttackComp_l->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+			AttackComp_r->SetCollisionEnabled(ECollisionEnabled::NoCollision);			
+		}
+	}
+	else
+	{
+		AttackComp_l->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		AttackComp_r->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
 }

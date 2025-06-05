@@ -16,6 +16,11 @@ public:
 	ACNox_Zero();
 
 private:
+	UPROPERTY(VisibleAnywhere)
+	class UBoxComponent* AttackComp_l;
+	UPROPERTY(VisibleAnywhere)
+	class UBoxComponent* AttackComp_r;
+	
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 
@@ -27,5 +32,7 @@ public:
 	class ACPatrolRoute* GetNearPatrolRoute();
 	virtual void GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed,
 							 float& OutNewAccelSpeed) override;
-	void SetDesiredRotation(const FRotator& InDesiredRotation) const;
+
+public:
+	virtual void AttackCollision(bool bOn, bool IsRightHand = true) override;
 };

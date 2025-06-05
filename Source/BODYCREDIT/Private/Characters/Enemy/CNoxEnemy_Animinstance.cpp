@@ -1,12 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Characters/Enemy/CNoxEnemy_Animinstance.h"
 
 #include "Characters/Enemy/CNox_MedicAndroid.h"
 #include "Characters/Enemy/CNox_MemoryCollectorAI.h"
 #include "Characters/Enemy/CNox_Zero.h"
 #include "Utilities/CLog.h"
+#include "Global.h"
+#include "KismetAnimationLibrary.h"
 
 void UCNoxEnemy_Animinstance::NativeInitializeAnimation()
 {
@@ -27,7 +26,9 @@ void UCNoxEnemy_Animinstance::NativeUpdateAnimation(float DeltaSeconds)
 	if (!OwnerEnemy) return;
 
 	Speed = OwnerEnemy->GetVelocity().Size();
-
+	DeltaYaw =UKismetAnimationLibrary::CalculateDirection(OwnerEnemy->GetVelocity(), OwnerEnemy->GetActorRotation());
+	CLog::Print(FString::Printf(TEXT("Speed : %.2f, DeltaYaw : %.2f"), Speed, DeltaYaw));
+	
 	if (loopCheck)
 	{
 		float Elapsed = GetWorld()->GetTimeSeconds() - LoopStartTime;
@@ -37,12 +38,6 @@ void UCNoxEnemy_Animinstance::NativeUpdateAnimation(float DeltaSeconds)
 			loopCheck = false;
 			Cast<ACNox_MemoryCollectorAI>(OwnerEnemy)->BeamAttackEnd();
 		}
-	}
-
-	if (DesiredRotation != FRotator::ZeroRotator)
-	{
-		float CurrentYaw = OwnerEnemy->GetActorRotation().Yaw;
-		DeltaYaw = FMath::FindDeltaAngleDegrees(CurrentYaw, DesiredRotation.Yaw);
 	}
 }
 
@@ -75,7 +70,7 @@ void UCNoxEnemy_Animinstance::PlayShieldMontage(const bool bInShieldStart)
 {
 	// CLog::Log(FString::Printf(TEXT("bUsingShield: %d"), bInShieldStart));
 
-	BehaviorComponent->SetShieldEnded(false);
+	// BehaviorComponent->SetShieldEnded(false);
 
 	if (bInShieldStart)
 		OwnerEnemy->PlayAnimMontage(ShieldMontage, 1.0f, ShieldStartSection);
