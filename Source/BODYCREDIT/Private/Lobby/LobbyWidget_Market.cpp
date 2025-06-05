@@ -15,6 +15,7 @@
 #include "Components/HorizontalBoxSlot.h"
 #include "Components/HorizontalBox.h"
 #include "Components/Image.h"
+#include "Inventory/Inventory_EquipmentTile.h"
 
 void ULobbyWidget_Market::NativeConstruct()
 {
@@ -60,8 +61,6 @@ void ULobbyWidget_Market::NativeConstruct()
         Button_SelectUtility->OnClicked.AddDynamic(this, &ThisClass::OnSelectUtilityClicked);
     }
 
-    PC = GetOwningPlayer();
-
     APawn* Pawn = PC->GetPawn();
 
     PlayerCharacter = Cast<ACNox_Runner>(Pawn);
@@ -98,7 +97,7 @@ void ULobbyWidget_Market::OnSelectWeaponClicked()
 
 	VerticalBox_MarketItem->ClearChildren();
 
-	TArray<FItemData> Weapons = MarketComp->GetItemsWeapon();
+	TArray<FItemData> Weapons = MarketComp->GetMarketItems(EPlayerPart::Weapon1);
 
 	const int32 NumPerRow = 2;
 	TArray<UHorizontalBox*> RowBoxes;
@@ -155,25 +154,344 @@ void ULobbyWidget_Market::OnSelectWeaponClicked()
 
 void ULobbyWidget_Market::OnSelectHeadClicked()
 {
+	if (!MarketComp || !MarketItemWidget || !VerticalBox_MarketItem)
+	{
+		return;
+	}
 
+	VerticalBox_MarketItem->ClearChildren();
+
+	TArray<FItemData> Weapons = MarketComp->GetMarketItems(EPlayerPart::Head);
+
+	const int32 NumPerRow = 2;
+	TArray<UHorizontalBox*> RowBoxes;
+
+	const int32 NumRows = FMath::CeilToInt((float)Weapons.Num() / NumPerRow);
+	for (int32 Row = 0; Row < NumRows; ++Row)
+	{
+		UHorizontalBox* NewRow = NewObject<UHorizontalBox>(this, UHorizontalBox::StaticClass());
+		RowBoxes.Add(NewRow);
+	}
+
+	for (int32 i = 0; i < Weapons.Num(); ++i)
+	{
+		int32 RowIndex = i / NumPerRow;
+
+		UMarket_ItemTile* ItemWidget = CreateWidget<UMarket_ItemTile>(this, MarketItemWidget);
+		if (ItemWidget)
+		{
+			if (ItemWidget->Image_Item && Weapons[i].Thumbnail)
+			{
+				FSlateBrush NewBrush;
+				NewBrush.SetResourceObject(Weapons[i].Thumbnail);
+				NewBrush.ImageSize = ImageSize;
+				ItemWidget->Image_Item->SetBrush(NewBrush);
+				ItemWidget->ItemData = Weapons[i];
+				ItemWidget->InventoryBaseComp = InventoryComp;
+			}
+
+			UHorizontalBox* TargetRow = RowBoxes[RowIndex];
+			if (TargetRow)
+			{
+				UHorizontalBoxSlot* SlotH = TargetRow->AddChildToHorizontalBox(ItemWidget);
+				if (Slot)
+				{
+					SlotH->SetHorizontalAlignment(HAlign_Center);
+					SlotH->SetVerticalAlignment(VAlign_Center);
+				}
+			}
+		}
+	}
+
+	for (UHorizontalBox* RowBox : RowBoxes)
+	{
+		if (RowBox)
+		{
+			UVerticalBoxSlot* VSlot = VerticalBox_MarketItem->AddChildToVerticalBox(RowBox);
+			if (VSlot)
+			{
+				VSlot->SetHorizontalAlignment(HAlign_Fill);
+			}
+		}
+	}
 }
 
 void ULobbyWidget_Market::OnSelectBodyClicked()
 {
+	if (!MarketComp || !MarketItemWidget || !VerticalBox_MarketItem)
+	{
+		return;
+	}
 
+	VerticalBox_MarketItem->ClearChildren();
+
+	TArray<FItemData> Weapons = MarketComp->GetMarketItems(EPlayerPart::Body);
+
+	const int32 NumPerRow = 2;
+	TArray<UHorizontalBox*> RowBoxes;
+
+	const int32 NumRows = FMath::CeilToInt((float)Weapons.Num() / NumPerRow);
+	for (int32 Row = 0; Row < NumRows; ++Row)
+	{
+		UHorizontalBox* NewRow = NewObject<UHorizontalBox>(this, UHorizontalBox::StaticClass());
+		RowBoxes.Add(NewRow);
+	}
+
+	for (int32 i = 0; i < Weapons.Num(); ++i)
+	{
+		int32 RowIndex = i / NumPerRow;
+
+		UMarket_ItemTile* ItemWidget = CreateWidget<UMarket_ItemTile>(this, MarketItemWidget);
+		if (ItemWidget)
+		{
+			if (ItemWidget->Image_Item && Weapons[i].Thumbnail)
+			{
+				FSlateBrush NewBrush;
+				NewBrush.SetResourceObject(Weapons[i].Thumbnail);
+				NewBrush.ImageSize = ImageSize;
+				ItemWidget->Image_Item->SetBrush(NewBrush);
+				ItemWidget->ItemData = Weapons[i];
+				ItemWidget->InventoryBaseComp = InventoryComp;
+			}
+
+			UHorizontalBox* TargetRow = RowBoxes[RowIndex];
+			if (TargetRow)
+			{
+				UHorizontalBoxSlot* SlotH = TargetRow->AddChildToHorizontalBox(ItemWidget);
+				if (Slot)
+				{
+					SlotH->SetHorizontalAlignment(HAlign_Center);
+					SlotH->SetVerticalAlignment(VAlign_Center);
+				}
+			}
+		}
+	}
+
+	for (UHorizontalBox* RowBox : RowBoxes)
+	{
+		if (RowBox)
+		{
+			UVerticalBoxSlot* VSlot = VerticalBox_MarketItem->AddChildToVerticalBox(RowBox);
+			if (VSlot)
+			{
+				VSlot->SetHorizontalAlignment(HAlign_Fill);
+			}
+		}
+	}
 }
 
 void ULobbyWidget_Market::OnSelectArmClicked()
 {
+	if (!MarketComp || !MarketItemWidget || !VerticalBox_MarketItem)
+	{
+		return;
+	}
 
+	VerticalBox_MarketItem->ClearChildren();
+
+	TArray<FItemData> Weapons = MarketComp->GetMarketItems(EPlayerPart::Arm);
+
+	const int32 NumPerRow = 2;
+	TArray<UHorizontalBox*> RowBoxes;
+
+	const int32 NumRows = FMath::CeilToInt((float)Weapons.Num() / NumPerRow);
+	for (int32 Row = 0; Row < NumRows; ++Row)
+	{
+		UHorizontalBox* NewRow = NewObject<UHorizontalBox>(this, UHorizontalBox::StaticClass());
+		RowBoxes.Add(NewRow);
+	}
+
+	for (int32 i = 0; i < Weapons.Num(); ++i)
+	{
+		int32 RowIndex = i / NumPerRow;
+
+		UMarket_ItemTile* ItemWidget = CreateWidget<UMarket_ItemTile>(this, MarketItemWidget);
+		if (ItemWidget)
+		{
+			if (ItemWidget->Image_Item && Weapons[i].Thumbnail)
+			{
+				FSlateBrush NewBrush;
+				NewBrush.SetResourceObject(Weapons[i].Thumbnail);
+				NewBrush.ImageSize = ImageSize;
+				ItemWidget->Image_Item->SetBrush(NewBrush);
+				ItemWidget->ItemData = Weapons[i];
+				ItemWidget->InventoryBaseComp = InventoryComp;
+			}
+
+			UHorizontalBox* TargetRow = RowBoxes[RowIndex];
+			if (TargetRow)
+			{
+				UHorizontalBoxSlot* SlotH = TargetRow->AddChildToHorizontalBox(ItemWidget);
+				if (Slot)
+				{
+					SlotH->SetHorizontalAlignment(HAlign_Center);
+					SlotH->SetVerticalAlignment(VAlign_Center);
+				}
+			}
+		}
+	}
+
+	for (UHorizontalBox* RowBox : RowBoxes)
+	{
+		if (RowBox)
+		{
+			UVerticalBoxSlot* VSlot = VerticalBox_MarketItem->AddChildToVerticalBox(RowBox);
+			if (VSlot)
+			{
+				VSlot->SetHorizontalAlignment(HAlign_Fill);
+			}
+		}
+	}
 }
 
 void ULobbyWidget_Market::OnSelectLegClicked()
 {
+	if (!MarketComp || !MarketItemWidget || !VerticalBox_MarketItem)
+	{
+		return;
+	}
 
+	VerticalBox_MarketItem->ClearChildren();
+
+	TArray<FItemData> Weapons = MarketComp->GetMarketItems(EPlayerPart::Leg);
+
+	const int32 NumPerRow = 2;
+	TArray<UHorizontalBox*> RowBoxes;
+
+	const int32 NumRows = FMath::CeilToInt((float)Weapons.Num() / NumPerRow);
+	for (int32 Row = 0; Row < NumRows; ++Row)
+	{
+		UHorizontalBox* NewRow = NewObject<UHorizontalBox>(this, UHorizontalBox::StaticClass());
+		RowBoxes.Add(NewRow);
+	}
+
+	for (int32 i = 0; i < Weapons.Num(); ++i)
+	{
+		int32 RowIndex = i / NumPerRow;
+
+		UMarket_ItemTile* ItemWidget = CreateWidget<UMarket_ItemTile>(this, MarketItemWidget);
+		if (ItemWidget)
+		{
+			if (ItemWidget->Image_Item && Weapons[i].Thumbnail)
+			{
+				FSlateBrush NewBrush;
+				NewBrush.SetResourceObject(Weapons[i].Thumbnail);
+				NewBrush.ImageSize = ImageSize;
+				ItemWidget->Image_Item->SetBrush(NewBrush);
+				ItemWidget->ItemData = Weapons[i];
+				ItemWidget->InventoryBaseComp = InventoryComp;
+			}
+
+			UHorizontalBox* TargetRow = RowBoxes[RowIndex];
+			if (TargetRow)
+			{
+				UHorizontalBoxSlot* SlotH = TargetRow->AddChildToHorizontalBox(ItemWidget);
+				if (Slot)
+				{
+					SlotH->SetHorizontalAlignment(HAlign_Center);
+					SlotH->SetVerticalAlignment(VAlign_Center);
+				}
+			}
+		}
+	}
+
+	for (UHorizontalBox* RowBox : RowBoxes)
+	{
+		if (RowBox)
+		{
+			UVerticalBoxSlot* VSlot = VerticalBox_MarketItem->AddChildToVerticalBox(RowBox);
+			if (VSlot)
+			{
+				VSlot->SetHorizontalAlignment(HAlign_Fill);
+			}
+		}
+	}
 }
 
 void ULobbyWidget_Market::OnSelectUtilityClicked()
 {
+	if (!MarketComp || !MarketItemWidget || !VerticalBox_MarketItem)
+	{
+		return;
+	}
 
+	VerticalBox_MarketItem->ClearChildren();
+
+	TArray<FItemData> Weapons = MarketComp->GetMarketItems(EPlayerPart::Backpack);
+	TArray<FItemData> ChestRigs = MarketComp->GetMarketItems(EPlayerPart::ChestRigs);
+
+	Weapons.Append(ChestRigs);
+
+	const int32 NumPerRow = 2;
+	TArray<UHorizontalBox*> RowBoxes;
+
+	const int32 NumRows = FMath::CeilToInt((float)Weapons.Num() / NumPerRow);
+	for (int32 Row = 0; Row < NumRows; ++Row)
+	{
+		UHorizontalBox* NewRow = NewObject<UHorizontalBox>(this, UHorizontalBox::StaticClass());
+		RowBoxes.Add(NewRow);
+	}
+
+	for (int32 i = 0; i < Weapons.Num(); ++i)
+	{
+		int32 RowIndex = i / NumPerRow;
+
+		UMarket_ItemTile* ItemWidget = CreateWidget<UMarket_ItemTile>(this, MarketItemWidget);
+		if (ItemWidget)
+		{
+			if (ItemWidget->Image_Item && Weapons[i].Thumbnail)
+			{
+				FSlateBrush NewBrush;
+				NewBrush.SetResourceObject(Weapons[i].Thumbnail);
+				NewBrush.ImageSize = ImageSize;
+				ItemWidget->Image_Item->SetBrush(NewBrush);
+				ItemWidget->ItemData = Weapons[i];
+				ItemWidget->InventoryBaseComp = InventoryComp;
+			}
+
+			UHorizontalBox* TargetRow = RowBoxes[RowIndex];
+			if (TargetRow)
+			{
+				UHorizontalBoxSlot* SlotH = TargetRow->AddChildToHorizontalBox(ItemWidget);
+				if (Slot)
+				{
+					SlotH->SetHorizontalAlignment(HAlign_Center);
+					SlotH->SetVerticalAlignment(VAlign_Center);
+				}
+			}
+		}
+	}
+
+	for (UHorizontalBox* RowBox : RowBoxes)
+	{
+		if (RowBox)
+		{
+			UVerticalBoxSlot* VSlot = VerticalBox_MarketItem->AddChildToVerticalBox(RowBox);
+			if (VSlot)
+			{
+				VSlot->SetHorizontalAlignment(HAlign_Fill);
+			}
+		}
+	}
+}
+
+bool ULobbyWidget_Market::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+{
+	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+
+	UItemObject* ItemObject = Cast<UItemObject>(InOperation->Payload);
+
+	if (UInventory_ItemWidget* DraggedWidget = Cast<UInventory_ItemWidget>(InOperation->DefaultDragVisual))
+	{
+		DraggedWidget->IsMoving = false;
+	}
+
+	if (UInventory_EquipmentTile* InventoryItemTileUI = Cast<UInventory_EquipmentTile>(InOperation->DefaultDragVisual)) {
+		InventoryItemTileUI->IsMoving = false;
+
+	}
+
+	InventoryComp->TryAddItem(ItemObject);
+
+	return true;
 }

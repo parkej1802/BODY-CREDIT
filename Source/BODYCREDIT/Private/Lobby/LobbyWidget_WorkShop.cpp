@@ -15,6 +15,7 @@
 #include "Item/Item_Base.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Session/NetGameInstance.h"
+#include "Components/SceneCaptureComponent2D.h"
 
 void ULobbyWidget_WorkShop::NativeConstruct()
 {
@@ -35,6 +36,8 @@ void ULobbyWidget_WorkShop::NativeConstruct()
     PlayerCharacter = Cast<ACNox_Runner>(Pawn);
     InventoryComp = PlayerCharacter->InventoryComp;
     EquipComp = PlayerCharacter->EquipComp;
+
+    PlayerCharacter->SceneCapture2D->ShowOnlyActorComponents(PlayerCharacter);
 
     InventoryGridWidget->InitInventory(InventoryComp, InventoryComp->InventoryTileSize);
     InventoryGridWidget->GridID = 4;
@@ -197,6 +200,8 @@ bool ULobbyWidget_WorkShop::NativeOnDrop(const FGeometry& InGeometry, const FDra
 
     }
 
+    InventoryComp->TryAddItem(ItemObject);
+
     return true;
 }
 
@@ -204,4 +209,5 @@ void ULobbyWidget_WorkShop::NativeTick(const FGeometry& MyGeometry, float InDelt
 {
     Super::NativeTick(MyGeometry, InDeltaTime);
 }
+
 

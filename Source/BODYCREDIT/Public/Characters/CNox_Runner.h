@@ -82,8 +82,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UAC_EquipComponent* EquipComp;
 
+// Market
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UAC_MarketComponent* MarketComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USceneCaptureComponent2D* SceneCapture2D;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USceneComponent* CaptureRoot;
 
 /**
  *	Memory Piece Add Function - LHJ (2025.05.12)

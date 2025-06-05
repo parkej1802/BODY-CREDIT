@@ -22,6 +22,7 @@
 #include "Session/NetGameInstance.h"
 #include "GameState_BodyCredit.h"
 #include "Inventory/AC_MarketComponent.h"
+#include "Components/SceneCaptureComponent2D.h"
 
 ACNox_Runner::ACNox_Runner()
 {
@@ -33,6 +34,14 @@ ACNox_Runner::ACNox_Runner()
 	InventoryComp = CreateDefaultSubobject<UAC_InventoryComponent>(TEXT("InventoryComp"));
 	EquipComp = CreateDefaultSubobject<UAC_EquipComponent>(TEXT("EquipComp"));
 	MarketComp = CreateDefaultSubobject<UAC_MarketComponent>(TEXT("MarketComp"));
+
+	CaptureRoot = CreateDefaultSubobject<USceneComponent>(TEXT("CaptureRoot"));
+	CaptureRoot->SetupAttachment(RootComponent);
+
+	SceneCapture2D = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SceneCapture"));
+	SceneCapture2D->SetupAttachment(CaptureRoot);
+
+
 }
 
 void ACNox_Runner::BeginPlay()

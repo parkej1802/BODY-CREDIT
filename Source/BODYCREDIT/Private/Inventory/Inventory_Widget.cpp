@@ -14,6 +14,7 @@
 #include "Components/Border.h"
 #include "Inventory/AC_InventoryEquipmentComponent.h"
 #include "Item/Lootable/Item_Backpack.h"
+#include "Components/SceneCaptureComponent2D.h"
 
 void UInventory_Widget::NativeConstruct()
 {
@@ -24,6 +25,8 @@ void UInventory_Widget::NativeConstruct()
     APawn* Pawn = PC->GetPawn();
 
     PlayerCharacter = Cast<ACNox_Runner>(Pawn);
+
+    PlayerCharacter->SceneCapture2D->ShowOnlyActorComponents(PlayerCharacter);
 
     InventoryComp = PlayerCharacter->InventoryComp;
 

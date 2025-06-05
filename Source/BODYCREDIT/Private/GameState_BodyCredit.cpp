@@ -7,6 +7,9 @@
 #include "Inventory/AC_InventoryBaseComponent.h"
 #include "Inventory/Inventory_Tile.h"
 #include "AC_LootingInventoryComponent.h"
+#include "Characters/CNox_Runner.h"
+#include "Inventory/AC_InventoryComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 
@@ -161,60 +164,8 @@ void AGameState_BodyCredit::SpawnItemPlayerInventory(class UItemObject* ItemObje
 		ItemActor->SetActorEnableCollision(false);
 	}
 
-	/*PC = GetOwningPlayer();
 
-	APawn* Pawn = PC->GetPawn();
-
-	PlayerCharacter = Cast<ACNox_Runner>(Pawn);
-
-	InventoryComp = PlayerCharacter->InventoryComp;
-
-	if (ItemObject->ItemActorOwner.IsValid())
-	{
-		UAC_InventoryBaseComponent* PlayerInventory = ;
-
-		if (InnerInventory)
-		{
-			for (const FInventoryItemData& SubItemData : ItemObject->ContainedItems)
-			{
-				UItemObject* SubItem = NewObject<UItemObject>(InnerInventory);
-				SubItem->ID = SubItemData.ID;
-				SubItem->Dimensions = SubItemData.Dimensions;
-				SubItem->Rotated = SubItemData.bRotated;
-				SubItem->StartPosition = SubItemData.StartPosition;
-				SubItem->ItemClass = SubItemData.ItemClass;
-				SubItem->Icon = SubItemData.Icon;
-				SubItem->RotatedIcon = SubItemData.RotatedIcon;
-				SubItem->ItemType = SubItemData.ItemType;
-				SubItem->CurrentIndex = SubItemData.CurrentIndex;
-
-				AItem_Base* SubItemActor = GetWorld()->SpawnActor<AItem_Base>(
-					SubItem->ItemClass,
-					SpawnLocation,
-					FRotator::ZeroRotator
-				);
-
-				if (SubItemActor)
-				{
-					SubItemActor->SetActorHiddenInGame(true);
-					SubItemActor->SetActorEnableCollision(false);
-					SubItemActor->ItemObject = SubItem;
-					SubItem->ItemActorOwner = SubItemActor;
-				}
-
-				if (SubItem->IsRotated() != SubItemData.bRotated)
-				{
-					SubItem->Rotate();
-				}
-
-				FInventoryTile SubTile(SubItemData.StartPosition.X, SubItemData.StartPosition.Y);
-				int32 SubIndex = InnerInventory->TileToIndex(SubTile);
-
-				if (InnerInventory->IsRoomAvailable(SubItem, SubIndex))
-				{
-					InnerInventory->AddItemAt(SubItem, SubIndex);
-				}
-			}
-		}
-	}*/
+	PlayerCharacter = Cast<ACNox_Runner>(Actor);
+	PlayerInventory = PlayerCharacter->InventoryComp;
+	PlayerInventory->TryAddItem(ItemObject);
 }

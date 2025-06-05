@@ -5,6 +5,7 @@
 #include "Inventory/Inventory_Widget.h"
 #include "Characters/CNox_Runner.h"
 #include "Lootable_Base.h"
+#include "Lobby/LobbyWidget_Pause.h"
 
 // Sets default values for this component's properties
 UAC_InventoryComponent::UAC_InventoryComponent()
@@ -31,10 +32,22 @@ UAC_InventoryComponent::UAC_InventoryComponent()
 		IA_LootableItem = TempIA_LootableItem.Object;
 	}
 
+	ConstructorHelpers::FObjectFinder<UInputAction>TempIA_PauseGame(TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Pause.IA_Pause'"));
+	if (TempIA_PauseGame.Succeeded())
+	{
+		IA_Pause = TempIA_PauseGame.Object;
+	}
+
 	static ConstructorHelpers::FClassFinder<UUserWidget> TempWidget(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/Inventory/WBP_MainInventory.WBP_MainInventory'"));
 	if (TempWidget.Succeeded())
 	{
 		InventoryWidget = TempWidget.Class;
+	}
+
+	static ConstructorHelpers::FClassFinder<UUserWidget> TempPauseWidget(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/Lobby/UI/WBP_LobbyPause.WBP_LobbyPause'"));
+	if (TempPauseWidget.Succeeded())
+	{
+		PauseGameWidget = TempPauseWidget.Class;
 	}
 }
 
@@ -72,6 +85,7 @@ void UAC_InventoryComponent::SetupInputBinding(class UEnhancedInputComponent* In
 	Input->BindAction(IA_InventoryMode, ETriggerEvent::Started, this, &UAC_InventoryComponent::ShowInventory);
 	Input->BindAction(IA_RotateItem, ETriggerEvent::Started, this, &UAC_InventoryComponent::RotateItem);
 	Input->BindAction(IA_LootableItem, ETriggerEvent::Started, this, &UAC_InventoryComponent::ShowLootableInventory);
+	Input->BindAction(IA_Pause, ETriggerEvent::Started, this, &UAC_InventoryComponent::PauseGame);
 }
 
 void UAC_InventoryComponent::ShowInventory()
@@ -106,6 +120,8 @@ void UAC_InventoryComponent::ShowInventory()
 
 void UAC_InventoryComponent::RotateItem()
 {
+	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, TEXT("RotateItem"));
+
 	UDragDropOperation* CurrentOp = UWidgetBlueprintLibrary::GetDragDroppingContent();
 	if (!CurrentOp) return;
 
@@ -172,5 +188,35 @@ void UAC_InventoryComponent::ShowLootableInventory()
 				pc->bShowMouseCursor = true;
 			}
 		}
+	}
+}
+
+void UAC_InventoryComponent::PauseGame()
+{
+	if (bIsPauseMode) {
+		bIsPauseMode = false;
+		if (PauseGameUI)
+		{
+			PauseGameUI->RemoveFromParent();
+		}
+
+		FInputModeGameOnly GameInputMode;
+		pc->SetInputMode(GameInputMode);
+		pc->bShowMouseCursor = false;
+		return;
+	}
+
+	if (!bIsPauseMode) {
+		bIsPauseMode = true;
+		if (PauseGameWidget) {
+			PauseGameUI = CreateWidget<ULobbyWidget_Pause>(GetWorld(), PauseGameWidget);
+		}
+		if (PauseGameUI)
+		{
+			PauseGameUI->AddToViewport();
+		}
+		FInputModeGameAndUI UIInputMode;
+		pc->SetInputMode(UIInputMode);
+		pc->bShowMouseCursor = true;
 	}
 }

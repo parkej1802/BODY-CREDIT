@@ -98,6 +98,7 @@ public:
 
 	UFUNCTION()
 	void SetItemInventory();
+
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	// float TileSize = 50.f;
 
@@ -107,7 +108,7 @@ public:
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 	virtual bool NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
-
+	
 	//UPROPERTY()
 	//class UInventory_GridWidget* CurrentHoveredGrid = nullptr;
 
@@ -126,6 +127,9 @@ public:
 	class UInventory_GridWidget* InventoryEquipChestRigsGridWidget;
 
 	bool bHasBackpack = false;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UPlayer3DOverlayWidget* Player3DOverlayWidget;
 
 // Player Stat
 public:
@@ -147,5 +151,6 @@ public:
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UTextBlock* Text_Energy;
+
 
 };

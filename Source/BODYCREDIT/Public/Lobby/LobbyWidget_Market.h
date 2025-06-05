@@ -95,5 +95,5 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector2D ImageSize = FVector2D(150, 100);
 
-
+	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 };

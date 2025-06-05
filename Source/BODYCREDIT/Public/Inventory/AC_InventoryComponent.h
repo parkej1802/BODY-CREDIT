@@ -40,10 +40,17 @@ public:
 	UPROPERTY()
 	class UInventory_Widget* InventoryMainUI;
 
+	UPROPERTY(EditAnywhere, Category = Widget)
+	TSubclassOf<UUserWidget> PauseGameWidget;
+
+	UPROPERTY()
+	class ULobbyWidget_Pause* PauseGameUI;
+
 // Input
 public:
 	bool bIsInventoryMode = false;
 	bool bIsLootableMode = false;
+	bool bIsPauseMode = false;
 
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	class UInputAction* IA_InventoryMode;
@@ -53,8 +60,12 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	class UInputAction* IA_LootableItem;
+
+	UPROPERTY(EditDefaultsOnly, Category = Input)
+	class UInputAction* IA_Pause;
 	
 	void ShowInventory();
 	void RotateItem();
 	void ShowLootableInventory();
+	void PauseGame();
 };
