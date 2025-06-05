@@ -48,7 +48,8 @@ public:
 	/**
 	 *	Common Virtual Function - LHJ (2025.05.07)
 	 */
-	virtual void TakeDamage(float Amount, bool ActiveShield, bool& OutIsShieldCrash);
+	virtual void TakeDamage(float Amount, bool ActiveShield, bool& OutIsShieldCrash); // For Enemy
+	virtual void TakeDamage(float Amount); // For Player
 	virtual void Die();
 	void SetStatus(float newHP, float newDefense);
 	bool IsDead() const { return bIsDead; }

@@ -68,6 +68,7 @@ protected: // Component
 protected:
 	UPROPERTY()
 	class ACEnemyController* EnemyController;
+	void SetApplyDamage(AActor* DamagedPlayer, const float DamageAmout);
 
 public:
 	// CCTV에서는 Blackboard에 세팅은 안하고 주변 Enemy에게만 전달한다.

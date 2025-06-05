@@ -27,7 +27,6 @@ void UCNoxEnemy_Animinstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	Speed = OwnerEnemy->GetVelocity().Size();
 	DeltaYaw =UKismetAnimationLibrary::CalculateDirection(OwnerEnemy->GetVelocity(), OwnerEnemy->GetActorRotation());
-	CLog::Print(FString::Printf(TEXT("Speed : %.2f, DeltaYaw : %.2f"), Speed, DeltaYaw));
 	
 	if (loopCheck)
 	{
@@ -47,6 +46,21 @@ void UCNoxEnemy_Animinstance::OnAnimMontageEnded(UAnimMontage* Montage, bool bIn
 	// 	OwnerEnemy->SetGrenadeEnded(true);
 	// else if (Montage == ShieldMontage)
 	// 	BehaviorComponent->SetShieldEnded(true);
+}
+
+void UCNoxEnemy_Animinstance::AnimNotify_EnableRAttack()
+{
+	OwnerEnemy->AttackCollision(true, true);
+}
+
+void UCNoxEnemy_Animinstance::AnimNotify_EnableLAttack()
+{
+	OwnerEnemy->AttackCollision(true, false);
+}
+
+void UCNoxEnemy_Animinstance::AnimNotify_EndAttack()
+{
+	OwnerEnemy->AttackCollision(false);
 }
 
 void UCNoxEnemy_Animinstance::AnimNotify_PlayIdleMontage()

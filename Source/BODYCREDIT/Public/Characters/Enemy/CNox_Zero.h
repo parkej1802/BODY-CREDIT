@@ -16,13 +16,19 @@ public:
 	ACNox_Zero();
 
 private:
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+
+private:
 	UPROPERTY(VisibleAnywhere)
 	class UBoxComponent* AttackComp_l;
 	UPROPERTY(VisibleAnywhere)
 	class UBoxComponent* AttackComp_r;
-	
-	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
+
+	UFUNCTION()
+	void OnAttackComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	                                   UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+	                                   const FHitResult& SweepResult);
 
 private:
 	UPROPERTY(VisibleAnywhere)
@@ -31,7 +37,7 @@ private:
 public:
 	class ACPatrolRoute* GetNearPatrolRoute();
 	virtual void GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed,
-							 float& OutNewAccelSpeed) override;
+	                                 float& OutNewAccelSpeed) override;
 
 public:
 	virtual void AttackCollision(bool bOn, bool IsRightHand = true) override;

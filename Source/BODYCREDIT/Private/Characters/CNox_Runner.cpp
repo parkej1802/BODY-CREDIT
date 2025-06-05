@@ -55,7 +55,6 @@ void ACNox_Runner::BeginPlay()
 			}
 
 
-
 			/*for (const FItemSaveData& Data : GI->SavedInventoryItems)
 			{
 				UItemObject* Item = CreateItemFromData(Data);
@@ -87,6 +86,13 @@ void ACNox_Runner::BeginPlay()
 	//FPSCamera->bUsePawnControlRotation = true;
 	//// 머리 본 숨김
 	//GetMesh()->HideBoneByName(FName("neck_01"), EPhysBodyOp::PBO_None);
+}
+
+float ACNox_Runner::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+                               class AController* EventInstigator, AActor* DamageCauser)
+{
+	HPComp->TakeDamage(DamageAmount);
+	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
 
 void ACNox_Runner::Tick(float DeltaTime)

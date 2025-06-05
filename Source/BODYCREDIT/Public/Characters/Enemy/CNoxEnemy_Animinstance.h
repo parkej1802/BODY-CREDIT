@@ -25,9 +25,24 @@ private:
 private:
 	UPROPERTY()
 	ACNox_EBase* OwnerEnemy;
-
 	UPROPERTY(BlueprintReadOnly, Category=Anim, meta=(AllowPrivateAccess=true))
 	float Speed;
+	UPROPERTY(BlueprintReadOnly, Category=Anim, meta=(AllowPrivateAccess=true))
+	float DeltaYaw;
+
+private:
+	UFUNCTION()
+	void AnimNotify_EnableRAttack();
+	UFUNCTION()
+	void AnimNotify_EnableLAttack();
+	UFUNCTION()
+	void AnimNotify_EndAttack();
+
+	// ==================================================================================
+	// Zero
+private:
+	UPROPERTY(BlueprintReadOnly, Category=Anim, meta=(AllowPrivateAccess=true))
+	int32 IdleIdx = 0;
 
 	// ==================================================================================
 	// Medic Android
@@ -64,6 +79,8 @@ public:
 	void PlayAttackMontage();
 	bool IsAttacking() const;
 
+	// ==================================================================================
+	// Memory Collector
 public:
 	UPROPERTY(VisibleAnywhere)
 	UAnimMontage* Attack1Montage;
@@ -113,14 +130,6 @@ private:
 	void AnimNotify_ResetCombo();
 	UFUNCTION()
 	void AnimNotify_RangeAttack();
-
-private: //Zero
-	UPROPERTY(BlueprintReadOnly, Category=Anim, meta=(AllowPrivateAccess=true))
-	int32 IdleIdx = 0;
-	UPROPERTY(BlueprintReadOnly, Category=Anim, meta=(AllowPrivateAccess=true))
-	FRotator DesiredRotation = FRotator::ZeroRotator;
-	UPROPERTY(BlueprintReadOnly, Category=Anim, meta=(AllowPrivateAccess=true))
-	float DeltaYaw;
 
 private:
 	UFUNCTION()
