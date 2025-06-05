@@ -78,6 +78,12 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+public:
+	FORCEINLINE USkeletalMeshComponent* GetHead() { return Head; }
+	FORCEINLINE USkeletalMeshComponent* GetUpperBody() { return UpperBody; }
+	FORCEINLINE USkeletalMeshComponent* GetArms() { return Arms; }
+	FORCEINLINE USkeletalMeshComponent* GetLowerBody() { return LowerBody; }
+
 private:
 	void Init();
 
