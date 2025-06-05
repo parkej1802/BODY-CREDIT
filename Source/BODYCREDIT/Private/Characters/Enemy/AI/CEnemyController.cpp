@@ -66,6 +66,7 @@ void ACEnemyController::OnPossess(APawn* InPawn)
 
 void ACEnemyController::OnAITargetPerceptionInfoUpdate(const FActorPerceptionUpdateInfo& UpdateInfo)
 {
+	
 	if (UpdateInfo.Stimulus.WasSuccessfullySensed())
 	{
 		if (TargetPlayer) return;
@@ -126,5 +127,5 @@ void ACEnemyController::UpdateExpiredStimuli(float DeltaTime)
 
 void ACEnemyController::PerceptionDeactive()
 {
-	PerceptionComponent->Deactivate();
+	Perception->OnTargetPerceptionInfoUpdated.Clear();
 }

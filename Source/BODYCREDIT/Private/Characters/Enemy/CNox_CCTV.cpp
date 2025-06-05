@@ -5,6 +5,7 @@
 
 #include "Global.h"
 #include "Characters/Enemy/AI/CEnemyController.h"
+#include "Components/Enemy/CFSMComponent.h"
 #include "Components/Enemy/CNoxEnemyHPComponent.h"
 #include "Engine/OverlapResult.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -37,6 +38,9 @@ void ACNox_CCTV::BeginPlay()
 void ACNox_CCTV::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (FSMComp->GetEnemyState() == EEnemyState::Hit || FSMComp->GetEnemyState() == EEnemyState::Sense)
+		FSMComp->SetEnemyState(EEnemyState::IDLE);
 }
 
 void ACNox_CCTV::PossessedBy(AController* NewController)
@@ -45,6 +49,14 @@ void ACNox_CCTV::PossessedBy(AController* NewController)
 	CLog::Log(FString::Printf(TEXT("PossessedBy Controller %s"), *NewController->GetName()));
 	if (auto* con = Cast<ACEnemyController>(NewController))
 		con->OnDetectPlayer.BindUObject(this, &ACNox_CCTV::BroadCastDetectPlayer);
+}
+
+float ACNox_CCTV::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+                             class AController* EventInstigator, AActor* DamageCauser)
+{
+	HPComp->TakeDamage(DamageAmount);
+	if (HPComp->IsDead()) FSMComp->SetEnemyState(EEnemyState::Die);
+	return DamageAmount;
 }
 
 void ACNox_CCTV::RotateCCTV(float DeltaTime)
@@ -113,7 +125,7 @@ void ACNox_CCTV::BroadCastDetectPlayer(ACNox* DetectPlayer)
 			if (FMath::Abs(ZDiff) <= 300.f && ZDiff <= 0.f)
 			{
 				// 플레이어 감지 정보 전달
-				// Enemy->SetTarget(DetectPlayer);
+				Enemy->SetTarget(DetectPlayer);
 				// Enemy->SetTargetCallByDelegate(DetectPlayer);
 			}
 		}

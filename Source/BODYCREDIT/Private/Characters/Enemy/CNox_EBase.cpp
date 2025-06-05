@@ -180,7 +180,7 @@ bool ACNox_EBase::IsHitting()
 void ACNox_EBase::HandleDie(const int32 sectionIdx)
 {
 	GetCapsuleComponent()->SetCollisionProfileName(FName("EnemyDie"));
-	EnemyAnim->PlayDieMontage(sectionIdx);
+	if (EnemyAnim) EnemyAnim->PlayDieMontage(sectionIdx);
 	EnemyController->PerceptionDeactive();
 }
 
