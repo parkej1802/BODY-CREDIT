@@ -89,6 +89,7 @@ public:
 	void SetCombatState(ECombatState NewCombatState);
 	void SetTargetCallByDelegate(ACNox* InTarget);
 	void HandleAttack(float InAttackDistance);
+	void HandleAttack();
 	bool IsAttacking();
 	bool IsPlayerInDistance();
 

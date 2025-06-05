@@ -1,10 +1,10 @@
-#include "State/ZERO/CConditionalMoveStrategy.h"
+#include "State/ZERO/CConditionalMoveStrategy_ZERO.h"
 
 #include "AIController.h"
 #include "Characters/Enemy/CNox_EBase.h"
 #include "Navigation/PathFollowingComponent.h"
 
-void CConditionalMoveStrategy::Move(ACNox_EBase* Owner, float DeltaTime)
+void CConditionalMoveStrategy_ZERO::Move(ACNox_EBase* Owner, float DeltaTime)
 {
 	AAIController* AICon = Cast<AAIController>(Owner->GetController());
 	if (!AICon) return;
@@ -25,8 +25,11 @@ void CConditionalMoveStrategy::Move(ACNox_EBase* Owner, float DeltaTime)
 	Owner->UpdateSkillCoolDowns(ESkillCoolDown::Melee, DeltaTime);
 }
 
-void CConditionalMoveStrategy::CovertToCombatState(ACNox_EBase* Owner)
+void CConditionalMoveStrategy_ZERO::CovertToCombatState(ACNox_EBase* Owner)
 {
 	if (Owner->IsSkillReady(ESkillCoolDown::Melee))
+	{
+		Owner->SetCombatState(ECombatState::Default);
 		Owner->SetEnemyState(EEnemyState::Combat);
+	}
 }

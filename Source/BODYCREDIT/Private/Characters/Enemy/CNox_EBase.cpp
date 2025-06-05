@@ -124,6 +124,11 @@ void ACNox_EBase::HandleAttack(float InAttackDistance)
 	EnemyAnim->PlayAttackMontage();
 }
 
+void ACNox_EBase::HandleAttack()
+{
+	EnemyAnim->PlayAttackMontage();
+}
+
 bool ACNox_EBase::IsAttacking()
 {
 	return EnemyAnim->IsAttacking();

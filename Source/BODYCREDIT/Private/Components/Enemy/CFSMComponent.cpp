@@ -15,7 +15,7 @@
 #include "State/MEMORY/CMemoryHuntState_MEMORY.h"
 #include "State/MEMORY/CSenseState_MEMORY.h"
 #include "State/ZERO/CCombatState_ZERO.h"
-#include "State/ZERO/CConditionalMoveStrategy.h"
+#include "State/ZERO/CConditionalMoveStrategy_ZERO.h"
 #include "State/ZERO/CDieState_ZERO.h"
 #include "State/ZERO/CIdleState_ZERO.h"
 #include "State/ZERO/CSenseState_ZERO.h"
@@ -61,7 +61,7 @@ TMap<EEnemyState, TSharedPtr<ICEnemyStateStrategy>> UCFSMComponent::CreateStrate
 			Result.Add(EEnemyState::IDLE, MakeShared<CIdleState_ZERO>(MoveTemp(MoveStrategy)));
 		}
 		{
-			TUniquePtr<CConditionalMoveStrategy> ConditionalMove = MakeUnique<CConditionalMoveStrategy>();
+			TUniquePtr<CConditionalMoveStrategy_ZERO> ConditionalMove = MakeUnique<CConditionalMoveStrategy_ZERO>();
 			Result.Add(EEnemyState::Sense, MakeShared<CSenseState_ZERO>(MoveTemp(ConditionalMove)));
 		}
 		Result.Add(EEnemyState::Combat, MakeShared<CCombatState_ZERO>());
@@ -105,7 +105,7 @@ void UCFSMComponent::InitSkillCoolDowns(EEnemyType Type)
 	{
 	case EEnemyType::Zero:
 		SkillCoolDowns.Add(GetSkillName(ESkillCoolDown::Melee), 0.f);
-		SkillMaxCoolDowns.Add(GetSkillName(ESkillCoolDown::Melee), 2.f);
+		SkillMaxCoolDowns.Add(GetSkillName(ESkillCoolDown::Melee), 1.f);
 		break;
 	default:
 		break;

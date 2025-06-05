@@ -7,7 +7,7 @@ class ACNox_EBase;
 /**
  * 
  */
-class BODYCREDIT_API CConditionalMoveStrategy : public ICMoveStrategy
+class BODYCREDIT_API CConditionalMoveStrategy_ZERO : public ICMoveStrategy
 {
 private:
 	float AcceptanceRadius = 10.f;
