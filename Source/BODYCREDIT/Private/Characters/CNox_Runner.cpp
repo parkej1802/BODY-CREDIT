@@ -158,9 +158,30 @@ void ACNox_Runner::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 void ACNox_Runner::Init()
 {
-	// Mesh
-	GetMesh()->SetRelativeLocation(FVector(0, 0, ~89));
-	GetMesh()->SetRelativeRotation(FRotator(0, ~89, 0));
+	{ // Modular Character Mesh
+		// Head
+		Head = GetMesh();
+		Head->SetRelativeLocation(FVector(0, 0, ~89));
+		Head->SetRelativeRotation(FRotator(0, ~89, 0));
+
+		// Hair
+		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Hair, "Hair", GetMesh());
+
+		// UpperBody
+		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &UpperBody, "UpperBody", GetMesh());
+
+		// UpperBody
+		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Clothes, "Clothes", UpperBody);
+
+		// Arms
+		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Arms, "Arms", GetMesh());
+
+		// Hands
+		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Hands, "Hands", Arms);
+
+		// LowerBody
+		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &LowerBody, "LowerBody", GetMesh());
+	}
 
 	// SpringArm
 	CHelpers::CreateComponent<USpringArmComponent>(this, &SpringArm, "SpringArm", RootComponent);
@@ -174,9 +195,9 @@ void ACNox_Runner::Init()
 	TPSCamera->SetRelativeLocation(FVector(~79, 60, 100));
 	TPSCamera->bUsePawnControlRotation = false;
 
-	// FPSCamera
-	CHelpers::CreateComponent<UCameraComponent>(this, &FPSCamera, "FPSCamera", GetMesh(), FName("FPSCamera"));
-	FPSCamera->bUsePawnControlRotation = false;
+	//// FPSCamera
+	//CHelpers::CreateComponent<UCameraComponent>(this, &FPSCamera, "FPSCamera", GetMesh(), FName("FPSCamera"));
+	//FPSCamera->bUsePawnControlRotation = false;
 
 	// MappingContext
 	CHelpers::GetAsset<UInputMappingContext>(&MappingContext,

@@ -11,6 +11,28 @@ class BODYCREDIT_API ACNox_Runner : public ACNox, public IGenericTeamAgentInterf
 {
 	GENERATED_BODY()
 
+private: // Modular Character Mesh
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh", meta = (AllowPrivateAccess = true))
+	class USkeletalMeshComponent* Head;
+
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh", meta = (AllowPrivateAccess = true))
+	class USkeletalMeshComponent* Hair;
+
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh", meta = (AllowPrivateAccess = true))
+	class USkeletalMeshComponent* UpperBody;
+
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh", meta = (AllowPrivateAccess = true))
+	class USkeletalMeshComponent* Clothes;
+
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh", meta = (AllowPrivateAccess = true))
+	class USkeletalMeshComponent* Arms;
+
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh", meta = (AllowPrivateAccess = true))
+	class USkeletalMeshComponent* Hands;
+
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh", meta = (AllowPrivateAccess = true))
+	class USkeletalMeshComponent* LowerBody;
+
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	class USpringArmComponent* SpringArm;
@@ -18,8 +40,8 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	class UCameraComponent* TPSCamera;
 
-	UPROPERTY(VisibleAnywhere, Category = "Camera")
-	class UCameraComponent* FPSCamera;
+	//UPROPERTY(VisibleAnywhere, Category = "Camera")
+	//class UCameraComponent* FPSCamera;
 
 private:
 	//UPROPERTY(VisibleAnywhere, Category = "Components")
@@ -55,6 +77,12 @@ public:
 	virtual void NotifyControllerChanged() override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+public:
+	FORCEINLINE USkeletalMeshComponent* GetHead() { return Head; }
+	FORCEINLINE USkeletalMeshComponent* GetUpperBody() { return UpperBody; }
+	FORCEINLINE USkeletalMeshComponent* GetArms() { return Arms; }
+	FORCEINLINE USkeletalMeshComponent* GetLowerBody() { return LowerBody; }
 
 private:
 	void Init();
