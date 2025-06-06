@@ -11,6 +11,7 @@
 #include "Inventory/AC_InventoryComponent.h"
 #include "Components/Border.h"
 #include "Inventory/Inventory_ItemWidget.h"
+#include "Components/SkeletalMeshComponent.h"
 
 void UInventory_EquipmentWidget::InitEquipment()
 {
@@ -165,7 +166,8 @@ bool UInventory_EquipmentWidget::NativeOnDrop(const FGeometry& InGeometry, const
 			InventoryItemTileUI->EquipBackpackInventoryComp = DroppedItem->ItemObjectInventoryComp;
 		}*/
 		InventoryItemTileUI->SetItem(DroppedItem);
-		PlayerCharacter->EquipComp->EquippedItems.Add(ItemType, DroppedItem);
+
+		PlayerCharacter->EquipComp->EquipItem(ItemType, DroppedItem);
 
 		UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Canvas_Grid->AddChild(InventoryItemTileUI));
 		if (CanvasSlot) {
@@ -176,6 +178,7 @@ bool UInventory_EquipmentWidget::NativeOnDrop(const FGeometry& InGeometry, const
 			{
 				BorderSlot->SetSize(NewSize);
 			}*/
+	
 		}
 		DrawDropLocation = false;
 		PlayerCharacter->EquipComp->IsChanged = true;

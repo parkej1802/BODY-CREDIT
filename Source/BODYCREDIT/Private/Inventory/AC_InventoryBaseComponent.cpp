@@ -22,7 +22,7 @@ void UAC_InventoryBaseComponent::BeginPlay()
 
 	Items.SetNum(Columns * Rows);
 
-	if (GetWorld())
+	/*if (GetWorld())
 	{
 		FString MapName = GetWorld()->GetMapName();
 		MapName.RemoveFromStart(GetWorld()->StreamingLevelsPrefix);
@@ -35,7 +35,7 @@ void UAC_InventoryBaseComponent::BeginPlay()
 				PreAddItem();
 			}
 		}
-	}
+	}*/
 }
 
 

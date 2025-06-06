@@ -50,6 +50,8 @@ void ACNox_Runner::BeginPlay()
 {
 	Super::BeginPlay();
 
+	CacheDefaultSkeletalMeshes();
+
 	Movement->EnableControlRotation();
 
 	UNetGameInstance* GI = Cast<UNetGameInstance>(GetGameInstance());
@@ -242,4 +244,12 @@ UItemObject* ACNox_Runner::CreateItemFromData(const FItemSaveData& Data)
 	UItemObject* NewItem = NewObject<UItemObject>();
 	NewItem->ImportData(Data);
 	return NewItem;
+}
+
+void ACNox_Runner::CacheDefaultSkeletalMeshes()
+{
+	DefaultMeshes.Add(EPlayerPart::Head, Head->SkeletalMesh);
+	DefaultMeshes.Add(EPlayerPart::Body, UpperBody->SkeletalMesh);
+	DefaultMeshes.Add(EPlayerPart::Arm, Arms->SkeletalMesh);
+	DefaultMeshes.Add(EPlayerPart::Leg, LowerBody->SkeletalMesh);
 }

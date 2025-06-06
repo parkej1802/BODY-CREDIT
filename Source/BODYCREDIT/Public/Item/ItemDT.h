@@ -85,6 +85,9 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
     float Weight;
 
+     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+     class USkeletalMesh* SkeletalMesh;
+
     FItemData()
         : ID(0)
         , Mesh(nullptr)

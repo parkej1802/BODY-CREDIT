@@ -33,6 +33,7 @@ private: // Modular Character Mesh
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh", meta = (AllowPrivateAccess = true))
 	class USkeletalMeshComponent* LowerBody;
 
+
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	class USpringArmComponent* SpringArm;
@@ -84,9 +85,13 @@ public:
 	FORCEINLINE USkeletalMeshComponent* GetArms() { return Arms; }
 	FORCEINLINE USkeletalMeshComponent* GetLowerBody() { return LowerBody; }
 
+	UPROPERTY(EditDefaultsOnly, Category = "Default Meshes")
+	TMap<EPlayerPart, USkeletalMesh*> DefaultMeshes;
+
+	void CacheDefaultSkeletalMeshes();
 private:
 	void Init();
-
+	
 /**
  *	Team ID Setting - LHJ (2025.05.02)
  *	IGenericTeamAgentInterface 상속 추가
