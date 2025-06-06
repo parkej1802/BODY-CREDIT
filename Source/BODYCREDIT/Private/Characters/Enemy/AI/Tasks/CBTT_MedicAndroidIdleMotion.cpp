@@ -8,7 +8,7 @@ EBTNodeResult::Type UCBTT_MedicAndroidIdleMotion::ExecuteTask(UBehaviorTreeCompo
 	if (ACNox_MedicAndroid* MyEnemy = Cast<
 		ACNox_MedicAndroid>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(FName("SelfActor"))))
 	{
-		MyEnemy->HandleIdleMotion();
+		
 		return EBTNodeResult::Succeeded;
 	}
 

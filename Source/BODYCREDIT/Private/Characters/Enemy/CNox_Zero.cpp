@@ -7,6 +7,8 @@
 #include "Characters/CNox_Runner.h"
 #include "Characters/Enemy/CNoxEnemy_Animinstance.h"
 #include "Components/BoxComponent.h"
+#include "Components/Enemy/CFSMComponent.h"
+#include "Components/Enemy/CNoxEnemyHPComponent.h"
 
 ACNox_Zero::ACNox_Zero()
 {
@@ -46,16 +48,37 @@ void ACNox_Zero::BeginPlay()
 	                          TEXT("/Game/Assets/Cyber_Zombie_Arm/Anim/Attack/AM_Attack.AM_Attack"));
 	// Hit Montage 등록
 	CHelpers::GetAssetDynamic(&(EnemyAnim->HitMontage),
-							  TEXT("/Game/Assets/Cyber_Zombie_Arm/Anim/Hit/AM_Hit.AM_Hit"));
+	                          TEXT("/Game/Assets/Cyber_Zombie_Arm/Anim/Hit/AM_Hit.AM_Hit"));
 	// Die Montage 등록
 	CHelpers::GetAssetDynamic(&(EnemyAnim->DieMontage),
-							  TEXT("/Game/Assets/Cyber_Zombie_Arm/Anim/Die/AM_Die.AM_Die"));
+	                          TEXT("/Game/Assets/Cyber_Zombie_Arm/Anim/Die/AM_Die.AM_Die"));
 	AttackCollision(false); // Attack Collision Off
 }
 
 void ACNox_Zero::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+float ACNox_Zero::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
+                             AController* EventInstigator, AActor* DamageCauser)
+{
+	if (!GetTarget())
+		if (ACNox* player = Cast<ACNox>(DamageCauser->GetOwner())) SetTarget(player);
+
+	HPComp->TakeDamage(DamageAmount);
+	if (HPComp->IsDead()) FSMComp->SetEnemyState(EEnemyState::Die);
+	else
+	{
+		const float HitChance = 0.3f; // 30% 확률로 피격 상태 진입
+		const float rand = FMath::FRand(); // 0~1 랜덤
+		if (rand <= HitChance)
+		{
+			ResetVal();
+			FSMComp->SetEnemyState(EEnemyState::Hit);
+		}
+	}
+	return DamageAmount;
 }
 
 void ACNox_Zero::OnAttackComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

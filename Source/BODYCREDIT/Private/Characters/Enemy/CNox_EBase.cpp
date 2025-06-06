@@ -66,27 +66,6 @@ void ACNox_EBase::PossessedBy(AController* NewController)
 	EnemyController = Cast<ACEnemyController>(NewController);
 }
 
-float ACNox_EBase::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
-                              class AController* EventInstigator, AActor* DamageCauser)
-{
-	if (!GetTarget())
-		if (ACNox* player = Cast<ACNox>(DamageCauser->GetOwner())) SetTarget(player);
-
-	HPComp->TakeDamage(DamageAmount);
-	if (HPComp->IsDead()) FSMComp->SetEnemyState(EEnemyState::Die);
-	else
-	{
-		const float HitChance = 0.3f; // 30% 확률로 피격 상태 진입
-		const float rand = FMath::FRand(); // 0~1 랜덤
-		if (rand <= HitChance)
-		{
-			ResetVal();
-			FSMComp->SetEnemyState(EEnemyState::Hit);
-		}
-	}
-	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-}
-
 void ACNox_EBase::SetApplyDamage(AActor* DamagedPlayer, const float DamageAmout)
 {
 	UGameplayStatics::ApplyDamage(DamagedPlayer, DamageAmout, EnemyController, this, UDamageType::StaticClass());

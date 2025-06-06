@@ -56,9 +56,7 @@ protected: // Virtual Function
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void PossessedBy(AController* NewController) override;
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
-							 class AController* EventInstigator, AActor* DamageCauser) override;
-
+	
 protected: // Component
 	UPROPERTY(VisibleDefaultsOnly)
 	class UCNox_BehaviorComponent* BehaviorComp;
@@ -108,13 +106,15 @@ public: // Medic Android
 	void SetGrenadeEnded(bool InbEndedAnim);
 
 private:
-	bool bAutoMove = false;
-	UPROPERTY(EditDefaultsOnly, Category=AutoMove)
-	ACNox* Target = nullptr;
+	bool bAutoMove = false;	
 	UPROPERTY(EditDefaultsOnly, Category=AutoMove)
 	float MoveDistance = 100.f;
 	UPROPERTY(EditDefaultsOnly, Category=AutoMove)
 	float AttackDistance = 100.f;
+
+protected:
+	UPROPERTY(EditDefaultsOnly, Category=AutoMove)
+	ACNox* Target = nullptr;
 
 public:
 	FORCEINLINE void SetAutoMove(bool InbAutoMove, ACNox* InTarget, float InMoveDistance)

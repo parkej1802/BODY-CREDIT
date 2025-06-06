@@ -11,17 +11,8 @@ void CConditionalMoveStrategy_MEDIC::Move(ACNox_EBase* Owner, float DeltaTime)
 	if (!AICon) return;
 
 	Owner->SetMovementSpeed(EEnemyMovementSpeed::Sprinting);
-	EPathFollowingRequestResult::Type result = AICon->MoveToActor(Owner->GetTarget(), AcceptanceThreshold, true);
-	switch (result)
-	{
-	case EPathFollowingRequestResult::Failed:
-		break;
-	case EPathFollowingRequestResult::AlreadyAtGoal:
-		CovertToCombatState(Owner); // 공격 쿨타임이 지났으면 공격 상태로 전환
-		break;
-	default:
-		break;
-	}
+	AICon->MoveToActor(Owner->GetTarget(), AcceptanceThreshold, true);
+	CovertToCombatState(Owner); // 공격 쿨타임이 지났으면 공격 상태로 전환
 }
 
 void CConditionalMoveStrategy_MEDIC::ResetVal(ACNox_EBase* Owner)

@@ -51,7 +51,7 @@ void UCBTT_EquipShield::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeM
 			if (ACNox_MedicAndroid* MyEnemy = Cast<
 				ACNox_MedicAndroid>(OwnerComp.GetBlackboardComponent()->GetValueAsObject(FName("SelfActor"))))
 			{
-				MyEnemy->HealEnd();
+				
 			}
 		}
 	}

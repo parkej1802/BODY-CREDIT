@@ -9,6 +9,6 @@ void UCBTS_MedicHealthCheck::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* 
 
 	if (auto* SelfActor = Cast<ACNox_MedicAndroid>(OwnerComp.GetAIOwner()->GetPawn()))
 	{
-		SelfActor->SetHealFlag(SelfActor->IsLowHealth());
+		
 	}
 }

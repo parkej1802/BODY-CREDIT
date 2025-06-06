@@ -4,6 +4,7 @@
 #include "Characters/Enemy/AttackActor/CElectricGrenade.h"
 #include "Components/Enemy/CNoxEnemyHPComponent.h"
 
+#pragma region Init
 ACNox_MedicAndroid::ACNox_MedicAndroid()
 {
 	ConstructorHelpers::FObjectFinder<USkeletalMesh> tmpMesh(TEXT(
@@ -45,13 +46,9 @@ void ACNox_MedicAndroid::BeginPlay()
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
-	ElectricGrenade = GetWorld()->SpawnActor<ACElectricGrenade>(ElectricGrenadeCls, this->GetActorLocation(), this->GetActorRotation(),
-	                                          SpawnParams);
-}
-
-void ACNox_MedicAndroid::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
+	ElectricGrenade = GetWorld()->SpawnActor<ACElectricGrenade>(ElectricGrenadeCls, this->GetActorLocation(),
+	                                                            this->GetActorRotation(),
+	                                                            SpawnParams);
 }
 
 void ACNox_MedicAndroid::SetPerceptionInfo()
@@ -60,14 +57,8 @@ void ACNox_MedicAndroid::SetPerceptionInfo()
 	RetentionTime = 0.f;
 }
 
-void ACNox_MedicAndroid::SetTarget(class ACNox* InTarget)
-{
-	Super::SetTarget(InTarget);
-	EnemyAnim->StopAllMontages(0.25f);
-}
-
 void ACNox_MedicAndroid::GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed,
-                                             float& OutNewAccelSpeed)
+											 float& OutNewAccelSpeed)
 {
 	switch (InMovementSpeed)
 	{
@@ -79,27 +70,51 @@ void ACNox_MedicAndroid::GetNewMovementSpeed(const EEnemyMovementSpeed& InMoveme
 		OutNewSpeed = 280.f;
 		OutNewAccelSpeed = 450.f;
 		break;
-	// case EEnemyMovementSpeed::Jogging:
-	// 	OutNewSpeed = 0.f;
-	// 	OutNewAccelSpeed = 0.f;
-	// 	break;
 	case EEnemyMovementSpeed::Sprinting:
 		OutNewSpeed = 320.f;
 		OutNewAccelSpeed = 1024.f;
 		break;
+	default:
+		break;
 	}
 }
+#pragma endregion
 
-void ACNox_MedicAndroid::HandleIdleMotion()
+void ACNox_MedicAndroid::Tick(float DeltaTime)
 {
-	EnemyAnim->AnimNotify_PlayIdleMontage();
+	Super::Tick(DeltaTime);
+}
+
+#pragma region Take Damage
+float ACNox_MedicAndroid::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
+									 AController* EventInstigator, AActor* DamageCauser)
+{
+	if (!GetTarget())
+		if (ACNox* player = Cast<ACNox>(DamageCauser->GetOwner())) SetTarget(player);
+	if (IsShielding()) return 0.f;
+	HPComp->TakeDamage(DamageAmount);
+	return DamageAmount;
+}
+#pragma endregion
+
+#pragma region Heal
+bool ACNox_MedicAndroid::IsLowHealth()
+{
+	return HPComp->GetHealthPercent() <= HealStdValue;
+}
+
+void ACNox_MedicAndroid::HandleEquipShield(const bool bInEquipShield)
+{
+	EnemyAnim->PlayShieldMontage(bInEquipShield);
 }
 
 bool ACNox_MedicAndroid::IsShielding() const
 {
 	return EnemyAnim->IsShielding();
 }
+#pragma endregion
 
+#pragma region Electric Grenade
 void ACNox_MedicAndroid::HandleElectricGrenade()
 {
 	EnemyAnim->PlayGrenadeMontage();
@@ -109,54 +124,19 @@ bool ACNox_MedicAndroid::IsPlayingGrenade() const
 {
 	return EnemyAnim->IsPlayingGrenade();
 }
+#pragma endregion
 
-void ACNox_MedicAndroid::HandleEquipShield(const bool bInEquipShield)
-{
-	// CLog::Log(FString::Printf(TEXT("[ACNox_MedicAndroid::HandleEquipShield] bInEquipShield: %d"), bInEquipShield));
-
-	bIsEquipShield = bInEquipShield;
-	EnemyAnim->PlayShieldMontage(bInEquipShield);
-	// BehaviorComp->SetEquipShield(bInEquipShield);
-}
-
-float ACNox_MedicAndroid::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
-                                     class AController* EventInstigator, AActor* DamageCauser)
-{
-	bool bIsDamageShield = false;
-	if (bIsEquipShield)
-		bIsDamageShield = true;
-
-	// 데미지 처리 추가
-	bool bIsShieldCrash = false;
-	HPComp->TakeDamage(DamageAmount, bIsDamageShield, bIsShieldCrash);
-
-	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-}
-
-bool ACNox_MedicAndroid::IsLowHealth()
-{
-	return HPComp->GetHealthPercent() <= HealStdValue;
-}
-
-void ACNox_MedicAndroid::SetHealFlag(bool bHealFlag)
-{
-	// BehaviorComp->SetHealFlag(bHealFlag);
-}
-
-void ACNox_MedicAndroid::HealEnd()
-{
-	EnemyAnim->JumpShieldMontage();
-}
-
+#pragma region Launch Grenade
 void ACNox_MedicAndroid::SuggestProjectileVelocityWithLimit(FVector& OutVelocity, const FVector& StartLocation,
-                                                            const FVector& TargetLocation, float MaxSpeed, float GravityZ)
+                                                            const FVector& TargetLocation, float MaxSpeed,
+                                                            float GravityZ)
 {
 	const FVector Delta = TargetLocation - StartLocation;
 	FVector DeltaXY = FVector(Delta.X, Delta.Y, 0.f);
 	float HorizontalDistance = DeltaXY.Size();
 	float DeltaZ = Delta.Z;
 
-	float ArcHeight = FMath::Clamp(HorizontalDistance*.2f, 100.f, 300.f);
+	float ArcHeight = FMath::Clamp(HorizontalDistance * .2f, 100.f, 300.f);
 
 	float Vz = FMath::Sqrt(2 * FMath::Abs(GravityZ) * ArcHeight);
 
@@ -185,9 +165,9 @@ void ACNox_MedicAndroid::SuggestProjectileVelocityWithLimit(FVector& OutVelocity
 void ACNox_MedicAndroid::LaunchElectricGrenade()
 {
 	FVector startLoc = GetMesh()->GetSocketLocation(FName("GrenadeSocket"));
-	// FVector targetLoc = BehaviorComp->GetTarget()->GetActorLocation();
-	FVector targetLoc = FVector::Zero();
+	FVector targetLoc = Target->GetActorLocation();
 	FVector outVelocity;
 	SuggestProjectileVelocityWithLimit(outVelocity, this->GetActorLocation(), targetLoc);
-	if (ElectricGrenade)	ElectricGrenade->InitializeGrenade(startLoc, targetLoc, outVelocity);
+	if (ElectricGrenade) ElectricGrenade->InitializeGrenade(startLoc, targetLoc, outVelocity);
 }
+#pragma endregion
