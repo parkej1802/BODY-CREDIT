@@ -126,6 +126,8 @@ void UCFSMComponent::ResetVal(EEnemyType Type)
 			EnemyStrategies[EEnemyState::IDLE]->ResetVal(OwnerEnemy);
 		}
 		break;
+	case EEnemyType::MedicAndroid:
+		EnemyStrategies[EEnemyState::Sense]->ResetVal(OwnerEnemy);
 	}
 }
 

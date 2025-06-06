@@ -2,6 +2,7 @@
 #include "Global.h"
 #include "Characters/Enemy/CNoxEnemy_Animinstance.h"
 #include "Characters/Enemy/AttackActor/CElectricGrenade.h"
+#include "Components/Enemy/CFSMComponent.h"
 #include "Components/Enemy/CNoxEnemyHPComponent.h"
 
 #pragma region Init
@@ -37,6 +38,8 @@ void ACNox_MedicAndroid::BeginPlay()
 	Super::BeginPlay();
 
 	CHelpers::GetAssetDynamic(&(EnemyAnim->IdleMontage), TEXT("/Game/Assets/MedicAnim/LocomotionAnim/AM_Idle.AM_Idle"));
+	CHelpers::GetAssetDynamic(&(EnemyAnim->HitMontage), TEXT("/Game/Assets/MedicAnim/DamageAnim/AM_Hit.AM_Hit"));
+	CHelpers::GetAssetDynamic(&(EnemyAnim->DieMontage), TEXT("/Game/Assets/MedicAnim/DieAnim/AM_Die.AM_Die"));
 	CHelpers::GetAssetDynamic(&(EnemyAnim->GrenadeMontage),
 	                          TEXT("/Game/Assets/MedicAnim/AttackAnim/AM_Grenade.AM_Grenade"));
 	CHelpers::GetAssetDynamic(&(EnemyAnim->ShieldMontage),
@@ -58,7 +61,7 @@ void ACNox_MedicAndroid::SetPerceptionInfo()
 }
 
 void ACNox_MedicAndroid::GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed,
-											 float& OutNewAccelSpeed)
+                                             float& OutNewAccelSpeed)
 {
 	switch (InMovementSpeed)
 	{
@@ -87,12 +90,27 @@ void ACNox_MedicAndroid::Tick(float DeltaTime)
 
 #pragma region Take Damage
 float ACNox_MedicAndroid::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
-									 AController* EventInstigator, AActor* DamageCauser)
+                                     AController* EventInstigator, AActor* DamageCauser)
 {
 	if (!GetTarget())
 		if (ACNox* player = Cast<ACNox>(DamageCauser->GetOwner())) SetTarget(player);
+
 	if (IsShielding()) return 0.f;
+
 	HPComp->TakeDamage(DamageAmount);
+	if (HPComp->IsDead()) FSMComp->SetEnemyState(EEnemyState::Die);
+	else
+	{
+		if (FSMComp->GetEnemyState() == EEnemyState::Combat) return DamageAmount;
+		
+		const float HitChance = 0.3f; // 30% 확률로 피격 상태 진입
+		const float rand = FMath::FRand(); // 0~1 랜덤
+		if (rand <= HitChance)
+		{
+			ResetVal();
+			FSMComp->SetEnemyState(EEnemyState::Hit);
+		}
+	}
 	return DamageAmount;
 }
 #pragma endregion
