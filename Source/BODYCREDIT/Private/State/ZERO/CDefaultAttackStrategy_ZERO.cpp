@@ -11,11 +11,12 @@ void CDefaultAttackStrategy_ZERO::Execute(ACNox_EBase* Owner, class UCFSMCompone
 
 	Owner->SetMovementSpeed(EEnemyMovementSpeed::Sprinting);
 	EPathFollowingRequestResult::Type result = AICon->MoveToActor(Owner->GetTarget(), AcceptanceThreshold, true);
-	if (result == EPathFollowingRequestResult::Type::Failed)
+	if (result == EPathFollowingRequestResult::Failed)
 	{
 		AICon->StopMovement();
 		return;
 	}
+	
 	if (!bFired)
 	{
 		Owner->HandleAttack();
@@ -30,11 +31,6 @@ void CDefaultAttackStrategy_ZERO::Execute(ACNox_EBase* Owner, class UCFSMCompone
 			bFired = false;
 		}
 	}
-}
-
-bool CDefaultAttackStrategy_ZERO::IsFinished() const
-{
-	return bFired;
 }
 
 void CDefaultAttackStrategy_ZERO::ResetVal(ACNox_EBase* Owner)

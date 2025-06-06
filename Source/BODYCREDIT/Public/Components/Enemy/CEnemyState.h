@@ -47,4 +47,6 @@ enum class ESkillCoolDown
 {
 	Melee,    // 근접 스킬
 	Ranged,   // 원거리 스킬
+	Heal,	  // 힐
+	Grenade,  // 수류탄
 };

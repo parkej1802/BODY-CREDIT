@@ -20,6 +20,5 @@ class BODYCREDIT_API ICAttackStrategy
 
 public:
 	virtual void Execute(ACNox_EBase* Owner, class UCFSMComponent* FSMComp) = 0;
-	virtual bool IsFinished() const { return true; }
 	virtual void ResetVal(ACNox_EBase* Owner) {};
 };

@@ -1,5 +1,6 @@
 #include "State/MEDIC/CCombatState_MEDIC.h"
 
+#include "Characters/Enemy/CNox_EBase.h"
 #include "Components/Enemy/CFSMComponent.h"
 #include "State/MEDIC/CCombat_DefaultState_MEDIC.h"
 #include "State/MEDIC/CCombat_GrenadeState_MEDIC.h"
@@ -12,7 +13,7 @@ CCombatState_MEDIC::CCombatState_MEDIC()
 	CombatSubStrategies.Add(ECombatState::Heal, MakeShared<CCombat_HealState_MEDIC>());
 }
 
-void CCombatState_MEDIC::Execute(class ACNox_EBase* Owner, class UCFSMComponent* FSMComp)
+void CCombatState_MEDIC::Execute(ACNox_EBase* Owner, UCFSMComponent* FSMComp)
 {
 	ECombatState SubState = FSMComp->GetCombatState();
 
@@ -20,4 +21,8 @@ void CCombatState_MEDIC::Execute(class ACNox_EBase* Owner, class UCFSMComponent*
 	{
 		CombatSubStrategies[SubState]->Execute(Owner, FSMComp);
 	}
+
+	Owner->UpdateSkillCoolDowns(ESkillCoolDown::Melee, Owner->GetWorld()->GetDeltaSeconds());
+	Owner->UpdateSkillCoolDowns(ESkillCoolDown::Heal, Owner->GetWorld()->GetDeltaSeconds());
+	Owner->UpdateSkillCoolDowns(ESkillCoolDown::Grenade, Owner->GetWorld()->GetDeltaSeconds());
 }

@@ -6,8 +6,10 @@
 #include "State/CCTV/CIdleState_CCTV.h"
 #include "State/CCTV/CRotateMoveStrategy.h"
 #include "State/MEDIC/CCombatState_MEDIC.h"
+#include "State/MEDIC/CConditionalMoveStrategy_MEDIC.h"
 #include "State/MEDIC/CDieState_MEDIC.h"
 #include "State/MEDIC/CIdleState_MEDIC.h"
+#include "State/MEDIC/CRandomMoveStrategy.h"
 #include "State/MEDIC/CSenseState_MEDIC.h"
 #include "State/MEMORY/CCombatState_MEMORY.h"
 #include "State/MEMORY/CDieState_MEMORY.h"
@@ -52,28 +54,38 @@ TMap<EEnemyState, TSharedPtr<ICEnemyStateStrategy>> UCFSMComponent::CreateStrate
 	{
 	case EEnemyType::Cctv:
 		{
-			TUniquePtr<CRotateMoveStrategy> MoveStrategy = MakeUnique<CRotateMoveStrategy>();
-			Result.Add(EEnemyState::IDLE, MakeShared<CIdleState_CCTV>(MoveTemp(MoveStrategy)));
+			{
+				TUniquePtr<CRotateMoveStrategy> MoveStrategy = MakeUnique<CRotateMoveStrategy>();
+				Result.Add(EEnemyState::IDLE, MakeShared<CIdleState_CCTV>(MoveTemp(MoveStrategy)));
+			}
+			Result.Add(EEnemyState::Die, MakeShared<CDieState_CCTV>());
 		}
-		Result.Add(EEnemyState::Die, MakeShared<CDieState_CCTV>());
 		break;
 	case EEnemyType::Zero:
 		{
-			TUniquePtr<CSplineMoveStrategy> MoveStrategy = MakeUnique<CSplineMoveStrategy>(
-				Cast<ACNox_Zero>(OwnerEnemy)->GetNearPatrolRoute());
-			Result.Add(EEnemyState::IDLE, MakeShared<CIdleState_ZERO>(MoveTemp(MoveStrategy)));
+			{
+				TUniquePtr<CSplineMoveStrategy> MoveStrategy = MakeUnique<CSplineMoveStrategy>(
+					Cast<ACNox_Zero>(OwnerEnemy)->GetNearPatrolRoute());
+				Result.Add(EEnemyState::IDLE, MakeShared<CIdleState_ZERO>(MoveTemp(MoveStrategy)));
+			}
+			{
+				TUniquePtr<CConditionalMoveStrategy_ZERO> ConditionalMove = MakeUnique<CConditionalMoveStrategy_ZERO>();
+				Result.Add(EEnemyState::Sense, MakeShared<CSenseState_ZERO>(MoveTemp(ConditionalMove)));
+			}
+			Result.Add(EEnemyState::Hit, MakeShared<CHitState_ZERO>());
+			Result.Add(EEnemyState::Combat, MakeShared<CCombatState_ZERO>());
+			Result.Add(EEnemyState::Die, MakeShared<CDieState_ZERO>());
 		}
-		{
-			TUniquePtr<CConditionalMoveStrategy_ZERO> ConditionalMove = MakeUnique<CConditionalMoveStrategy_ZERO>();
-			Result.Add(EEnemyState::Sense, MakeShared<CSenseState_ZERO>(MoveTemp(ConditionalMove)));
-		}
-		Result.Add(EEnemyState::Hit, MakeShared<CHitState_ZERO>());
-		Result.Add(EEnemyState::Combat, MakeShared<CCombatState_ZERO>());
-		Result.Add(EEnemyState::Die, MakeShared<CDieState_ZERO>());
 		break;
 	case EEnemyType::MedicAndroid:
-		Result.Add(EEnemyState::IDLE, MakeShared<CIdleState_MEDIC>());
-		Result.Add(EEnemyState::Sense, MakeShared<CSenseState_MEDIC>());
+		{
+			TUniquePtr<CRandomMoveStrategy> MoveStrategy = MakeUnique<CRandomMoveStrategy>();
+			Result.Add(EEnemyState::IDLE, MakeShared<CIdleState_MEDIC>(MoveTemp(MoveStrategy)));
+		}
+		{
+			TUniquePtr<CConditionalMoveStrategy_MEDIC> ConditionalMove = MakeUnique<CConditionalMoveStrategy_MEDIC>();
+			Result.Add(EEnemyState::Sense, MakeShared<CSenseState_MEDIC>(MoveTemp(ConditionalMove)));
+		}
 		Result.Add(EEnemyState::Combat, MakeShared<CCombatState_MEDIC>());
 		Result.Add(EEnemyState::Die, MakeShared<CDieState_MEDIC>());
 		break;
@@ -135,6 +147,14 @@ void UCFSMComponent::InitSkillCoolDowns(EEnemyType Type)
 		SkillCoolDowns.Add(GetSkillName(ESkillCoolDown::Melee), 0.f);
 		SkillMaxCoolDowns.Add(GetSkillName(ESkillCoolDown::Melee), 1.f);
 		break;
+	case EEnemyType::MedicAndroid:
+		SkillCoolDowns.Add(GetSkillName(ESkillCoolDown::Melee), 0.f);
+		SkillMaxCoolDowns.Add(GetSkillName(ESkillCoolDown::Melee), 1.f);
+		SkillCoolDowns.Add(GetSkillName(ESkillCoolDown::Heal), 0.f);
+		SkillMaxCoolDowns.Add(GetSkillName(ESkillCoolDown::Heal), 20.f);
+		SkillCoolDowns.Add(GetSkillName(ESkillCoolDown::Grenade), 0.f);
+		SkillMaxCoolDowns.Add(GetSkillName(ESkillCoolDown::Grenade), 10.f);
+		break;
 	default:
 		break;
 	}
@@ -146,6 +166,8 @@ FName UCFSMComponent::GetSkillName(ESkillCoolDown SkillType) const
 	{
 	case ESkillCoolDown::Melee: return FName(TEXT("MeleeCoolDown"));
 	case ESkillCoolDown::Ranged: return FName(TEXT("RangedCoolDown"));
+	case ESkillCoolDown::Heal: return FName(TEXT("HealCoolDown"));
+	case ESkillCoolDown::Grenade: return FName(TEXT("GrenadeCoolDown"));
 	default: return FName(TEXT("UnknownCoolDown"));
 	}
 }

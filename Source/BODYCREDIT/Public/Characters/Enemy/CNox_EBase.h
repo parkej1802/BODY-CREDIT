@@ -131,7 +131,9 @@ public:
 	void SetMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed);
 
 public:
-	bool IsPlayerInForwardRange(ACNox* InTarget, float InForwardRange);
+	bool IsPlayerInForwardRange(ACNox* InTarget, float InForwardRange); // 작업 후 제거 예정
+	bool IsPlayerInForwardRange(float InForwardRange);
+	bool IsPlayerInForwardDegree(const float InForwardRange, const float InDegree = 10.f);
 
 public:
 	void UpdateSkillCoolDowns(ESkillCoolDown Skill, float DeltaTime);

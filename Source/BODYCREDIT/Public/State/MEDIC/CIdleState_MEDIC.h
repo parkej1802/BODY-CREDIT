@@ -3,11 +3,15 @@
 #include "CoreMinimal.h"
 #include "Interfaces/Enemy/CEnemyStateStrategy.h"
 
+class CRandomMoveStrategy;
 /**
  * 
  */
 class BODYCREDIT_API CIdleState_MEDIC : public ICEnemyStateStrategy
 {
+	TUniquePtr<CRandomMoveStrategy> MoveStrategy;
+	
 public:
-	virtual void Execute(class ACNox_EBase* Owner, class UCFSMComponent* FSMComp) override;
+	CIdleState_MEDIC(TUniquePtr<CRandomMoveStrategy> InMoveStrategy);
+	virtual void Execute(ACNox_EBase* Owner, UCFSMComponent* FSMComp) override;
 };
