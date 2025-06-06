@@ -72,17 +72,54 @@ void UAC_EquipComponent::EquipItem(EPlayerPart Part, UItemObject* Item)
 
 	EquippedItems.Add(Part, Item);
 
-	//FString Msg = FString::Printf(TEXT("[EquipItem] Part: %d, ItemObject ptr: %p, InventoryComp ptr: %p"),
-	//	(int)Part,
-	//	Item,
-	//	Item->ItemObjectInventoryComp);
-	//if (GEngine)
-	//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, Msg);
+	if (Item->ItemData.SkeletalMesh)
+	{
+		switch (Part)
+		{
+		case EPlayerPart::Head:
+			PlayerCharacter->GetHead()->SetSkeletalMeshAsset(Item->ItemData.SkeletalMesh);
+			break;
+		case EPlayerPart::Body:
+			PlayerCharacter->GetUpperBody()->SetSkeletalMeshAsset(Item->ItemData.SkeletalMesh);
+			break;
+		case EPlayerPart::Arm:
+			PlayerCharacter->GetArms()->SetSkeletalMeshAsset(Item->ItemData.SkeletalMesh);
+			break;
+		case EPlayerPart::Leg:
+			PlayerCharacter->GetLowerBody()->SetSkeletalMeshAsset(Item->ItemData.SkeletalMesh);
+			break;
+		default:
+			break;
+		}
+	}
 }
 
 void UAC_EquipComponent::UnequipItem(EPlayerPart Part)
 {
-	EquippedItems.Remove(Part);
+	if (EquippedItems.Contains(Part))
+	{
+		EquippedItems.Remove(Part);
+
+		if (PlayerCharacter && PlayerCharacter->DefaultMeshes.Contains(Part))
+		{
+			USkeletalMesh* DefaultMesh = PlayerCharacter->DefaultMeshes[Part];
+			switch (Part)
+			{
+			case EPlayerPart::Head:
+				PlayerCharacter->GetHead()->SetSkeletalMeshAsset(DefaultMesh);
+				break;
+			case EPlayerPart::Body:
+				PlayerCharacter->GetUpperBody()->SetSkeletalMeshAsset(DefaultMesh);
+				break;
+			case EPlayerPart::Arm:
+				PlayerCharacter->GetArms()->SetSkeletalMeshAsset(DefaultMesh);
+				break;
+			case EPlayerPart::Leg:
+				PlayerCharacter->GetLowerBody()->SetSkeletalMeshAsset(DefaultMesh);
+				break;
+			}
+		}
+	}
 }
 
 bool UAC_EquipComponent::IsEquip(EPlayerPart Part)

@@ -23,6 +23,8 @@
 #include "Session/NetGameInstance.h"
 #include "GameState_BodyCredit.h"
 #include "Inventory/AC_MarketComponent.h"
+#include "Components/SceneCaptureComponent2D.h"
+#include "Characters/CNox_Controller.h"
 
 ACNox_Runner::ACNox_Runner()
 {
@@ -34,11 +36,21 @@ ACNox_Runner::ACNox_Runner()
 	InventoryComp = CreateDefaultSubobject<UAC_InventoryComponent>(TEXT("InventoryComp"));
 	EquipComp = CreateDefaultSubobject<UAC_EquipComponent>(TEXT("EquipComp"));
 	MarketComp = CreateDefaultSubobject<UAC_MarketComponent>(TEXT("MarketComp"));
+
+	CaptureRoot = CreateDefaultSubobject<USceneComponent>(TEXT("CaptureRoot"));
+	CaptureRoot->SetupAttachment(RootComponent);
+
+	SceneCapture2D = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SceneCapture"));
+	SceneCapture2D->SetupAttachment(CaptureRoot);
+
+
 }
 
 void ACNox_Runner::BeginPlay()
 {
 	Super::BeginPlay();
+
+	CacheDefaultSkeletalMeshes();
 
 	Movement->EnableControlRotation();
 
@@ -135,7 +147,7 @@ void ACNox_Runner::NotifyControllerChanged()
 	Super::NotifyControllerChanged();
 
 	// MappingContext
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	if (ACNox_Controller* PlayerController = Cast<ACNox_Controller>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
 			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
@@ -232,4 +244,12 @@ UItemObject* ACNox_Runner::CreateItemFromData(const FItemSaveData& Data)
 	UItemObject* NewItem = NewObject<UItemObject>();
 	NewItem->ImportData(Data);
 	return NewItem;
+}
+
+void ACNox_Runner::CacheDefaultSkeletalMeshes()
+{
+	DefaultMeshes.Add(EPlayerPart::Head, Head->SkeletalMesh);
+	DefaultMeshes.Add(EPlayerPart::Body, UpperBody->SkeletalMesh);
+	DefaultMeshes.Add(EPlayerPart::Arm, Arms->SkeletalMesh);
+	DefaultMeshes.Add(EPlayerPart::Leg, LowerBody->SkeletalMesh);
 }

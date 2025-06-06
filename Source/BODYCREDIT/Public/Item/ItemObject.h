@@ -5,21 +5,8 @@
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
 #include "Materials/MaterialInterface.h"
+#include "ItemDT.h"
 #include "ItemObject.generated.h"
-
-UENUM(BlueprintType)
-enum class EPlayerPart : uint8
-{
-	Basic	 UMETA(DisplayName = "Basic"),
-    Head     UMETA(DisplayName = "Head"),
-    Body     UMETA(DisplayName = "Body"),
-	Arm		 UMETA(DisplayName = "Arm"),
-	Leg      UMETA(DisplayName = "Leg"),
-    Weapon1   UMETA(DisplayName = "Weapon1"),
-	Weapon2  UMETA(DisplayName = "Weapon2"),
-	Backpack	UMETA(DisplayName = "Backpack"),
-	ChestRigs	UMETA(DisplayName = "ChestRigs")
-};
 
 
 USTRUCT(BlueprintType)
@@ -149,5 +136,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<FInventoryItemData> ContainedItems;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FItemData ItemData;
 
 };

@@ -6,9 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "Inventory_Tile.h"
 #include "Item/ItemObject.h"
+#include "Item/ItemDT.h"
 #include "AC_EquipComponent.generated.h"
-
-
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class BODYCREDIT_API UAC_EquipComponent : public UActorComponent

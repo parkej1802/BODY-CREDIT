@@ -71,6 +71,8 @@ public:
 	UPROPERTY()
 	bool IsMoving = false;
 
+	void Refresh();
+
 public:
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual bool NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;

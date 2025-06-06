@@ -22,7 +22,7 @@ void UAC_InventoryBaseComponent::BeginPlay()
 
 	Items.SetNum(Columns * Rows);
 
-	if (GetWorld())
+	/*if (GetWorld())
 	{
 		FString MapName = GetWorld()->GetMapName();
 		MapName.RemoveFromStart(GetWorld()->StreamingLevelsPrefix);
@@ -35,7 +35,7 @@ void UAC_InventoryBaseComponent::BeginPlay()
 				PreAddItem();
 			}
 		}
-	}
+	}*/
 }
 
 
@@ -104,7 +104,7 @@ void UAC_InventoryBaseComponent::AddItemAt(class UItemObject* ItemObject, int32 
 	FInventoryTile TempTile = IndexToTile(TopLeftIndex);
 	FIntPoint TempDimension = ItemObject->GetDimension();
 
-	ItemObject->StartPosition = FIntPoint(TempTile.X, TempTile.Y);
+	ItemObject->ItemData.StartPosition = FIntPoint(TempTile.X, TempTile.Y);
 
 	for (int32 i = TempTile.X; i < (TempDimension.X + TempTile.X); ++i)
 	{
