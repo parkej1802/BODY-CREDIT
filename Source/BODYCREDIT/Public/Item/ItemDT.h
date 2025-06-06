@@ -106,6 +106,7 @@ public:
         , StartPosition(0, 0)
         , ItemType(EPlayerPart::Basic)
         , Weight(1)
+        , SkeletalMesh(nullptr)
     {
     }
 };

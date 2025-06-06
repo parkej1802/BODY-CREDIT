@@ -171,6 +171,8 @@ void UAC_InventoryComponent::ShowLootableInventory()
 	FVector ForwardVector = PlayerCharacter->GetControlRotation().Vector();
 	FVector EndPos = StartPos + (ForwardVector * 300.f);
 
+	DrawDebugLine(GetWorld(), StartPos, EndPos, FColor::Red, false, 1.0f, 0, 2.0f);
+
 	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, StartPos, EndPos, ECC_Visibility, TraceParams);
 
 	if (bHit)
@@ -200,7 +202,6 @@ void UAC_InventoryComponent::ShowLootableInventory()
 			pc->bShowMouseCursor = true;
 		}
 	}
-
 }
 
 void UAC_InventoryComponent::PauseGame()

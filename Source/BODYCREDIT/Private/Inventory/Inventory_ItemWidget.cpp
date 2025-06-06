@@ -11,6 +11,7 @@
 #include "Styling/SlateBrush.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Inventory/Inventory_Widget.h"
+#include "Item/Item_Base.h"
 
 void UInventory_ItemWidget::NativeConstruct()
 {
@@ -65,9 +66,18 @@ FReply UInventory_ItemWidget::NativeOnMouseButtonDown(const FGeometry& InGeometr
 	{
 		return UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton).NativeReply;
 	}
+	else if (InMouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
+	{
+		if (ItemObject)
+		{
+			ItemObject->ItemActorOwner->UseItem();
+		}
+		return FReply::Handled();
+	}
 
 	return Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 }
+
 
 void UInventory_ItemWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
@@ -86,8 +96,6 @@ void UInventory_ItemWidget::NativeOnDragDetected(const FGeometry& InGeometry, co
 {
 	if (IsMoving) return;
 	IsMoving = true;
-
-	
 
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
 

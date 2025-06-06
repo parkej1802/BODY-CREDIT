@@ -33,10 +33,10 @@ void UInventory_Widget::NativeConstruct()
 
     EquipComp = PlayerCharacter->EquipComp;
 
-	InventoryGridWidget->InitInventory(InventoryComp, InventoryComp->InventoryTileSize);
+	/*InventoryGridWidget->InitInventory(InventoryComp, InventoryComp->InventoryTileSize);
 	InventoryGridWidget->GridID = 0;
-	InventoryGridWidget->PlayerController = PC;
-    InventoryGridWidget->SetVisibility(ESlateVisibility::Visible);
+	InventoryGridWidget->PlayerController = PC;*/
+    InventoryGridWidget->SetVisibility(ESlateVisibility::Hidden);
 
     SetItemInventory();
 
@@ -69,7 +69,6 @@ void UInventory_Widget::NativeConstruct()
         InventoryItemGridWidget->SetVisibility(ESlateVisibility::Visible);
         InventoryItemGridWidget->InitInventory(LootingInventoryComp, InventoryComp->InventoryTileSize);
         InventoryItemGridWidget->GridID = 1;
-        // InventoryItemGridWidget->OwningInventoryWidget = this;
         InventoryItemGridWidget->PlayerController = PC;
     }
     else {
@@ -83,7 +82,6 @@ void UInventory_Widget::NativeConstruct()
 void UInventory_Widget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
     Super::NativeTick(MyGeometry, InDeltaTime);
-    // IsMouseOnGrid();
 }
 
 

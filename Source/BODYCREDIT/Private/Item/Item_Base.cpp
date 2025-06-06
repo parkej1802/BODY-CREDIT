@@ -30,8 +30,7 @@ AItem_Base::AItem_Base()
 	SphereComp->SetGenerateOverlapEvents(true);
 
 	ItemObject = CreateDefaultSubobject<UItemObject>(TEXT("ItemObject"));
-	
-	ItemStrategy = nullptr;
+
 }
 
 void AItem_Base::OnConstruction(const FTransform& Transform)
@@ -95,15 +94,15 @@ void AItem_Base::Tick(float DeltaTime)
 
 void AItem_Base::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (ACNox_Runner* PlayerCharacter = Cast<ACNox_Runner>(OtherActor)) 
-	{
-		if (PlayerCharacter->InventoryComp->TryAddItem(ItemObject)) 
-		{
-			/*Destroy();*/
-			SetActorHiddenInGame(true);
-			SetActorEnableCollision(false);
-		}
-	}
+	//if (ACNox_Runner* PlayerCharacter = Cast<ACNox_Runner>(OtherActor)) 
+	//{
+	//	if (PlayerCharacter->InventoryComp->TryAddItem(ItemObject)) 
+	//	{
+	//		/*Destroy();*/
+	//		SetActorHiddenInGame(true);
+	//		SetActorEnableCollision(false);
+	//	}
+	//}
 }
 
 void AItem_Base::GetDefaultItemObject()
@@ -127,7 +126,6 @@ void AItem_Base::UseItem()
 {
 	if (ItemStrategy)
 	{
-		ItemStrategy->Use(this);
+		ItemStrategy->Use(ItemObject);
 	}
 }
-

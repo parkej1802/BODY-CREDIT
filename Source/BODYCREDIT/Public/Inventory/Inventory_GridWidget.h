@@ -105,8 +105,6 @@ public:
 	UPROPERTY(EditAnywhere, Category = Widget)
 	TSubclassOf<UUserWidget> InventoryItemWidget;
 
-	void InitEquipment(class UAC_InventoryBaseComponent* InventoryComponent, float Equipment_TileSize);
-
 	UPROPERTY()
 	class UInventory_ItemWidget* InventoryItemUI;
 

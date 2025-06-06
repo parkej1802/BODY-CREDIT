@@ -184,13 +184,13 @@ void ACNox_Runner::Init()
 		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &UpperBody, "UpperBody", GetMesh());
 
 		// UpperBody
-		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Clothes, "Clothes", UpperBody);
+		//CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Clothes, "Clothes", UpperBody);
 
 		// Arms
 		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Arms, "Arms", GetMesh());
 
 		// Hands
-		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Hands, "Hands", Arms);
+		//CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Hands, "Hands", Arms);
 
 		// LowerBody
 		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &LowerBody, "LowerBody", GetMesh());
@@ -248,8 +248,8 @@ UItemObject* ACNox_Runner::CreateItemFromData(const FItemSaveData& Data)
 
 void ACNox_Runner::CacheDefaultSkeletalMeshes()
 {
-	DefaultMeshes.Add(EPlayerPart::Head, Head->SkeletalMesh);
-	DefaultMeshes.Add(EPlayerPart::Body, UpperBody->SkeletalMesh);
-	DefaultMeshes.Add(EPlayerPart::Arm, Arms->SkeletalMesh);
-	DefaultMeshes.Add(EPlayerPart::Leg, LowerBody->SkeletalMesh);
+	DefaultMeshes.Add(EPlayerPart::Head, Head->GetSkeletalMeshAsset());
+	DefaultMeshes.Add(EPlayerPart::Body, UpperBody->GetSkeletalMeshAsset());
+	DefaultMeshes.Add(EPlayerPart::Arm, Arms->GetSkeletalMeshAsset());
+	DefaultMeshes.Add(EPlayerPart::Leg, LowerBody->GetSkeletalMeshAsset());
 }
