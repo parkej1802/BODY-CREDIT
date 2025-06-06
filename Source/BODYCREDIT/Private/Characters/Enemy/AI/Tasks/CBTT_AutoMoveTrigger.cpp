@@ -9,7 +9,7 @@
 
 UCBTT_AutoMoveTrigger::UCBTT_AutoMoveTrigger()
 {
-	bCreateNodeInstance = true;
+	// bCreateNodeInstance = true;
 }
 
 EBTNodeResult::Type UCBTT_AutoMoveTrigger::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)

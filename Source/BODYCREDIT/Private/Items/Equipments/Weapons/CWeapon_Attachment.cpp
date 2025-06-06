@@ -56,7 +56,7 @@ void ACWeapon_Attachment::OffCollisions()
 		OnWeaponAttachmentEndCollision.Broadcast();
 
 	for (UShapeComponent* shape : Collisions)
-		shape->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		shape->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 }
 

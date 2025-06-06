@@ -9,6 +9,7 @@
 #include "Components/CStateComponent.h"
 #include "Components/CMovementComponent.h"
 #include "Components/CWeaponComponent.h"
+#include "Components/CZoomComponent.h"
 #include "Inventory/AC_InventoryComponent.h"
 #include "Components/CNoxHPComponent.h"
 #include "Games/CMainGM.h"
@@ -65,7 +66,6 @@ void ACNox_Runner::BeginPlay()
 			}
 
 
-
 			/*for (const FItemSaveData& Data : GI->SavedInventoryItems)
 			{
 				UItemObject* Item = CreateItemFromData(Data);
@@ -97,6 +97,13 @@ void ACNox_Runner::BeginPlay()
 	//FPSCamera->bUsePawnControlRotation = true;
 	//// 머리 본 숨김
 	//GetMesh()->HideBoneByName(FName("neck_01"), EPhysBodyOp::PBO_None);
+}
+
+float ACNox_Runner::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+                               class AController* EventInstigator, AActor* DamageCauser)
+{
+	HPComp->TakeDamage(DamageAmount);
+	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
 
 void ACNox_Runner::Tick(float DeltaTime)
@@ -162,9 +169,30 @@ void ACNox_Runner::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 void ACNox_Runner::Init()
 {
-	// Mesh
-	GetMesh()->SetRelativeLocation(FVector(0, 0, ~89));
-	GetMesh()->SetRelativeRotation(FRotator(0, ~89, 0));
+	{ // Modular Character Mesh
+		// Head
+		Head = GetMesh();
+		Head->SetRelativeLocation(FVector(0, 0, ~89));
+		Head->SetRelativeRotation(FRotator(0, ~89, 0));
+
+		// Hair
+		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Hair, "Hair", GetMesh());
+
+		// UpperBody
+		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &UpperBody, "UpperBody", GetMesh());
+
+		// UpperBody
+		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Clothes, "Clothes", UpperBody);
+
+		// Arms
+		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Arms, "Arms", GetMesh());
+
+		// Hands
+		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Hands, "Hands", Arms);
+
+		// LowerBody
+		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &LowerBody, "LowerBody", GetMesh());
+	}
 
 	// SpringArm
 	CHelpers::CreateComponent<USpringArmComponent>(this, &SpringArm, "SpringArm", RootComponent);
@@ -178,9 +206,9 @@ void ACNox_Runner::Init()
 	TPSCamera->SetRelativeLocation(FVector(~79, 60, 100));
 	TPSCamera->bUsePawnControlRotation = false;
 
-	// FPSCamera
-	CHelpers::CreateComponent<UCameraComponent>(this, &FPSCamera, "FPSCamera", GetMesh(), FName("FPSCamera"));
-	FPSCamera->bUsePawnControlRotation = false;
+	//// FPSCamera
+	//CHelpers::CreateComponent<UCameraComponent>(this, &FPSCamera, "FPSCamera", GetMesh(), FName("FPSCamera"));
+	//FPSCamera->bUsePawnControlRotation = false;
 
 	// MappingContext
 	CHelpers::GetAsset<UInputMappingContext>(&MappingContext,
@@ -198,6 +226,10 @@ void ACNox_Runner::Init()
 
 	// Weapon
 	CHelpers::CreateActorComponent<UCWeaponComponent>(this, &Weapon, "Weapon");
+
+	// Zoom
+	CHelpers::CreateActorComponent<UCZoomComponent>(this, &Zoom, "Zoom");
+
 }
 
 void ACNox_Runner::MakeMemoryPiece()

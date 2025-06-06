@@ -4,25 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Characters/CNox.h"
+#include "Components/Enemy/CEnemyState.h"
 #include "CNox_EBase.generated.h"
-
-UENUM(BlueprintType)
-enum class EEnemyType : uint8
-{
-	Cctv = 0,
-	Zero,
-	MedicAndroid,
-	MemoryCollector,
-};
-
-UENUM(BlueprintType)
-enum class EEnemyMovementSpeed : uint8
-{
-	Idle = 0,
-	Walking,
-	Jogging,
-	Sprinting
-};
 
 /**
  * Enemy Base
@@ -66,10 +49,15 @@ protected: // Status
 	UPROPERTY(EditDefaultsOnly)
 	float AccelValue = 150.f;
 
+public:
+	EEnemyType GetEnemyType() const { return EnemyType; }
+
 protected: // Virtual Function
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void PossessedBy(AController* NewController) override;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+							 class AController* EventInstigator, AActor* DamageCauser) override;
 
 protected: // Component
 	UPROPERTY(VisibleDefaultsOnly)
@@ -78,28 +66,36 @@ protected: // Component
 	class UCNoxEnemy_Animinstance* EnemyAnim;
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UCNoxEnemyHPComponent* HPComp;
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	class UCFSMComponent* FSMComp;
 
 protected:
 	UPROPERTY()
 	class ACEnemyController* EnemyController;
-
-public:
-	bool bUseBehaviorTree = true;
-
-private:
-	UPROPERTY(EditDefaultsOnly, Category = "AI")
-	class UBehaviorTree* BehaviorTree;
-
-public:
-	FORCEINLINE class UBehaviorTree* GetBehaviorTree() { return BehaviorTree; }
+	void SetApplyDamage(AActor* DamagedPlayer, const float DamageAmout);
 
 public:
 	// CCTV에서는 Blackboard에 세팅은 안하고 주변 Enemy에게만 전달한다.
 	virtual void SetTarget(ACNox* InTarget);
+	ACNox* GetTarget() const { return Target; }
+	void SetEnemyState(EEnemyState NewState);
+	void SetCombatState(ECombatState NewCombatState);
 	void SetTargetCallByDelegate(ACNox* InTarget);
-	void HandleAttack(float InAttackDistance);
+	void HandleAttack(float InAttackDistance); // BT 제거할 때 같이 제거
+	void HandleAttack();
 	bool IsAttacking();
 	bool IsPlayerInDistance();
+
+	virtual void AttackCollision(bool bOn, bool IsRightHand = true)
+	{
+	}
+
+	void HandleHit(const int32 sectionIdx = 1);
+	bool IsHitting();
+
+	void HandleDie(const int32 sectionIdx = 1);
+	
+	void ResetVal();
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category=Health)
@@ -127,9 +123,18 @@ public:
 		Target = InTarget;
 		MoveDistance = InMoveDistance;
 	}
-	virtual void GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed, float& OutNewAccelSpeed){};
+
+	virtual void GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed,
+	                                 float& OutNewAccelSpeed)
+	{
+	};
 	void SetMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed);
 
 public:
 	bool IsPlayerInForwardRange(ACNox* InTarget, float InForwardRange);
+
+public:
+	void UpdateSkillCoolDowns(ESkillCoolDown Skill, float DeltaTime);
+	bool IsSkillReady(ESkillCoolDown Skill) const;
+	void UsingSkill(ESkillCoolDown Skill);
 };

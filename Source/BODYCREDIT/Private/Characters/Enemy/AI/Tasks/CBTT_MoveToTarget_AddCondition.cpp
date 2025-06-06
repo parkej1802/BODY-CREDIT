@@ -1,9 +1,7 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Characters/Enemy/AI/Tasks/CBTT_MoveToTarget_AddCondition.h"
 
 #include "AIController.h"
+#include "Global.h"
 
 UCBTT_MoveToTarget_AddCondition::UCBTT_MoveToTarget_AddCondition()
 {
@@ -23,13 +21,17 @@ void UCBTT_MoveToTarget_AddCondition::TickTask(UBehaviorTreeComponent& OwnerComp
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
 	float CurrentCoolDown = OwnerComp.GetBlackboardComponent()->GetValueAsFloat(ConditionKey.SelectedKeyName);
-	if (CurrentCoolDown >= ConditionValue)
+	bool chkCondition = OwnerComp.GetBlackboardComponent()->GetValueAsBool(TargetInRadiusCheckKey.SelectedKeyName);
+	// CLog::Log(FString::Printf(TEXT("chkCondition : %d, CurrentCoolDown >= ConditionValue : %d"), chkCondition,
+	//                           CurrentCoolDown >= ConditionValue));
+	if (chkCondition && CurrentCoolDown >= ConditionValue)
 	{
 		AAIController* AIController = OwnerComp.GetAIOwner();
 		if (AIController)
 		{
+			OwnerComp.GetBlackboardComponent()->SetValueAsBool(PlayGrenadeKey, true);
 			// 이동을 중단합니다
-			AIController->StopMovement();
+			// AIController->StopMovement();
 			FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 		}
 		else

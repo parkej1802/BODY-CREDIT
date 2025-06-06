@@ -11,7 +11,7 @@ FString UCAnimNotify_BowString::GetNotifyName_Implementation() const
 
 void UCAnimNotify_BowString::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
 {
-	Super::Notify(MeshComp, Animation);
+	Super::Notify(MeshComp, Animation, EventReference);
 	CheckNull(MeshComp);
 	CheckNull(MeshComp->GetOwner());
 

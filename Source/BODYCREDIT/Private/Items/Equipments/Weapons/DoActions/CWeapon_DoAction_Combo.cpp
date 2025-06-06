@@ -84,14 +84,14 @@ void UCWeapon_DoAction_Combo::OnWeaponAttachmentEndCollision()
 		}
 	}
 
-	if (!!candidate)
-	{
-		FRotator rotator = UKismetMathLibrary::FindLookAtRotation(OwnerCharacter->GetActorLocation(), candidate->GetActorLocation());
-		FRotator target = FRotator(0, rotator.Yaw, 0);
-
-		AController* controller = OwnerCharacter->GetController<AController>();
-		controller->SetControlRotation(target);
-	}
+	// if (!!candidate)
+	// {
+	// 	FRotator rotator = UKismetMathLibrary::FindLookAtRotation(OwnerCharacter->GetActorLocation(), candidate->GetActorLocation());
+	// 	FRotator target = FRotator(0, rotator.Yaw, 0);
+	//
+	// 	AController* controller = OwnerCharacter->GetController<AController>();
+	// 	controller->SetControlRotation(target);
+	// }
 
 	Hitted.Empty();
 

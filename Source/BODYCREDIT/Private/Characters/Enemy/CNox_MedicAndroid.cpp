@@ -1,6 +1,7 @@
 #include "Characters/Enemy/CNox_MedicAndroid.h"
 #include "Global.h"
 #include "Characters/Enemy/CNoxEnemy_Animinstance.h"
+#include "Characters/Enemy/AttackActor/CElectricGrenade.h"
 #include "Components/Enemy/CNoxEnemyHPComponent.h"
 
 ACNox_MedicAndroid::ACNox_MedicAndroid()
@@ -23,6 +24,11 @@ ACNox_MedicAndroid::ACNox_MedicAndroid()
 
 	EnemyType = EEnemyType::MedicAndroid;
 	SetPerceptionInfo();
+
+	ConstructorHelpers::FClassFinder<ACElectricGrenade> GrenadeClass(
+		TEXT("/Game/Characters/Enemy/AttackActor/BP_ElectircGrenade.BP_ElectircGrenade_C"));
+	if (GrenadeClass.Succeeded())
+		ElectricGrenadeCls = GrenadeClass.Class;
 }
 
 void ACNox_MedicAndroid::BeginPlay()
@@ -36,6 +42,11 @@ void ACNox_MedicAndroid::BeginPlay()
 	                          TEXT("/Game/Assets/MedicAnim/HealAnim/AM_Shield.AM_Shield"));
 	CHelpers::GetAssetDynamic(&(EnemyAnim->AttackMontage),
 	                          TEXT("/Game/Assets/MedicAnim/AttackAnim/AM_Attack.AM_Attack"));
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	ElectricGrenade = GetWorld()->SpawnActor<ACElectricGrenade>(ElectricGrenadeCls, this->GetActorLocation(), this->GetActorRotation(),
+	                                          SpawnParams);
 }
 
 void ACNox_MedicAndroid::Tick(float DeltaTime)
@@ -46,7 +57,6 @@ void ACNox_MedicAndroid::Tick(float DeltaTime)
 void ACNox_MedicAndroid::SetPerceptionInfo()
 {
 	Super::SetPerceptionInfo();
-
 	RetentionTime = 0.f;
 }
 
@@ -59,9 +69,6 @@ void ACNox_MedicAndroid::SetTarget(class ACNox* InTarget)
 void ACNox_MedicAndroid::GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed,
                                              float& OutNewAccelSpeed)
 {
-	OutNewSpeed = 0.f;
-	OutNewAccelSpeed = 600.f;
-
 	switch (InMovementSpeed)
 	{
 	case EEnemyMovementSpeed::Idle:
@@ -69,14 +76,16 @@ void ACNox_MedicAndroid::GetNewMovementSpeed(const EEnemyMovementSpeed& InMoveme
 		OutNewAccelSpeed = 0.f;
 		break;
 	case EEnemyMovementSpeed::Walking:
-		OutNewSpeed = 400.f;
+		OutNewSpeed = 280.f;
 		OutNewAccelSpeed = 450.f;
 		break;
-	case EEnemyMovementSpeed::Jogging:
-		OutNewSpeed = 0.f;
-		break;
+	// case EEnemyMovementSpeed::Jogging:
+	// 	OutNewSpeed = 0.f;
+	// 	OutNewAccelSpeed = 0.f;
+	// 	break;
 	case EEnemyMovementSpeed::Sprinting:
-		OutNewSpeed = 500.f;
+		OutNewSpeed = 320.f;
+		OutNewAccelSpeed = 1024.f;
 		break;
 	}
 }
@@ -97,7 +106,7 @@ void ACNox_MedicAndroid::HandleEquipShield(const bool bInEquipShield)
 
 	bIsEquipShield = bInEquipShield;
 	EnemyAnim->PlayShieldMontage(bInEquipShield);
-	BehaviorComp->SetEquipShield(bInEquipShield);
+	// BehaviorComp->SetEquipShield(bInEquipShield);
 }
 
 float ACNox_MedicAndroid::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
@@ -121,10 +130,54 @@ bool ACNox_MedicAndroid::IsLowHealth()
 
 void ACNox_MedicAndroid::SetHealFlag(bool bHealFlag)
 {
-	BehaviorComp->SetHealFlag(bHealFlag);
+	// BehaviorComp->SetHealFlag(bHealFlag);
 }
 
 void ACNox_MedicAndroid::HealEnd()
 {
 	EnemyAnim->JumpShieldMontage();
+}
+
+void ACNox_MedicAndroid::SuggestProjectileVelocityWithLimit(FVector& OutVelocity, const FVector& StartLocation,
+                                                            const FVector& TargetLocation, float MaxSpeed, float GravityZ)
+{
+	const FVector Delta = TargetLocation - StartLocation;
+	FVector DeltaXY = FVector(Delta.X, Delta.Y, 0.f);
+	float HorizontalDistance = DeltaXY.Size();
+	float DeltaZ = Delta.Z;
+
+	float ArcHeight = FMath::Clamp(HorizontalDistance*.2f, 100.f, 300.f);
+
+	float Vz = FMath::Sqrt(2 * FMath::Abs(GravityZ) * ArcHeight);
+
+	float TimeUp = Vz / FMath::Abs(GravityZ);
+	float TimeDown = FMath::Sqrt(FMath::Max(2 * (ArcHeight - DeltaZ), 0.f) / FMath::Abs(GravityZ));
+	float TotalTime = TimeUp + TimeDown;
+
+	// 최소 시간 보정 (너무 가까울 때 처리)
+	if (TotalTime <= 0.f) TotalTime = 0.1f;
+
+	FVector DirXY = DeltaXY.GetSafeNormal();
+	float Vxy = HorizontalDistance / TotalTime;
+
+	FVector Velocity = DirXY * Vxy + FVector(0, 0, Vz);
+	float InitialSpeed = Velocity.Size();
+
+	if (InitialSpeed > MaxSpeed)
+	{
+		float Scale = MaxSpeed / InitialSpeed;
+		Velocity *= Scale;
+	}
+
+	OutVelocity = Velocity;
+}
+
+void ACNox_MedicAndroid::LaunchElectricGrenade()
+{
+	FVector startLoc = GetMesh()->GetSocketLocation(FName("GrenadeSocket"));
+	// FVector targetLoc = BehaviorComp->GetTarget()->GetActorLocation();
+	FVector targetLoc = FVector::Zero();
+	FVector outVelocity;
+	SuggestProjectileVelocityWithLimit(outVelocity, this->GetActorLocation(), targetLoc);
+	if (ElectricGrenade)	ElectricGrenade->InitializeGrenade(startLoc, targetLoc, outVelocity);
 }

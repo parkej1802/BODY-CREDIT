@@ -1,12 +1,10 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "Characters/Enemy/CNoxEnemy_Animinstance.h"
 
 #include "Characters/Enemy/CNox_MedicAndroid.h"
 #include "Characters/Enemy/CNox_MemoryCollectorAI.h"
 #include "Characters/Enemy/CNox_Zero.h"
 #include "Utilities/CLog.h"
+#include "Global.h"
 
 void UCNoxEnemy_Animinstance::NativeInitializeAnimation()
 {
@@ -26,7 +24,14 @@ void UCNoxEnemy_Animinstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	if (!OwnerEnemy) return;
 
-	Speed = OwnerEnemy->GetVelocity().Size();
+	FVector velo = OwnerEnemy->GetVelocity();
+	Speed = velo.Size();
+
+	velo.Z = 0;
+	velo.Normalize();
+	const float Dot = FVector::DotProduct(OwnerEnemy->GetActorForwardVector(), velo);
+	const float CrossZ = FVector::CrossProduct(OwnerEnemy->GetActorForwardVector(), velo).Z;
+	DeltaYaw=FMath::RadiansToDegrees( FMath::Atan2( CrossZ, Dot ) );
 
 	if (loopCheck)
 	{
@@ -38,20 +43,29 @@ void UCNoxEnemy_Animinstance::NativeUpdateAnimation(float DeltaSeconds)
 			Cast<ACNox_MemoryCollectorAI>(OwnerEnemy)->BeamAttackEnd();
 		}
 	}
-
-	if (DesiredRotation != FRotator::ZeroRotator)
-	{
-		float CurrentYaw = OwnerEnemy->GetActorRotation().Yaw;
-		DeltaYaw = FMath::FindDeltaAngleDegrees(CurrentYaw, DesiredRotation.Yaw);
-	}
 }
 
 void UCNoxEnemy_Animinstance::OnAnimMontageEnded(UAnimMontage* Montage, bool bInterrupted)
 {
-	if (Montage == GrenadeMontage)
-		OwnerEnemy->SetGrenadeEnded(true);
-	else if (Montage == ShieldMontage)
-		BehaviorComponent->SetShieldEnded(true);
+	// if (Montage == GrenadeMontage)
+	// 	OwnerEnemy->SetGrenadeEnded(true);
+	// else if (Montage == ShieldMontage)
+	// 	BehaviorComponent->SetShieldEnded(true);
+}
+
+void UCNoxEnemy_Animinstance::AnimNotify_EnableRAttack()
+{
+	OwnerEnemy->AttackCollision(true, true);
+}
+
+void UCNoxEnemy_Animinstance::AnimNotify_EnableLAttack()
+{
+	OwnerEnemy->AttackCollision(true, false);
+}
+
+void UCNoxEnemy_Animinstance::AnimNotify_EndAttack()
+{
+	OwnerEnemy->AttackCollision(false);
 }
 
 void UCNoxEnemy_Animinstance::AnimNotify_PlayIdleMontage()
@@ -75,7 +89,7 @@ void UCNoxEnemy_Animinstance::PlayShieldMontage(const bool bInShieldStart)
 {
 	// CLog::Log(FString::Printf(TEXT("bUsingShield: %d"), bInShieldStart));
 
-	BehaviorComponent->SetShieldEnded(false);
+	// BehaviorComponent->SetShieldEnded(false);
 
 	if (bInShieldStart)
 		OwnerEnemy->PlayAnimMontage(ShieldMontage, 1.0f, ShieldStartSection);
@@ -91,7 +105,7 @@ void UCNoxEnemy_Animinstance::JumpShieldMontage()
 
 void UCNoxEnemy_Animinstance::PlayAttackMontage()
 {
-	if (OwnerEnemy->IsA(ACNox_MedicAndroid::StaticClass())||
+	if (OwnerEnemy->IsA(ACNox_MedicAndroid::StaticClass()) ||
 		OwnerEnemy->IsA(ACNox_Zero::StaticClass()))
 	{
 		if (AttackMontage) OwnerEnemy->PlayAnimMontage(AttackMontage, 1.0f);
@@ -108,7 +122,7 @@ void UCNoxEnemy_Animinstance::PlayAttackMontage()
 
 bool UCNoxEnemy_Animinstance::IsAttacking() const
 {
-	if (OwnerEnemy->IsA(ACNox_MedicAndroid::StaticClass())||OwnerEnemy->IsA(ACNox_Zero::StaticClass()))
+	if (OwnerEnemy->IsA(ACNox_MedicAndroid::StaticClass()) || OwnerEnemy->IsA(ACNox_Zero::StaticClass()))
 	{
 		if (AttackMontage && Montage_IsPlaying(AttackMontage)) return true;
 		else return false;
@@ -123,6 +137,23 @@ bool UCNoxEnemy_Animinstance::IsAttacking() const
 	}
 
 	return false;
+}
+
+void UCNoxEnemy_Animinstance::PlayHitMontage(const int32 sectionIdx)
+{
+	OwnerEnemy->PlayAnimMontage(HitMontage, sectionIdx);
+}
+
+bool UCNoxEnemy_Animinstance::IsHitting() const
+{
+	if (AttackMontage && Montage_IsPlaying(AttackMontage)) return true;
+
+	return false;
+}
+
+void UCNoxEnemy_Animinstance::PlayDieMontage(const int32 sectionIdx)
+{
+	if (DieMontage) OwnerEnemy->PlayAnimMontage(DieMontage, 1.0f);
 }
 
 void UCNoxEnemy_Animinstance::PlayBeamAttack()
@@ -212,4 +243,9 @@ void UCNoxEnemy_Animinstance::AnimNotify_RangeAttack()
 		// 오른손
 		Cast<ACNox_MemoryCollectorAI>(OwnerEnemy)->StartRangeAttack(true);
 	}
+}
+
+void UCNoxEnemy_Animinstance::AnimNotify_Grenade()
+{
+	Cast<ACNox_MedicAndroid>(OwnerEnemy)->LaunchElectricGrenade();
 }

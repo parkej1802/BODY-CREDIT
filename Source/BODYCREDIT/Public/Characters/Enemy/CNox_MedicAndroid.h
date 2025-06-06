@@ -24,7 +24,8 @@ private:
 
 public:
 	virtual void SetTarget(class ACNox* InTarget) override;
-	void GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed, float& OutNewAccelSpeed) override;
+	void GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed,
+	                         float& OutNewAccelSpeed) override;
 
 public:
 	void HandleIdleMotion();
@@ -46,9 +47,24 @@ private:
 private:
 	UPROPERTY(EditDefaultsOnly, Category=Heal)
 	float HealStdValue = 0.4f;
-	
+
 public:
 	bool IsLowHealth();
 	void SetHealFlag(bool bHealFlag);
 	void HealEnd();
+
+private:	// Electric Grenade
+	UPROPERTY(VisibleDefaultsOnly)
+	TSubclassOf<class ACElectricGrenade> ElectricGrenadeCls;
+	UPROPERTY(VisibleAnywhere)
+	class ACElectricGrenade* ElectricGrenade;
+	
+	void SuggestProjectileVelocityWithLimit(FVector& OutVelocity,
+	                                        const FVector& StartLocation,
+	                                        const FVector& TargetLocation,
+	                                        float MaxSpeed = 1500.f,
+	                                        float GravityZ = -980.f
+	);
+public:
+	void LaunchElectricGrenade();
 };

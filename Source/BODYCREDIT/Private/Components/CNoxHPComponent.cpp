@@ -1,5 +1,7 @@
 #include "Components/CNoxHPComponent.h"
 
+#include "Global.h"
+
 UCNoxHPComponent::UCNoxHPComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -39,6 +41,13 @@ void UCNoxHPComponent::TakeDamage(float Amount, bool ActiveShield, bool& OutIsSh
 	{
 		Health = FMath::Max(0.f, Health - Amount);
 	}
+}
+
+void UCNoxHPComponent::TakeDamage(float Amount)
+{
+	Health = FMath::Max(0.f, Health - Amount);
+	if (Health <= 0) bIsDead = true;
+	CLog::Print(FString::Printf(TEXT("%s TakeDamage: %f"), *GetOwner()->GetName() ,Amount));
 }
 
 void UCNoxHPComponent::Die()
