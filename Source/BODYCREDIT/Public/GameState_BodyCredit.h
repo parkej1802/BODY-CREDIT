@@ -31,4 +31,6 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	class UAC_InventoryComponent* PlayerInventory;
+
+	void RestoreItemAndSubItems(UItemObject* ItemObject, FVector SpawnLocation, AActor* OwnerActor);
 };

@@ -17,6 +17,7 @@ void UInventory_EquipmentTile::NativeConstruct()
 
 FSlateBrush UInventory_EquipmentTile::GetIconImage()
 {
+	ItemObject->ItemData.Rotated = false;
 	UMaterialInterface* Material = ItemObject->GetIcon();
 
 	FSlateBrush Brush;
@@ -34,9 +35,29 @@ FSlateBrush UInventory_EquipmentTile::GetIconImage()
 	return Brush;
 }
 
+
+void UInventory_EquipmentTile::Refresh()
+{
+	if (!IsValid(ItemObject)) return;
+
+	FIntPoint ItemDim = ItemObject->GetDimension();
+	NewSize = FVector2D(ItemDim.X * EquipMainWidget->TileSize, ItemDim.Y * EquipMainWidget->TileSize);
+
+	if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Image_Item->Slot))
+	{
+		CanvasSlot->SetSize(NewSize);
+	}
+
+	FSlateBrush IconBrush;
+	IconBrush.SetResourceObject(ItemObject->GetIcon());
+	IconBrush.ImageSize = NewSize;
+
+	Image_Item->SetBrush(IconBrush);
+}
+
 void UInventory_EquipmentTile::SetItem(UItemObject* NewItem)
 {
-	if (NewItem->ItemType != ItemType) return;
+	if (NewItem->ItemData.ItemType != ItemType) return;
 
 	ItemObject = NewItem;
 

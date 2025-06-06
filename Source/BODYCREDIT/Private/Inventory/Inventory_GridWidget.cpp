@@ -374,7 +374,8 @@ bool UInventory_GridWidget::NativeOnDrop(const FGeometry& InGeometry, const FDra
 		DraggedWidget->IsMoving = false;
 	}
 
-	if (UInventory_EquipmentTile* InventoryItemTileUI = Cast<UInventory_EquipmentTile>(InOperation->DefaultDragVisual)) {
+	if (UInventory_EquipmentTile* InventoryItemTileUI = Cast<UInventory_EquipmentTile>(InOperation->DefaultDragVisual)) 
+	{
 		InventoryItemTileUI->IsMoving = false;
 	}
 
@@ -391,8 +392,8 @@ bool UInventory_GridWidget::NativeOnDrop(const FGeometry& InGeometry, const FDra
 	}
 	else
 	{
-		TempTile.X = ItemObject->StartPosition.X;
-		TempTile.Y = ItemObject->StartPosition.Y;
+		TempTile.X = ItemObject->ItemData.StartPosition.X;
+		TempTile.Y = ItemObject->ItemData.StartPosition.Y;
 
 		InventoryBaseComp->TryAddItem(ItemObject);
 	}

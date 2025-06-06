@@ -8,12 +8,14 @@
 #include "Components/Image.h"
 #include "Animation/WidgetAnimation.h"
 #include "Kismet/GameplayStatics.h"
+#include "Characters/CNox_Controller.h"
+
 
 void ULobbyWidget_Pause::NativeConstruct()
 {
     Super::NativeConstruct();
 
-    PC = GetOwningPlayer();
+    PC = Cast<ACNox_Controller>(GetOwningPlayer());
 
     APawn* Pawn = PC->GetPawn();
 
@@ -46,10 +48,8 @@ void ULobbyWidget_Pause::OnContinueClicked()
 
 void ULobbyWidget_Pause::OnExitClicked()
 {
-    
     this->RemoveFromParent();
-    PC = GetWorld()->GetFirstPlayerController();
-    PC->SetInputMode(FInputModeUIOnly());
+    PC->SetInputMode(FInputModeGameAndUI());
     PC->bShowMouseCursor = true;
 }
 

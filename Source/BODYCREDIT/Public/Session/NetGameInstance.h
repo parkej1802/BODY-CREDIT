@@ -21,6 +21,9 @@ public:
 	
 	virtual void Init() override;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UDataTable* ItemDataTable;
+
 public:
 	IOnlineSessionPtr sessionInterface;
 

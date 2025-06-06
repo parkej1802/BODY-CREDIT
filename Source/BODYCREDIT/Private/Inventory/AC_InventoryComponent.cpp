@@ -6,6 +6,8 @@
 #include "Characters/CNox_Runner.h"
 #include "Lootable_Base.h"
 #include "Lobby/LobbyWidget_Pause.h"
+#include "Inventory/Inventory_EquipmentTile.h"
+#include "Characters/CNox_Controller.h"
 
 // Sets default values for this component's properties
 UAC_InventoryComponent::UAC_InventoryComponent()
@@ -58,7 +60,7 @@ void UAC_InventoryComponent::BeginPlay()
 
 	AActor* OwnerActor = GetOwner();
 
-	if ((pc = OwnerActor->GetInstigatorController<APlayerController>()) != nullptr)
+	if ((pc = OwnerActor->GetInstigatorController<ACNox_Controller>()) != nullptr)
 	{
 		UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(pc->InputComponent);
 		if (EnhancedInputComponent)
@@ -120,7 +122,6 @@ void UAC_InventoryComponent::ShowInventory()
 
 void UAC_InventoryComponent::RotateItem()
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, TEXT("RotateItem"));
 
 	UDragDropOperation* CurrentOp = UWidgetBlueprintLibrary::GetDragDroppingContent();
 	if (!CurrentOp) return;
@@ -133,8 +134,14 @@ void UAC_InventoryComponent::RotateItem()
 		UInventory_ItemWidget* ItemWidget = Cast<UInventory_ItemWidget>(CurrentOp->DefaultDragVisual);
 		if (ItemWidget)
 		{
+			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, TEXT("RotateItem"));
 			ItemWidget->ItemObject = ItemObject;
 			ItemWidget->Refresh();
+		}
+		UInventory_EquipmentTile* Tile = Cast<UInventory_EquipmentTile>(CurrentOp->DefaultDragVisual);
+		if (Tile)
+		{
+			Tile->Refresh();
 		}
 	}
 }
@@ -168,27 +175,32 @@ void UAC_InventoryComponent::ShowLootableInventory()
 
 	if (bHit)
 	{
-		ALootable_Base* LootableActor = Cast<ALootable_Base>(HitResult.GetActor());
-		if (LootableActor)
+		AActor* HitActor = HitResult.GetActor();
+		if (!HitActor) return;
+
+		UAC_LootingInventoryComponent* LootComp = HitActor->FindComponentByClass<UAC_LootingInventoryComponent>();
+
+		if (LootComp && !bIsLootableMode)
 		{
-			if (!bIsLootableMode) {
-				bIsLootableMode = true;
-				PlayerCharacter->LootableInventoryComp = LootableActor->LootInventoryComp;
-				if (InventoryWidget)
-				{
-					InventoryMainUI = CreateWidget<UInventory_Widget>(GetWorld(), InventoryWidget);
-					InventoryMainUI->bIsLootable = bIsLootableMode;
-				}
-				if (InventoryMainUI)
-				{
-					InventoryMainUI->AddToViewport();
-				}
-				FInputModeGameAndUI UIInputMode;
-				pc->SetInputMode(UIInputMode);
-				pc->bShowMouseCursor = true;
+			bIsLootableMode = true;
+			PlayerCharacter->LootableInventoryComp = LootComp;
+
+			if (InventoryWidget)
+			{
+				InventoryMainUI = CreateWidget<UInventory_Widget>(GetWorld(), InventoryWidget);
+				InventoryMainUI->bIsLootable = true;
 			}
+			if (InventoryMainUI)
+			{
+				InventoryMainUI->AddToViewport();
+			}
+
+			FInputModeGameAndUI UIInputMode;
+			pc->SetInputMode(UIInputMode);
+			pc->bShowMouseCursor = true;
 		}
 	}
+
 }
 
 void UAC_InventoryComponent::PauseGame()

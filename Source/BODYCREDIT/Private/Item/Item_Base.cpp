@@ -11,6 +11,7 @@
 #include "Item/ItemDT.h"
 #include "Games/CMainGM.h"
 #include "Item/Functions/ItemStrategy.h"
+#include "Session/NetGameInstance.h"
 
 // Sets default values
 AItem_Base::AItem_Base()
@@ -37,6 +38,7 @@ void AItem_Base::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 
+#if WITH_EDITOR
 	ItemDataTable = LoadObject<UDataTable>(nullptr, TEXT("/Game/Item/DT_ItemData.DT_ItemData"));
 
 	if (ItemDataTable)
@@ -44,25 +46,36 @@ void AItem_Base::OnConstruction(const FTransform& Transform)
 		FItemData* TempData = ItemDataTable->FindRow<FItemData>(ItemName, ContextString);
 		if (TempData && TempData->Mesh)
 		{
-			ItemData = *TempData;
-			StaticMeshComp->SetStaticMesh(ItemData.Mesh);
-
-			GetDefaultItemObject();
+			ItemObject->ItemData = *TempData;
+			// ItemData = *TempData;
+			StaticMeshComp->SetStaticMesh(ItemObject->ItemData.Mesh);
 		}
 	}
+#endif
 }
 
 void AItem_Base::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//ItemObject = NewObject<UItemObject>(this, TEXT("ItemObject"));
-	//GetDefaultItemObject();
+	ItemDataTable = GetGameInstance<UNetGameInstance>()->ItemDataTable;
+	if (ItemDataTable)
+	{
+		FItemData* TempData = ItemDataTable->FindRow<FItemData>(ItemName, ContextString);
+		if (TempData && TempData->Mesh)
+		{
+			ItemObject->ItemData = *TempData;
+			// ItemData = *TempData;
+			StaticMeshComp->SetStaticMesh(ItemObject->ItemData.Mesh);
+
+			// GetDefaultItemObject();
+		}
+	}
 
 	if (!ItemObject)
 	{
 		ItemObject = NewObject<UItemObject>(this, TEXT("ItemObject"));
-		GetDefaultItemObject();
+		// GetDefaultItemObject();
 	}
 	ItemObject->ItemActorOwner = this;
 
@@ -95,12 +108,12 @@ void AItem_Base::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 
 void AItem_Base::GetDefaultItemObject()
 {
-	ItemObject->Dimensions.X = ItemData.Dimensions.X;
+	/*ItemObject->Dimensions.X = ItemData.Dimensions.X;
 	ItemObject->Dimensions.Y = ItemData.Dimensions.Y;
 	ItemObject->Icon = ItemData.Icon;
 	ItemObject->RotatedIcon = ItemData.RotatedIcon;
 	ItemObject->ItemClass = ItemData.ItemClass;
-	ItemObject->ItemType = ItemData.ItemType;
+	ItemObject->ItemType = ItemData.ItemType;*/
 }
 
 void AItem_Base::SetItemStrategy(class UItemStrategy* NewStrategy)

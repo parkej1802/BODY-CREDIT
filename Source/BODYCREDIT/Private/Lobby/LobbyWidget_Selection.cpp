@@ -13,7 +13,7 @@ void ULobbyWidget_Selection::NativeConstruct()
 
 
     PC = GetOwningPlayer();
-    FInputModeUIOnly InputMode;
+    FInputModeGameAndUI InputMode;
     PC->SetInputMode(InputMode);
     PC->bShowMouseCursor = true;
 

@@ -58,21 +58,7 @@ void AGameState_BodyCredit::SpawnItemHiddenFromActor(class UItemObject* ItemObje
 
 	SpawnLocation = Actor->GetActorLocation() + (Actor->GetActorForwardVector() * 150.f);
 
-	if (GroundClamp)
-	{
-		FHitResult HitResult;
-		FCollisionQueryParams TraceParams;
-		TraceParams.AddIgnoredActor(Actor);
-
-		bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, SpawnLocation, (SpawnLocation - FVector(0.f, 0.f, 1000.f)), ECC_Visibility, TraceParams);
-
-		if (bHit)
-		{
-			SpawnLocation = HitResult.Location;
-		}
-	}
-
-	AItem_Base* ItemActor = GetWorld()->SpawnActor<AItem_Base>(ItemObject->ItemClass, SpawnLocation, FRotator::ZeroRotator);
+	AItem_Base* ItemActor = GetWorld()->SpawnActor<AItem_Base>(ItemObject->ItemData.ItemClass, SpawnLocation, FRotator::ZeroRotator);
 	ItemObject->ItemActorOwner = ItemActor;
 	ItemActor->ItemObject = ItemObject;
 
@@ -92,14 +78,14 @@ void AGameState_BodyCredit::SpawnItemHiddenFromActor(class UItemObject* ItemObje
 			for (const FInventoryItemData& SubItemData : ItemObject->ContainedItems)
 			{
 				UItemObject* SubItem = NewObject<UItemObject>(InnerInventory);
-				SubItem->ID = SubItemData.ID;
-				SubItem->Dimensions = SubItemData.Dimensions;
-				SubItem->Rotated = SubItemData.bRotated;
-				SubItem->StartPosition = SubItemData.StartPosition;
-				SubItem->ItemClass = SubItemData.ItemClass;
-				SubItem->Icon = SubItemData.Icon;
-				SubItem->RotatedIcon = SubItemData.RotatedIcon;
-				SubItem->ItemType = SubItemData.ItemType;
+				SubItem->ItemData.ID = SubItemData.ID;
+				SubItem->ItemData.Dimensions = SubItemData.Dimensions;
+				SubItem->ItemData.Rotated = SubItemData.bRotated;
+				SubItem->ItemData.StartPosition = SubItemData.StartPosition;
+				SubItem->ItemData.ItemClass = SubItemData.ItemClass;
+				SubItem->ItemData.Icon = SubItemData.Icon;
+				SubItem->ItemData.RotatedIcon = SubItemData.RotatedIcon;
+				SubItem->ItemData.ItemType = SubItemData.ItemType;
 				SubItem->CurrentIndex = SubItemData.CurrentIndex;
 
 				AItem_Base* SubItemActor = GetWorld()->SpawnActor<AItem_Base>(
@@ -153,7 +139,7 @@ void AGameState_BodyCredit::SpawnItemPlayerInventory(class UItemObject* ItemObje
 		}
 	}
 
-	AItem_Base* ItemActor = GetWorld()->SpawnActor<AItem_Base>(ItemObject->ItemClass, SpawnLocation, FRotator::ZeroRotator);
+	AItem_Base* ItemActor = GetWorld()->SpawnActor<AItem_Base>(ItemObject->ItemData.ItemClass, SpawnLocation, FRotator::ZeroRotator);
 	ItemObject->ItemActorOwner = ItemActor;
 	ItemActor->ItemObject = ItemObject;
 

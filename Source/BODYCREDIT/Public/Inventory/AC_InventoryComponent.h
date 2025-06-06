@@ -28,7 +28,7 @@ public:
 	class ACNox_Runner* PlayerCharacter;
 
 	UPROPERTY()
-	class APlayerController* pc;
+	class ACNox_Controller* pc;
 
 	void SetupInputBinding(class UEnhancedInputComponent* Input);
 

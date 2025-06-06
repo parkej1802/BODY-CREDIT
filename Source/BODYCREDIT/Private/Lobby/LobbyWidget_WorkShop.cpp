@@ -16,13 +16,14 @@
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Session/NetGameInstance.h"
 #include "Components/SceneCaptureComponent2D.h"
+#include "Characters/CNox_Controller.h"
 
 void ULobbyWidget_WorkShop::NativeConstruct()
 {
     Super::NativeConstruct();
 
-    PC = GetOwningPlayer();
-    FInputModeUIOnly InputMode;
+    PC = Cast<ACNox_Controller>(GetOwningPlayer());
+    FInputModeGameAndUI InputMode;
     PC->SetInputMode(InputMode);
     PC->bShowMouseCursor = true;
 

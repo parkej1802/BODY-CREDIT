@@ -104,7 +104,7 @@ void UAC_InventoryBaseComponent::AddItemAt(class UItemObject* ItemObject, int32 
 	FInventoryTile TempTile = IndexToTile(TopLeftIndex);
 	FIntPoint TempDimension = ItemObject->GetDimension();
 
-	ItemObject->StartPosition = FIntPoint(TempTile.X, TempTile.Y);
+	ItemObject->ItemData.StartPosition = FIntPoint(TempTile.X, TempTile.Y);
 
 	for (int32 i = TempTile.X; i < (TempDimension.X + TempTile.X); ++i)
 	{

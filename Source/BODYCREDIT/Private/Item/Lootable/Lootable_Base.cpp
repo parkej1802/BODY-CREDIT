@@ -4,6 +4,7 @@
 #include "Lootable_Base.h"
 #include "../Public/AC_LootingInventoryComponent.h"
 #include "Components/BoxComponent.h"
+#include "Session/NetGameInstance.h"
 
 // Sets default values
 ALootable_Base::ALootable_Base()
@@ -32,5 +33,10 @@ void ALootable_Base::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+}
+
+UAC_LootingInventoryComponent* ALootable_Base::GetLootInventoryComponent_Implementation() const
+{
+	return LootInventoryComp;
 }
 

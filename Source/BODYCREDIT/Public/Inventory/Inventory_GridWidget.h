@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Inventory/Inventory_Line.h"
+#include "Characters/CNox_Controller.h"
 #include "Inventory_GridWidget.generated.h"
 
 /**
@@ -36,7 +37,7 @@ public:
 	int32 GridID;
 	
 	UPROPERTY()
-	class APlayerController* PlayerController;
+	ACNox_Controller* PlayerController;
 
 	bool CurrentlyHovered = false;
 

@@ -16,13 +16,15 @@
 #include "Components/HorizontalBox.h"
 #include "Components/Image.h"
 #include "Inventory/Inventory_EquipmentTile.h"
+#include "Characters/CNox_Controller.h"
+
 
 void ULobbyWidget_Market::NativeConstruct()
 {
     Super::NativeConstruct();
 
-    PC = GetOwningPlayer();
-    FInputModeUIOnly InputMode;
+    PC = Cast<ACNox_Controller>(GetOwningPlayer());
+    FInputModeGameAndUI InputMode;
     PC->SetInputMode(InputMode);
     PC->bShowMouseCursor = true;
 

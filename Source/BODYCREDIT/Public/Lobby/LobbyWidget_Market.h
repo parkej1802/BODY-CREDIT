@@ -75,7 +75,7 @@ public:
 	class ACNox_Runner* PlayerCharacter;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class APlayerController* PC;
+	class ACNox_Controller* PC;
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UScrollBox* ScrollBox_Market;

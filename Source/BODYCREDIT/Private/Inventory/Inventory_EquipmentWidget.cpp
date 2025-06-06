@@ -130,20 +130,20 @@ bool UInventory_EquipmentWidget::NativeOnDrop(const FGeometry& InGeometry, const
 	//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Backpack is NOT equipped."));
 	//}
 
-	if (ItemType == EPlayerPart::Weapon2 && DroppedItem->ItemType == EPlayerPart::Weapon1)
+	if (ItemType == EPlayerPart::Weapon2 && DroppedItem->ItemData.ItemType == EPlayerPart::Weapon1)
 	{
-		DroppedItem->ItemType = EPlayerPart::Weapon2;
+		DroppedItem->ItemData.ItemType = EPlayerPart::Weapon2;
 	}
 
-	if (ItemType == EPlayerPart::Weapon1 && DroppedItem->ItemType == EPlayerPart::Weapon2)
+	if (ItemType == EPlayerPart::Weapon1 && DroppedItem->ItemData.ItemType == EPlayerPart::Weapon2)
 	{
-		DroppedItem->ItemType = EPlayerPart::Weapon1;
+		DroppedItem->ItemData.ItemType = EPlayerPart::Weapon1;
 	}
 
 	UItemObject** FoundItem = PlayerCharacter->EquipComp->EquippedItems.Find(ItemType);
 	bool bSlot = (FoundItem && *FoundItem);
 
-	if (DroppedItem->ItemType != ItemType || bSlot)
+	if (DroppedItem->ItemData.ItemType != ItemType || bSlot)
 	{
 		DrawDropLocation = false;
 		return false;
@@ -221,7 +221,7 @@ bool UInventory_EquipmentWidget::IsValidItemType(UItemObject* TempItemObject) co
 {
 
 	bool bIsWeaponSlot = (ItemType == EPlayerPart::Weapon1 || ItemType == EPlayerPart::Weapon2);
-	bool bIsWeaponItem = (TempItemObject->ItemType == EPlayerPart::Weapon1 || TempItemObject->ItemType == EPlayerPart::Weapon2);
+	bool bIsWeaponItem = (TempItemObject->ItemData.ItemType == EPlayerPart::Weapon1 || TempItemObject->ItemData.ItemType == EPlayerPart::Weapon2);
 
 	UItemObject** FoundItem = PlayerCharacter->EquipComp->EquippedItems.Find(ItemType);
 	bool bSlotEmpty = !(FoundItem && *FoundItem);
@@ -231,7 +231,7 @@ bool UInventory_EquipmentWidget::IsValidItemType(UItemObject* TempItemObject) co
 		return bSlotEmpty;
 	}
 
-	bool bTypeMatch = TempItemObject->ItemType == ItemType;
+	bool bTypeMatch = TempItemObject->ItemData.ItemType == ItemType;
 
 	return bTypeMatch && bSlotEmpty;
 }

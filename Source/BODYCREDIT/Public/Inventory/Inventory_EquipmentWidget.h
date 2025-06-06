@@ -36,7 +36,7 @@ public:
 	class UInventory_EquipmentTile* InventoryItemTileUI;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class APlayerController* PC;
+	class ACNox_Controller* PC;
 
 	UPROPERTY(EditAnywhere)
 	class UAC_EquipComponent* EquipComp;

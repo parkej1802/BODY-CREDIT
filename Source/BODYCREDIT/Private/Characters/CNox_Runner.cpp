@@ -23,6 +23,7 @@
 #include "GameState_BodyCredit.h"
 #include "Inventory/AC_MarketComponent.h"
 #include "Components/SceneCaptureComponent2D.h"
+#include "Characters/CNox_Controller.h"
 
 ACNox_Runner::ACNox_Runner()
 {
@@ -137,7 +138,7 @@ void ACNox_Runner::NotifyControllerChanged()
 	Super::NotifyControllerChanged();
 
 	// MappingContext
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	if (ACNox_Controller* PlayerController = Cast<ACNox_Controller>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
 			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))

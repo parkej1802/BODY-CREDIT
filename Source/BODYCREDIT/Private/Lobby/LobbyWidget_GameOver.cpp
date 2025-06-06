@@ -29,10 +29,10 @@ void ULobbyWidget_GameOver::NativeConstruct()
         PlayAnimation(Anim_Background, 0.0f, 9999, EUMGSequencePlayMode::Forward);
     }
 
-    if (Anim_GameOver) 
+    /*if (Anim_GameOver) 
     {
         PlayAnimation(Anim_GameOver, 0.0f, 9999, EUMGSequencePlayMode::Forward);
-    }
+    }*/
 
 }
 

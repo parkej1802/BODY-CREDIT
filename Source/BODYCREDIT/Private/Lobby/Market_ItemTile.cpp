@@ -9,6 +9,7 @@
 #include "Inventory/Inventory_EquipmentTile.h"
 #include "Characters/CNox_Runner.h"
 #include "Inventory/AC_InventoryComponent.h"
+#include "Characters/CNox_Controller.h"
 
 void UMarket_ItemTile::NativeConstruct()
 {
@@ -19,7 +20,7 @@ void UMarket_ItemTile::NativeConstruct()
 		Button_BuyItem->OnClicked.AddDynamic(this, &ThisClass::OnBuyItemClicked);
 	}
 
-	PC = GetOwningPlayer();
+	PC = Cast<ACNox_Controller>(GetOwningPlayer());
 
 	APawn* Pawn = PC->GetPawn();
 
@@ -31,12 +32,7 @@ void UMarket_ItemTile::NativeConstruct()
 void UMarket_ItemTile::OnBuyItemClicked()
 {
     UItemObject* NewItemObject = NewObject<UItemObject>();
-    NewItemObject->ItemClass = ItemData.ItemClass;
-    NewItemObject->Icon = ItemData.Icon;
-    NewItemObject->RotatedIcon = ItemData.RotatedIcon;
-    NewItemObject->Dimensions = ItemData.Dimensions;
-    NewItemObject->Rotated = ItemData.Rotated;
-    NewItemObject->ItemType = ItemData.ItemType;
+    NewItemObject->ItemData = ItemData;
 
     AGameState_BodyCredit* GameState = GetWorld()->GetGameState<AGameState_BodyCredit>();
     if (GameState)
