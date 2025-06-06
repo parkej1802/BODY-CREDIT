@@ -29,9 +29,11 @@ public:
 
 public:
 	void HandleIdleMotion();
+	bool IsShielding() const;
 
 public:
 	void HandleElectricGrenade();
+	bool IsPlayingGrenade() const;
 
 public:
 	bool bIsEquipShield = false;

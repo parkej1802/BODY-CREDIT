@@ -95,9 +95,19 @@ void ACNox_MedicAndroid::HandleIdleMotion()
 	EnemyAnim->AnimNotify_PlayIdleMontage();
 }
 
+bool ACNox_MedicAndroid::IsShielding() const
+{
+	return EnemyAnim->IsShielding();
+}
+
 void ACNox_MedicAndroid::HandleElectricGrenade()
 {
 	EnemyAnim->PlayGrenadeMontage();
+}
+
+bool ACNox_MedicAndroid::IsPlayingGrenade() const
+{
+	return EnemyAnim->IsPlayingGrenade();
 }
 
 void ACNox_MedicAndroid::HandleEquipShield(const bool bInEquipShield)

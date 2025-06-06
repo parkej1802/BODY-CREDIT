@@ -76,10 +76,12 @@ private:
 
 public:
 	void PlayGrenadeMontage();
+	bool IsPlayingGrenade() const;
 
 public:
 	void PlayShieldMontage(const bool bInShieldStart);
 	void JumpShieldMontage();
+	bool IsShielding() const;
 	void PlayAttackMontage();
 	bool IsAttacking() const;
 	void PlayHitMontage(const int32 sectionIdx = 1);

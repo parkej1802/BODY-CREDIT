@@ -81,8 +81,12 @@ void UCNoxEnemy_Animinstance::AnimNotify_DistanceToPlayer()
 
 void UCNoxEnemy_Animinstance::PlayGrenadeMontage()
 {
-	OwnerEnemy->SetGrenadeEnded(false);
 	OwnerEnemy->PlayAnimMontage(GrenadeMontage, 1.0f);
+}
+
+bool UCNoxEnemy_Animinstance::IsPlayingGrenade() const
+{
+	return Montage_IsPlaying(GrenadeMontage);
 }
 
 void UCNoxEnemy_Animinstance::PlayShieldMontage(const bool bInShieldStart)
@@ -101,6 +105,11 @@ void UCNoxEnemy_Animinstance::JumpShieldMontage()
 {
 	if (ShieldMontage && Montage_IsPlaying(ShieldMontage))
 		Montage_JumpToSection(FName("ShieldEnd"), ShieldMontage);
+}
+
+bool UCNoxEnemy_Animinstance::IsShielding() const
+{
+	return Montage_IsPlaying(ShieldMontage);
 }
 
 void UCNoxEnemy_Animinstance::PlayAttackMontage()
