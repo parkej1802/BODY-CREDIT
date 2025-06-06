@@ -2,6 +2,7 @@
 
 #include "AIController.h"
 #include "Characters/Enemy/CNox_EBase.h"
+#include "Characters/Enemy/CNox_MedicAndroid.h"
 #include "Navigation/PathFollowingComponent.h"
 
 void CConditionalMoveStrategy_MEDIC::Move(ACNox_EBase* Owner, float DeltaTime)
@@ -42,6 +43,12 @@ void CConditionalMoveStrategy_MEDIC::CovertToCombatState(ACNox_EBase* Owner)
 	else if (Owner->IsSkillReady(ESkillCoolDown::Grenade) && Owner->IsPlayerInForwardDegree(GrenadeRange))
 	{
 		Owner->SetCombatState(ECombatState::Grenade);
+		Owner->SetEnemyState(EEnemyState::Combat);
+	}
+	// 체력이 낮은지 확인
+	else if (Owner->IsSkillReady(ESkillCoolDown::Heal) && Cast<ACNox_MedicAndroid>(Owner)->IsLowHealth())
+	{
+		Owner->SetCombatState(ECombatState::Heal);
 		Owner->SetEnemyState(EEnemyState::Combat);
 	}
 }
