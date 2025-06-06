@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Item/Lootable/LootableInterface.h"
 #include "Lootable_Base.generated.h"
 
 UCLASS()
-class BODYCREDIT_API ALootable_Base : public AActor
+class BODYCREDIT_API ALootable_Base : public AActor, public ILootableInterface
 {
 	GENERATED_BODY()
 	
@@ -32,4 +33,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UAC_LootingInventoryComponent* LootInventoryComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UDataTable* ItemDataTable;
+
+	virtual class UAC_LootingInventoryComponent* GetLootInventoryComponent_Implementation() const override;
 };

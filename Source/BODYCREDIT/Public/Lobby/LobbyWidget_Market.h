@@ -75,7 +75,7 @@ public:
 	class ACNox_Runner* PlayerCharacter;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class APlayerController* PC;
+	class ACNox_Controller* PC;
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UScrollBox* ScrollBox_Market;
@@ -95,5 +95,5 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector2D ImageSize = FVector2D(150, 100);
 
-
+	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 };

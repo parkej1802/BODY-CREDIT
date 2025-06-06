@@ -15,13 +15,15 @@
 #include "Item/Item_Base.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Session/NetGameInstance.h"
+#include "Components/SceneCaptureComponent2D.h"
+#include "Characters/CNox_Controller.h"
 
 void ULobbyWidget_WorkShop::NativeConstruct()
 {
     Super::NativeConstruct();
 
-    PC = GetOwningPlayer();
-    FInputModeUIOnly InputMode;
+    PC = Cast<ACNox_Controller>(GetOwningPlayer());
+    FInputModeGameAndUI InputMode;
     PC->SetInputMode(InputMode);
     PC->bShowMouseCursor = true;
 
@@ -35,6 +37,8 @@ void ULobbyWidget_WorkShop::NativeConstruct()
     PlayerCharacter = Cast<ACNox_Runner>(Pawn);
     InventoryComp = PlayerCharacter->InventoryComp;
     EquipComp = PlayerCharacter->EquipComp;
+
+    PlayerCharacter->SceneCapture2D->ShowOnlyActorComponents(PlayerCharacter);
 
     InventoryGridWidget->InitInventory(InventoryComp, InventoryComp->InventoryTileSize);
     InventoryGridWidget->GridID = 4;
@@ -197,6 +201,8 @@ bool ULobbyWidget_WorkShop::NativeOnDrop(const FGeometry& InGeometry, const FDra
 
     }
 
+    InventoryComp->TryAddItem(ItemObject);
+
     return true;
 }
 
@@ -204,4 +210,5 @@ void ULobbyWidget_WorkShop::NativeTick(const FGeometry& MyGeometry, float InDelt
 {
     Super::NativeTick(MyGeometry, InDeltaTime);
 }
+
 

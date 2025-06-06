@@ -4,8 +4,21 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
-#include "ItemObject.h"
 #include "ItemDT.generated.h"
+
+UENUM(BlueprintType)
+enum class EPlayerPart : uint8
+{
+	Basic	 UMETA(DisplayName = "Basic"),
+    Head     UMETA(DisplayName = "Head"),
+    Body     UMETA(DisplayName = "Body"),
+	Arm		 UMETA(DisplayName = "Arm"),
+	Leg      UMETA(DisplayName = "Leg"),
+    Weapon1   UMETA(DisplayName = "Weapon1"),
+	Weapon2  UMETA(DisplayName = "Weapon2"),
+	Backpack	UMETA(DisplayName = "Backpack"),
+	ChestRigs	UMETA(DisplayName = "ChestRigs")
+};
 
 UENUM(BlueprintType)
 enum class EItemRarity : uint8
@@ -71,6 +84,9 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
     float Weight;
+
+     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+     class USkeletalMesh* SkeletalMesh;
 
     FItemData()
         : ID(0)

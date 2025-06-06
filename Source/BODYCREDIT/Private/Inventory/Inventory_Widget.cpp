@@ -14,26 +14,29 @@
 #include "Components/Border.h"
 #include "Inventory/AC_InventoryEquipmentComponent.h"
 #include "Item/Lootable/Item_Backpack.h"
+#include "Components/SceneCaptureComponent2D.h"
+#include "Characters/CNox_Controller.h"
 
 void UInventory_Widget::NativeConstruct()
 {
     Super::NativeConstruct();
 
-    PC = GetOwningPlayer();
+    PC = Cast<ACNox_Controller>(GetOwningPlayer());
 
     APawn* Pawn = PC->GetPawn();
 
     PlayerCharacter = Cast<ACNox_Runner>(Pawn);
 
+    PlayerCharacter->SceneCapture2D->ShowOnlyActorComponents(PlayerCharacter);
+
     InventoryComp = PlayerCharacter->InventoryComp;
 
     EquipComp = PlayerCharacter->EquipComp;
 
-	/*InventoryGridWidget->InitInventory(InventoryComp, InventoryComp->InventoryTileSize);
+	InventoryGridWidget->InitInventory(InventoryComp, InventoryComp->InventoryTileSize);
 	InventoryGridWidget->GridID = 0;
-	InventoryGridWidget->PlayerController = PC;*/
-	 // InventoryGridWidget->OwningInventoryWidget = this;
-    InventoryGridWidget->SetVisibility(ESlateVisibility::Hidden);
+	InventoryGridWidget->PlayerController = PC;
+    InventoryGridWidget->SetVisibility(ESlateVisibility::Visible);
 
     SetItemInventory();
 

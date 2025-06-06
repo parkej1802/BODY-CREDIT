@@ -87,6 +87,8 @@ void UInventory_ItemWidget::NativeOnDragDetected(const FGeometry& InGeometry, co
 	if (IsMoving) return;
 	IsMoving = true;
 
+	
+
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
 
 	UDragDropOperation* DragOperation = UWidgetBlueprintLibrary::CreateDragDropOperation(UDragDropOperation::StaticClass());

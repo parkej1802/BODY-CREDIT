@@ -26,4 +26,9 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UDataTable* ItemDataTable;
+
+	void AddRandomItem();
+	
 };

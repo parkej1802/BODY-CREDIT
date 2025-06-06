@@ -7,6 +7,8 @@ void UNetGameInstance::Init()
 {	
 	Super::Init();
 
+	ItemDataTable = LoadObject<UDataTable>(nullptr, TEXT("/Game/Item/DT_ItemData.DT_ItemData"));
+
 	if (auto subsys = IOnlineSubsystem::Get())
 	{
 		sessionInterface = subsys->GetSessionInterface();
@@ -21,8 +23,6 @@ void UNetGameInstance::Init()
 				}
 			), 2.f, false);
 	}
-
-
 }
 
 void UNetGameInstance::CreateMySession(FString roomName, int32 playerCount)

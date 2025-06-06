@@ -46,8 +46,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UDataTable* ItemDataTable;
 
-	UPROPERTY()
-	FItemData ItemData = FItemData();
+	/*UPROPERTY()
+	FItemData ItemData = FItemData();*/
 	
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	//class UMaterialInterface* Icon;

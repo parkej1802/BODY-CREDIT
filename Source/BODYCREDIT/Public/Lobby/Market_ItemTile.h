@@ -30,6 +30,17 @@ public:
 	UPROPERTY()
 	FItemData ItemData;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class ACNox_Runner* PlayerCharacter;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class ACNox_Controller* PC;
+
+	UPROPERTY(EditAnywhere)
+	class UAC_InventoryComponent* InventoryComp;
+
 	UPROPERTY()
     class UAC_InventoryBaseComponent* InventoryBaseComp;
+
+	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 };

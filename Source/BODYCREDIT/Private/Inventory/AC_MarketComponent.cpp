@@ -34,7 +34,7 @@ void UAC_MarketComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	// ...
 }
 
-TArray<FItemData> UAC_MarketComponent::GetItemsWeapon()
+TArray<FItemData> UAC_MarketComponent::GetMarketItems(EPlayerPart ItemType)
 {
 	TArray<FItemData> Weapons;
 
@@ -46,7 +46,7 @@ TArray<FItemData> UAC_MarketComponent::GetItemsWeapon()
 
 	for (FItemData* Item : AllItems)
 	{
-		if (Item && Item->ItemType == EPlayerPart::Weapon1)
+		if (Item && Item->ItemType == ItemType)
 		{
 			Weapons.Add(*Item);
 		}

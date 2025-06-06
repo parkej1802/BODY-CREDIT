@@ -30,6 +30,6 @@ public:
 	UDataTable* ItemDataTable;
 
 	UFUNCTION(BlueprintCallable)
-	TArray<FItemData> GetItemsWeapon();
+	TArray<FItemData> GetMarketItems(EPlayerPart ItemType);
 
 };

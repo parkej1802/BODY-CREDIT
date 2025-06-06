@@ -40,7 +40,7 @@ public:
 	class ACNox_Runner* PlayerCharacter;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class APlayerController* PC;
+	class ACNox_Controller* PC;
 
 	UPROPERTY(EditAnywhere)
 	class UAC_EquipComponent* EquipComp;
@@ -114,9 +114,13 @@ public:
 
 	UFUNCTION()
 	void SetItemInventory();
+	
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UPlayer3DOverlayWidget* Player3DOverlayWidget;
 
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent);
 	virtual bool NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
 };
