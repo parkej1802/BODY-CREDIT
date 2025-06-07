@@ -1,25 +1,103 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-
-#include "Inventory/Inventory_ItemStrategy.h"
+﻿#include "Inventory/Inventory_ItemStrategy.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
+#include "Components/Button.h"
+#include "GameFramework/PlayerController.h"
+#include "Blueprint/DragDropOperation.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
+#include "Components/CanvasPanelSlot.h"
+#include "Inventory/Inventory_ItemInventoryWidget.h"
+#include "Item/ItemObject.h"
+#include "Components/CanvasPanel.h"
 
 void UInventory_ItemStrategy::NativeConstruct()
 {
 	Super::NativeConstruct();
-}
 
-FReply UInventory_ItemStrategy::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
-{
-	if (InMouseEvent.IsMouseButtonDown(EKeys::LeftMouseButton))
+	if (Button_Exit)
 	{
-		return UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton).NativeReply;
+		Button_Exit->OnClicked.AddDynamic(this, &UInventory_ItemStrategy::OnExitClicked);
 	}
 
-	return Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+	if (Button_Drag)
+	{
+		Button_Drag->OnPressed.AddDynamic(this, &UInventory_ItemStrategy::OnDragPressed);
+		Button_Drag->OnReleased.AddDynamic(this, &UInventory_ItemStrategy::OnDragReleased);
+	}
 }
 
-void UInventory_ItemStrategy::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
+void UInventory_ItemStrategy::OnExitClicked()
 {
-	
+	// ParentWidget->RemoveFromParent();
+	ItemObject->bIsUseFunction = false;
+	RemoveFromParent();
+}
+
+//void UInventory_ItemStrategy::OnDragPressed()
+//{
+//	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("DragPressed"));
+//	if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+//	{
+//		float MouseX, MouseY;
+//		if (PC->GetMousePosition(MouseX, MouseY))
+//		{
+//			const float Scale = UWidgetLayoutLibrary::GetViewportScale(this);
+//			FVector2D ScreenPos(MouseX, MouseY);
+//
+//			if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Slot))
+//			{
+//				MouseOffset = (ScreenPos / Scale) - CanvasSlot->GetPosition();
+//				bIsDragging = true;
+//				GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("DragPressed true"));
+//			}
+//		}
+//	}
+//}
+
+void UInventory_ItemStrategy::OnDragPressed()
+{
+	FVector2D MouseScreen;
+	FVector2D ViewportPos;
+
+	MouseScreen = FSlateApplication::Get().GetCursorPos();
+	ViewportPos = GEngine->GameViewport->GetWindow()->GetPositionInScreen();
+
+	FVector2D LocalMousePos = MouseScreen - ViewportPos;
+
+	const float Scale = UWidgetLayoutLibrary::GetViewportScale(this);
+	FVector2D ScreenPos = LocalMousePos / Scale;
+
+	if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(CanvasPanel_ItemStrategy->Slot))
+	{
+		FVector2D WidgetPos = CanvasSlot->GetPosition();
+		MouseOffset = ScreenPos - WidgetPos;
+		bIsDragging = true;
+	}
+}
+
+void UInventory_ItemStrategy::OnDragReleased()
+{
+	bIsDragging = false;
+}
+
+void UInventory_ItemStrategy::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	if (bIsDragging && CanvasPanel_ItemStrategy)
+	{
+		FVector2D MouseScreen;
+		FVector2D ViewportPos;
+
+		MouseScreen = FSlateApplication::Get().GetCursorPos();
+		ViewportPos = GEngine->GameViewport->GetWindow()->GetPositionInScreen();
+
+		FVector2D LocalMousePos = MouseScreen - ViewportPos;
+		const float Scale = UWidgetLayoutLibrary::GetViewportScale(this);
+		FVector2D NewPos = (LocalMousePos / Scale) - MouseOffset;
+
+		if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(CanvasPanel_ItemStrategy->Slot))
+		{
+			CanvasSlot->SetPosition(NewPos);
+		}
+	}
 }

@@ -57,38 +57,37 @@ void ACNox_Runner::BeginPlay()
 	UNetGameInstance* GI = Cast<UNetGameInstance>(GetGameInstance());
 	if (GI && EquipComp)
 	{
-		if (GEngine)
+
+		AGameState_BodyCredit* MyGameState = GetWorld()->GetGameState<AGameState_BodyCredit>();
+		for (auto& Pair : GI->SavedEquippedItems)
 		{
-			AGameState_BodyCredit* MyGameState = GetWorld()->GetGameState<AGameState_BodyCredit>();
-			for (auto& Pair : GI->SavedEquippedItems)
-			{
-				EquipComp->EquippedItems.Add(Pair.Key, CreateItemFromData(Pair.Value));
+			EquipComp->EquippedItems.Add(Pair.Key, CreateItemFromData(Pair.Value));
 
-				MyGameState->SpawnItemHiddenFromActor(EquipComp->EquippedItems[Pair.Key], this, true);
-			}
-
-
-			/*for (const FItemSaveData& Data : GI->SavedInventoryItems)
-			{
-				UItemObject* Item = CreateItemFromData(Data);
-
-				if (Item->IsRotated() != Data.bRotated)
-					Item->Rotate();
-
-				FInventoryTile StartTile(Data.StartPosition.X, Data.StartPosition.Y);
-				int32 Index = InventoryComp->TileToIndex(StartTile);
-
-				if (InventoryComp->IsRoomAvailable(Item, Index))
-				{
-					InventoryComp->AddItemAt(Item, Index);
-					MyGameState->SpawnItemHiddenFromActor(Item, this, true);
-				}
-				else
-				{
-					InventoryComp->TryAddItem(Item);
-				}
-			}*/
+			MyGameState->SpawnItemHiddenFromActor(EquipComp->EquippedItems[Pair.Key], this, true);
 		}
+
+
+		/*for (const FItemSaveData& Data : GI->SavedInventoryItems)
+		{
+			UItemObject* Item = CreateItemFromData(Data);
+
+			if (Item->IsRotated() != Data.bRotated)
+				Item->Rotate();
+
+			FInventoryTile StartTile(Data.StartPosition.X, Data.StartPosition.Y);
+			int32 Index = InventoryComp->TileToIndex(StartTile);
+
+			if (InventoryComp->IsRoomAvailable(Item, Index))
+			{
+				InventoryComp->AddItemAt(Item, Index);
+				MyGameState->SpawnItemHiddenFromActor(Item, this, true);
+			}
+			else
+			{
+				InventoryComp->TryAddItem(Item);
+			}
+		}*/
+		
 	}
 
 	// 서버 관련 메시 숨김 처리 함수

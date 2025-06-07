@@ -23,10 +23,16 @@ public:
 	UPROPERTY()
 	class UInventory_ItemStrategy* InventoryUI;
 
+	UPROPERTY()
+	class UInventory_ItemInventoryWidget* ItemInventoryUI;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ACNox_Runner* PlayerCharacter;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ACNox_Controller* PC;
+
+	bool IsUsing = false;
+	
 
 };

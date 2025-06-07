@@ -149,5 +149,6 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Item")
 	void UseItem();
 
-
+	UPROPERTY()
+	bool bIsUseFunction = false;
 };

@@ -10,38 +10,66 @@
 #include "Characters/CNox_Runner.h"
 #include "Inventory/AC_InventoryComponent.h"
 #include "Inventory/Inventory_GridWidget.h"
+#include "Item/Item_Base.h"
+#include "Inventory/Inventory_ItemInventoryWidget.h"
 
 void UFunction_Backpack::Use(UItemObject* ItemObject)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("USE Working"));
+	if (IsUsing) {
+		InventoryUI->RemoveFromParent();
+		IsUsing = !IsUsing;
+		return;
+	}
 
-	if (!ItemObject) return;
+	AItem_Base* Owner = ItemObject->ItemActorOwner.Get();
 
-	UWorld* World = ItemObject->GetWorld();
-	if (!World) return;
-
+	UWorld* World = Owner->GetWorld();
+	
 	PC = Cast<ACNox_Controller>(World->GetFirstPlayerController());
-	if (!PC) return;
 
 	APawn* Pawn = PC->GetPawn();
 
 	PlayerCharacter = Cast<ACNox_Runner>(Pawn);
+	ItemObject->bIsUseFunction = true;
 
 	if (!InventoryWidget)
 	{
-		InventoryWidget = LoadClass<UInventory_ItemStrategy>(nullptr, TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/Inventory/WBP_ItemStrategy.WBP_ItemStrategy'"));
+		//InventoryWidget = LoadClass<UInventory_ItemInventoryWidget>(nullptr, TEXT("/Game/Inventory/WBP_ItemInventoryWidget.WBP_ItemInventoryWidget_C"));
+		InventoryWidget = LoadClass<UInventory_ItemStrategy>(nullptr, TEXT("/Game/Inventory/WBP_ItemStrategy.WBP_ItemStrategy_C"));
 	}
 
-	if (InventoryWidget)
+	if (InventoryWidget) 
 	{
-		InventoryUI = CreateWidget<UInventory_ItemStrategy>(GetWorld(), InventoryWidget);
+		InventoryUI = CreateWidget<UInventory_ItemStrategy>(World, InventoryWidget);
 		InventoryUI->InventoryComp = Cast<UAC_InventoryBaseComponent>(ItemObject->ItemActorOwner->LootInventoryComp);
+
 		InventoryUI->ItemInventoryGridWidget->InitInventory(InventoryUI->InventoryComp, PlayerCharacter->InventoryComp->InventoryTileSize);
 		InventoryUI->ItemInventoryGridWidget->PlayerController = PC;
+
+		InventoryUI->ItemObject = ItemObject;
+
+		IsUsing = !IsUsing;
+
+	/*	ItemInventoryUI = CreateWidget<UInventory_ItemInventoryWidget>(World, InventoryWidget);
+		if (!ItemInventoryUI)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("ItemInventoryUI Create Failed"));
+			return;
+		}
+		ItemInventoryUI->InventoryStrategyUI->InventoryComp = Cast<UAC_InventoryBaseComponent>(ItemObject->ItemActorOwner->LootInventoryComp);
+
+		ItemInventoryUI->InventoryStrategyUI->ItemInventoryGridWidget->InitInventory(ItemInventoryUI->InventoryStrategyUI->InventoryComp, PlayerCharacter->InventoryComp->InventoryTileSize);
+		ItemInventoryUI->InventoryStrategyUI->ItemInventoryGridWidget->PlayerController = PC;
+		ItemInventoryUI->InventoryStrategyUI->ParentWidget = ItemInventoryUI;*/
 	}
 
 	if (InventoryUI)
 	{
 		InventoryUI->AddToViewport();
 	}
+
+	/*if (ItemInventoryUI)
+	{
+		ItemInventoryUI->AddToViewport();
+	}*/
 }
