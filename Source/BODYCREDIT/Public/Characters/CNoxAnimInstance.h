@@ -32,10 +32,16 @@ protected:
 
 protected:
 	UPROPERTY(BlueprintReadOnly)
+	float Speed;
+
+	UPROPERTY(BlueprintReadOnly)
 	float Direction;
 
 	UPROPERTY(BlueprintReadOnly)
-	float Speed;
+	bool bSprint;
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bCrouch;
 
 	UPROPERTY(BlueprintReadOnly)
 	bool bFalling;
