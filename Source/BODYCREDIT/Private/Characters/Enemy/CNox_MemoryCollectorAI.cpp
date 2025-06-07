@@ -120,6 +120,9 @@ void ACNox_MemoryCollectorAI::SetPerceptionInfo()
 {
 	Super::SetPerceptionInfo();
 
+	SightRadius = 800.f;
+	HearingRange = 1000.f;
+	
 	RetentionTime = 0.f;
 }
 
@@ -134,15 +137,11 @@ void ACNox_MemoryCollectorAI::GetNewMovementSpeed(const EEnemyMovementSpeed& InM
 		break;
 	case EEnemyMovementSpeed::Walking:
 		OutNewSpeed = 400.f;
-		OutNewAccelSpeed = 450.f;
+		OutNewAccelSpeed = 728.f;
 		break;
-	// case EEnemyMovementSpeed::Jogging:
-	// 	OutNewSpeed = 500.f;
-	// 	OutNewAccelSpeed = 800.f;
-	// 	break;
 	case EEnemyMovementSpeed::Sprinting:
-		OutNewSpeed = 500.f;
-		OutNewAccelSpeed = 600.f;
+		OutNewSpeed = 400.f;
+		OutNewAccelSpeed = 1024.f;
 		break;
 	}
 }

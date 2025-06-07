@@ -153,9 +153,9 @@ bool ACNox_EBase::IsPlayerInDistance()
 	return dist <= AttackDistance;
 }
 
+#pragma region Hitting
 void ACNox_EBase::HandleHit(const int32 sectionIdx)
 {
-	EnemyController->StopMovement();
 	EnemyAnim->PlayHitMontage(sectionIdx);
 }
 
@@ -163,13 +163,16 @@ bool ACNox_EBase::IsHitting()
 {
 	return EnemyAnim->IsHitting();
 }
+#pragma endregion
 
+#pragma region Die
 void ACNox_EBase::HandleDie(const int32 sectionIdx)
 {
 	GetCapsuleComponent()->SetCollisionProfileName(FName("EnemyDie"));
 	if (EnemyAnim) EnemyAnim->PlayDieMontage(sectionIdx);
 	EnemyController->PerceptionDeactive();
 }
+#pragma endregion
 
 void ACNox_EBase::ResetVal()
 {

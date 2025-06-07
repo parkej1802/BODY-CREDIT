@@ -3,7 +3,6 @@
 #include "NiagaraComponent.h"
 #include "Characters/CNox_Runner.h"
 #include "Characters/Enemy/CNoxEnemy_Animinstance.h"
-#include "Characters/Enemy/CNox_Zero.h"
 #include "Characters/Enemy/AttackActor/CElectricGrenade.h"
 #include "Components/BoxComponent.h"
 #include "Components/Enemy/CFSMComponent.h"

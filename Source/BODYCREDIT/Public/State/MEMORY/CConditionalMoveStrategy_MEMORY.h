@@ -7,11 +7,14 @@ class ACNox_EBase;
 /**
  * 
  */
-class BODYCREDIT_API CConditionalMoveStrategy_ZERO : public ICMoveStrategy
+class BODYCREDIT_API CConditionalMoveStrategy_MEMORY : public ICMoveStrategy
 {
 private:
-	float AcceptanceRadius = 10.f;
-	float AcceptanceThreshold = 40.f;
+    // const float MeleeAttackRange = 200.f;
+    // const float GrenadeRange = 1500.f;
+
+	// float AcceptanceRadius = 10.f;
+	float AcceptanceThreshold = 500.f;
 
 	void CovertToCombatState(ACNox_EBase* Owner);
 

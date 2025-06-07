@@ -16,3 +16,8 @@ void CSenseState_MEDIC::Execute(ACNox_EBase* Owner, UCFSMComponent* FSMComp)
 	Owner->UpdateSkillCoolDowns(ESkillCoolDown::Heal, Owner->GetWorld()->GetDeltaSeconds());
 	Owner->UpdateSkillCoolDowns(ESkillCoolDown::Grenade, Owner->GetWorld()->GetDeltaSeconds());
 }
+
+void CSenseState_MEDIC::ResetVal(ACNox_EBase* Owner)
+{
+	if (MoveStrategy) MoveStrategy->ResetVal(Owner);
+}
