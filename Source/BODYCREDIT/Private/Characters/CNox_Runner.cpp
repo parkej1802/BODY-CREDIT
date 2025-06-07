@@ -30,8 +30,8 @@ ACNox_Runner::ACNox_Runner()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	CHelpers::CreateActorComponent<UCNoxHPComponent>(this, &HPComp, "HPComp");
 	Init();
+	CHelpers::CreateActorComponent<UCNoxHPComponent>(this, &HPComp, "HPComp");
 
 	InventoryComp = CreateDefaultSubobject<UAC_InventoryComponent>(TEXT("InventoryComp"));
 	EquipComp = CreateDefaultSubobject<UAC_EquipComponent>(TEXT("EquipComp"));
@@ -173,9 +173,8 @@ void ACNox_Runner::Init()
 {
 	{ // Modular Character Mesh
 		// Head
-		Head = GetMesh();
-		Head->SetRelativeLocation(FVector(0, 0, ~89));
-		Head->SetRelativeRotation(FRotator(0, ~89, 0));
+		GetMesh()->SetRelativeLocation(FVector(0, 0, ~84));
+		GetMesh()->SetRelativeRotation(FRotator(0, ~89, 0));
 
 		// Hair
 		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Hair, "Hair", GetMesh());
@@ -184,16 +183,16 @@ void ACNox_Runner::Init()
 		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &UpperBody, "UpperBody", GetMesh());
 
 		// UpperBody
-		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Clothes, "Clothes", UpperBody);
+		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Clothes, "Clothes", GetMesh());
 
 		// Arms
 		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Arms, "Arms", GetMesh());
 
-		// Hands
-		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Hands, "Hands", Arms);
-
 		// LowerBody
 		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &LowerBody, "LowerBody", GetMesh());
+
+		// Foot
+		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Foot, "Foot", GetMesh());
 	}
 
 	// SpringArm
@@ -248,8 +247,8 @@ UItemObject* ACNox_Runner::CreateItemFromData(const FItemSaveData& Data)
 
 void ACNox_Runner::CacheDefaultSkeletalMeshes()
 {
-	DefaultMeshes.Add(EPlayerPart::Head, Head->SkeletalMesh);
-	DefaultMeshes.Add(EPlayerPart::Body, UpperBody->SkeletalMesh);
-	DefaultMeshes.Add(EPlayerPart::Arm, Arms->SkeletalMesh);
-	DefaultMeshes.Add(EPlayerPart::Leg, LowerBody->SkeletalMesh);
+	//DefaultMeshes.Add(EPlayerPart::Head, GetMesh()->SkeletalMesh);
+	//DefaultMeshes.Add(EPlayerPart::Body, UpperBody->SkeletalMesh);
+	//DefaultMeshes.Add(EPlayerPart::Arm, Arms->SkeletalMesh);
+	//DefaultMeshes.Add(EPlayerPart::Leg, LowerBody->SkeletalMesh);
 }

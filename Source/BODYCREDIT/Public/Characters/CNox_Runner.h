@@ -11,28 +11,24 @@ class BODYCREDIT_API ACNox_Runner : public ACNox, public IGenericTeamAgentInterf
 {
 	GENERATED_BODY()
 
-private: // Modular Character Mesh
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh", meta = (AllowPrivateAccess = true))
-	class USkeletalMeshComponent* Head;
-
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh", meta = (AllowPrivateAccess = true))
+protected: // Modular Character Mesh
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh")
 	class USkeletalMeshComponent* Hair;
 
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh", meta = (AllowPrivateAccess = true))
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh")
 	class USkeletalMeshComponent* UpperBody;
 
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh", meta = (AllowPrivateAccess = true))
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh")
 	class USkeletalMeshComponent* Clothes;
 
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh", meta = (AllowPrivateAccess = true))
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh")
 	class USkeletalMeshComponent* Arms;
 
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh", meta = (AllowPrivateAccess = true))
-	class USkeletalMeshComponent* Hands;
-
-	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh", meta = (AllowPrivateAccess = true))
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh")
 	class USkeletalMeshComponent* LowerBody;
 
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh")
+	class USkeletalMeshComponent* Foot;
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
@@ -80,7 +76,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 public:
-	FORCEINLINE USkeletalMeshComponent* GetHead() { return Head; }
+	FORCEINLINE USkeletalMeshComponent* GetHead() { return GetMesh(); }
 	FORCEINLINE USkeletalMeshComponent* GetUpperBody() { return UpperBody; }
 	FORCEINLINE USkeletalMeshComponent* GetArms() { return Arms; }
 	FORCEINLINE USkeletalMeshComponent* GetLowerBody() { return LowerBody; }
