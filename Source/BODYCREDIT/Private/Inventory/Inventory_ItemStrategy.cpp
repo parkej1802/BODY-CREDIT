@@ -32,27 +32,6 @@ void UInventory_ItemStrategy::OnExitClicked()
 	RemoveFromParent();
 }
 
-//void UInventory_ItemStrategy::OnDragPressed()
-//{
-//	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("DragPressed"));
-//	if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
-//	{
-//		float MouseX, MouseY;
-//		if (PC->GetMousePosition(MouseX, MouseY))
-//		{
-//			const float Scale = UWidgetLayoutLibrary::GetViewportScale(this);
-//			FVector2D ScreenPos(MouseX, MouseY);
-//
-//			if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Slot))
-//			{
-//				MouseOffset = (ScreenPos / Scale) - CanvasSlot->GetPosition();
-//				bIsDragging = true;
-//				GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, TEXT("DragPressed true"));
-//			}
-//		}
-//	}
-//}
-
 void UInventory_ItemStrategy::OnDragPressed()
 {
 	FVector2D MouseScreen;
