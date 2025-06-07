@@ -24,6 +24,20 @@ private:
 	virtual void GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed,
 	                         float& OutNewAccelSpeed) override;
 
+private: // Attacking
+	UPROPERTY(VisibleAnywhere)
+	class UBoxComponent* AttackComp_l;
+	UPROPERTY(VisibleAnywhere)
+	class UBoxComponent* AttackComp_r;
+
+	UFUNCTION()
+	void OnAttackComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+									   UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+									   const FHitResult& SweepResult);
+	
+public:
+	virtual void AttackCollision(bool bOn, bool IsRightHand = true) override;
+
 public: // Animation
 	bool IsShielding() const;
 	void HandleElectricGrenade();
@@ -39,6 +53,10 @@ public: // Heal
 private:
 	UPROPERTY(EditDefaultsOnly, Category=Heal)
 	float HealStdValue = 0.4f;
+	UPROPERTY(EditDefaultsOnly, Category=Heal)
+	class UNiagaraSystem* HealEffectFactory = nullptr;
+	UPROPERTY()
+	class UNiagaraComponent* HealEffect = nullptr;
 
 private: // Electric Grenade
 	UPROPERTY(VisibleDefaultsOnly)

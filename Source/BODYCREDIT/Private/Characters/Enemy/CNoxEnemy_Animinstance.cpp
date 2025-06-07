@@ -150,14 +150,12 @@ bool UCNoxEnemy_Animinstance::IsAttacking() const
 
 void UCNoxEnemy_Animinstance::PlayHitMontage(const int32 sectionIdx)
 {
-	OwnerEnemy->PlayAnimMontage(HitMontage, sectionIdx);
+	OwnerEnemy->PlayAnimMontage(HitMontage, 1, FName(FString::FromInt(sectionIdx)));
 }
 
 bool UCNoxEnemy_Animinstance::IsHitting() const
 {
-	if (AttackMontage && Montage_IsPlaying(AttackMontage)) return true;
-
-	return false;
+	return Montage_IsPlaying(HitMontage);
 }
 
 void UCNoxEnemy_Animinstance::PlayDieMontage(const int32 sectionIdx)

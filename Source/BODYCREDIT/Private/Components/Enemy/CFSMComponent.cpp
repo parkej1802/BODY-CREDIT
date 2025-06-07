@@ -8,6 +8,7 @@
 #include "State/MEDIC/CCombatState_MEDIC.h"
 #include "State/MEDIC/CConditionalMoveStrategy_MEDIC.h"
 #include "State/MEDIC/CDieState_MEDIC.h"
+#include "State/MEDIC/CHitState_MEDIC.h"
 #include "State/MEDIC/CIdleState_MEDIC.h"
 #include "State/MEDIC/CRandomMoveStrategy.h"
 #include "State/MEDIC/CSenseState_MEDIC.h"
@@ -86,6 +87,7 @@ TMap<EEnemyState, TSharedPtr<ICEnemyStateStrategy>> UCFSMComponent::CreateStrate
 			TUniquePtr<CConditionalMoveStrategy_MEDIC> ConditionalMove = MakeUnique<CConditionalMoveStrategy_MEDIC>();
 			Result.Add(EEnemyState::Sense, MakeShared<CSenseState_MEDIC>(MoveTemp(ConditionalMove)));
 		}
+		Result.Add(EEnemyState::Hit, MakeShared<CHitState_MEDIC>());
 		Result.Add(EEnemyState::Combat, MakeShared<CCombatState_MEDIC>());
 		Result.Add(EEnemyState::Die, MakeShared<CDieState_MEDIC>());
 		break;
@@ -153,7 +155,7 @@ void UCFSMComponent::InitSkillCoolDowns(EEnemyType Type)
 		SkillCoolDowns.Add(GetSkillName(ESkillCoolDown::Melee), 0.f);
 		SkillMaxCoolDowns.Add(GetSkillName(ESkillCoolDown::Melee), 1.f);
 		SkillCoolDowns.Add(GetSkillName(ESkillCoolDown::Heal), 0.f);
-		SkillMaxCoolDowns.Add(GetSkillName(ESkillCoolDown::Heal), 20.f);
+		SkillMaxCoolDowns.Add(GetSkillName(ESkillCoolDown::Heal), 3.f);
 		SkillCoolDowns.Add(GetSkillName(ESkillCoolDown::Grenade), 0.f);
 		SkillMaxCoolDowns.Add(GetSkillName(ESkillCoolDown::Grenade), 10.f);
 		break;

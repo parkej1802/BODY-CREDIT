@@ -48,7 +48,7 @@ void ACNox_EBase::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	if (FSMComp) FSMComp->UpdateState();
-
+	
 	if (FSMComp) // Print Current State
 	{
 		FString myState = UEnum::GetValueOrBitfieldAsString(FSMComp->GetEnemyState());
@@ -57,6 +57,13 @@ void ACNox_EBase::Tick(float DeltaTime)
 		DrawDebugString(
 			GetWorld(), FVector(GetActorLocation().X, GetActorLocation().Y,
 			                    GetActorLocation().Z - 50), myState, nullptr, FColor::Yellow, 0);
+	}
+	if (HPComp)
+	{
+		FString myHP = FString::Printf(TEXT("%.2f"), HPComp->GetHealthPercent());
+		DrawDebugString(
+			GetWorld(), FVector(GetActorLocation().X, GetActorLocation().Y,
+								GetActorLocation().Z - 100), myHP, nullptr, FColor::Red, 0);
 	}
 }
 
@@ -148,6 +155,7 @@ bool ACNox_EBase::IsPlayerInDistance()
 
 void ACNox_EBase::HandleHit(const int32 sectionIdx)
 {
+	EnemyController->StopMovement();
 	EnemyAnim->PlayHitMontage(sectionIdx);
 }
 
