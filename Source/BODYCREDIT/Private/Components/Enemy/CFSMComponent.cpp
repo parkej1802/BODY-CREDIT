@@ -15,6 +15,7 @@
 #include "State/MEMORY/CCombatState_MEMORY.h"
 #include "State/MEMORY/CConditionalMoveStrategy_MEMORY.h"
 #include "State/MEMORY/CDieState_MEMORY.h"
+#include "State/MEMORY/CHitState_MEMORY.h"
 #include "State/MEMORY/CIdleState_MEMORY.h"
 #include "State/MEMORY/CMemoryHuntState_MEMORY.h"
 #include "State/MEMORY/CSenseState_MEMORY.h"
@@ -76,7 +77,7 @@ void UCFSMComponent::InitSkillCoolDowns(EEnemyType Type)
 		SkillCoolDowns.Add(GetSkillName(ESkillCoolDown::Beam), 0.f);
 		SkillMaxCoolDowns.Add(GetSkillName(ESkillCoolDown::Beam), 20.f);
 		SkillCoolDowns.Add(GetSkillName(ESkillCoolDown::WavePulse), 0.f);
-		SkillMaxCoolDowns.Add(GetSkillName(ESkillCoolDown::WavePulse), 10.f);
+		SkillMaxCoolDowns.Add(GetSkillName(ESkillCoolDown::WavePulse), 20.f);
 		break;
 	}
 }
@@ -139,6 +140,7 @@ TMap<EEnemyState, TSharedPtr<ICEnemyStateStrategy>> UCFSMComponent::CreateStrate
 			}
 			Result.Add(EEnemyState::MemoryHunt, MakeShared<CMemoryHuntState_MEMORY>());
 			Result.Add(EEnemyState::Combat, MakeShared<CCombatState_MEMORY>());
+			Result.Add(EEnemyState::Hit, MakeShared<CHitState_MEMORY>());
 			Result.Add(EEnemyState::Die, MakeShared<CDieState_MEMORY>());
 		}		
 		break;
@@ -170,7 +172,9 @@ void UCFSMComponent::ResetVal(EEnemyType Type)
 		}
 		break;
 	case EEnemyType::MedicAndroid:
+	case EEnemyType::MemoryCollector:
 		EnemyStrategies[EEnemyState::Sense]->ResetVal(OwnerEnemy);
+		break;
 	}
 }
 #pragma endregion

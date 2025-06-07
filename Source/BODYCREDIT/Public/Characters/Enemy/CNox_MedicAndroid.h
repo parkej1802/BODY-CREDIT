@@ -19,8 +19,8 @@ private:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetPerceptionInfo() override;
-	virtual auto TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
-	                        AController* EventInstigator, AActor* DamageCauser) -> float override;
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
+	                        AController* EventInstigator, AActor* DamageCauser) override;
 	virtual void GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed,
 	                         float& OutNewAccelSpeed) override;
 
