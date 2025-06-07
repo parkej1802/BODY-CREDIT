@@ -38,6 +38,9 @@ protected:
 	float Direction;
 
 	UPROPERTY(BlueprintReadOnly)
+	bool bForward;
+
+	UPROPERTY(BlueprintReadOnly)
 	bool bSprint;
 
 	UPROPERTY(BlueprintReadOnly)
