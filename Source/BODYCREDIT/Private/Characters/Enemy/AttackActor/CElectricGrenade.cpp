@@ -7,7 +7,8 @@
 ACElectricGrenade::ACElectricGrenade()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	CHelpers::CreateComponent<UStaticMeshComponent>(this, &MeshComp, "MeshComp");
+	CHelpers::CreateComponent<USceneComponent>(this, &RootComp, "RootComp");
+	CHelpers::CreateComponent<UStaticMeshComponent>(this, &MeshComp, "MeshComp", RootComp);
 	CHelpers::CreateActorComponent<UProjectileMovementComponent>(this, &ProjectileComp, "ProjectileComp");
 	ProjectileComp->bRotationFollowsVelocity = true;
 	ProjectileComp->bAutoActivate = false;

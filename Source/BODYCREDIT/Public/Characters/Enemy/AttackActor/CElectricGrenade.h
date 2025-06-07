@@ -20,7 +20,9 @@ public:
 
 private:
 	UPROPERTY(EditAnywhere)
-	class UStaticMeshComponent* MeshComp;
+	USceneComponent* RootComp;
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* MeshComp;
 	UPROPERTY(EditAnywhere)
 	class UProjectileMovementComponent* ProjectileComp;
 
