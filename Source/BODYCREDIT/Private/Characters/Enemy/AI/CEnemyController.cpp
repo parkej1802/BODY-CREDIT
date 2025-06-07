@@ -127,5 +127,6 @@ void ACEnemyController::UpdateExpiredStimuli(float DeltaTime)
 
 void ACEnemyController::PerceptionDeactive()
 {
+	StopMovement();
 	Perception->OnTargetPerceptionInfoUpdated.Clear();
 }
