@@ -1,6 +1,5 @@
 #include "Characters/Enemy/AttackActor/CBeam.h"
 #include "Global.h"
-#include "MaterialHLSLTree.h"
 #include "NiagaraComponent.h"
 #include "Characters/Enemy/CNox_MemoryCollectorAI.h"
 #include "Global.h"
