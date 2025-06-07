@@ -70,6 +70,8 @@ float ACNox_Zero::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 	if (HPComp->IsDead()) FSMComp->SetEnemyState(EEnemyState::Die);
 	else
 	{
+		if (FSMComp->GetEnemyState() == EEnemyState::Combat) return DamageAmount;
+		
 		const float HitChance = 0.3f; // 30% 확률로 피격 상태 진입
 		const float rand = FMath::FRand(); // 0~1 랜덤
 		if (rand <= HitChance)
