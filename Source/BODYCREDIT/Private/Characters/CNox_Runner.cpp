@@ -1,5 +1,6 @@
 ﻿#include "Characters/CNox_Runner.h"
 #include "Global.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "InputMappingContext.h"
@@ -171,6 +172,9 @@ void ACNox_Runner::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 void ACNox_Runner::Init()
 {
+	UCapsuleComponent* capsule = Cast<UCapsuleComponent>(RootComponent);
+	capsule->SetCollisionProfileName(FName("Player"));
+
 	{ // Modular Character Mesh
 		// Head
 		GetMesh()->SetRelativeLocation(FVector(0, 0, ~84));
@@ -251,8 +255,8 @@ void ACNox_Runner::ReactFlashBang()
 
 void ACNox_Runner::CacheDefaultSkeletalMeshes()
 {
-	//DefaultMeshes.Add(EPlayerPart::Head, GetMesh()->SkeletalMesh);
-	//DefaultMeshes.Add(EPlayerPart::Body, UpperBody->SkeletalMesh);
-	//DefaultMeshes.Add(EPlayerPart::Arm, Arms->SkeletalMesh);
-	//DefaultMeshes.Add(EPlayerPart::Leg, LowerBody->SkeletalMesh);
+	DefaultMeshes.Add(EPlayerPart::Head, GetMesh()->SkeletalMesh);
+	DefaultMeshes.Add(EPlayerPart::Body, UpperBody->SkeletalMesh);
+	DefaultMeshes.Add(EPlayerPart::Arm, Arms->SkeletalMesh);
+	DefaultMeshes.Add(EPlayerPart::Leg, LowerBody->SkeletalMesh);
 }

@@ -2,6 +2,7 @@
 #include "Global.h"
 #include "Characters/CNox.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Components/CMovementComponent.h"
 #include "Items/Equipments/Weapons/CWeapon_SubAction.h"
 
 void UCNoxAnimInstance::NativeBeginPlay()
@@ -32,6 +33,10 @@ void UCNoxAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		FRotator delta = UKismetMathLibrary::NormalizedDeltaRotator(rot1, rot2);
 		PrevRotation = UKismetMathLibrary::RInterpTo(PrevRotation, delta, DeltaSeconds, 25);
 		Direction = PrevRotation.Yaw;
+
+		bSprint = CHelpers::GetComponent<UCMovementComponent>(OwnerCharacter)->IsSprint();
+
+		bCrouch = CHelpers::GetComponent<UCMovementComponent>(OwnerCharacter)->IsCrouch();
 
 		// 캐릭터 점프 중인지
 		bFalling = OwnerCharacter->GetCharacterMovement()->IsFalling();

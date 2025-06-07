@@ -31,8 +31,8 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class UInputAction* IA_Look;
 
-	//UPROPERTY(VisibleAnywhere) // 보류
-	//class UInputAction* IA_Sprint;
+	UPROPERTY(VisibleAnywhere) // 보류
+	class UInputAction* IA_Sprint;
 
 	UPROPERTY(VisibleAnywhere)
 	class UInputAction* IA_Crouch;
@@ -45,10 +45,12 @@ private:
 
 public:
 	FORCEINLINE bool CanMove() { return bCanMove; }
+	FORCEINLINE bool IsSprint() { return bSprint; }
+	FORCEINLINE bool IsCrouch() { return bCrouch; }
 
 	FORCEINLINE float GetWalkSpeed() { return Speed[(int32)ESpeedType::WALK]; }
-	//FORCEINLINE float GetRunSpeed() { return Speed[(int32)ESpeedType::Run]; }
-	//FORCEINLINE float GetSprintSpeed() { return Speed[(int32)ESpeedType::Sprint]; }
+	FORCEINLINE float GetRunSpeed() { return Speed[(int32)ESpeedType::MOVE_FWD]; }
+	FORCEINLINE float GetSprintSpeed() { return Speed[(int32)ESpeedType::SPRINT]; }
 
 	FORCEINLINE bool GetFixedCamera() { return bFixedCamera; }
 	FORCEINLINE void EnableFixedCamera() { bFixedCamera = true; }
@@ -63,15 +65,12 @@ protected:
 public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	
 public:
 	virtual void BindInput(class UEnhancedInputComponent* InEnhancedInputComponent) override;
 
 private:
 	// Inputs
-	void OnMoveForward(const struct FInputActionValue& InVal);
-	void OnMoveRight(const struct FInputActionValue& InVal);
+	void OnMovement(const struct FInputActionValue& InVal);
 	void OffMovement(const struct FInputActionValue& InVal);
 
 	void OnHorizontalLook(const struct FInputActionValue& InVal);
@@ -87,19 +86,7 @@ private:
 public:
 	void SetSpeed(ESpeedType InType);
 
-	UFUNCTION(Reliable, Server)
-	void ServerRPC_SetSpeed(ESpeedType InType);
-	void ServerRPC_SetSpeed_Implementation(ESpeedType InType);
-
-	UFUNCTION(NetMulticast, Reliable)
-	void MulticastRPC_SetSpeed(ESpeedType InType);
-	void MulticastRPC_SetSpeed_Implementation(ESpeedType InType);
-
 public:
-	void UpdateSpeed();
-
-	int32 IsPressed(ESpeedType InType);
-
 	void SetCrouchSpeed();
 	void SetWalkSpeed();
 	void SetMoveForwardSpeed();
@@ -119,10 +106,7 @@ private:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Speed")
-	float Speed[(int32)ESpeedType::MAX] = { 200, 400, 500, 300, 350, 600 };
-
-	UPROPERTY(EditAnywhere, Replicated, Category = "Speed")
-	int32 Pressed[(int32)ESpeedType::MAX];
+	float Speed[(int32)ESpeedType::MAX] = { 200, 400, 500, 300, 350, 700 };
 
 private:
 	UPROPERTY(EditAnywhere, Category = "CameraSpeed")
@@ -133,6 +117,8 @@ private:
 
 private:
 	bool bCanMove = true;
+	bool bSprint = false;
+	bool bCrouch = false;
 	bool bFixedCamera = false;
 
 	bool bMoveForward = false;
