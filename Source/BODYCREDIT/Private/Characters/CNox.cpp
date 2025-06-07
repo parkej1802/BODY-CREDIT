@@ -7,7 +7,6 @@
 ACNox::ACNox()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	bReplicates = true;
 
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
