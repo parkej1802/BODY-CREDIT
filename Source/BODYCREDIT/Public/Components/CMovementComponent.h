@@ -8,11 +8,13 @@
 UENUM(BlueprintType)
 enum class ESpeedType : uint8
 {
-	CROUCH = 0,		 // C (슬라이딩, 대쉬와 버튼 공유 예정)
-	WALK,			 // LCtrl
-	MOVE_FWD,		 // W
-	MOVE_BWD,		 // S
-	MOVE_RLWD,		 // D or A
+	STAND_WALK,			// Stand Walk
+	STAND_RUN_FWD,		// W
+	STAND_RUN_BWD,		// S
+	STAND_RUN_RLWD,		// D or A
+	CROUCH_WALK_FWD,	// Crouch W
+	CROUCH_WALK_BWD,	// Crouch S
+	CROUCH_WALK_RLWD,	// Crouch D or A
 	SPRINT,			 // LShift 보류
 	MAX,
 };
@@ -45,12 +47,20 @@ private:
 
 public:
 	FORCEINLINE bool CanMove() { return bCanMove; }
+	FORCEINLINE bool IsForward() { return bForward; }
 	FORCEINLINE bool IsSprint() { return bSprint; }
 	FORCEINLINE bool IsCrouch() { return bCrouch; }
 
-	FORCEINLINE float GetWalkSpeed() { return Speed[(int32)ESpeedType::WALK]; }
-	FORCEINLINE float GetRunSpeed() { return Speed[(int32)ESpeedType::MOVE_FWD]; }
-	FORCEINLINE float GetSprintSpeed() { return Speed[(int32)ESpeedType::SPRINT]; }
+	// Stand
+	FORCEINLINE float GetStandWalkSpeed() { return Speed[(int32)ESpeedType::STAND_WALK]; }
+	FORCEINLINE float GetStandRunForwardSpeed() { return Speed[(int32)ESpeedType::STAND_RUN_FWD]; }
+	FORCEINLINE float GetStandRunBackwardSpeed() { return Speed[(int32)ESpeedType::STAND_RUN_BWD]; }
+	FORCEINLINE float GetStandRunRLwardSpeed() { return Speed[(int32)ESpeedType::STAND_RUN_RLWD]; }
+
+	// Crouch
+	FORCEINLINE float GetCrouchRunForwardSpeed() { return Speed[(int32)ESpeedType::CROUCH_WALK_FWD]; }
+	FORCEINLINE float GetCrouchRunBackwardSpeed() { return Speed[(int32)ESpeedType::CROUCH_WALK_BWD]; }
+	FORCEINLINE float GetCrouchRunRLwardSpeed() { return Speed[(int32)ESpeedType::CROUCH_WALK_RLWD]; }
 
 	FORCEINLINE bool GetFixedCamera() { return bFixedCamera; }
 	FORCEINLINE void EnableFixedCamera() { bFixedCamera = true; }
@@ -87,11 +97,15 @@ public:
 	void SetSpeed(ESpeedType InType);
 
 public:
-	void SetCrouchSpeed();
-	void SetWalkSpeed();
-	void SetMoveForwardSpeed();
-	void SetMoveBackwardSpeed();
-	void SetMoveRLSpeed();
+	void SetStandWalkSpeed();
+	void SetStandRunForwardSpeed();
+	void SetStandRunBackwardSpeed();
+	void SetStandRunRLwardSpeed();
+
+	void SetCrouchWalkForwardSpeed();
+	void SetCrouchWalkBackwardSpeed();
+	void SetCrouchWalkRLwardSpeed();
+
 	void SetSprintSpeed();
 
 	void EnableControlRotation();
@@ -106,7 +120,7 @@ private:
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Speed")
-	float Speed[(int32)ESpeedType::MAX] = { 200, 400, 500, 300, 350, 700 };
+	float Speed[(int32)ESpeedType::MAX] = { 350, 500, 300, 350, 300, 300, 300, 700 };
 
 private:
 	UPROPERTY(EditAnywhere, Category = "CameraSpeed")
@@ -117,11 +131,10 @@ private:
 
 private:
 	bool bCanMove = true;
+	bool bForward = false;
 	bool bSprint = false;
 	bool bCrouch = false;
 	bool bFixedCamera = false;
-
-	bool bMoveForward = false;
 
 	// FOV
 	const float DefaultFOV = 90;
