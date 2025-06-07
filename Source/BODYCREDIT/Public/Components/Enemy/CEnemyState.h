@@ -49,4 +49,6 @@ enum class ESkillCoolDown
 	Ranged,   // 원거리 스킬
 	Heal,	  // 힐
 	Grenade,  // 수류탄
+	Beam,	  // 레이저
+	WavePulse,// 충격파
 };

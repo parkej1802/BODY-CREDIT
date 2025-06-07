@@ -8,23 +8,23 @@ UCLASS()
 class BODYCREDIT_API ACRangeProjectile : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
+
+public:
 	ACRangeProjectile();
 
 protected:
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	virtual void Tick(float DeltaTime) override;
 
 public:
 	void InitializeProjectile(FVector InStartLocation, class ACNox* InTargetActor);
-	
+
 private:
 	UPROPERTY()
 	class ACNox_MemoryCollectorAI* OwnerAI;
-	FVector StartLocation;	
+	FVector StartLocation;
 	UPROPERTY()
 	class ACNox* Target;
 	FVector CurrentVelocity;
@@ -35,7 +35,10 @@ private:
 private:
 	UPROPERTY(EditDefaultsOnly)
 	class UBoxComponent* BoxComp;
+	UPROPERTY(EditDefaultsOnly)
+	class UNiagaraComponent* ProjectileFxComp;
 
 	UFUNCTION()
-	void OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+	               int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 };

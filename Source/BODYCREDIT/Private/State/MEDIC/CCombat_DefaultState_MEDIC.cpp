@@ -2,7 +2,6 @@
 
 #include "AIController.h"
 #include "Characters/Enemy/CNox_EBase.h"
-#include "Components/Enemy/CEnemyState.h"
 #include "Navigation/PathFollowingComponent.h"
 
 void CCombat_DefaultState_MEDIC::Execute(class ACNox_EBase* Owner, class UCFSMComponent* FSMComp)

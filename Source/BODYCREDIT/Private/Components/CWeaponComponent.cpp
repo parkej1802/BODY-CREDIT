@@ -4,6 +4,7 @@
 #include "EnhancedInputComponent.h"
 #include "InputActionValue.h"
 #include "Components/CStateComponent.h"
+#include "Components/CMovementComponent.h"
 #include "Items/Equipments/Weapons/CWeapon_Asset.h"
 #include "Items/Equipments/Weapons/CWeapon_Data.h"
 #include "Items/Equipments/Weapons/CWeapon_Attachment.h"
@@ -133,7 +134,11 @@ void UCWeaponComponent::DoAction()
 void UCWeaponComponent::SubAction_Pressed()
 {
 	if (IsBowMode())
+	{
+		CheckTrue(CHelpers::GetComponent<UCMovementComponent>(OwnerCharacter)->IsSprint());
+
 		CHelpers::GetComponent<UCZoomComponent>(OwnerCharacter)->SetComponentTickEnabled(false);
+	}
 
 	if (!!GetSubAction())
 		GetSubAction()->Pressed();

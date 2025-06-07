@@ -1,7 +1,11 @@
 #include "Characters/Enemy/CNox_MedicAndroid.h"
 #include "Global.h"
+#include "NiagaraComponent.h"
+#include "Characters/CNox_Runner.h"
 #include "Characters/Enemy/CNoxEnemy_Animinstance.h"
 #include "Characters/Enemy/AttackActor/CElectricGrenade.h"
+#include "Components/BoxComponent.h"
+#include "Components/Enemy/CFSMComponent.h"
 #include "Components/Enemy/CNoxEnemyHPComponent.h"
 
 #pragma region Init
@@ -17,6 +21,18 @@ ACNox_MedicAndroid::ACNox_MedicAndroid()
 
 	GetCapsuleComponent()->SetCapsuleHalfHeight(110.f);
 	GetCapsuleComponent()->SetCapsuleRadius(42.f);
+
+	{
+		// Attack Collision
+		CHelpers::CreateComponent<UBoxComponent>(this, &AttackComp_l, "AttackComp_l", GetMesh(), "middle_01_l");
+		CHelpers::CreateComponent<UBoxComponent>(this, &AttackComp_r, "AttackComp_r", GetMesh(), "middle_01_r");
+		AttackComp_l->SetCollisionProfileName("EnemyWeapon");
+		AttackComp_r->SetCollisionProfileName("EnemyWeapon");
+		AttackComp_l->SetBoxExtent(FVector(25));
+		AttackComp_r->SetBoxExtent(FVector(25));
+		AttackComp_l->OnComponentBeginOverlap.AddDynamic(this, &ACNox_MedicAndroid::OnAttackComponentBeginOverlap);
+		AttackComp_r->OnComponentBeginOverlap.AddDynamic(this, &ACNox_MedicAndroid::OnAttackComponentBeginOverlap);
+	}
 
 	ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClass(
 		TEXT("/Game/Characters/Enemy/Anim/MedicAnim/ABP_Medic.ABP_Medic_C"));
@@ -37,6 +53,8 @@ void ACNox_MedicAndroid::BeginPlay()
 	Super::BeginPlay();
 
 	CHelpers::GetAssetDynamic(&(EnemyAnim->IdleMontage), TEXT("/Game/Assets/MedicAnim/LocomotionAnim/AM_Idle.AM_Idle"));
+	CHelpers::GetAssetDynamic(&(EnemyAnim->HitMontage), TEXT("/Game/Assets/MedicAnim/DamageAnim/AM_Hit.AM_Hit"));
+	CHelpers::GetAssetDynamic(&(EnemyAnim->DieMontage), TEXT("/Game/Assets/MedicAnim/DieAnim/AM_Die.AM_Die"));
 	CHelpers::GetAssetDynamic(&(EnemyAnim->GrenadeMontage),
 	                          TEXT("/Game/Assets/MedicAnim/AttackAnim/AM_Grenade.AM_Grenade"));
 	CHelpers::GetAssetDynamic(&(EnemyAnim->ShieldMontage),
@@ -49,6 +67,13 @@ void ACNox_MedicAndroid::BeginPlay()
 	ElectricGrenade = GetWorld()->SpawnActor<ACElectricGrenade>(ElectricGrenadeCls, this->GetActorLocation(),
 	                                                            this->GetActorRotation(),
 	                                                            SpawnParams);
+
+	HealEffect = UNiagaraFunctionLibrary::SpawnSystemAttached(HealEffectFactory, GetMesh(), "spine_02",
+	                                                          GetActorLocation(),
+	                                                          FRotator::ZeroRotator,
+	                                                          EAttachLocation::Type::KeepWorldPosition, false, false);
+
+	AttackCollision(false); // Attack Collision Off
 }
 
 void ACNox_MedicAndroid::SetPerceptionInfo()
@@ -58,7 +83,7 @@ void ACNox_MedicAndroid::SetPerceptionInfo()
 }
 
 void ACNox_MedicAndroid::GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed,
-											 float& OutNewAccelSpeed)
+                                             float& OutNewAccelSpeed)
 {
 	switch (InMovementSpeed)
 	{
@@ -87,12 +112,27 @@ void ACNox_MedicAndroid::Tick(float DeltaTime)
 
 #pragma region Take Damage
 float ACNox_MedicAndroid::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
-									 AController* EventInstigator, AActor* DamageCauser)
+                                     AController* EventInstigator, AActor* DamageCauser)
 {
 	if (!GetTarget())
 		if (ACNox* player = Cast<ACNox>(DamageCauser->GetOwner())) SetTarget(player);
+
 	if (IsShielding()) return 0.f;
+
 	HPComp->TakeDamage(DamageAmount);
+	if (HPComp->IsDead()) FSMComp->SetEnemyState(EEnemyState::Die);
+	else
+	{
+		if (FSMComp->GetEnemyState() == EEnemyState::Combat) return DamageAmount;
+
+		const float HitChance = 0.3f; // 30% 확률로 피격 상태 진입
+		const float rand = FMath::FRand(); // 0~1 랜덤
+		if (rand <= HitChance)
+		{
+			ResetVal();
+			FSMComp->SetEnemyState(EEnemyState::Hit);
+		}
+	}
 	return DamageAmount;
 }
 #pragma endregion
@@ -106,6 +146,7 @@ bool ACNox_MedicAndroid::IsLowHealth()
 void ACNox_MedicAndroid::HandleEquipShield(const bool bInEquipShield)
 {
 	EnemyAnim->PlayShieldMontage(bInEquipShield);
+	bInEquipShield ? HealEffect->Activate() : HealEffect->Deactivate();
 }
 
 bool ACNox_MedicAndroid::IsShielding() const
@@ -169,5 +210,39 @@ void ACNox_MedicAndroid::LaunchElectricGrenade()
 	FVector outVelocity;
 	SuggestProjectileVelocityWithLimit(outVelocity, this->GetActorLocation(), targetLoc);
 	if (ElectricGrenade) ElectricGrenade->InitializeGrenade(startLoc, targetLoc, outVelocity);
+}
+#pragma endregion
+
+#pragma region Attacking
+void ACNox_MedicAndroid::OnAttackComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                                       UPrimitiveComponent* OtherComp, int32 OtherBodyIndex,
+                                                       bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (ACNox_Runner* player = Cast<ACNox_Runner>(OtherActor))
+	{
+		SetApplyDamage(player, 20.f);
+	}
+}
+
+void ACNox_MedicAndroid::AttackCollision(bool bOn, bool IsRightHand)
+{
+	if (bOn)
+	{
+		if (IsRightHand)
+		{
+			AttackComp_r->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+			AttackComp_l->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		}
+		else
+		{
+			AttackComp_l->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+			AttackComp_r->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		}
+	}
+	else
+	{
+		AttackComp_l->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		AttackComp_r->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
 }
 #pragma endregion

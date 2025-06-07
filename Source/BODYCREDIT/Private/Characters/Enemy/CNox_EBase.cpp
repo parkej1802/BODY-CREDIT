@@ -48,7 +48,7 @@ void ACNox_EBase::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	if (FSMComp) FSMComp->UpdateState();
-
+	
 	if (FSMComp) // Print Current State
 	{
 		FString myState = UEnum::GetValueOrBitfieldAsString(FSMComp->GetEnemyState());
@@ -57,6 +57,13 @@ void ACNox_EBase::Tick(float DeltaTime)
 		DrawDebugString(
 			GetWorld(), FVector(GetActorLocation().X, GetActorLocation().Y,
 			                    GetActorLocation().Z - 50), myState, nullptr, FColor::Yellow, 0);
+	}
+	if (HPComp)
+	{
+		FString myHP = FString::Printf(TEXT("%.2f"), HPComp->GetHealthPercent());
+		DrawDebugString(
+			GetWorld(), FVector(GetActorLocation().X, GetActorLocation().Y,
+								GetActorLocation().Z - 100), myHP, nullptr, FColor::Red, 0);
 	}
 }
 
@@ -146,6 +153,7 @@ bool ACNox_EBase::IsPlayerInDistance()
 	return dist <= AttackDistance;
 }
 
+#pragma region Hitting
 void ACNox_EBase::HandleHit(const int32 sectionIdx)
 {
 	EnemyAnim->PlayHitMontage(sectionIdx);
@@ -155,13 +163,16 @@ bool ACNox_EBase::IsHitting()
 {
 	return EnemyAnim->IsHitting();
 }
+#pragma endregion
 
+#pragma region Die
 void ACNox_EBase::HandleDie(const int32 sectionIdx)
 {
 	GetCapsuleComponent()->SetCollisionProfileName(FName("EnemyDie"));
 	if (EnemyAnim) EnemyAnim->PlayDieMontage(sectionIdx);
 	EnemyController->PerceptionDeactive();
 }
+#pragma endregion
 
 void ACNox_EBase::ResetVal()
 {

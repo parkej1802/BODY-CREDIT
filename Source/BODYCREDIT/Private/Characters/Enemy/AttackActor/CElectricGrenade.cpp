@@ -1,5 +1,6 @@
 #include "Characters/Enemy/AttackActor/CElectricGrenade.h"
 #include "Global.h"
+#include "Characters/CNox_Runner.h"
 #include "Engine/OverlapResult.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
@@ -75,11 +76,7 @@ void ACElectricGrenade::Explode()
 			TraceParams
 		);
 
-		if (bBlocked && Hit.GetActor() == Target)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("플레이어 감지 성공 (엄폐물 없음)!"));
-			// 데미지 처리, 상태 변경 등
-		}
+		if (bBlocked && Hit.GetActor() == Target) Cast<ACNox_Runner>(Target)->ReactFlashBang();
 	}
 
 	// 이펙트 처리

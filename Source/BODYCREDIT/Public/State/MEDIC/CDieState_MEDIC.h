@@ -9,5 +9,8 @@
 class BODYCREDIT_API CDieState_MEDIC : public ICEnemyStateStrategy
 {
 public:
-	virtual void Execute(class ACNox_EBase* Owner, class UCFSMComponent* FSMComp) override;
+	virtual void Execute(ACNox_EBase* Owner, UCFSMComponent* FSMComp) override;
+
+private:
+	bool bFired = false;
 };

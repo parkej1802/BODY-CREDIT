@@ -15,4 +15,5 @@ private:
 public:
 	CSenseState_MEDIC(TUniquePtr<CConditionalMoveStrategy_MEDIC> InMoveStrategy);
 	virtual void Execute(class ACNox_EBase* Owner, class UCFSMComponent* FSMComp) override;
+	virtual void ResetVal(ACNox_EBase* Owner) override;
 };

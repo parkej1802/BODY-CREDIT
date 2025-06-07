@@ -1,6 +1,6 @@
 #include "Characters/Enemy/AttackActor/CRangeProjectile.h"
 
-#include "Characters/CNox_Runner.h"
+#include "NiagaraComponent.h"
 #include "Components/BoxComponent.h"
 #include "Global.h"
 #include "Characters/Enemy/CNox_MemoryCollectorAI.h"
@@ -11,6 +11,8 @@ ACRangeProjectile::ACRangeProjectile()
 	CHelpers::CreateComponent<UBoxComponent>(this, &BoxComp, "BoxComp");
 	BoxComp->SetCollisionProfileName(FName("EnemyWeapon"));
 	BoxComp->OnComponentBeginOverlap.AddDynamic(this, &ACRangeProjectile::OnOverlap);
+
+	CHelpers::CreateComponent<UNiagaraComponent>(this, &ProjectileFxComp, "ProjectileFxComp", RootComponent);
 }
 
 void ACRangeProjectile::BeginPlay()
@@ -34,7 +36,7 @@ void ACRangeProjectile::Tick(float DeltaTime)
 		NewDir = NewDir.GetSafeNormal();
 
 		CurrentVelocity = NewDir * Speed;
-		SetActorLocation(GetActorLocation() + CurrentVelocity * DeltaTime);
+		SetActorLocationAndRotation(GetActorLocation() + CurrentVelocity * DeltaTime, NewDir.Rotation());
 	}
 }
 
@@ -47,11 +49,13 @@ void ACRangeProjectile::InitializeProjectile(FVector InStartLocation, ACNox* InT
 	// 처음에는 정면으로 쏨
 	FVector Direction = (Target->GetActorLocation() - GetActorLocation()).GetSafeNormal();
 	CurrentVelocity = Direction * Speed;
+
+	ProjectileFxComp->ReinitializeSystem(); // 모든 파티클 제거 + 재시작
 }
 
 void ACRangeProjectile::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+                                  UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+                                  const FHitResult& SweepResult)
 {
 	OwnerAI->ReturnToPool(this);
 }
-

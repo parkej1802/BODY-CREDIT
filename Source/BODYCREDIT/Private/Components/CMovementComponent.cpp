@@ -26,8 +26,6 @@ void UCMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	UpdateSpeed();
-
 	if (UCWeaponComponent* weapon = CHelpers::GetComponent<UCWeaponComponent>(OwnerCharacter))
 		if (weapon->IsBowMode()) return;
 
@@ -39,8 +37,7 @@ void UCMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 void UCMovementComponent::BindInput(UEnhancedInputComponent* InEnhancedInputComponent)
 {
 	// Movement
-	InEnhancedInputComponent->BindAction(IA_Movement, ETriggerEvent::Triggered, this, &UCMovementComponent::OnMoveForward);
-	InEnhancedInputComponent->BindAction(IA_Movement, ETriggerEvent::Triggered, this, &UCMovementComponent::OnMoveRight);
+	InEnhancedInputComponent->BindAction(IA_Movement, ETriggerEvent::Triggered, this, &UCMovementComponent::OnMovement);
 	InEnhancedInputComponent->BindAction(IA_Movement, ETriggerEvent::Completed, this, &UCMovementComponent::OffMovement);
 
 	// Look
@@ -48,8 +45,8 @@ void UCMovementComponent::BindInput(UEnhancedInputComponent* InEnhancedInputComp
 	InEnhancedInputComponent->BindAction(IA_Look, ETriggerEvent::Triggered, this, &UCMovementComponent::OnVerticalLook);
 
 	//// Sprint // 보류
-	//InEnhancedInputComponent->BindAction(IA_Sprint, ETriggerEvent::Started, this, &UCMovementComponent::OnSprint);
-	//InEnhancedInputComponent->BindAction(IA_Sprint, ETriggerEvent::Completed, this, &UCMovementComponent::OnReset);
+	InEnhancedInputComponent->BindAction(IA_Sprint, ETriggerEvent::Started, this, &UCMovementComponent::OnSprint);
+	InEnhancedInputComponent->BindAction(IA_Sprint, ETriggerEvent::Completed, this, &UCMovementComponent::OnReset);
 
 	// Crouch
 	InEnhancedInputComponent->BindAction(IA_Crouch, ETriggerEvent::Started, this, &UCMovementComponent::OnCrouch);
@@ -59,66 +56,93 @@ void UCMovementComponent::BindInput(UEnhancedInputComponent* InEnhancedInputComp
 
 }
 
-void UCMovementComponent::OnMoveForward(const FInputActionValue& InVal)
+void UCMovementComponent::OnMovement(const FInputActionValue& InVal)
 {
 	CheckFalse(bCanMove);
 
-	TargetFOV = RunFOV;
+	// 캐릭터의 정면 방향을 가져오기 위해 컨트롤러의 회전 값을 구해서 Z축만을 사용
+	FRotator rot = FRotator(0, OwnerCharacter->GetControlRotation().Yaw, 0);
 
 	const FVector2D input = InVal.Get<FVector2D>();
 
-	// 이동 방향 계산 (카메라 전방 기준)
-	const float yaw = OwnerCharacter->GetControlRotation().Yaw;
-	const FVector direction = FQuat(FRotator(0, yaw, 0)).GetForwardVector();
+	if (input.X > 0)
+	{
+		bForward = true;
 
-	if (input.X > 0) // Forward
-	{
-		Pressed[(uint8)ESpeedType::MOVE_FWD] = true;
-		Pressed[(uint8)ESpeedType::MOVE_BWD] = false;
+		if (bCrouch)
+		{
+			SetCrouchWalkForwardSpeed();
+
+			if (bSprint)
+			{
+				OnCrouch(FInputActionValue());
+
+				SetSprintSpeed();
+			}
+		}
+		else if (bSprint)
+		{
+			SetSprintSpeed();
+		}
+		else SetStandRunForwardSpeed();
+
+		//if (bSprint)
+		//{
+		//	if (bCrouch)
+		//		OnCrouch(FInputActionValue());
+
+		//	SetSprintSpeed();
+		//}
+		//else SetStandRunForwardSpeed();
+
+		// Forward
+		OwnerCharacter->AddMovementInput(FQuat(rot).GetForwardVector(), input.X);
 	}
-	else if (input.X < 0) // Backward
+	else if (input.X == 0)
 	{
-		Pressed[(uint8)ESpeedType::MOVE_BWD] = true;
-		Pressed[(uint8)ESpeedType::MOVE_FWD] = false;
+		bForward = false;
+
+		OnReset(FInputActionValue());
+
+		SetStandRunRLwardSpeed();
 	}
 	else
 	{
-		Pressed[(uint8)ESpeedType::MOVE_BWD] = false;
-		Pressed[(uint8)ESpeedType::MOVE_FWD] = false;
+		bForward = false;
+
+		if (bCrouch)
+			SetCrouchWalkBackwardSpeed();
+		else SetStandRunBackwardSpeed();
+
+		// back
+		OwnerCharacter->AddMovementInput(FQuat(rot).GetForwardVector(), input.X);
 	}
 
-	// 이동 입력 적용
-	OwnerCharacter->AddMovementInput(direction, input.X);
+	// Right Or Left
+	OwnerCharacter->AddMovementInput(FQuat(rot).GetRightVector(), input.Y);
+	
+	//if (input.Y > 0)
+	//{
+	//	if (input.X == 0)
+	//		SetStandRunRLwardSpeed();
 
-}
+	//	// Right
+	//	OwnerCharacter->AddMovementInput(FQuat(rot).GetRightVector(), input.Y);
+	//}
+	//else
+	//{
+	//	if (input.X == 0)
+	//		SetStandRunRLwardSpeed();
 
-void UCMovementComponent::OnMoveRight(const FInputActionValue& InVal)
-{
-	CheckFalse(bCanMove);
-
-	Pressed[(uint8)ESpeedType::MOVE_RLWD] = true;
-
-	const FVector2D input = InVal.Get<FVector2D>();
-	if (FMath::IsNearlyEqual(input.Y, 0))
-		Pressed[(uint8)ESpeedType::MOVE_RLWD] = false;
-
-	// 이동 방향 계산 (카메라 전방 기준)
-	const float yaw = OwnerCharacter->GetControlRotation().Yaw;
-	const FVector direction = FQuat(FRotator(0, yaw, 0)).GetRightVector();
-
-	// 이동 입력 적용
-	OwnerCharacter->AddMovementInput(direction, input.Y);
+	//	// Left
+	//	OwnerCharacter->AddMovementInput(FQuat(rot).GetRightVector(), input.Y);
+	//}
 
 }
 
 void UCMovementComponent::OffMovement(const FInputActionValue& InVal)
 {
 	TargetFOV = DefaultFOV;
-
-	// Movement false 처리
-	Pressed[(uint8)ESpeedType::MOVE_FWD] = false;
-	Pressed[(uint8)ESpeedType::MOVE_BWD] = false;
-	Pressed[(uint8)ESpeedType::MOVE_RLWD] = false;
 
 }
 
@@ -146,13 +170,15 @@ void UCMovementComponent::OnVerticalLook(const FInputActionValue& InVal)
 
 void UCMovementComponent::OnSprint(const FInputActionValue& InVal)
 {
-	SetSprintSpeed();
+	bSprint = true;
+
+	CHelpers::GetComponent<UCWeaponComponent>(OwnerCharacter)->SubAction_Released();
 
 }
 
 void UCMovementComponent::OnReset(const FInputActionValue& InVal)
 {
-	SetMoveForwardSpeed();
+	bSprint = false;
 
 }
 
@@ -168,6 +194,17 @@ void UCMovementComponent::OnCrouch(const FInputActionValue& InVal)
 
 	//SetCrouchState(!bCrouch);
 
+	if (bCrouch)
+	{
+		bCrouch = false;
+		OwnerCharacter->UnCrouch();
+	}
+	else
+	{
+		bCrouch = true;
+		OwnerCharacter->Crouch();
+	}
+
 }
 
 void UCMovementComponent::OnJump(const FInputActionValue& InVal)
@@ -178,90 +215,49 @@ void UCMovementComponent::OnJump(const FInputActionValue& InVal)
 
 void UCMovementComponent::SetSpeed(ESpeedType InType)
 {
-	if (OwnerCharacter->IsLocallyControlled())
-	{
-		ServerRPC_SetSpeed(InType);
-
-		return;
-	}
-
 	OwnerCharacter->GetCharacterMovement()->MaxWalkSpeed = Speed[(uint8)InType];
 
 }
 
-void UCMovementComponent::ServerRPC_SetSpeed_Implementation(ESpeedType InType)
+void UCMovementComponent::SetStandWalkSpeed()
 {
-	MulticastRPC_SetSpeed(InType);
+	SetSpeed(ESpeedType::STAND_WALK);
 
 }
 
-void UCMovementComponent::MulticastRPC_SetSpeed_Implementation(ESpeedType InType)
+void UCMovementComponent::SetStandRunForwardSpeed()
 {
-	OwnerCharacter->GetCharacterMovement()->MaxWalkSpeed = Speed[(uint8)InType];
+	SetSpeed(ESpeedType::STAND_RUN_FWD);
 
 }
 
-void UCMovementComponent::UpdateSpeed()
+void UCMovementComponent::SetStandRunBackwardSpeed()
 {
-	// FWD
-	if (IsPressed(ESpeedType::MOVE_FWD))
-	{
-		SetMoveForwardSpeed();
-
-		return;
-	}
-
-	// BWD
-	else if (IsPressed(ESpeedType::MOVE_BWD))
-	{
-		SetMoveBackwardSpeed();
-
-		return;
-	}
-
-	// RWD or LWD
-	else if (IsPressed(ESpeedType::MOVE_RLWD))
-	{
-		SetMoveRLSpeed();
-
-		return;
-	}
+	SetSpeed(ESpeedType::STAND_RUN_BWD);
 
 }
 
-int32 UCMovementComponent::IsPressed(ESpeedType InType)
+void UCMovementComponent::SetStandRunRLwardSpeed()
 {
-	return Pressed[(int32)InType];
+	SetSpeed(ESpeedType::STAND_RUN_RLWD);
 
 }
 
-void UCMovementComponent::SetCrouchSpeed()
+void UCMovementComponent::SetCrouchWalkForwardSpeed()
 {
-	SetSpeed(ESpeedType::CROUCH);
+	SetSpeed(ESpeedType::CROUCH_WALK_FWD);
+	
+}
+
+void UCMovementComponent::SetCrouchWalkBackwardSpeed()
+{
+	SetSpeed(ESpeedType::CROUCH_WALK_BWD);
 
 }
 
-void UCMovementComponent::SetWalkSpeed()
+void UCMovementComponent::SetCrouchWalkRLwardSpeed()
 {
-	SetSpeed(ESpeedType::WALK);
-
-}
-
-void UCMovementComponent::SetMoveForwardSpeed()
-{
-	SetSpeed(ESpeedType::MOVE_FWD);
-
-}
-
-void UCMovementComponent::SetMoveBackwardSpeed()
-{
-	SetSpeed(ESpeedType::MOVE_BWD);
-
-}
-
-void UCMovementComponent::SetMoveRLSpeed()
-{
-	SetSpeed(ESpeedType::MOVE_RLWD);
+	SetSpeed(ESpeedType::CROUCH_WALK_RLWD);
 
 }
 
@@ -306,24 +302,15 @@ void UCMovementComponent::Init()
 	CHelpers::GetAsset<UInputAction>(&IA_Look, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Look.IA_Look'"));
 
 	//// Sprint
-	//CHelpers::GetAsset<UInputAction>(&IA_Sprint, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Sprint.IA_Sprint'"));
+	CHelpers::GetAsset<UInputAction>(&IA_Sprint, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Sprint.IA_Sprint'"));
 
 	// Crouch
 	CHelpers::GetAsset<UInputAction>(&IA_Crouch, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Crouch.IA_Crouch'"));
 
 	// Walk
-	CHelpers::GetAsset<UInputAction>(&IA_Crouch, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Walk.IA_Walk'"));
+	CHelpers::GetAsset<UInputAction>(&IA_Walk , TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Walk.IA_Walk'"));
 
 	// Jump
 	CHelpers::GetAsset<UInputAction>(&IA_Jump, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Jump.IA_Jump'"));
-
-}
-
-//virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-void UCMovementComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(UCMovementComponent, Pressed);
 
 }
