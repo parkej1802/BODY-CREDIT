@@ -39,6 +39,8 @@ public: // Heal
 private:
 	UPROPERTY(EditDefaultsOnly, Category=Heal)
 	float HealStdValue = 0.4f;
+	UPROPERTY(EditDefaultsOnly, Category=Heal)
+	class UNiagaraSystem* HealEffect = nullptr;
 
 private: // Electric Grenade
 	UPROPERTY(VisibleDefaultsOnly)
