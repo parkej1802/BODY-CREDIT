@@ -38,7 +38,6 @@ void UCMovementComponent::BindInput(UEnhancedInputComponent* InEnhancedInputComp
 {
 	// Movement
 	InEnhancedInputComponent->BindAction(IA_Movement, ETriggerEvent::Triggered, this, &UCMovementComponent::OnMovement);
-	//InEnhancedInputComponent->BindAction(IA_Movement, ETriggerEvent::Triggered, this, &UCMovementComponent::OnMoveRight);
 	InEnhancedInputComponent->BindAction(IA_Movement, ETriggerEvent::Completed, this, &UCMovementComponent::OffMovement);
 
 	// Look
@@ -66,37 +65,78 @@ void UCMovementComponent::OnMovement(const FInputActionValue& InVal)
 
 	const FVector2D input = InVal.Get<FVector2D>();
 
-	if (input.X >= 0)
+	if (input.X > 0)
 	{
-		bSprint ? SetSprintSpeed() : SetMoveForwardSpeed();
+		bForward = true;
+
+		if (bCrouch)
+		{
+			SetCrouchWalkForwardSpeed();
+
+			if (bSprint)
+			{
+				OnCrouch(FInputActionValue());
+
+				SetSprintSpeed();
+			}
+		}
+		else if (bSprint)
+		{
+			SetSprintSpeed();
+		}
+		else SetStandRunForwardSpeed();
+
+		//if (bSprint)
+		//{
+		//	if (bCrouch)
+		//		OnCrouch(FInputActionValue());
+
+		//	SetSprintSpeed();
+		//}
+		//else SetStandRunForwardSpeed();
 
 		// Forward
 		OwnerCharacter->AddMovementInput(FQuat(rot).GetForwardVector(), input.X);
 	}
+	else if (input.X == 0)
+	{
+		bForward = false;
+
+		OnReset(FInputActionValue());
+
+		SetStandRunRLwardSpeed();
+	}
 	else
 	{
-		SetMoveBackwardSpeed();
+		bForward = false;
+
+		if (bCrouch)
+			SetCrouchWalkBackwardSpeed();
+		else SetStandRunBackwardSpeed();
 
 		// back
 		OwnerCharacter->AddMovementInput(FQuat(rot).GetForwardVector(), input.X);
 	}
+
+	// Right Or Left
+	OwnerCharacter->AddMovementInput(FQuat(rot).GetRightVector(), input.Y);
 	
-	if (input.Y > 0)
-	{
-		if (input.X == 0)
-			SetMoveRLSpeed();
+	//if (input.Y > 0)
+	//{
+	//	if (input.X == 0)
+	//		SetStandRunRLwardSpeed();
 
-		// Right
-		OwnerCharacter->AddMovementInput(FQuat(rot).GetRightVector(), input.Y);
-	}
-	else
-	{
-		if (input.X == 0)
-			SetMoveRLSpeed();
+	//	// Right
+	//	OwnerCharacter->AddMovementInput(FQuat(rot).GetRightVector(), input.Y);
+	//}
+	//else
+	//{
+	//	if (input.X == 0)
+	//		SetStandRunRLwardSpeed();
 
-		// Left
-		OwnerCharacter->AddMovementInput(FQuat(rot).GetRightVector(), input.Y);
-	}
+	//	// Left
+	//	OwnerCharacter->AddMovementInput(FQuat(rot).GetRightVector(), input.Y);
+	//}
 
 }
 
@@ -131,6 +171,8 @@ void UCMovementComponent::OnVerticalLook(const FInputActionValue& InVal)
 void UCMovementComponent::OnSprint(const FInputActionValue& InVal)
 {
 	bSprint = true;
+
+	CHelpers::GetComponent<UCWeaponComponent>(OwnerCharacter)->SubAction_Released();
 
 }
 
@@ -177,33 +219,45 @@ void UCMovementComponent::SetSpeed(ESpeedType InType)
 
 }
 
-void UCMovementComponent::SetCrouchSpeed()
+void UCMovementComponent::SetStandWalkSpeed()
 {
-	SetSpeed(ESpeedType::CROUCH);
+	SetSpeed(ESpeedType::STAND_WALK);
 
 }
 
-void UCMovementComponent::SetWalkSpeed()
+void UCMovementComponent::SetStandRunForwardSpeed()
 {
-	SetSpeed(ESpeedType::WALK);
+	SetSpeed(ESpeedType::STAND_RUN_FWD);
 
 }
 
-void UCMovementComponent::SetMoveForwardSpeed()
+void UCMovementComponent::SetStandRunBackwardSpeed()
 {
-	SetSpeed(ESpeedType::MOVE_FWD);
+	SetSpeed(ESpeedType::STAND_RUN_BWD);
 
 }
 
-void UCMovementComponent::SetMoveBackwardSpeed()
+void UCMovementComponent::SetStandRunRLwardSpeed()
 {
-	SetSpeed(ESpeedType::MOVE_BWD);
+	SetSpeed(ESpeedType::STAND_RUN_RLWD);
 
 }
 
-void UCMovementComponent::SetMoveRLSpeed()
+void UCMovementComponent::SetCrouchWalkForwardSpeed()
 {
-	SetSpeed(ESpeedType::MOVE_RLWD);
+	SetSpeed(ESpeedType::CROUCH_WALK_FWD);
+	
+}
+
+void UCMovementComponent::SetCrouchWalkBackwardSpeed()
+{
+	SetSpeed(ESpeedType::CROUCH_WALK_BWD);
+
+}
+
+void UCMovementComponent::SetCrouchWalkRLwardSpeed()
+{
+	SetSpeed(ESpeedType::CROUCH_WALK_RLWD);
 
 }
 

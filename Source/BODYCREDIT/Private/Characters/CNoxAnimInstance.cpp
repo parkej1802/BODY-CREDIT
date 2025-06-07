@@ -34,6 +34,8 @@ void UCNoxAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		PrevRotation = UKismetMathLibrary::RInterpTo(PrevRotation, delta, DeltaSeconds, 25);
 		Direction = PrevRotation.Yaw;
 
+		bForward = CHelpers::GetComponent<UCMovementComponent>(OwnerCharacter)->IsForward();
+
 		bSprint = CHelpers::GetComponent<UCMovementComponent>(OwnerCharacter)->IsSprint();
 
 		bCrouch = CHelpers::GetComponent<UCMovementComponent>(OwnerCharacter)->IsCrouch();
