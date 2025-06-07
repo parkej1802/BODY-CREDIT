@@ -12,7 +12,7 @@ CCombatState_MEMORY::CCombatState_MEMORY()
 	CombatSubStrategies.Add(ECombatState::WavePulse, MakeShared<CCombat_WavePulseState_MEMORY>());
 }
 
-void CCombatState_MEMORY::Execute(class ACNox_EBase* Owner, class UCFSMComponent* FSMComp)
+void CCombatState_MEMORY::Execute(ACNox_EBase* Owner, UCFSMComponent* FSMComp)
 {
 	ECombatState SubState = FSMComp->GetCombatState();
 

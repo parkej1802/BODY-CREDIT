@@ -8,6 +8,9 @@
  */
 class BODYCREDIT_API CCombat_BeamState_MEMORY : public ICEnemyStateStrategy
 {
+private:
+	bool bFired = false;
+
 public:
-	virtual void Execute(class ACNox_EBase* Owner, class UCFSMComponent* FSMComp) override;
+	virtual void Execute(ACNox_EBase* Owner, UCFSMComponent* FSMComp) override;
 };

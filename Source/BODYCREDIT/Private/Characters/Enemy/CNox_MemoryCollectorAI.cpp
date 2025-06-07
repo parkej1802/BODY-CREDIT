@@ -104,16 +104,16 @@ void ACNox_MemoryCollectorAI::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// if (bRotateToTarget)
-	// {
-	// 	FVector TargetLoc = BehaviorComp->GetTarget()->GetActorLocation();
-	// 	float newYaw = (TargetLoc - GetActorLocation()).GetSafeNormal().Rotation().Yaw;
-	// 	FRotator TargetRot = FRotator(0, newYaw, 0);
-	//
-	// 	// 보간
-	// 	FRotator NewRot = FMath::RInterpTo(GetActorRotation(), TargetRot, DeltaTime, 5.f);
-	// 	SetActorRotation(NewRot);
-	// }
+	if (bRotateToTarget)
+	{
+		FVector TargetLoc = Target->GetActorLocation();
+		float newYaw = (TargetLoc - GetActorLocation()).GetSafeNormal().Rotation().Yaw;
+		FRotator TargetRot = FRotator(0, newYaw, 0);
+	
+		// 보간
+		FRotator NewRot = FMath::RInterpTo(GetActorRotation(), TargetRot, DeltaTime, 5.f);
+		SetActorRotation(NewRot);
+	}
 }
 
 void ACNox_MemoryCollectorAI::SetPerceptionInfo()
@@ -290,14 +290,14 @@ bool ACNox_MemoryCollectorAI::IsPlayBeam()
 
 void ACNox_MemoryCollectorAI::BeamAttack()
 {
-	// Beam->SetBeamActive(true, BehaviorComp->GetTarget());
+	Beam->SetBeamActive(true, Target);
 	bRotateToTarget = true;
 }
 
 void ACNox_MemoryCollectorAI::BeamAttackEnd()
 {
 	EnemyAnim->StopBeamAttack();
-	// Beam->SetBeamActive(false, BehaviorComp->GetTarget());
+	Beam->SetBeamActive(false, Target);
 	bRotateToTarget = false;
 }
 
@@ -346,7 +346,7 @@ void ACNox_MemoryCollectorAI::StartRangeAttack(bool bIsRight)
 	SpawnTransform.SetScale3D(SpawnScale);
 
 	auto* PoolObj = RangeProjectileArray.Pop();
-	// PoolObj->InitializeProjectile(SpawnTransform.GetLocation(), BehaviorComp->GetTarget());
+	PoolObj->InitializeProjectile(SpawnTransform.GetLocation(), Target);
 	PoolObj->SetActorTransform(SpawnTransform);
 	PoolObj->SetActorEnableCollision(true);
 	PoolObj->SetActorHiddenInGame(false);
