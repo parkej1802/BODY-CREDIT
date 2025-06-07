@@ -130,9 +130,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void MakeMemoryPiece();
 
+	// Looting
+public: 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UAC_LootingInventoryComponent* LootableInventoryComp;
-
-
+	
 	UItemObject* CreateItemFromData(const FItemSaveData& Data);
+
+public: // Flash Bang
+	void ReactFlashBang();
 };
