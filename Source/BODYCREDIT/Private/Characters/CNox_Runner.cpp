@@ -17,10 +17,6 @@
 
 #include "Data/CMemoryData.h"
 #include "Inventory/AC_EquipComponent.h"
-#include "Perception/AIPerceptionStimuliSourceComponent.h"
-#include "Perception/AISense_Damage.h"
-#include "Perception/AISense_Hearing.h"
-#include "Perception/AISense_Sight.h"
 #include "Session/NetGameInstance.h"
 #include "GameState_BodyCredit.h"
 #include "Inventory/AC_MarketComponent.h"
