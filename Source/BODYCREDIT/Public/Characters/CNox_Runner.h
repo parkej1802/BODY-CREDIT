@@ -99,7 +99,7 @@ private:
 /**
  *	HP Component - LHJ (2025.05.07)
  */
-private:
+public:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UCNoxHPComponent* HPComp;
 

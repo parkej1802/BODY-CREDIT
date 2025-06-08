@@ -17,6 +17,8 @@
 #include "Session/NetGameInstance.h"
 #include "Components/SceneCaptureComponent2D.h"
 #include "Characters/CNox_Controller.h"
+#include "Components/CNoxHPComponent.h"
+#include "Components/TextBlock.h"
 
 void ULobbyWidget_WorkShop::NativeConstruct()
 {
@@ -209,6 +211,29 @@ bool ULobbyWidget_WorkShop::NativeOnDrop(const FGeometry& InGeometry, const FDra
 void ULobbyWidget_WorkShop::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
     Super::NativeTick(MyGeometry, InDeltaTime);
+
+    if (PlayerCharacter->EquipComp->IsStatChanged) 
+    {
+        PlayerCharacter->EquipComp->IsStatChanged = false;
+        PlayerStatChange();
+    }
 }
 
+void ULobbyWidget_WorkShop::PlayerStatChange()
+{
+    float Power = PlayerCharacter->HPComp->Strength;
+    float Health = PlayerCharacter->HPComp->Health;
+    float Defense = PlayerCharacter->HPComp->Defense;
+    float MovementSpeed = PlayerCharacter->HPComp->MovementSpeed;
+    float Weight = PlayerCharacter->HPComp->Weight;
+    float Stamina = PlayerCharacter->HPComp->Stamina;
+    float Humanity = PlayerCharacter->HPComp->Humanity;
 
+    Text_Power->SetText(FText::AsNumber(Power));
+    Text_Health->SetText(FText::AsNumber(Health));
+    Text_Speed->SetText(FText::AsNumber(MovementSpeed));
+    Text_Weight->SetText(FText::AsNumber(Weight));
+    Text_Energy->SetText(FText::AsNumber(Stamina));
+    Text_Humanity->SetText(FText::AsNumber(Humanity));
+
+}

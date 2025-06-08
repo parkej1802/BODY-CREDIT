@@ -41,6 +41,8 @@ void AGameState_BodyCredit::SpawnItemFromActor(UItemObject* ItemObject, AActor* 
 	}*/
 
 	AItem_Base* ItemActor = Cast<AItem_Base>(ItemObject->ItemActorOwner.Get());
+	ItemObject->ItemActorOwner = ItemActor;
+	ItemActor->ItemObject = ItemObject;
 
 	if (ItemActor)
 	{

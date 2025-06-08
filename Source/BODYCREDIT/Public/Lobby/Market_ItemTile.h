@@ -24,6 +24,12 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UButton* Button_BuyItem;
 
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* Text_Price;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* Text_Name;
+
 	UFUNCTION()
 	void OnBuyItemClicked();
 

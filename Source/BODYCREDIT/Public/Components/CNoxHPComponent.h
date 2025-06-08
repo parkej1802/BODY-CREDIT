@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -24,7 +24,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
-protected:
+public:
 	/**
 	*	Status Property - LHJ (2025.05.07)
 	*/
@@ -43,6 +43,21 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Status")
 	float ShieldRegenTimeMax = 3.f;
 	float CurShieldRegenTime;
+
+	UPROPERTY(EditAnywhere, Category="Status")
+	float MovementSpeed = 600;
+
+	UPROPERTY(EditAnywhere, Category="Status")
+	float Strength = 50.f;
+
+	UPROPERTY(EditAnywhere, Category="Status")
+	float Weight = 60.f;
+
+	UPROPERTY(EditAnywhere, Category="Status")
+	float Stamina = 100.f;
+
+	UPROPERTY(EditAnywhere, Category="Status")
+	float Humanity = 100.f;
 
 public:
 	/**

@@ -10,6 +10,8 @@
 #include "Characters/CNox_Runner.h"
 #include "Inventory/AC_InventoryComponent.h"
 #include "Characters/CNox_Controller.h"
+#include "Components/TextBlock.h"
+
 
 void UMarket_ItemTile::NativeConstruct()
 {
@@ -27,6 +29,9 @@ void UMarket_ItemTile::NativeConstruct()
 	PlayerCharacter = Cast<ACNox_Runner>(Pawn);
 
 	InventoryComp = PlayerCharacter->InventoryComp;
+
+	Text_Name->SetText(FText::FromName(ItemData.ItemName));
+	Text_Price->SetText(FText::AsNumber(ItemData.Price));
 }
 
 void UMarket_ItemTile::OnBuyItemClicked()
