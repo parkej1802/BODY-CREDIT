@@ -37,12 +37,13 @@ ACNox_MemoryCollectorAI::ACNox_MemoryCollectorAI()
 		CHelpers::GetClass<ACWavePulse>(&WavePulseOrgCls,
 		                                TEXT("/Game/Characters/Enemy/AttackActor/BP_WavePulse.BP_WavePulse_C"));
 		CHelpers::GetClass<ACRangeProjectile>(&RangeProjectileCls,
-		                                      TEXT("/Game/Characters/Enemy/AttackActor/BP_RangeProjectile.BP_RangeProjectile_C"));
+		                                      TEXT(
+			                                      "/Game/Characters/Enemy/AttackActor/BP_RangeProjectile.BP_RangeProjectile_C"));
 	}
 
 	{
 		ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClass(
-		   TEXT("/Game/Characters/Enemy/Anim/MemoryAnim/ABP_MemoryAnim.ABP_MemoryAnim_C"));
+			TEXT("/Game/Characters/Enemy/Anim/MemoryAnim/ABP_MemoryAnim.ABP_MemoryAnim_C"));
 		if (AnimInstanceClass.Succeeded()) GetMesh()->SetAnimInstanceClass(AnimInstanceClass.Class);
 	}
 
@@ -60,17 +61,17 @@ void ACNox_MemoryCollectorAI::BeginPlay()
 
 	{
 		CHelpers::GetAssetDynamic(&(EnemyAnim->Attack1Montage),
-								 TEXT("/Game/Assets/MemoryCollectorAnim/AM_Attack1.AM_Attack1"));
+		                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_Attack1.AM_Attack1"));
 		CHelpers::GetAssetDynamic(&(EnemyAnim->Attack2Montage),
-								  TEXT("/Game/Assets/MemoryCollectorAnim/AM_Attack2.AM_Attack2"));
+		                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_Attack2.AM_Attack2"));
 		CHelpers::GetAssetDynamic(&(EnemyAnim->Attack3Montage),
-								  TEXT("/Game/Assets/MemoryCollectorAnim/AM_Attack3.AM_Attack3"));
+		                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_Attack3.AM_Attack3"));
 		CHelpers::GetAssetDynamic(&(EnemyAnim->Attack4Montage),
-								  TEXT("/Game/Assets/MemoryCollectorAnim/AM_Attack4.AM_Attack4"));
+		                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_Attack4.AM_Attack4"));
 		CHelpers::GetAssetDynamic(&(EnemyAnim->BeamMontage),
-								  TEXT("/Game/Assets/MemoryCollectorAnim/AM_Beam.AM_Beam"));
+		                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_Beam.AM_Beam"));
 		CHelpers::GetAssetDynamic(&(EnemyAnim->WavePulseMontage),
-								  TEXT("/Game/Assets/MemoryCollectorAnim/AM_WavePulse.AM_WavePulse"));
+		                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_WavePulse.AM_WavePulse"));
 
 		// 테스트 애니메이션
 		CHelpers::GetAssetDynamic(&(EnemyAnim->HitMontage), TEXT("/Game/Assets/MedicAnim/DamageAnim/AM_Hit.AM_Hit"));
@@ -141,7 +142,7 @@ void ACNox_MemoryCollectorAI::SetPerceptionInfo()
 }
 
 float ACNox_MemoryCollectorAI::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
-	AController* EventInstigator, AActor* DamageCauser)
+                                          AController* EventInstigator, AActor* DamageCauser)
 {
 	if (!GetTarget())
 		if (ACNox* player = Cast<ACNox>(DamageCauser->GetOwner())) SetTarget(player);
@@ -185,25 +186,23 @@ void ACNox_MemoryCollectorAI::GetNewMovementSpeed(const EEnemyMovementSpeed& InM
 
 void ACNox_MemoryCollectorAI::RegisterMemory(const FMemoryFragment& InNewMemory)
 {
-	if (!HasAuthority()) return;
-
 	// TTL 체크: 오래된 기억 제거
-	const float Now = GetWorld()->GetTimeSeconds();
-	MemoryQueue.RemoveAll([Now, this](const FMemoryFragment& Mem)
-	{
-		return (Now - Mem.TimeStamp) > MemoryExpireTime;
-	});
+	// const float Now = GetWorld()->GetTimeSeconds();
+	// MemoryQueue.RemoveAll([Now, this](const FMemoryFragment& Mem)
+	// {
+	// 	return (Now - Mem.TimeStamp) > MemoryExpireTime;
+	// });
 
 	// TTL 삭제 후 현재 기억이 포함됐는지 검사
-	if (!MemoryQueue.Contains(CurrentTargetMemory))
-	{
-		CurrentTargetMemory = FMemoryFragment(); // 초기화
-		// // 또는 다음 우선순위 기억으로 갱신
-		// if (MemoryQueue.Num() > 0)
-		// {
-		// 	CurrentTargetMemory = MemoryQueue[0];
-		// }
-	}
+	// if (!MemoryQueue.Contains(CurrentTargetMemory))
+	// {
+	// 	CurrentTargetMemory = FMemoryFragment(); // 초기화
+	// 	// // 또는 다음 우선순위 기억으로 갱신
+	// 	// if (MemoryQueue.Num() > 0)
+	// 	// {
+	// 	// 	CurrentTargetMemory = MemoryQueue[0];
+	// 	// }
+	// }
 
 	// 중복 방지: 동일 위치/플레이어 기억은 덮어쓰기 또는 무시
 	for (FMemoryFragment& Mem : MemoryQueue)
@@ -232,14 +231,14 @@ void ACNox_MemoryCollectorAI::RegisterMemory(const FMemoryFragment& InNewMemory)
 	MemoryQueue.Sort(); // operator< 로 우선순위 내림차순 정렬
 
 	// 가장 우선순위가 높은 기억으로 현재 목표 갱신
-	if (MemoryQueue.Num() > 0 && MemoryQueue[0].CalculatedPriority > CurrentTargetMemory.CalculatedPriority)
-	{
-		CurrentTargetMemory = MemoryQueue[0];
-		// Blackboard에 등록된 위치 갱신 등 추가 가능
-	}
+	// if (MemoryQueue.Num() > 0 && MemoryQueue[0].CalculatedPriority > CurrentTargetMemory.CalculatedPriority)
+	// {
+	// 	CurrentTargetMemory = MemoryQueue[0];
+	// 	// Blackboard에 등록된 위치 갱신 등 추가 가능
+	// }
 }
 
-void ACNox_MemoryCollectorAI::EvaluateMemory()
+bool ACNox_MemoryCollectorAI::EvaluateMemory()
 {
 	float Now = GetWorld()->GetTimeSeconds();
 	float BestScore = -1.0f;
@@ -287,15 +286,9 @@ void ACNox_MemoryCollectorAI::EvaluateMemory()
 		}
 	}
 
-	// if (BestMemory)
-	// {
-	// 	BehaviorComp->SetMemoryTarget(*BestMemory);
-	// 	BehaviorComp->SetHasMemoryTarget(true);
-	// }
-	// else
-	// {
-	// 	BehaviorComp->SetHasMemoryTarget(false);
-	// }
+	if (BestMemory) CurrentTargetMemory = *BestMemory;
+	
+	return BestMemory ? true : false;
 }
 
 const FMemoryFragment ACNox_MemoryCollectorAI::GetMemoryTarget()
