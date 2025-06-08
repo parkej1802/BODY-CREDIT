@@ -6,34 +6,25 @@
 #include "Utilities/CLog.h"
 #include "Global.h"
 
-void UCNoxEnemy_Animinstance::NativeInitializeAnimation()
-{
-	Super::NativeInitializeAnimation();
-}
-
-void UCNoxEnemy_Animinstance::NativeBeginPlay()
-{
-	Super::NativeBeginPlay();
-	this->OnMontageEnded.AddDynamic(this, &UCNoxEnemy_Animinstance::OnAnimMontageEnded);
-	IdleIdx = FMath::RandRange(0, 8);
-}
-
+#pragma region Update Animation
 void UCNoxEnemy_Animinstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
 	if (!OwnerEnemy) return;
 
-	FVector velo = OwnerEnemy->GetVelocity();
-	Speed = velo.Size();
+	{
+		FVector velo = OwnerEnemy->GetVelocity();
+		Speed = velo.Size();
 
-	velo.Z = 0;
-	velo.Normalize();
-	const float Dot = FVector::DotProduct(OwnerEnemy->GetActorForwardVector(), velo);
-	const float CrossZ = FVector::CrossProduct(OwnerEnemy->GetActorForwardVector(), velo).Z;
-	DeltaYaw=FMath::RadiansToDegrees( FMath::Atan2( CrossZ, Dot ) );
-
-	if (loopCheck)
+		velo.Z = 0;
+		velo.Normalize();
+		const float Dot = FVector::DotProduct(OwnerEnemy->GetActorForwardVector(), velo);
+		const float CrossZ = FVector::CrossProduct(OwnerEnemy->GetActorForwardVector(), velo).Z;
+		DeltaYaw=FMath::RadiansToDegrees( FMath::Atan2( CrossZ, Dot ) );
+	}
+	
+	if (loopCheck) // laser Beam (Medic)
 	{
 		float Elapsed = GetWorld()->GetTimeSeconds() - LoopStartTime;
 		CLog::Print(FString::Printf(TEXT("Elapsed : %.2f"), Elapsed));
@@ -44,74 +35,9 @@ void UCNoxEnemy_Animinstance::NativeUpdateAnimation(float DeltaSeconds)
 		}
 	}
 }
+#pragma endregion
 
-void UCNoxEnemy_Animinstance::OnAnimMontageEnded(UAnimMontage* Montage, bool bInterrupted)
-{
-	// if (Montage == GrenadeMontage)
-	// 	OwnerEnemy->SetGrenadeEnded(true);
-	// else if (Montage == ShieldMontage)
-	// 	BehaviorComponent->SetShieldEnded(true);
-}
-
-void UCNoxEnemy_Animinstance::AnimNotify_EnableRAttack()
-{
-	OwnerEnemy->AttackCollision(true, true);
-}
-
-void UCNoxEnemy_Animinstance::AnimNotify_EnableLAttack()
-{
-	OwnerEnemy->AttackCollision(true, false);
-}
-
-void UCNoxEnemy_Animinstance::AnimNotify_EndAttack()
-{
-	OwnerEnemy->AttackCollision(false);
-}
-
-void UCNoxEnemy_Animinstance::AnimNotify_PlayIdleMontage()
-{
-	OwnerEnemy->PlayAnimMontage(IdleMontage, 1.0f);
-}
-
-void UCNoxEnemy_Animinstance::AnimNotify_DistanceToPlayer()
-{
-	if (!OwnerEnemy->IsPlayerInDistance())
-		Montage_Stop(0.25f, AttackMontage);
-}
-
-void UCNoxEnemy_Animinstance::PlayGrenadeMontage()
-{
-	OwnerEnemy->PlayAnimMontage(GrenadeMontage, 1.0f);
-}
-
-bool UCNoxEnemy_Animinstance::IsPlayingGrenade() const
-{
-	return Montage_IsPlaying(GrenadeMontage);
-}
-
-void UCNoxEnemy_Animinstance::PlayShieldMontage(const bool bInShieldStart)
-{
-	// CLog::Log(FString::Printf(TEXT("bUsingShield: %d"), bInShieldStart));
-
-	// BehaviorComponent->SetShieldEnded(false);
-
-	if (bInShieldStart)
-		OwnerEnemy->PlayAnimMontage(ShieldMontage, 1.0f, ShieldStartSection);
-	else
-		OwnerEnemy->PlayAnimMontage(ShieldMontage, -.65f, ShieldEndSection);
-}
-
-void UCNoxEnemy_Animinstance::JumpShieldMontage()
-{
-	if (ShieldMontage && Montage_IsPlaying(ShieldMontage))
-		Montage_JumpToSection(FName("ShieldEnd"), ShieldMontage);
-}
-
-bool UCNoxEnemy_Animinstance::IsShielding() const
-{
-	return Montage_IsPlaying(ShieldMontage);
-}
-
+#pragma region Attacking
 void UCNoxEnemy_Animinstance::PlayAttackMontage()
 {
 	if (OwnerEnemy->IsA(ACNox_MedicAndroid::StaticClass()) ||
@@ -148,27 +74,66 @@ bool UCNoxEnemy_Animinstance::IsAttacking() const
 	return false;
 }
 
-void UCNoxEnemy_Animinstance::PlayHitMontage(const int32 sectionIdx)
+void UCNoxEnemy_Animinstance::AnimNotify_EnableRAttack()
 {
-	OwnerEnemy->PlayAnimMontage(HitMontage, 1, FName(FString::FromInt(sectionIdx)));
+	OwnerEnemy->AttackCollision(true, true);
 }
 
-bool UCNoxEnemy_Animinstance::IsHitting() const
+void UCNoxEnemy_Animinstance::AnimNotify_EnableLAttack()
 {
-	return Montage_IsPlaying(HitMontage);
+	OwnerEnemy->AttackCollision(true, false);
 }
 
-void UCNoxEnemy_Animinstance::PlayDieMontage(const int32 sectionIdx)
+void UCNoxEnemy_Animinstance::AnimNotify_EndAttack()
 {
-	if (DieMontage) OwnerEnemy->PlayAnimMontage(DieMontage, 1.0f);
+	OwnerEnemy->AttackCollision(false);
+}
+#pragma endregion
+
+#pragma region Grenade
+void UCNoxEnemy_Animinstance::PlayGrenadeMontage() const
+{
+	OwnerEnemy->PlayAnimMontage(GrenadeMontage, 1.0f);
 }
 
-void UCNoxEnemy_Animinstance::PlayBeamAttack()
+bool UCNoxEnemy_Animinstance::IsPlayingGrenade() const
+{
+	return Montage_IsPlaying(GrenadeMontage);
+}
+
+void UCNoxEnemy_Animinstance::AnimNotify_Grenade() const
+{
+	Cast<ACNox_MedicAndroid>(OwnerEnemy)->LaunchElectricGrenade();
+}
+#pragma endregion
+
+#pragma region Heal
+void UCNoxEnemy_Animinstance::PlayShieldMontage(const bool bInShieldStart) const
+{
+	if (bInShieldStart)
+		OwnerEnemy->PlayAnimMontage(ShieldMontage, 1.0f, ShieldStartSection);
+	else
+		OwnerEnemy->PlayAnimMontage(ShieldMontage, -.65f, ShieldEndSection);
+}
+
+bool UCNoxEnemy_Animinstance::IsShielding() const
+{
+	return Montage_IsPlaying(ShieldMontage);
+}
+#pragma endregion
+
+#pragma region Beam
+void UCNoxEnemy_Animinstance::PlayBeamAttack() const
 {
 	OwnerEnemy->PlayAnimMontage(BeamMontage, 1.0f);
 }
 
-void UCNoxEnemy_Animinstance::StopBeamAttack()
+void UCNoxEnemy_Animinstance::AnimNotify_BeamStart() const
+{
+	Cast<ACNox_MemoryCollectorAI>(OwnerEnemy)->BeamAttack();
+}
+
+void UCNoxEnemy_Animinstance::StopBeamAttack() const
 {
 	OwnerEnemy->StopAnimMontage(BeamMontage);
 }
@@ -178,32 +143,31 @@ bool UCNoxEnemy_Animinstance::IsBeamAttacking() const
 	return Montage_IsPlaying(BeamMontage);
 }
 
-void UCNoxEnemy_Animinstance::AnimNotify_BeamStart()
-{
-	Cast<ACNox_MemoryCollectorAI>(OwnerEnemy)->BeamAttack();
-}
-
 void UCNoxEnemy_Animinstance::AnimNotify_UsingBeamTimeChecker()
 {
 	loopCheck = true;
 	LoopStartTime = GetWorld()->GetTimeSeconds();
 }
+#pragma endregion
 
-void UCNoxEnemy_Animinstance::PlayWavePulse()
+#pragma region Wave Pulse
+void UCNoxEnemy_Animinstance::PlayWavePulse() const
 {
 	OwnerEnemy->PlayAnimMontage(WavePulseMontage, 1.0f);
+}
+
+void UCNoxEnemy_Animinstance::AnimNotify_WavePulseStart() const
+{
+	Cast<ACNox_MemoryCollectorAI>(OwnerEnemy)->PulseWaveAttack();
 }
 
 bool UCNoxEnemy_Animinstance::IsWavePulseAttacking() const
 {
 	return Montage_IsPlaying(WavePulseMontage);
 }
+#pragma endregion
 
-void UCNoxEnemy_Animinstance::AnimNotify_WavePulseStart()
-{
-	Cast<ACNox_MemoryCollectorAI>(OwnerEnemy)->PulseWaveAttack();
-}
-
+#pragma region Range Attack (Memory Collector)
 void UCNoxEnemy_Animinstance::AnimNotify_SaveAttack()
 {
 	UAnimMontage* tmpMontage = nullptr;
@@ -251,8 +215,23 @@ void UCNoxEnemy_Animinstance::AnimNotify_RangeAttack()
 		Cast<ACNox_MemoryCollectorAI>(OwnerEnemy)->StartRangeAttack(true);
 	}
 }
+#pragma endregion
 
-void UCNoxEnemy_Animinstance::AnimNotify_Grenade()
+#pragma region Hit
+void UCNoxEnemy_Animinstance::PlayHitMontage(const int32 sectionIdx)
 {
-	Cast<ACNox_MedicAndroid>(OwnerEnemy)->LaunchElectricGrenade();
+	OwnerEnemy->PlayAnimMontage(HitMontage, 1, FName(FString::FromInt(sectionIdx)));
 }
+
+bool UCNoxEnemy_Animinstance::IsHitting() const
+{
+	return Montage_IsPlaying(HitMontage);
+}
+#pragma endregion
+
+#pragma region Die
+void UCNoxEnemy_Animinstance::PlayDieMontage(const int32 sectionIdx)
+{
+	if (DieMontage) OwnerEnemy->PlayAnimMontage(DieMontage, 1.0f);
+}
+#pragma endregion

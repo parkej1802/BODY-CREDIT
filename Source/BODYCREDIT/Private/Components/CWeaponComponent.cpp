@@ -135,9 +135,17 @@ void UCWeaponComponent::SubAction_Pressed()
 {
 	if (IsBowMode())
 	{
-		CheckTrue(CHelpers::GetComponent<UCMovementComponent>(OwnerCharacter)->IsSprint());
-
-		CHelpers::GetComponent<UCZoomComponent>(OwnerCharacter)->SetComponentTickEnabled(false);
+		if (UCMovementComponent* movement = CHelpers::GetComponent<UCMovementComponent>(OwnerCharacter))
+		{
+			if (movement->IsSprint())
+			{
+				if (movement->IsSlide())
+				{
+					CHelpers::GetComponent<UCZoomComponent>(OwnerCharacter)->SetComponentTickEnabled(false);
+				}
+				else return;
+			}
+		}
 	}
 
 	if (!!GetSubAction())

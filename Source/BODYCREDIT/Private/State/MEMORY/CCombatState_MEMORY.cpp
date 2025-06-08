@@ -1,5 +1,6 @@
 #include "State/MEMORY/CCombatState_MEMORY.h"
 
+#include "Characters/Enemy/CNox_EBase.h"
 #include "Components/Enemy/CFSMComponent.h"
 #include "State/MEMORY/CCombat_BeamState_MEMORY.h"
 #include "State/MEMORY/CCombat_DefaultState_MEMORY.h"
@@ -20,4 +21,8 @@ void CCombatState_MEMORY::Execute(ACNox_EBase* Owner, UCFSMComponent* FSMComp)
 	{
 		CombatSubStrategies[SubState]->Execute(Owner, FSMComp);
 	}
+
+	Owner->UpdateSkillCoolDowns(ESkillCoolDown::Ranged, Owner->GetWorld()->GetDeltaSeconds());
+	Owner->UpdateSkillCoolDowns(ESkillCoolDown::Beam, Owner->GetWorld()->GetDeltaSeconds());
+	Owner->UpdateSkillCoolDowns(ESkillCoolDown::WavePulse, Owner->GetWorld()->GetDeltaSeconds());
 }

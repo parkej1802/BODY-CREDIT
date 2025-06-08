@@ -18,6 +18,8 @@
 #include "State/MEMORY/CHitState_MEMORY.h"
 #include "State/MEMORY/CIdleState_MEMORY.h"
 #include "State/MEMORY/CMemoryHuntState_MEMORY.h"
+#include "State/MEMORY/CMemoryMoveStrategy.h"
+#include "State/MEMORY/CRandomMoveStrategy_Memory.h"
 #include "State/MEMORY/CSenseState_MEMORY.h"
 #include "State/ZERO/CCombatState_ZERO.h"
 #include "State/ZERO/CConditionalMoveStrategy_ZERO.h"
@@ -133,12 +135,18 @@ TMap<EEnemyState, TSharedPtr<ICEnemyStateStrategy>> UCFSMComponent::CreateStrate
 		break;
 	case EEnemyType::MemoryCollector:
 		{
-			Result.Add(EEnemyState::IDLE, MakeShared<CIdleState_MEMORY>());
+			{
+				TUniquePtr<CRandomMoveStrategy_Memory> MoveStrategy = MakeUnique<CRandomMoveStrategy_Memory>();
+				Result.Add(EEnemyState::IDLE, MakeShared<CIdleState_MEMORY>(MoveTemp(MoveStrategy)));
+			}
 			{
 				TUniquePtr<CConditionalMoveStrategy_MEMORY> ConditionalMove = MakeUnique<CConditionalMoveStrategy_MEMORY>();
 				Result.Add(EEnemyState::Sense, MakeShared<CSenseState_MEMORY>(MoveTemp(ConditionalMove)));
 			}
-			Result.Add(EEnemyState::MemoryHunt, MakeShared<CMemoryHuntState_MEMORY>());
+			{
+				TUniquePtr<CMemoryMoveStrategy> MemoryMove = MakeUnique<CMemoryMoveStrategy>();
+				Result.Add(EEnemyState::MemoryHunt, MakeShared<CMemoryHuntState_MEMORY>(MoveTemp(MemoryMove)));
+			}
 			Result.Add(EEnemyState::Combat, MakeShared<CCombatState_MEMORY>());
 			Result.Add(EEnemyState::Hit, MakeShared<CHitState_MEMORY>());
 			Result.Add(EEnemyState::Die, MakeShared<CDieState_MEMORY>());

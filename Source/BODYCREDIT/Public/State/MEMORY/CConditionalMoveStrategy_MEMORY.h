@@ -3,8 +3,8 @@
 #include "CoreMinimal.h"
 #include "Interfaces/Enemy/CMoveStrategy.h"
 
-enum class ECombatState : uint8;
 enum class ESkillCoolDown;
+enum class ECombatState : uint8;
 class ACNox_EBase;
 
 struct FEnemySkill
@@ -12,9 +12,11 @@ struct FEnemySkill
 private:
 	float SkillWeight;
 	ESkillCoolDown Skill;
-	
+
 public:
-	FEnemySkill(ESkillCoolDown InSkill, float InWeight = 0.f):Skill(InSkill), SkillWeight(InWeight) {}
+	FEnemySkill(ESkillCoolDown InSkill, float InWeight = 0.f): Skill(InSkill), SkillWeight(InWeight)
+	{ }
+
 	ESkillCoolDown GetSkill() const { return Skill; }
 	float GetWeight() const { return SkillWeight; }
 };

@@ -1,7 +1,6 @@
 #include "Characters/Enemy/CNox_Zero.h"
 
 #include "EngineUtils.h"
-#include "Components/Enemy/CNox_BehaviorComponent.h"
 #include "Patrol/CPatrolRoute.h"
 #include "Global.h"
 #include "Characters/CNox_Runner.h"

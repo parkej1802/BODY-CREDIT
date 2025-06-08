@@ -5,6 +5,7 @@
 #include "Perception/AISenseConfig_Hearing.h"
 #include "Perception/AISenseConfig_Sight.h"
 
+#pragma region Init
 ACEnemyController::ACEnemyController()
 {
 	CHelpers::CreateActorComponent<UAIPerceptionComponent>(this, &Perception, "Perception");
@@ -18,15 +19,15 @@ ACEnemyController::ACEnemyController()
 	Perception->SetDominantSense(*Sight->GetSenseImplementation());
 }
 
-void ACEnemyController::BeginPlay()
+void ACEnemyController::OnPossess(APawn* InPawn)
 {
-	Super::BeginPlay();
-}
+	Super::OnPossess(InPawn);
 
-void ACEnemyController::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-	UpdateExpiredStimuli(DeltaSeconds);
+	EnemyBase = Cast<ACNox_EBase>(InPawn);
+	if (EnemyBase) SetGenericTeamId(EnemyBase->TeamID); // TeamID 설정
+
+	InitPerception(); // Perception Settings
+	Perception->OnTargetPerceptionInfoUpdated.AddDynamic(this, &ACEnemyController::OnAITargetPerceptionInfoUpdate);
 }
 
 void ACEnemyController::InitPerception()
@@ -48,25 +49,8 @@ void ACEnemyController::InitPerception()
 	Perception->RequestStimuliListenerUpdate();
 }
 
-void ACEnemyController::SetTargetPlayer(ACNox* InTargetPlayer)
-{
-	TargetPlayer = InTargetPlayer;
-}
-
-void ACEnemyController::OnPossess(APawn* InPawn)
-{
-	Super::OnPossess(InPawn);
-
-	EnemyBase = Cast<ACNox_EBase>(InPawn);
-	if (EnemyBase) SetGenericTeamId(EnemyBase->TeamID);	// TeamID 설정
-
-	InitPerception();	// Perception Settings
-	Perception->OnTargetPerceptionInfoUpdated.AddDynamic(this, &ACEnemyController::OnAITargetPerceptionInfoUpdate);
-}
-
 void ACEnemyController::OnAITargetPerceptionInfoUpdate(const FActorPerceptionUpdateInfo& UpdateInfo)
 {
-	
 	if (UpdateInfo.Stimulus.WasSuccessfullySensed())
 	{
 		if (TargetPlayer) return;
@@ -79,8 +63,9 @@ void ACEnemyController::OnAITargetPerceptionInfoUpdate(const FActorPerceptionUpd
 		if (TargetPlayer) OnDetectPlayer.ExecuteIfBound(TargetPlayer);
 	}
 }
+#pragma endregion
 
-// 가까운 플레이어 구하기 (멀티플레이 고려)
+#pragma region Get Near Player
 ACNox* ACEnemyController::GetNearTargetPlayer()
 {
 	ACNox* NearTarget = nullptr;
@@ -103,8 +88,24 @@ ACNox* ACEnemyController::GetNearTargetPlayer()
 	}
 	return NearTarget;
 }
+#pragma endregion
 
-// 타겟 잃어버리기
+#pragma region Tick
+void ACEnemyController::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	UpdateExpiredStimuli(DeltaSeconds);
+}
+#pragma endregion
+
+#pragma region Set Target
+void ACEnemyController::SetTargetPlayer(ACNox* InTargetPlayer)
+{
+	TargetPlayer = InTargetPlayer;
+}
+#pragma endregion
+
+#pragma region Target loss
 void ACEnemyController::UpdateExpiredStimuli(float DeltaTime)
 {
 	if (!TargetPlayer) return;
@@ -124,9 +125,12 @@ void ACEnemyController::UpdateExpiredStimuli(float DeltaTime)
 		StopMovement();
 	}
 }
+#pragma endregion
 
+#pragma region Stop Perception (Using Die)
 void ACEnemyController::PerceptionDeactive()
 {
 	StopMovement();
 	Perception->OnTargetPerceptionInfoUpdated.Clear();
 }
+#pragma endregion

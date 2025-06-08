@@ -40,6 +40,8 @@ void UCNoxAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 		bCrouch = CHelpers::GetComponent<UCMovementComponent>(OwnerCharacter)->IsCrouch();
 
+		bSlide = CHelpers::GetComponent<UCMovementComponent>(OwnerCharacter)->IsSlide();
+
 		// 캐릭터 점프 중인지
 		bFalling = OwnerCharacter->GetCharacterMovement()->IsFalling();
 
