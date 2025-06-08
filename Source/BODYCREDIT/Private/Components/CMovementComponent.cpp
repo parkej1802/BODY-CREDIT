@@ -294,7 +294,7 @@ void UCMovementComponent::OnSlide(const FInputActionValue& InVal)
 	//	OwnerCharacter->GetCharacterMovement()->AddImpulse(FQuat(rot).GetForwardVector() * OwnerCharacter->GetVelocity().Size2D(), true);
 	//}
 
-		// 슬라이딩 조건: 지면 + 달리기 중 + 이미 슬라이딩 중이 아님
+	// 슬라이딩 조건: 지면 + 달리기 중 + 이미 슬라이딩 중이 아님
 	if (bIsSliding || !OwnerCharacter->GetCharacterMovement()->IsMovingOnGround() || !bSprint)
 	{
 		return;
