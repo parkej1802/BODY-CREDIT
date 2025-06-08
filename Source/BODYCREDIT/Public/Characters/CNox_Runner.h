@@ -151,4 +151,11 @@ private: // ObserverComp
 public:
 	void RegisterAttack();
 	void RegisterLooting();
+
+public: // Card Key Check
+	UFUNCTION(BlueprintCallable)
+	bool CheckCardKey() const { return bHasCardKey; }
+	void SetDropCardKey(bool bDrop) { bHasCardKey = bDrop; }
+private:
+	bool bHasCardKey = false;
 };
