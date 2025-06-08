@@ -183,6 +183,8 @@ void UAC_InventoryComponent::ShowLootableInventory()
 		if (!HitActor) return;
 
 		AItem_Base* ItemActor = Cast<AItem_Base>(HitActor);
+
+
 		if (ItemActor) {
 			if (PlayerCharacter->EquipComp->EquippedItems[EPlayerPart::Backpack])
 			{

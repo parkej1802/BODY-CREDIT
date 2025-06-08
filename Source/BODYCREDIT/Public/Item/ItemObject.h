@@ -151,4 +151,7 @@ public:
 
 	UPROPERTY()
 	bool bIsUseFunction = false;
+
+	UPROPERTY()
+	bool bIsMenu = false;
 };

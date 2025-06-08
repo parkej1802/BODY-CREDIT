@@ -11,6 +11,9 @@
 #include "Inventory/AC_InventoryComponent.h"
 #include "Characters/CNox_Controller.h"
 #include "Components/TextBlock.h"
+#include "Session/NetGameInstance.h"
+#include "Lobby/LobbyWidget_InsufficientGold.h"
+#include "Lobby/LobbyWidget_Market.h"
 
 
 void UMarket_ItemTile::NativeConstruct()
@@ -32,10 +35,26 @@ void UMarket_ItemTile::NativeConstruct()
 
 	Text_Name->SetText(FText::FromName(ItemData.ItemName));
 	Text_Price->SetText(FText::AsNumber(ItemData.Price));
+
+	GI = Cast<UNetGameInstance>(GetGameInstance());
+
 }
 
 void UMarket_ItemTile::OnBuyItemClicked()
 {
+	if (ItemData.Price > GI->PlayerGold)
+	{
+		if (InsufficientFundWidget)
+		{
+			InsufficientFundUI = CreateWidget<ULobbyWidget_InsufficientGold>(this, InsufficientFundWidget);
+		}
+		if (InsufficientFundUI)
+		{
+			InsufficientFundUI->AddToViewport();
+		}
+		return;
+	}
+
     UItemObject* NewItemObject = NewObject<UItemObject>();
     NewItemObject->ItemData = ItemData;
 
@@ -44,6 +63,14 @@ void UMarket_ItemTile::OnBuyItemClicked()
     {
         GameState->SpawnItemPlayerInventory(NewItemObject, GetOwningPlayerPawn(), false);
     }
+
+	if (GI) {
+		int32 NewGold = GI->PlayerGold - ItemData.Price;
+		GI->SetPlayerGold(NewGold);
+		if (OwningMarket) {
+			OwningMarket->UpdatePlayerGoldText(NewGold);
+		}
+	}
 }
 
 bool UMarket_ItemTile::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)

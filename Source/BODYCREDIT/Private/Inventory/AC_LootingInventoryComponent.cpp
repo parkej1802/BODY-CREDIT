@@ -50,36 +50,69 @@ void UAC_LootingInventoryComponent::AddRandomItem()
 
 	TArray<FName> RowNames = GI->ItemDataTable->GetRowNames();
 
+	TArray<FName> CommonItems;
+	TArray<FName> RareItems;
+	TArray<FName> EpicItems;
+
 	for (const FName& RowName : RowNames)
 	{
-		if (ItemsAdded >= MaxItemsToAdd)
-			break;
+		FItemData* ItemData = GI->ItemDataTable->FindRow<FItemData>(RowName, TEXT("ClassifyRarity"));
+		if (!ItemData) continue;
 
-		FItemData* ItemData = GI->ItemDataTable->FindRow<FItemData>(RowName, TEXT("PreAddItem"));
-		if (!ItemData || !ItemData->ItemClass) continue;
-
-		float Chance = 0.f;
 		switch (ItemData->Rarity)
 		{
-		case EItemRarity::Common: Chance = 0.8f; break;
-		case EItemRarity::Rare:   Chance = 0.3f; break;
-		case EItemRarity::Epic:   Chance = 0.1f; break;
+		case EItemRarity::Common: CommonItems.Add(RowName); break;
+		case EItemRarity::Rare:   RareItems.Add(RowName);   break;
+		case EItemRarity::Epic:   EpicItems.Add(RowName);   break;
+		default: break;
+		}
+	}
+
+	while (ItemsAdded < MaxItemsToAdd)
+	{
+		float Roll = FMath::FRand();
+
+		TArray<FName>* SelectedArray = nullptr;
+
+		if (Roll <= 0.1f && EpicItems.Num() > 0)
+		{
+			SelectedArray = &EpicItems;
+		}
+		else if (Roll <= 0.4f && RareItems.Num() > 0)
+		{
+			SelectedArray = &RareItems;
+		}
+		else if (CommonItems.Num() > 0)
+		{
+			SelectedArray = &CommonItems;
 		}
 
-		if (FMath::FRand() <= Chance)
+		if (SelectedArray && SelectedArray->Num() > 0)
 		{
+			int32 Index = FMath::RandRange(0, SelectedArray->Num() - 1);
+			FName ChosenRow = (*SelectedArray)[Index];
+
+			FItemData* ItemData = GI->ItemDataTable->FindRow<FItemData>(ChosenRow, TEXT("LootSpawn"));
+			if (!ItemData || !ItemData->ItemClass) continue;
+
 			AItem_Base* TempItemBase = GetWorld()->SpawnActor<AItem_Base>(ItemData->ItemClass);
 			if (IsValid(TempItemBase) && IsValid(TempItemBase->ItemObject))
 			{
-				if (TryAddItem(TempItemBase->ItemObject)) {
+				if (TryAddItem(TempItemBase->ItemObject))
+				{
 					TempItemBase->SetActorHiddenInGame(true);
 					TempItemBase->SetActorEnableCollision(false);
 				}
-				else {
+				else
+				{
 					TempItemBase->Destroy();
 				}
-				ItemsAdded++;
 			}
+			ItemsAdded++;
+		}
+		else
+		{
+			break;
 		}
 	}
 }

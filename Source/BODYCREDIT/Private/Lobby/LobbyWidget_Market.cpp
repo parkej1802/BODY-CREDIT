@@ -17,6 +17,9 @@
 #include "Components/Image.h"
 #include "Inventory/Inventory_EquipmentTile.h"
 #include "Characters/CNox_Controller.h"
+#include "Session/NetGameInstance.h"
+#include "Components/TextBlock.h"
+#include "Lobby/LobbyWidget_SellItem.h"
 
 void ULobbyWidget_Market::NativeConstruct()
 {
@@ -62,6 +65,14 @@ void ULobbyWidget_Market::NativeConstruct()
         Button_SelectUtility->OnClicked.AddDynamic(this, &ThisClass::OnSelectUtilityClicked);
     }
 
+	GI = Cast<UNetGameInstance>(GetGameInstance());
+	if (GI) {
+		GI->MarketUI = this;
+		GI->OnGoldChanged.RemoveDynamic(this, &ULobbyWidget_Market::UpdatePlayerGoldText);
+		GI->OnGoldChanged.AddDynamic(this, &ULobbyWidget_Market::UpdatePlayerGoldText);
+		UpdatePlayerGoldText(GI->PlayerGold);
+	}
+
     APawn* Pawn = PC->GetPawn();
 
     PlayerCharacter = Cast<ACNox_Runner>(Pawn);
@@ -73,6 +84,8 @@ void ULobbyWidget_Market::NativeConstruct()
     InventoryGridWidget->PlayerController = PC;
 
     MarketComp = PlayerCharacter->MarketComp;
+
+	
 }
 
 void ULobbyWidget_Market::OnBackClicked()
@@ -84,7 +97,7 @@ void ULobbyWidget_Market::OnBackClicked()
         {
             LobbyWidget_Selection->AddToViewport();
 
-            this->RemoveFromParent();
+            RemoveFromParent();
         }
     }
 }
@@ -117,6 +130,7 @@ void ULobbyWidget_Market::OnSelectWeaponClicked()
 		UMarket_ItemTile* ItemWidget = CreateWidget<UMarket_ItemTile>(this, MarketItemWidget);
 		if (ItemWidget)
 		{
+			ItemWidget->OwningMarket = this;
             if (ItemWidget->Image_Item && Weapons[i].Thumbnail)
             {
                 FSlateBrush NewBrush;
@@ -181,6 +195,7 @@ void ULobbyWidget_Market::OnSelectHeadClicked()
 		UMarket_ItemTile* ItemWidget = CreateWidget<UMarket_ItemTile>(this, MarketItemWidget);
 		if (ItemWidget)
 		{
+			ItemWidget->OwningMarket = this;
 			if (ItemWidget->Image_Item && Weapons[i].Thumbnail)
 			{
 				FSlateBrush NewBrush;
@@ -245,6 +260,7 @@ void ULobbyWidget_Market::OnSelectBodyClicked()
 		UMarket_ItemTile* ItemWidget = CreateWidget<UMarket_ItemTile>(this, MarketItemWidget);
 		if (ItemWidget)
 		{
+			ItemWidget->OwningMarket = this;
 			if (ItemWidget->Image_Item && Weapons[i].Thumbnail)
 			{
 				FSlateBrush NewBrush;
@@ -309,6 +325,7 @@ void ULobbyWidget_Market::OnSelectArmClicked()
 		UMarket_ItemTile* ItemWidget = CreateWidget<UMarket_ItemTile>(this, MarketItemWidget);
 		if (ItemWidget)
 		{
+			ItemWidget->OwningMarket = this;
 			if (ItemWidget->Image_Item && Weapons[i].Thumbnail)
 			{
 				FSlateBrush NewBrush;
@@ -373,6 +390,7 @@ void ULobbyWidget_Market::OnSelectLegClicked()
 		UMarket_ItemTile* ItemWidget = CreateWidget<UMarket_ItemTile>(this, MarketItemWidget);
 		if (ItemWidget)
 		{
+			ItemWidget->OwningMarket = this;
 			if (ItemWidget->Image_Item && Weapons[i].Thumbnail)
 			{
 				FSlateBrush NewBrush;
@@ -441,6 +459,7 @@ void ULobbyWidget_Market::OnSelectUtilityClicked()
 		UMarket_ItemTile* ItemWidget = CreateWidget<UMarket_ItemTile>(this, MarketItemWidget);
 		if (ItemWidget)
 		{
+			ItemWidget->OwningMarket = this;
 			if (ItemWidget->Image_Item && Weapons[i].Thumbnail)
 			{
 				FSlateBrush NewBrush;
@@ -493,7 +512,61 @@ bool ULobbyWidget_Market::NativeOnDrop(const FGeometry& InGeometry, const FDragD
 
 	}
 
-	InventoryComp->TryAddItem(ItemObject);
+	ShowSellUI(ItemObject);
+	
 
 	return true;
+}
+
+void ULobbyWidget_Market::UpdatePlayerGoldText(int32 NewGold)
+{
+	//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Blue, TEXT("UpdatePlayerGoldText"));
+	if (Text_PlayerGold)
+	{
+		Text_PlayerGold->SetText(FText::AsNumber(NewGold));
+	}
+}
+
+void ULobbyWidget_Market::ShowSellUI(UItemObject* ItemObject)
+{
+	if (SellItemUI) {
+		SellItemUI->RemoveFromParent();
+		return;
+	}
+
+	if (SellItemWidget)
+	{
+		SellItemUI = CreateWidget<ULobbyWidget_SellItem>(this, SellItemWidget);
+
+	}
+	if (SellItemUI)
+	{
+		SellItemUI->MarketUI = this;
+		SellItemUI->SetItemToSell(ItemObject);
+		SellItemUI->AddToViewport();
+		SellItemUI->OnConfirmSell.AddDynamic(this, &ULobbyWidget_Market::HandleSellConfirm);
+		SellItemUI->OnCancelSell.AddDynamic(this, &ULobbyWidget_Market::HandleSellCancel);
+
+	}
+}
+
+void ULobbyWidget_Market::HandleSellConfirm(UItemObject* ItemObject)
+{
+	//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Blue, TEXT("HandleSellConfirm"));
+	if (ItemObject)
+	{
+		InventoryComp->RemoveItem(ItemObject);
+		int32 NewGold = GI->PlayerGold + (ItemObject->ItemData.Price * 0.7);
+		GI->SetPlayerGold(NewGold);
+		UpdatePlayerGoldText(NewGold);
+	}
+}
+
+void ULobbyWidget_Market::HandleSellCancel(class UItemObject* ItemObject)
+{
+	//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Blue, TEXT("CancelSell"));
+	if (ItemObject)
+	{
+		InventoryComp->TryAddItem(ItemObject);
+	}
 }

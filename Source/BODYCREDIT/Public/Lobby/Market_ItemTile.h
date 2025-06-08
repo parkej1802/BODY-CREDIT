@@ -49,4 +49,18 @@ public:
     class UAC_InventoryBaseComponent* InventoryBaseComp;
 
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+
+	UPROPERTY()
+	class UNetGameInstance* GI;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UUserWidget> InsufficientFundWidget;
+
+	UPROPERTY()
+	class ULobbyWidget_InsufficientGold* InsufficientFundUI;
+
+	UPROPERTY()
+	class ULobbyWidget_Market* OwningMarket;
+
+
 };

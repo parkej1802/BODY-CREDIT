@@ -7,6 +7,7 @@
 #include "Inventory/Inventory_Widget.h"
 #include "Misc/EnumRange.h"
 #include "Session/NetGameInstance.h"
+#include "Components/CNoxHPComponent.h"
 
 // Sets default values for this component's properties
 UAC_EquipComponent::UAC_EquipComponent()
@@ -70,6 +71,7 @@ void UAC_EquipComponent::EquipItem(EPlayerPart Part, UItemObject* Item)
 {
 	if (!Item) return;
 
+	SetPlayerStat(Item, 1);
 	EquippedItems.Add(Part, Item);
 
 	if (Item->ItemData.SkeletalMesh)
@@ -98,6 +100,7 @@ void UAC_EquipComponent::UnequipItem(EPlayerPart Part)
 {
 	if (EquippedItems.Contains(Part))
 	{
+		SetPlayerStat(EquippedItems[Part], -1);
 		EquippedItems.Remove(Part);
 
 		if (PlayerCharacter && PlayerCharacter->DefaultMeshes.Contains(Part))
@@ -156,3 +159,15 @@ UItemObject* UAC_EquipComponent::CreateItemFromData(const FItemSaveData& Data)
 	}
 	return NewItem;
 }
+
+void UAC_EquipComponent::SetPlayerStat(UItemObject* Item, int32 Direction)
+{
+	PlayerCharacter->HPComp->Health += Direction * Item->ItemData.StatIncrease.Health;
+	PlayerCharacter->HPComp->Strength += Direction * Item->ItemData.StatIncrease.Strength;
+	PlayerCharacter->HPComp->MovementSpeed += Direction * Item->ItemData.StatIncrease.MoveSpeed;
+	PlayerCharacter->HPComp->Defense += Direction * Item->ItemData.StatIncrease.Armor;
+	PlayerCharacter->HPComp->Stamina += Direction * Item->ItemData.StatIncrease.Stamina;
+	PlayerCharacter->HPComp->Weight += Direction * Item->ItemData.Weight;
+	PlayerCharacter->HPComp->Humanity += Direction * Item->ItemData.StatIncrease.Humanity;
+}
+
