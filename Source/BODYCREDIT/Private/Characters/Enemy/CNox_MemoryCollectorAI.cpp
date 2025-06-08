@@ -257,13 +257,13 @@ bool ACNox_MemoryCollectorAI::EvaluateMemory()
 		// 기억의 종류에 따라 가중치 부여
 		switch (Mem.TriggerType)
 		{
-		case EMemoryTriggerType::Intrusion:
+		case EMemoryTriggerType::Stay:
 			Score += 20.f;
 			break;
 		case EMemoryTriggerType::Combat:
 			Score += 40.f;
 			break;
-		case EMemoryTriggerType::Loitering:
+		case EMemoryTriggerType::Looting:
 			Score += 15.f;
 			break;
 		default:

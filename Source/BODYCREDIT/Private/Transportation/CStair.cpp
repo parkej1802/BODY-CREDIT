@@ -4,9 +4,9 @@
 ACStair::ACStair()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	CHelpers::CreateComponent<USceneComponent>(this, &Root, "Root", RootComponent);
-	CHelpers::CreateComponent<USceneComponent>(this, &PointA, "PointA");
-	CHelpers::CreateComponent<USceneComponent>(this, &PointB, "PointB");
+	CHelpers::CreateComponent<USceneComponent>(this, &Root, "Root");
+	CHelpers::CreateComponent<USceneComponent>(this, &PointA, "PointA", Root);
+	CHelpers::CreateComponent<USceneComponent>(this, &PointB, "PointB", Root);
 }
 
 void ACStair::BeginPlay()

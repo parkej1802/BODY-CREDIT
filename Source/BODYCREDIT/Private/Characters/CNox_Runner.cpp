@@ -14,14 +14,13 @@
 #include "Inventory/AC_InventoryComponent.h"
 #include "Components/CNoxHPComponent.h"
 #include "Games/CMainGM.h"
-
-#include "Data/CMemoryData.h"
 #include "Inventory/AC_EquipComponent.h"
 #include "Session/NetGameInstance.h"
 #include "GameState_BodyCredit.h"
 #include "Inventory/AC_MarketComponent.h"
 #include "Components/SceneCaptureComponent2D.h"
 #include "Characters/CNox_Controller.h"
+#include "Components/CNoxObserverComp.h"
 
 ACNox_Runner::ACNox_Runner()
 {
@@ -29,6 +28,7 @@ ACNox_Runner::ACNox_Runner()
 
 	Init();
 	CHelpers::CreateActorComponent<UCNoxHPComponent>(this, &HPComp, "HPComp");
+	CHelpers::CreateActorComponent<UCNoxObserverComp>(this, &ObserverComp, "ObserverComp");
 
 	InventoryComp = CreateDefaultSubobject<UAC_InventoryComponent>(TEXT("InventoryComp"));
 	EquipComp = CreateDefaultSubobject<UAC_EquipComponent>(TEXT("EquipComp"));
@@ -235,9 +235,9 @@ void ACNox_Runner::Init()
 
 }
 
-void ACNox_Runner::MakeMemoryPiece()
+void ACNox_Runner::MakeMemoryPiece(const EMemoryTriggerType& Trigger)
 {
-	MainGM->RegisterMemoryFromPlayer(this, EMemoryTriggerType::Intrusion);
+	MainGM->RegisterMemoryFromPlayer(this, Trigger);
 }
 
 UItemObject* ACNox_Runner::CreateItemFromData(const FItemSaveData& Data)
@@ -251,17 +251,21 @@ void ACNox_Runner::ReactFlashBang()
 {
 }
 
+void ACNox_Runner::RegisterAttack()
+{
+	ObserverComp->RegisterAttack();
+}
+
+void ACNox_Runner::RegisterLooting()
+{
+	ObserverComp->RegisterLooting();
+}
+
 void ACNox_Runner::CacheDefaultSkeletalMeshes()
 {
-
-	/*DefaultMeshes.Add(EPlayerPart::Head, Head->GetSkeletalMeshAsset());
+	DefaultMeshes.Add(EPlayerPart::Head, GetMesh()->GetSkeletalMeshAsset());
 	DefaultMeshes.Add(EPlayerPart::Body, UpperBody->GetSkeletalMeshAsset());
 	DefaultMeshes.Add(EPlayerPart::Arm, Arms->GetSkeletalMeshAsset());
-	DefaultMeshes.Add(EPlayerPart::Leg, LowerBody->GetSkeletalMeshAsset());*/
-
-	DefaultMeshes.Add(EPlayerPart::Head, GetMesh()->SkeletalMesh);
-	DefaultMeshes.Add(EPlayerPart::Body, UpperBody->SkeletalMesh);
-	DefaultMeshes.Add(EPlayerPart::Arm, Arms->SkeletalMesh);
-	DefaultMeshes.Add(EPlayerPart::Leg, LowerBody->SkeletalMesh);
+	DefaultMeshes.Add(EPlayerPart::Leg, LowerBody->GetSkeletalMeshAsset());
 }
 

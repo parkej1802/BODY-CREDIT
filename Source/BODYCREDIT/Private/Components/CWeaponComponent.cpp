@@ -3,6 +3,7 @@
 #include "Characters/CNox.h"
 #include "EnhancedInputComponent.h"
 #include "InputActionValue.h"
+#include "Characters/CNox_Runner.h"
 #include "Components/CStateComponent.h"
 #include "Components/CMovementComponent.h"
 #include "Items/Equipments/Weapons/CWeapon_Asset.h"
@@ -127,7 +128,10 @@ void UCWeaponComponent::SetUnarmedMode()
 void UCWeaponComponent::DoAction()
 {
 	if (!!GetDoAction())
+	{
 		GetDoAction()->DoAction();
+		Cast<ACNox_Runner>(OwnerCharacter)->RegisterAttack();
+	}
 
 }
 
