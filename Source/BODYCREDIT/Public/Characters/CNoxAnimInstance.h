@@ -47,6 +47,9 @@ protected:
 	bool bCrouch;
 
 	UPROPERTY(BlueprintReadOnly)
+	bool bSlide;
+
+	UPROPERTY(BlueprintReadOnly)
 	bool bFalling;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")

@@ -26,6 +26,54 @@ void UCMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
+	// MaxWalkSpeed 보간 처리
+	OwnerCharacter->GetCharacterMovement()->MaxWalkSpeed = FMath::FInterpTo(OwnerCharacter->GetCharacterMovement()->MaxWalkSpeed, DesiredMaxWalkSpeed, DeltaTime, InterpSpeed);
+
+	//if (bIsSliding)
+	//{
+	//	SlideElapsedTime += DeltaTime;
+
+	//	FVector CurrentVelocity = OwnerCharacter->GetVelocity();
+	//	FVector NewVelocity = CurrentVelocity - (CurrentVelocity.GetSafeNormal() * SlideFriction * DeltaTime);
+
+	//	if (NewVelocity.Size() <= MinSlideSpeed)
+	//	{
+	//		OffSlide(FInputActionValue());
+	//	}
+	//	else
+	//	{
+	//		OwnerCharacter->GetCharacterMovement()->Velocity = NewVelocity;
+	//	}
+	//}
+
+	if (bIsSliding)
+	{
+		SlideElapsedTime += DeltaTime;
+
+		UCharacterMovementComponent* MoveComp = OwnerCharacter->GetCharacterMovement();
+		FVector CurrentVelocity = MoveComp->Velocity;
+		FVector SlideDirection = CurrentVelocity.GetSafeNormal();
+
+		// 🔥 핵심! 높이 차이로 오르막/내리막 판단
+		float HeightDelta = OwnerCharacter->GetActorLocation().Z - LastSlideLocation.Z;
+		LastSlideLocation = OwnerCharacter->GetActorLocation(); // 갱신
+
+		float SlopeFactor = 1.0f;
+
+		if (HeightDelta > 0)
+			SlopeFactor = 10.0f; // 오르막
+		else if (HeightDelta < 0)
+			SlopeFactor = 0.5f; // 내리막
+
+		// 감속 적용
+		FVector NewVelocity = CurrentVelocity - (SlideDirection * SlideFriction * DeltaTime * SlopeFactor);
+		NewVelocity.Z = 0.0f;
+		MoveComp->Velocity = NewVelocity;
+
+		if (NewVelocity.Size2D() <= MinSlideSpeed)
+			OffSlide(FInputActionValue());
+	}
+
 	if (UCWeaponComponent* weapon = CHelpers::GetComponent<UCWeaponComponent>(OwnerCharacter))
 		if (weapon->IsBowMode()) return;
 
@@ -51,6 +99,10 @@ void UCMovementComponent::BindInput(UEnhancedInputComponent* InEnhancedInputComp
 	// Crouch
 	InEnhancedInputComponent->BindAction(IA_Crouch, ETriggerEvent::Started, this, &UCMovementComponent::OnCrouch);
 
+	// Slide
+	InEnhancedInputComponent->BindAction(IA_Slide, ETriggerEvent::Started, this, &UCMovementComponent::OnSlide);
+	InEnhancedInputComponent->BindAction(IA_Slide, ETriggerEvent::Completed, this, &UCMovementComponent::OffSlide);
+
 	// Jump
 	InEnhancedInputComponent->BindAction(IA_Jump, ETriggerEvent::Started, this, &UCMovementComponent::OnJump);
 
@@ -59,6 +111,7 @@ void UCMovementComponent::BindInput(UEnhancedInputComponent* InEnhancedInputComp
 void UCMovementComponent::OnMovement(const FInputActionValue& InVal)
 {
 	CheckFalse(bCanMove);
+	CheckTrue(bSlide);
 
 	// 캐릭터의 정면 방향을 가져오기 위해 컨트롤러의 회전 값을 구해서 Z축만을 사용
 	FRotator rot = FRotator(0, OwnerCharacter->GetControlRotation().Yaw, 0);
@@ -170,6 +223,9 @@ void UCMovementComponent::OnVerticalLook(const FInputActionValue& InVal)
 
 void UCMovementComponent::OnSprint(const FInputActionValue& InVal)
 {
+	if (bSlide)
+		OffSlide(FInputActionValue());
+
 	bSprint = true;
 
 	CHelpers::GetComponent<UCWeaponComponent>(OwnerCharacter)->SubAction_Released();
@@ -207,15 +263,102 @@ void UCMovementComponent::OnCrouch(const FInputActionValue& InVal)
 
 }
 
+void UCMovementComponent::OnSlide(const FInputActionValue& InVal)
+{
+	CheckFalse(bSprint);
+
+	//if (bSprint)
+	//{
+	//	OffSlide(FInputActionValue());
+
+	//	return;
+	//}
+
+	//OwnerCharacter->Crouch();
+
+	bSlide = true;
+
+	//if (!bIsSliding && OwnerCharacter->GetCharacterMovement()->Velocity.Size() >= SlideInitialSpeed)
+	//{
+	//	bSlide = true;
+	//	SlideElapsedTime = 0.0f;
+
+	//	OwnerCharacter->Crouch();
+
+	//	// 슬라이딩 중 마찰력 제거
+	//	OwnerCharacter->GetCharacterMovement()->BrakingFrictionFactor = 0.0f;
+
+	//	// 슬라이딩 방향은 현재 속도 방향
+	//	FRotator rot = FRotator(0, OwnerCharacter->GetControlRotation().Yaw, 0);
+
+	//	OwnerCharacter->GetCharacterMovement()->AddImpulse(FQuat(rot).GetForwardVector() * OwnerCharacter->GetVelocity().Size2D(), true);
+	//}
+
+		// 슬라이딩 조건: 지면 + 달리기 중 + 이미 슬라이딩 중이 아님
+	if (bIsSliding || !OwnerCharacter->GetCharacterMovement()->IsMovingOnGround() || !bSprint)
+	{
+		return;
+	}
+
+	LastSlideLocation = OwnerCharacter->GetActorLocation();
+
+	bIsSliding = true;
+	SlideElapsedTime = 0.0f;
+
+	// 마찰력 제거로 감속 늦춤
+	OwnerCharacter->GetCharacterMovement()->BrakingFrictionFactor = 0.0f;
+	OwnerCharacter->GetCharacterMovement()->GroundFriction = 0.0f;
+	OwnerCharacter->GetCharacterMovement()->BrakingDecelerationWalking = 0.0f;
+
+	// MovementMode 유지 (공중 상태 방지)
+	OwnerCharacter->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+
+	// 지면 방향으로 밀기
+	FVector SlideDirection = OwnerCharacter->GetVelocity().GetSafeNormal();
+	OwnerCharacter->GetCharacterMovement()->AddImpulse(SlideDirection * SlideInitialSpeed, true);
+
+}
+
+void UCMovementComponent::OffSlide(const FInputActionValue& InVal)
+{
+	//OwnerCharacter->UnCrouch();
+
+	bSlide = false;
+
+	//bIsSliding = false;
+	//
+	//OwnerCharacter->UnCrouch();
+
+	//// 마찰력 원상복귀
+	//OwnerCharacter->GetCharacterMovement()->BrakingFrictionFactor = 2.0f;
+
+	//// 슬라이드 종료 후 기본 이동 속도 복원
+	//OwnerCharacter->GetCharacterMovement()->MaxWalkSpeed = 500.0f;
+
+	bIsSliding = false;
+
+	// 마찰력 복구
+	OwnerCharacter->GetCharacterMovement()->BrakingFrictionFactor = 2.0f;
+	OwnerCharacter->GetCharacterMovement()->GroundFriction = 8.0f;
+	OwnerCharacter->GetCharacterMovement()->BrakingDecelerationWalking = 2048.0f;
+
+	// 걷기 속도 복구
+	OwnerCharacter->GetCharacterMovement()->MaxWalkSpeed = Speed[(int32)ESpeedType::STAND_RUN_FWD];
+
+}
+
 void UCMovementComponent::OnJump(const FInputActionValue& InVal)
 {
+	if (bSlide)
+		OffSlide(FInputActionValue());
+
 	OwnerCharacter->Jump();
 
 }
 
 void UCMovementComponent::SetSpeed(ESpeedType InType)
 {
-	OwnerCharacter->GetCharacterMovement()->MaxWalkSpeed = Speed[(uint8)InType];
+	//OwnerCharacter->GetCharacterMovement()->MaxWalkSpeed = Speed[(uint8)InType];
 
 }
 
@@ -223,11 +366,15 @@ void UCMovementComponent::SetStandWalkSpeed()
 {
 	SetSpeed(ESpeedType::STAND_WALK);
 
+	DesiredMaxWalkSpeed = Speed[(int32)ESpeedType::STAND_WALK];
+
 }
 
 void UCMovementComponent::SetStandRunForwardSpeed()
 {
 	SetSpeed(ESpeedType::STAND_RUN_FWD);
+
+	DesiredMaxWalkSpeed = Speed[(int32)ESpeedType::STAND_RUN_FWD];
 
 }
 
@@ -235,17 +382,23 @@ void UCMovementComponent::SetStandRunBackwardSpeed()
 {
 	SetSpeed(ESpeedType::STAND_RUN_BWD);
 
+	DesiredMaxWalkSpeed = Speed[(int32)ESpeedType::STAND_RUN_BWD];
+
 }
 
 void UCMovementComponent::SetStandRunRLwardSpeed()
 {
 	SetSpeed(ESpeedType::STAND_RUN_RLWD);
 
+	DesiredMaxWalkSpeed = Speed[(int32)ESpeedType::STAND_RUN_RLWD];
+
 }
 
 void UCMovementComponent::SetCrouchWalkForwardSpeed()
 {
 	SetSpeed(ESpeedType::CROUCH_WALK_FWD);
+
+	DesiredMaxWalkSpeed = Speed[(int32)ESpeedType::CROUCH_WALK_FWD];
 	
 }
 
@@ -253,17 +406,23 @@ void UCMovementComponent::SetCrouchWalkBackwardSpeed()
 {
 	SetSpeed(ESpeedType::CROUCH_WALK_BWD);
 
+	DesiredMaxWalkSpeed = Speed[(int32)ESpeedType::CROUCH_WALK_BWD];
+
 }
 
 void UCMovementComponent::SetCrouchWalkRLwardSpeed()
 {
 	SetSpeed(ESpeedType::CROUCH_WALK_RLWD);
 
+	DesiredMaxWalkSpeed = Speed[(int32)ESpeedType::CROUCH_WALK_RLWD];
+
 }
 
 void UCMovementComponent::SetSprintSpeed()
 {
 	SetSpeed(ESpeedType::SPRINT);
+
+	DesiredMaxWalkSpeed = Speed[(int32)ESpeedType::SPRINT];
 
 }
 
@@ -307,8 +466,8 @@ void UCMovementComponent::Init()
 	// Crouch
 	CHelpers::GetAsset<UInputAction>(&IA_Crouch, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Crouch.IA_Crouch'"));
 
-	// Walk
-	CHelpers::GetAsset<UInputAction>(&IA_Walk , TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Walk.IA_Walk'"));
+	// Slide
+	CHelpers::GetAsset<UInputAction>(&IA_Slide , TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Slide.IA_Slide'"));
 
 	// Jump
 	CHelpers::GetAsset<UInputAction>(&IA_Jump, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Jump.IA_Jump'"));
