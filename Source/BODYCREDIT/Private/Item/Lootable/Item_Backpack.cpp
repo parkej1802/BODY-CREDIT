@@ -9,7 +9,6 @@
 AItem_Backpack::AItem_Backpack()
 {
 	LootInventoryComp = CreateDefaultSubobject<UAC_LootingInventoryComponent>(TEXT("EquipInventoryComp"));
-	ItemName = FName("Backpack");
 }
 
 void AItem_Backpack::BeginPlay()

@@ -99,6 +99,27 @@ public:
 	UFUNCTION()
 	void SetItemInventory();
 
+public:
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* Text_Power;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* Text_Health;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* Text_Weight;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* Text_Humanity;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* Text_Energy;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* Text_Speed;
+
+	void PlayerStatChange();
+
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	// float TileSize = 50.f;
 
@@ -131,26 +152,6 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UPlayer3DOverlayWidget* Player3DOverlayWidget;
 
-// Player Stat
-public:
-	
-	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UTextBlock* Text_Power;
-	
-	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UTextBlock* Text_Health;
-
-	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UTextBlock* Text_Speed;
-
-	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UTextBlock* Text_Weight;
-
-	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UTextBlock* Text_Humanity;
-
-	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UTextBlock* Text_Energy;
 
 
 };

@@ -8,7 +8,6 @@
 AItem_ChestRigs::AItem_ChestRigs()
 {
 	LootInventoryComp = CreateDefaultSubobject<UAC_LootingInventoryComponent>(TEXT("EquipInventoryComp"));
-	ItemName = FName("ChestRigs");
 }
 
 void AItem_ChestRigs::BeginPlay()

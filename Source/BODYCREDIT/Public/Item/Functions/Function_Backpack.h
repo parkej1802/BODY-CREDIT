@@ -31,8 +31,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ACNox_Controller* PC;
-
-	bool IsUsing = false;
 	
 
 };

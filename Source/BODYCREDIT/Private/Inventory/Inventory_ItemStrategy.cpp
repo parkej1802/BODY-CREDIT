@@ -27,8 +27,7 @@ void UInventory_ItemStrategy::NativeConstruct()
 
 void UInventory_ItemStrategy::OnExitClicked()
 {
-	// ParentWidget->RemoveFromParent();
-	ItemObject->bIsUseFunction = false;
+	ItemObject->bIsUseFunction = !ItemObject->bIsUseFunction;
 	RemoveFromParent();
 }
 

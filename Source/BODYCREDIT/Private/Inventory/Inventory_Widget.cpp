@@ -16,6 +16,8 @@
 #include "Item/Lootable/Item_Backpack.h"
 #include "Components/SceneCaptureComponent2D.h"
 #include "Characters/CNox_Controller.h"
+#include "Components/CNoxHPComponent.h"
+#include "Components/TextBlock.h"
 
 void UInventory_Widget::NativeConstruct()
 {
@@ -233,7 +235,6 @@ void UInventory_Widget::SetItemInventory()
                         InventoryEquipChestRigsGridWidget->InitInventory(EquipChestRigsInventoryComp, InventoryComp->InventoryTileSize);
                         InventoryEquipChestRigsGridWidget->GridID = 3;
                         InventoryEquipChestRigsGridWidget->PlayerController = PC;
-                        // InventoryEquipChestRigsGridWidget->OwningInventoryWidget = this;
                     }
                     else {
                         InventoryEquipChestRigsGridWidget->SetVisibility(ESlateVisibility::Visible);
@@ -255,25 +256,6 @@ void UInventory_Widget::SetItemInventory()
 			BackpackItem = *FoundBackpack;
 
 			if (BackpackItem) {
-				/*FString Msg = FString::Printf(TEXT("BackpackItem Info:"));
-
-				Msg += FString::Printf(TEXT("\n- Dimensions: (%d, %d)"), BackpackItem->Dimensions.X, BackpackItem->Dimensions.Y);
-				Msg += FString::Printf(TEXT("\n- Icon: %s"), BackpackItem->Icon ? *BackpackItem->Icon->GetName() : TEXT("nullptr"));
-				Msg += FString::Printf(TEXT("\n- RotatedIcon: %s"), BackpackItem->RotatedIcon ? *BackpackItem->RotatedIcon->GetName() : TEXT("nullptr"));
-				Msg += FString::Printf(TEXT("\n- InventoryComp: %s"), BackpackItem->ItemActorOwner->LootInventoryComp ? *BackpackItem->ItemObjectInventoryComp->GetName() : TEXT("nullptr"));
-
-				if (!BackpackItem->ItemActorOwner->LootInventoryComp)
-				{
-					Msg += TEXT("\n!!! InventoryComp is nullptr !!!");
-				}
-
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, Msg);
-
-				Msg = FString::Printf(TEXT("[SetItemInventory] BackpackItem ptr: %p, InventoryComp ptr: %p"),
-					BackpackItem,
-					BackpackItem->ItemActorOwner->LootInventoryComp);
-
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, Msg);*/
 
 				if (BackpackItem->ItemActorOwner->LootInventoryComp) {
 
@@ -284,7 +266,6 @@ void UInventory_Widget::SetItemInventory()
 						InventoryEquipGridWidget->InitInventory(EquipBackpackInventoryComp, InventoryComp->InventoryTileSize);
 						InventoryEquipGridWidget->GridID = 2;
 						InventoryEquipGridWidget->PlayerController = PC;
-						// InventoryEquipGridWidget->OwningInventoryWidget = this;
 					}
 					else {
 
@@ -302,59 +283,21 @@ void UInventory_Widget::SetItemInventory()
 	}
 }
 
-//void UInventory_Widget::SetItemInventory()
-//{
-//    if (UItemObject** FoundBackpack = EquipComp->EquippedItems.Find(EPlayerPart::Backpack)) {
-//
-//        if (FoundBackpack && InventoryEquipGridWidget) {
-//            BackpackItem = *FoundBackpack;
-//
-//            if (BackpackItem) {
-//                FString Msg = FString::Printf(TEXT("BackpackItem Info:"));
-//
-//                Msg += FString::Printf(TEXT("\n- Dimensions: (%d, %d)"), BackpackItem->Dimensions.X, BackpackItem->Dimensions.Y);
-//                Msg += FString::Printf(TEXT("\n- Icon: %s"), BackpackItem->Icon ? *BackpackItem->Icon->GetName() : TEXT("nullptr"));
-//                Msg += FString::Printf(TEXT("\n- RotatedIcon: %s"), BackpackItem->RotatedIcon ? *BackpackItem->RotatedIcon->GetName() : TEXT("nullptr"));
-//                Msg += FString::Printf(TEXT("\n- InventoryComp: %s"), BackpackItem->ItemObjectInventoryComp ? *BackpackItem->ItemObjectInventoryComp->GetName() : TEXT("nullptr"));
-//
-//                if (!BackpackItem->ItemObjectInventoryComp)
-//                {
-//                    Msg += TEXT("\n!!! InventoryComp is nullptr !!!");
-//                }
-//
-//                GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, Msg);
-//
-//                Msg = FString::Printf(TEXT("[SetItemInventory] BackpackItem ptr: %p, InventoryComp ptr: %p"),
-//                    BackpackItem,
-//                    BackpackItem->ItemObjectInventoryComp);
-//
-//                GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, Msg);
-//
-//                if (BackpackItem && BackpackItem->ItemActorOwner.IsValid())
-//                {
-//                    if (EquipBackpackInventoryComp != BackpackItem->ItemActorOwner->LootInventoryComp)
-//                    {
-//                        EquipBackpackInventoryComp = BackpackItem->ItemActorOwner->LootInventoryComp;
-//
-//                        InventoryEquipGridWidget->SetVisibility(ESlateVisibility::Visible);
-//                        InventoryEquipGridWidget->InitInventory(EquipBackpackInventoryComp, InventoryComp->InventoryTileSize);
-//                        InventoryEquipGridWidget->GridID = 2;
-//                        InventoryEquipGridWidget->PlayerController = PC;
-//                        InventoryEquipGridWidget->OwningInventoryWidget = this;
-//                    }
-//                    else {
-//
-//                        InventoryEquipGridWidget->SetVisibility(ESlateVisibility::Visible);
-//                    }
-//                }
-//             
-//            }
-//        }
-//    }
-//    else {
-//        //BackpackItem = nullptr;
-//        //EquipBackpackInventoryComp = nullptr;
-//        InventoryEquipGridWidget->SetVisibility(ESlateVisibility::Hidden);
-//        InventoryEquipGridWidget->ClearInventory();
-//    }
-//}
+
+void UInventory_Widget::PlayerStatChange()
+{
+	float Power = PlayerCharacter->HPComp->Strength;
+	float Health = PlayerCharacter->HPComp->Health;
+	float Defense = PlayerCharacter->HPComp->Defense;
+	float MovementSpeed = PlayerCharacter->HPComp->MovementSpeed;
+	float Weight = PlayerCharacter->HPComp->Weight;
+	float Stamina = PlayerCharacter->HPComp->Stamina;
+	float Humanity = PlayerCharacter->HPComp->Humanity;
+
+	Text_Power->SetText(FText::AsNumber(Power));
+	Text_Health->SetText(FText::AsNumber(Health));
+	Text_Speed->SetText(FText::AsNumber(MovementSpeed));
+	Text_Weight->SetText(FText::AsNumber(Weight));
+	Text_Energy->SetText(FText::AsNumber(Stamina));
+	Text_Humanity->SetText(FText::AsNumber(Humanity));
+}

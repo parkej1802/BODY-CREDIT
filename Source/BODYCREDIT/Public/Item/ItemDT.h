@@ -6,6 +6,34 @@
 #include "Engine/DataTable.h"
 #include "ItemDT.generated.h"
 
+USTRUCT(BlueprintType)
+struct FItemStatIncrease
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
+	float Health = 0.f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
+	float Strength = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
+	float Stamina = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
+	float MoveSpeed = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
+	float Armor = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
+	float Accuracy = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
+	float CarryWeight = 0.f;
+};
+
 UENUM(BlueprintType)
 enum class EPlayerPart : uint8
 {
@@ -88,6 +116,12 @@ public:
      UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
      class USkeletalMesh* SkeletalMesh;
 
+     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+     FItemStatIncrease StatIncrease;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+    FName ItemName;
+
     FItemData()
         : ID(0)
         , Mesh(nullptr)
@@ -107,6 +141,8 @@ public:
         , ItemType(EPlayerPart::Basic)
         , Weight(1)
         , SkeletalMesh(nullptr)
+        , StatIncrease()
+        , ItemName()
     {
     }
 };

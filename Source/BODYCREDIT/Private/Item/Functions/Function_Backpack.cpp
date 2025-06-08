@@ -15,9 +15,8 @@
 
 void UFunction_Backpack::Use(UItemObject* ItemObject)
 {
-	if (IsUsing) {
-		InventoryUI->RemoveFromParent();
-		IsUsing = !IsUsing;
+	if (ItemObject->bIsUseFunction) {
+		InventoryUI->OnExitClicked();
 		return;
 	}
 
@@ -30,7 +29,7 @@ void UFunction_Backpack::Use(UItemObject* ItemObject)
 	APawn* Pawn = PC->GetPawn();
 
 	PlayerCharacter = Cast<ACNox_Runner>(Pawn);
-	ItemObject->bIsUseFunction = true;
+	ItemObject->bIsUseFunction = !ItemObject->bIsUseFunction;
 
 	if (!InventoryWidget)
 	{
@@ -48,7 +47,6 @@ void UFunction_Backpack::Use(UItemObject* ItemObject)
 
 		InventoryUI->ItemObject = ItemObject;
 
-		IsUsing = !IsUsing;
 
 	/*	ItemInventoryUI = CreateWidget<UInventory_ItemInventoryWidget>(World, InventoryWidget);
 		if (!ItemInventoryUI)

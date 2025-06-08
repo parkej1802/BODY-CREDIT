@@ -8,6 +8,8 @@
 #include "Lobby/LobbyWidget_Pause.h"
 #include "Inventory/Inventory_EquipmentTile.h"
 #include "Characters/CNox_Controller.h"
+#include "Inventory/AC_EquipComponent.h"
+#include "Item/Item_Base.h"
 
 // Sets default values for this component's properties
 UAC_InventoryComponent::UAC_InventoryComponent()
@@ -180,7 +182,31 @@ void UAC_InventoryComponent::ShowLootableInventory()
 		AActor* HitActor = HitResult.GetActor();
 		if (!HitActor) return;
 
+		AItem_Base* ItemActor = Cast<AItem_Base>(HitActor);
+		if (ItemActor) {
+			if (PlayerCharacter->EquipComp->EquippedItems[EPlayerPart::Backpack])
+			{
+				if (PlayerCharacter->EquipComp->EquippedItems[EPlayerPart::Backpack]->ItemActorOwner->LootInventoryComp->TryAddItem(ItemActor->ItemObject)) 
+				{
+					ItemActor->SetActorHiddenInGame(true);
+					ItemActor->SetActorEnableCollision(false);
+					return;
+				}
+			}
+			else if (PlayerCharacter->EquipComp->EquippedItems[EPlayerPart::ChestRigs])
+			{
+				if (PlayerCharacter->EquipComp->EquippedItems[EPlayerPart::ChestRigs]->ItemActorOwner->LootInventoryComp->TryAddItem(ItemActor->ItemObject))
+				{
+					ItemActor->SetActorHiddenInGame(true);
+					ItemActor->SetActorEnableCollision(false);
+					return;
+				}
+			}
+		}
+		
 		UAC_LootingInventoryComponent* LootComp = HitActor->FindComponentByClass<UAC_LootingInventoryComponent>();
+
+		if (!LootComp) return;
 
 		if (LootComp && !bIsLootableMode)
 		{

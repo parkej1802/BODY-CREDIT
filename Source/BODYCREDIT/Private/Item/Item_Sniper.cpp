@@ -18,7 +18,6 @@ AItem_Sniper::AItem_Sniper()
 		RotatedIcon = Temp_MatR.Object;
 	}*/
 
-	ItemName = "Sniper";
 }
 
 //UItemObject* AItem_Sniper::GetDefaultItemObject()
