@@ -60,10 +60,9 @@ void UCMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 
 		float SlopeFactor = 1.0f;
 
-		if (HeightDelta > 0)
-			SlopeFactor = 10.0f; // 오르막
-		else if (HeightDelta < 0)
-			SlopeFactor = 0.5f; // 내리막
+		if (HeightDelta > 0) SlopeFactor = 10.0f; // 오르막
+		else if (HeightDelta < 0) SlopeFactor = 0.5f; // 내리막
+		else SlopeFactor = 2.0f; // 평지
 
 		// 감속 적용
 		FVector NewVelocity = CurrentVelocity - (SlideDirection * SlideFriction * DeltaTime * SlopeFactor);
@@ -265,7 +264,7 @@ void UCMovementComponent::OnCrouch(const FInputActionValue& InVal)
 
 void UCMovementComponent::OnSlide(const FInputActionValue& InVal)
 {
-	CheckFalse(bSprint);
+	CheckTrue(OwnerCharacter->GetVelocity().Size2D() <= 500);
 
 	//if (bSprint)
 	//{
@@ -294,11 +293,9 @@ void UCMovementComponent::OnSlide(const FInputActionValue& InVal)
 	//	OwnerCharacter->GetCharacterMovement()->AddImpulse(FQuat(rot).GetForwardVector() * OwnerCharacter->GetVelocity().Size2D(), true);
 	//}
 
-		// 슬라이딩 조건: 지면 + 달리기 중 + 이미 슬라이딩 중이 아님
-	if (bIsSliding || !OwnerCharacter->GetCharacterMovement()->IsMovingOnGround() || !bSprint)
-	{
+	// 슬라이딩 조건: 지면 + 달리기 중 + 이미 슬라이딩 중이 아님
+	if (bIsSliding or !OwnerCharacter->GetCharacterMovement()->IsMovingOnGround() or !bSprint)
 		return;
-	}
 
 	LastSlideLocation = OwnerCharacter->GetActorLocation();
 
