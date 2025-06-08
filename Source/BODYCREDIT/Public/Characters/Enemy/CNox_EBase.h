@@ -28,7 +28,7 @@ protected:
 	UPROPERTY()
 	class ACEnemyController* EnemyController;
 	UPROPERTY(EditAnywhere, Category=Debug)
-	bool bDebug = false;
+	bool bDebug = true;
 
 	void InitComp();
 #pragma endregion
