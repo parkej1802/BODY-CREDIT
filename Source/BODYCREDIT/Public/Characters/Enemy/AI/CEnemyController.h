@@ -15,24 +15,26 @@ class BODYCREDIT_API ACEnemyController : public AAIController
 {
 	GENERATED_BODY()
 
-private:
-	ACEnemyController();
-	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaSeconds) override;
-	virtual void OnPossess(APawn* InPawn) override;
-
-	void InitPerception();
+#pragma region Common
 
 private:
 	UPROPERTY()
 	class ACNox_EBase* EnemyBase;
 	UPROPERTY()
 	class ACNox* TargetPlayer;
+#pragma endregion
 
-public:
-	void SetTargetPlayer(ACNox* InTargetPlayer);
+#pragma region Init
 
-private: // Sensing
+private:
+	ACEnemyController();
+	virtual void OnPossess(APawn* InPawn) override;
+	void InitPerception();
+#pragma endregion
+
+#pragma region Sensing
+
+private:
 	UPROPERTY(VisibleAnywhere)
 	class UAIPerceptionComponent* Perception;
 	UPROPERTY()
@@ -43,17 +45,42 @@ private: // Sensing
 	// Sensing Delegate Function
 	UFUNCTION()
 	void OnAITargetPerceptionInfoUpdate(const FActorPerceptionUpdateInfo& UpdateInfo);
+#pragma endregion
+
+#pragma region Get Near Player
 
 private:
 	ACNox* GetNearTargetPlayer();
+#pragma endregion
+
+#pragma region Tick
+
+private:
+	virtual void Tick(float DeltaSeconds) override;
+#pragma endregion
+
+#pragma region Set Target
+
+public:
+	void SetTargetPlayer(ACNox* InTargetPlayer);
+#pragma endregion
+
+#pragma region Target loss
 
 private:
 	float CurExpiredTime = 0.f;
-	void UpdateExpiredStimuli(float DeltaTime); // Forget Target Player
+	void UpdateExpiredStimuli(float DeltaTime);
+#pragma endregion
 
-public: // CCTV BroadCasting
+#pragma region CCTV BroadCasting
+
+public:
 	FDetectPlayer OnDetectPlayer;
+#pragma endregion
 
-public: // Die
+#pragma region Stop Perception (Using Die)
+
+public:
 	void PerceptionDeactive();
+#pragma endregion
 };

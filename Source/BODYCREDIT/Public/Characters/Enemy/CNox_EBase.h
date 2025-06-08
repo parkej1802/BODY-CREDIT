@@ -15,9 +15,35 @@ class BODYCREDIT_API ACNox_EBase : public ACNox
 {
 	GENERATED_BODY()
 
+#pragma region Init
 public:
 	ACNox_EBase();
 
+protected: // Virtual Function
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+	virtual void PossessedBy(AController* NewController) override;
+
+protected:
+	UPROPERTY()
+	class ACEnemyController* EnemyController;
+	UPROPERTY(EditAnywhere, Category=Debug)
+	bool bDebug = false;
+
+	void InitComp();
+#pragma endregion
+
+#pragma region Component
+protected:
+	UPROPERTY(VisibleDefaultsOnly)
+	class UCNoxEnemy_Animinstance* EnemyAnim;
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	class UCNoxEnemyHPComponent* HPComp;
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	class UCFSMComponent* FSMComp;
+#pragma endregion
+
+#pragma region Sensing
 protected: // Sensing Property
 	UPROPERTY(EditDefaultsOnly, Category="Sensing")
 	float SightRadius = 300.f;
@@ -42,58 +68,77 @@ protected: // Set Sensing Function
 	virtual void SetPerceptionInfo()
 	{
 	}
+#pragma endregion
 
-protected: // Status
+#pragma region EnemyType
+protected:
 	UPROPERTY(EditDefaultsOnly)
 	EEnemyType EnemyType;
-	UPROPERTY(EditDefaultsOnly)
-	float AccelValue = 150.f;
 
 public:
 	EEnemyType GetEnemyType() const { return EnemyType; }
+#pragma endregion
 
-protected: // Virtual Function
-	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
-	virtual void PossessedBy(AController* NewController) override;
-	
-protected: // Component
-	UPROPERTY(VisibleDefaultsOnly)
-	class UCNox_BehaviorComponent* BehaviorComp;
-	UPROPERTY(VisibleDefaultsOnly)
-	class UCNoxEnemy_Animinstance* EnemyAnim;
-	UPROPERTY(VisibleAnywhere, Category = "Components")
-	class UCNoxEnemyHPComponent* HPComp;
-	UPROPERTY(VisibleAnywhere, Category = "Components")
-	class UCFSMComponent* FSMComp;
+#pragma region Apply Damage
+protected:
+	void SetApplyDamage(AActor* DamagedPlayer, const float DamageAmout);
+#pragma endregion
+
+#pragma region Target
 
 protected:
-	UPROPERTY()
-	class ACEnemyController* EnemyController;
-	void SetApplyDamage(AActor* DamagedPlayer, const float DamageAmout);
+	UPROPERTY(EditDefaultsOnly)
+	ACNox* Target = nullptr;
 
 public:
-	// CCTV에서는 Blackboard에 세팅은 안하고 주변 Enemy에게만 전달한다.
 	virtual void SetTarget(ACNox* InTarget);
 	ACNox* GetTarget() const { return Target; }
-	void SetEnemyState(EEnemyState NewState);
-	void SetCombatState(ECombatState NewCombatState);
-	void SetTargetCallByDelegate(ACNox* InTarget);
-	void HandleAttack(float InAttackDistance); // BT 제거할 때 같이 제거
+#pragma endregion
+	
+#pragma region Set Movement Speed
+
+protected:
+	virtual void GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed,
+									 float& OutNewAccelSpeed)
+	{
+	};
+
+public:
+	void SetMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed);
+#pragma endregion
+	
+#pragma region Attacking
+
+public:
 	void HandleAttack();
 	bool IsAttacking();
-	bool IsPlayerInDistance();
 
 	virtual void AttackCollision(bool bOn, bool IsRightHand = true)
 	{
 	}
+#pragma endregion
 
+#pragma region BroadCast To Near Enemy
+
+public:
+	void SetTargetCallByDelegate(ACNox* InTarget);
+#pragma endregion
+
+#pragma region Hitting
+
+public:
 	void HandleHit(const int32 sectionIdx = 1);
 	bool IsHitting();
+	void ResetVal() const;
+#pragma endregion
 
+#pragma region Die
+
+public:
 	void HandleDie(const int32 sectionIdx = 1);
-	
-	void ResetVal();
+#pragma endregion
+
+#pragma region Heal (Medic)
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category=Health)
@@ -101,42 +146,26 @@ protected:
 
 public:
 	void HealHP();
+#pragma endregion
 
-public: // Medic Android
-	void SetGrenadeEnded(bool InbEndedAnim);
-
-private:
-	bool bAutoMove = false;	
-	UPROPERTY(EditDefaultsOnly, Category=AutoMove)
-	float MoveDistance = 100.f;
-	UPROPERTY(EditDefaultsOnly, Category=AutoMove)
-	float AttackDistance = 100.f;
-
-protected:
-	UPROPERTY(EditDefaultsOnly, Category=AutoMove)
-	ACNox* Target = nullptr;
+#pragma region Check Player In Forward Degree
 
 public:
-	FORCEINLINE void SetAutoMove(bool InbAutoMove, ACNox* InTarget, float InMoveDistance)
-	{
-		bAutoMove = InbAutoMove;
-		Target = InTarget;
-		MoveDistance = InMoveDistance;
-	}
-
-	virtual void GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed,
-	                                 float& OutNewAccelSpeed)
-	{
-	};
-	void SetMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed);
-
-public:
-	bool IsPlayerInForwardRange(ACNox* InTarget, float InForwardRange); // 작업 후 제거 예정
-	bool IsPlayerInForwardRange(float InForwardRange);
 	bool IsPlayerInForwardDegree(const float InForwardRange, const float InDegree = 10.f);
+#pragma endregion
+
+#pragma region FSM Set State
+
+public:
+	void SetEnemyState(EEnemyState NewState);
+	void SetCombatState(ECombatState NewCombatState);
+#pragma endregion
+
+#pragma region FSM Skill Cool Downs
 
 public:
 	void UpdateSkillCoolDowns(ESkillCoolDown Skill, float DeltaTime);
 	bool IsSkillReady(ESkillCoolDown Skill) const;
 	void UsingSkill(ESkillCoolDown Skill);
+#pragma endregion
 };

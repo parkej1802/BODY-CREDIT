@@ -287,25 +287,20 @@ bool ACNox_MemoryCollectorAI::EvaluateMemory()
 	}
 
 	if (BestMemory) CurrentTargetMemory = *BestMemory;
-	
+
 	return BestMemory ? true : false;
 }
 
 const FMemoryFragment ACNox_MemoryCollectorAI::GetMemoryTarget()
 {
 	return CurrentTargetMemory;
-	// return BehaviorComp->GetMemoryTarget();
 }
 
-void ACNox_MemoryCollectorAI::SetPatrolLocation(const FVector& InPatrolLocation)
+void ACNox_MemoryCollectorAI::SetMemoryTarget_MemoryMoveEnd(const FMemoryFragment& InNewMemory)
 {
-	// BehaviorComp->SetPatrolLocation(InPatrolLocation);
-}
-
-FVector ACNox_MemoryCollectorAI::GetPatrolLocation()
-{
-	return FVector::ZeroVector;
-	// return BehaviorComp->GetPatrolLocation();
+	if (MemoryQueue.Contains(CurrentTargetMemory))
+		MemoryQueue.Remove(CurrentTargetMemory);
+	CurrentTargetMemory = InNewMemory;
 }
 
 void ACNox_MemoryCollectorAI::ShutBeam()

@@ -55,11 +55,8 @@ public:
 	void RegisterMemory(const FMemoryFragment& InNewMemory);
 	bool EvaluateMemory();
 	const FMemoryFragment GetMemoryTarget();
-	FORCEINLINE bool IsMemoryEmpty() { return MemoryQueue.Num() > 0; }
-
-public:
-	void SetPatrolLocation(const FVector& InPatrolLocation);
-	FVector GetPatrolLocation();
+	void SetMemoryTarget_MemoryMoveEnd(const FMemoryFragment& InNewMemory);
+	bool IsMemoryEmpty() const { return MemoryQueue.Num() > 0; }
 
 private:
 	UPROPERTY()

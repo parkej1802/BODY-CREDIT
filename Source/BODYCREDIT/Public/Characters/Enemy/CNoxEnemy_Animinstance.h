@@ -13,14 +13,7 @@ class BODYCREDIT_API UCNoxEnemy_Animinstance : public UAnimInstance
 {
 	GENERATED_BODY()
 
-private:
-	virtual void NativeInitializeAnimation() override;
-	virtual void NativeBeginPlay() override;
-	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
-
-private:
-	UFUNCTION()
-	void OnAnimMontageEnded(UAnimMontage* Montage, bool bInterrupted);
+#pragma region Update Animation
 
 private:
 	UPROPERTY()
@@ -30,66 +23,34 @@ private:
 	UPROPERTY(BlueprintReadOnly, Category=Anim, meta=(AllowPrivateAccess=true))
 	float DeltaYaw;
 
-private:
-	UFUNCTION()
-	void AnimNotify_EnableRAttack();
-	UFUNCTION()
-	void AnimNotify_EnableLAttack();
-	UFUNCTION()
-	void AnimNotify_EndAttack();
+	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+#pragma endregion
 
-	// ==================================================================================
-	// Zero
-private:
-	UPROPERTY(BlueprintReadOnly, Category=Anim, meta=(AllowPrivateAccess=true))
-	int32 IdleIdx = 0;
+#pragma region Set Owner
 
-	// ==================================================================================
-	// Medic Android
 public:
+	void SetEnemy(ACNox_EBase* InOwnerEnemy) { OwnerEnemy = InOwnerEnemy; }
+#pragma endregion
+
+#pragma region Montage
+
+public:
+	// Common
 	UPROPERTY(VisibleAnywhere)
 	UAnimMontage* IdleMontage;
-	UPROPERTY(VisibleAnywhere)
-	UAnimMontage* GrenadeMontage;
-	UPROPERTY(VisibleAnywhere)
-	UAnimMontage* ShieldMontage;
-	UPROPERTY(VisibleAnywhere)
-	UAnimMontage* AttackMontage;
 	UPROPERTY(VisibleAnywhere)
 	UAnimMontage* HitMontage;
 	UPROPERTY(VisibleAnywhere)
 	UAnimMontage* DieMontage;
-
-	const FName ShieldStartSection = "ShieldStart";
-	const FName ShieldEndSection = "ShieldEnd";
-
-public:
-	FORCEINLINE void SetEnemy(ACNox_EBase* InOwnerEnemy) { OwnerEnemy = InOwnerEnemy; }
-
-public:
-	UFUNCTION()
-	void AnimNotify_PlayIdleMontage();
-
-private:
-	UFUNCTION()
-	void AnimNotify_DistanceToPlayer();
-
-public:
-	void PlayGrenadeMontage();
-	bool IsPlayingGrenade() const;
-
-public:
-	void PlayShieldMontage(const bool bInShieldStart);
-	void JumpShieldMontage();
-	bool IsShielding() const;
-	void PlayAttackMontage();
-	bool IsAttacking() const;
-	void PlayHitMontage(const int32 sectionIdx = 1);
-	bool IsHitting() const;
-	void PlayDieMontage(const int32 sectionIdx = 1);
-	// ==================================================================================
+	// Zero, Medic
+	UPROPERTY(VisibleAnywhere)
+	UAnimMontage* AttackMontage;
+	// Medic
+	UPROPERTY(VisibleAnywhere)
+	UAnimMontage* GrenadeMontage;
+	UPROPERTY(VisibleAnywhere)
+	UAnimMontage* ShieldMontage;
 	// Memory Collector
-public:
 	UPROPERTY(VisibleAnywhere)
 	UAnimMontage* Attack1Montage;
 	UPROPERTY(VisibleAnywhere)
@@ -102,23 +63,51 @@ public:
 	UAnimMontage* BeamMontage;
 	UPROPERTY(VisibleAnywhere)
 	UAnimMontage* WavePulseMontage;
+#pragma endregion
+
+#pragma region Attacking
 
 public:
-	void PlayBeamAttack();
-	void StopBeamAttack();
+	void PlayAttackMontage();
+	bool IsAttacking() const;
+
+private:
+	UFUNCTION()
+	void AnimNotify_EnableRAttack();
+	UFUNCTION()
+	void AnimNotify_EnableLAttack();
+	UFUNCTION()
+	void AnimNotify_EndAttack();
+#pragma endregion
+
+#pragma region Grenade
+
+public:
+	void PlayGrenadeMontage() const;
+	bool IsPlayingGrenade() const;
+
+private:
+	UFUNCTION()
+	void AnimNotify_Grenade() const;
+#pragma endregion
+
+#pragma region Heal
+
+private:
+	const FName ShieldStartSection = "ShieldStart";
+	const FName ShieldEndSection = "ShieldEnd";
+
+public:
+	void PlayShieldMontage(const bool bInShieldStart) const;
+	bool IsShielding() const;
+#pragma endregion
+
+#pragma region Beam
+
+public:
+	void PlayBeamAttack() const;
+	void StopBeamAttack() const;
 	bool IsBeamAttacking() const;
-
-private:
-	UFUNCTION()
-	void AnimNotify_BeamStart();
-
-public:
-	void PlayWavePulse();
-	bool IsWavePulseAttacking() const;
-
-private:
-	UFUNCTION()
-	void AnimNotify_WavePulseStart();
 
 private:
 	bool loopCheck = false;
@@ -128,6 +117,22 @@ private:
 
 	UFUNCTION()
 	void AnimNotify_UsingBeamTimeChecker();
+	UFUNCTION()
+	void AnimNotify_BeamStart() const;
+#pragma endregion
+
+#pragma region Wave Pulse
+
+public:
+	void PlayWavePulse() const;
+	bool IsWavePulseAttacking() const;
+
+private:
+	UFUNCTION()
+	void AnimNotify_WavePulseStart() const;
+#pragma endregion
+
+#pragma region Range Attack (Memory Collector)
 
 private:
 	int8 AttackCombo = 0;
@@ -138,8 +143,18 @@ private:
 	void AnimNotify_ResetCombo();
 	UFUNCTION()
 	void AnimNotify_RangeAttack();
+#pragma endregion
 
-private:
-	UFUNCTION()
-	void AnimNotify_Grenade();
+#pragma region Hit
+
+public:
+	void PlayHitMontage(const int32 sectionIdx = 1);
+	bool IsHitting() const;
+#pragma endregion
+
+#pragma region Die
+
+public:
+	void PlayDieMontage(const int32 sectionIdx = 1);
+#pragma endregion
 };
