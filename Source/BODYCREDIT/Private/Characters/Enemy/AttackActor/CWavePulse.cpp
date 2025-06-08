@@ -1,5 +1,6 @@
 #include "Characters/Enemy/AttackActor/CWavePulse.h"
 #include "Global.h"
+#include "Characters/Enemy/CNox_EBase.h"
 #include "Components/TimelineComponent.h"
 
 ACWavePulse::ACWavePulse()
@@ -27,6 +28,8 @@ void ACWavePulse::BeginPlay()
 	FOnTimelineEvent FinishedEvent;
 	FinishedEvent.BindUFunction(this, FName("OnWaveEnd"));
 	WaveTimeline->SetTimelineFinishedFunc(FinishedEvent);
+
+	OwnerAI = Cast<ACNox_EBase>(GetOwner());
 }
 
 void ACWavePulse::Tick(float DeltaTime)
@@ -37,7 +40,6 @@ void ACWavePulse::Tick(float DeltaTime)
 void ACWavePulse::StartWave()
 {
 	SetActorHiddenInGame(false);
-	// SphereComp->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	WaveTimeline->PlayFromStart();
 }
 
@@ -58,8 +60,7 @@ void ACWavePulse::HandleWaveProgress(float Value)
 	for (AActor* HitActor : Overlaps)
 	{
 		if (!HitActor || DamagedActors.Contains(HitActor)) continue;
-
-		UGameplayStatics::ApplyDamage(HitActor, 10.f, nullptr, this, nullptr);
+		OwnerAI->SetApplyDamage(HitActor, 10.f);
 		DamagedActors.Add(HitActor);
 	}
 }

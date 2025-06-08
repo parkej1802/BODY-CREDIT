@@ -16,6 +16,11 @@ void CCombat_DefaultState_MEMORY::Execute(class ACNox_EBase* Owner, class UCFSMC
 		AICon->StopMovement();
 		return;
 	}
+	else if (result == EPathFollowingRequestResult::AlreadyAtGoal)
+	{
+		const FRotator TargetRot = (Owner->GetTargetLocation() - Owner->GetActorLocation()).Rotation();
+		Owner->SetActorRotation(FMath::RInterpTo(Owner->GetActorRotation(), TargetRot, Owner->GetWorld()->GetDeltaSeconds(), 40.f));
+	}
 	
 	if (!bFired)
 	{
