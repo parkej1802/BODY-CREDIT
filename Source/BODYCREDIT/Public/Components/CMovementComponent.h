@@ -40,7 +40,7 @@ private:
 	class UInputAction* IA_Crouch;
 
 	UPROPERTY(VisibleAnywhere)
-	class UInputAction* IA_Walk;
+	class UInputAction* IA_Slide;
 
 	UPROPERTY(VisibleAnywhere)
 	class UInputAction* IA_Jump;
@@ -49,6 +49,7 @@ public:
 	FORCEINLINE bool CanMove() { return bCanMove; }
 	FORCEINLINE bool IsForward() { return bForward; }
 	FORCEINLINE bool IsSprint() { return bSprint; }
+	FORCEINLINE bool IsSlide() { return bSlide; }
 	FORCEINLINE bool IsCrouch() { return bCrouch; }
 
 	// Stand
@@ -90,6 +91,9 @@ private:
 	void OnReset(const struct FInputActionValue& InVal);
 	
 	void OnCrouch(const struct FInputActionValue& InVal);
+
+	void OnSlide(const struct FInputActionValue& InVal);
+	void OffSlide(const struct FInputActionValue& InVal);
 	
 	void OnJump(const struct FInputActionValue& InVal);
 
@@ -134,6 +138,7 @@ private:
 	bool bForward = false;
 	bool bSprint = false;
 	bool bCrouch = false;
+	bool bSlide = false;
 	bool bFixedCamera = false;
 
 	// FOV
@@ -142,5 +147,31 @@ private:
 	const float SprintFOV = 110;
 	const float FOVInterpSpeed = 3;
 	float TargetFOV = DefaultFOV;
+
+	// Interp Speed
+	float DesiredMaxWalkSpeed;
+	float InterpSpeed = 10.0f;
+
+public:
+	//Slide
+	UPROPERTY(BlueprintReadOnly, Category = "Slide")
+	bool bIsSliding = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
+	float SlideInitialSpeed = 200;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
+	float SlideFriction = 100.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
+	float MinSlideSpeed = 300.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Slide")
+	float MaxSlideDuration = 1.5f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Slide")
+	float SlideElapsedTime = 0.0f;
+
+	FVector LastSlideLocation;
 
 };
