@@ -28,7 +28,7 @@ public:
 	void RegisterMemoryFromPlayer(class ACNox_Runner* Player, EMemoryTriggerType Trigger);
 
 private:
-	const FString VIPZoneID = "VipZone";
+	const FString VIPZoneID = "VIP";
 	UPROPERTY()
 	TArray<class ACAreaTriggerBox*> ZoneVolumes;
 
