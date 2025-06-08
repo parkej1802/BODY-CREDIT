@@ -3,6 +3,7 @@
 #include "NiagaraComponent.h"
 #include "Characters/Enemy/CNox_MemoryCollectorAI.h"
 #include "Global.h"
+#include "Characters/CNox_Runner.h"
 
 ACBeam::ACBeam()
 {

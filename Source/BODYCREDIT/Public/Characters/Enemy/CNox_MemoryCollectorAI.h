@@ -7,6 +7,7 @@
 #include "Data/CMemoryData.h"
 #include "CNox_MemoryCollectorAI.generated.h"
 
+class ACRangeProjectile;
 /**
  * 기억 추적 AI
  */
@@ -86,9 +87,9 @@ private:
 	FCriticalSection ProjectileArrayCriticalSection;
 
 	UPROPERTY()
-	TSubclassOf<class ACRangeProjectile> RangeProjectileCls;
+	TSubclassOf<ACRangeProjectile> RangeProjectileCls;
 	UPROPERTY(VisibleAnywhere)
-	TArray<class ACRangeProjectile*> RangeProjectileArray;
+	TArray<ACRangeProjectile*> RangeProjectileArray;
 	UPROPERTY(EditAnywhere)
 	int32 SpawnProjectileCount = 16;
 
@@ -99,5 +100,5 @@ private:
 
 public:
 	void StartRangeAttack(bool bIsRight);
-	void ReturnToPool(class ACRangeProjectile* ReturnedProjectile);
+	void ReturnToPool(ACRangeProjectile* ReturnedProjectile);
 };

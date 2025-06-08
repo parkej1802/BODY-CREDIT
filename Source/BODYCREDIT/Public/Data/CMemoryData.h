@@ -3,16 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Characters/CNox_Runner.h"
 #include "CMemoryData.generated.h"
 
 UENUM(BlueprintType)
 enum class EMemoryTriggerType : uint8
 {
 	None,
-	Intrusion,
+	Stay,
 	Combat,
-	Loitering,
+	Looting,
 	Max
 };
 
@@ -43,7 +42,7 @@ struct FMemoryFragment
 	FName ZoneID = TEXT("");
 
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<ACNox_Runner> SourcePlayer = nullptr;
+	TObjectPtr<class ACNox_Runner> SourcePlayer = nullptr;
 
 	void CalculatePriority(const FVector& AILocation)
 	{

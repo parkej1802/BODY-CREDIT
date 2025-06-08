@@ -38,9 +38,8 @@ void ACAttachment_Bow::BeginPlay()
 
 	SkeletalMesh->SetVisibility(false);
 
-	PoseableMesh->SetSkeletalMesh(SkeletalMesh->SkeletalMesh);
+	PoseableMesh->SetSkeletalMesh(SkeletalMesh->GetSkeletalMeshAsset());
 	PoseableMesh->CopyPoseFromSkeletalComponent(SkeletalMesh);
-
 }
 
 void ACAttachment_Bow::Tick(float DeltaTime)
