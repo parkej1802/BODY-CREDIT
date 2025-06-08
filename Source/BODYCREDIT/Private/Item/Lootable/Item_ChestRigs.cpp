@@ -3,16 +3,18 @@
 
 #include "Item/Lootable/Item_ChestRigs.h"
 #include "AC_LootingInventoryComponent.h"
+#include "Item/Functions/Function_Backpack.h"
 
 AItem_ChestRigs::AItem_ChestRigs()
 {
 	LootInventoryComp = CreateDefaultSubobject<UAC_LootingInventoryComponent>(TEXT("EquipInventoryComp"));
-	ItemName = FName("ChestRigs");
 }
 
 void AItem_ChestRigs::BeginPlay()
 {
 	Super::BeginPlay();
+
+	ItemStrategy = NewObject<UFunction_Backpack>();
 
 	ItemObject->ItemActorOwner->LootInventoryComp = LootInventoryComp;
 }

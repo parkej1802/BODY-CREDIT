@@ -72,9 +72,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName ItemName;
 
-		
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ACMainGM* GameMode;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UAC_LootingInventoryComponent* LootInventoryComp;
+
+//#if WITH_EDITOR
+//	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
+//#endif
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Strategy")
 	class UItemStrategy* ItemStrategy;
@@ -84,11 +90,4 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="Item")
 	void UseItem();
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UAC_LootingInventoryComponent* LootInventoryComp;
-
-//#if WITH_EDITOR
-//	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
-//#endif
 };

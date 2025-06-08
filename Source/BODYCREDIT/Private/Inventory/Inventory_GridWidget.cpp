@@ -325,6 +325,9 @@ bool UInventory_GridWidget::NativeOnDragOver(const FGeometry& InGeometry, const 
 	Down = bResult.Value;
 
 	UItemObject* ItemObject = Cast<UItemObject>(InOperation->Payload);
+	if (!ItemObject) {
+		return false;
+	}
 	FIntPoint TempDimension = ItemObject->GetDimension();
 
 	int32 AdjustedX = Right ? FMath::Clamp(TempDimension.X - 1, 0, TempDimension.X - 1) : FMath::Clamp(TempDimension.X, 0, TempDimension.X);
@@ -382,6 +385,8 @@ bool UInventory_GridWidget::NativeOnDrop(const FGeometry& InGeometry, const FDra
 	if (!IsCurrentlyHovered()) return false;
 
 	UItemObject* ItemObject = GetPayLoad(InOperation);
+	if (!ItemObject) return false;
+
 	FInventoryTile TempTile;
 
 	if (IsRoomAvailableForPayload(ItemObject))

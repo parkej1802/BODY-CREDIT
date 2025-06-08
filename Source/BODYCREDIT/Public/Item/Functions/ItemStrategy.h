@@ -15,5 +15,5 @@ class BODYCREDIT_API UItemStrategy : public UObject
 	GENERATED_BODY()
 	
 public:
-	virtual void Use(class AItem_Base* Item) {};
+	virtual void Use(class UItemObject* ItemObject) {};
 };

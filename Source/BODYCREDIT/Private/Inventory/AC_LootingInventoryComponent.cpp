@@ -21,6 +21,11 @@ void UAC_LootingInventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (GetOwner() && GetOwner()->IsA(AItem_Base::StaticClass()))
+	{
+		return;
+	}
+
 	AddRandomItem();
 
 	// PreAddItem();

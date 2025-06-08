@@ -61,4 +61,6 @@ public:
 
 	UItemObject* CreateItemFromData(const FItemSaveData& Data);
 
+	bool IsStatChanged = false;
+
 };

@@ -182,6 +182,7 @@ bool UInventory_EquipmentWidget::NativeOnDrop(const FGeometry& InGeometry, const
 		}
 		DrawDropLocation = false;
 		PlayerCharacter->EquipComp->IsChanged = true;
+		PlayerCharacter->EquipComp->IsStatChanged = true;
 		InventoryItemTileUI->IsMoving = false;
 		return true;
 	}

@@ -4,6 +4,7 @@
 #include "Item/ItemObject.h"
 #include "AC_LootingInventoryComponent.h"
 #include "Item/Item_Base.h"
+#include "Item/Functions/ItemStrategy.h"
 
 
 FIntPoint UItemObject::GetDimension()
@@ -98,4 +99,19 @@ void UItemObject::ImportData(const FItemSaveData& Data)
 	ItemData.ItemType = Data.ItemType;
 	CurrentIndex = Data.CurrentIndex;
 	ContainedItems = Data.ContainedItems;
+}
+
+void UItemObject::SetItemStrategy(class UItemStrategy* NewStrategy)
+{
+	if (ItemStrategy != NewStrategy) {
+		ItemStrategy = NewStrategy;
+	}
+}
+
+void UItemObject::UseItem()
+{
+	if (ItemStrategy)
+	{
+		ItemStrategy->Use(this);
+	}
 }

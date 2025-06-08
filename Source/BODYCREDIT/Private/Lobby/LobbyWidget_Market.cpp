@@ -18,7 +18,6 @@
 #include "Inventory/Inventory_EquipmentTile.h"
 #include "Characters/CNox_Controller.h"
 
-
 void ULobbyWidget_Market::NativeConstruct()
 {
     Super::NativeConstruct();
@@ -382,6 +381,7 @@ void ULobbyWidget_Market::OnSelectLegClicked()
 				ItemWidget->Image_Item->SetBrush(NewBrush);
 				ItemWidget->ItemData = Weapons[i];
 				ItemWidget->InventoryBaseComp = InventoryComp;
+
 			}
 
 			UHorizontalBox* TargetRow = RowBoxes[RowIndex];

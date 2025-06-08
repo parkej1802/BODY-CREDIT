@@ -140,4 +140,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FItemData ItemData;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Strategy")
+	class UItemStrategy* ItemStrategy;
+
+	UFUNCTION(BlueprintCallable, Category="Item")
+	void SetItemStrategy(class UItemStrategy* NewStrategy);
+
+	UFUNCTION(BlueprintCallable, Category="Item")
+	void UseItem();
+
+	UPROPERTY()
+	bool bIsUseFunction = false;
 };

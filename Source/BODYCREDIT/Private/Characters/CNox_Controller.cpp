@@ -42,5 +42,5 @@ void ACNox_Controller::RotateDraggedItem()
         EquipTile->Refresh();
     }
 
-	GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Green, TEXT("Item Rotated (R key)"));
+	// GEngine->AddOnScreenDebugMessage(-1, 1.5f, FColor::Green, TEXT("Item Rotated (R key)"));
 }
