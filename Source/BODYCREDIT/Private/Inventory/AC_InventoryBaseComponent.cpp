@@ -244,6 +244,21 @@ void UAC_InventoryBaseComponent::RemoveItem(UItemObject* ItemObject)
 	}
 }
 
+void UAC_InventoryBaseComponent::DestroyItem(UItemObject* ItemObject)
+{
+	if (IsValid(ItemObject))
+	{
+		for (int i = 0; i < Items.Num(); ++i)
+		{
+			if (ItemObject == Items[i])
+			{
+				Items[i] = nullptr;
+				IsDirty = true;
+			}
+		}
+	}
+}	
+
 void UAC_InventoryBaseComponent::OnInventoryChanged()
 {
 	InventoryChanged.Broadcast();

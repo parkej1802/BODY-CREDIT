@@ -71,3 +71,9 @@ void UNetGameInstance::OnCreateSessionComplete(FName SessionName, bool bWasSucce
 	//PRINTLOG(TEXT("SessionName : %s, bWasSuccessful : %d"), *SessionName.ToString(), bWasSuccessful);
 }
 
+void UNetGameInstance::SetPlayerGold(int32 NewGold)
+{
+	PlayerGold = NewGold;
+	OnGoldChanged.Broadcast(NewGold);
+}
+

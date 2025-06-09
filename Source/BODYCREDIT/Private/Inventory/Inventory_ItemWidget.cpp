@@ -12,6 +12,8 @@
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Inventory/Inventory_Widget.h"
 #include "Item/Item_Base.h"
+#include "Lobby/LobbyWidget_ItemMenu.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
 
 void UInventory_ItemWidget::NativeConstruct()
 {
@@ -68,10 +70,41 @@ FReply UInventory_ItemWidget::NativeOnMouseButtonDown(const FGeometry& InGeometr
 	}
 	else if (InMouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
 	{
-		if (ItemObject)
+		if (ItemObject->bIsMenu)
 		{
-			ItemObject->ItemActorOwner->UseItem();
+			ItemObject->bIsMenu = !ItemObject->bIsMenu;
+			if (ItemMenuUI) {
+				ItemMenuUI->RemoveFromParent();
+			}
+			
+			return FReply::Handled();
 		}
+
+		if (!ItemObject->bIsMenu && ItemMenuWidget)
+		{
+			ItemMenuUI = CreateWidget<ULobbyWidget_ItemMenu>(this, ItemMenuWidget);
+			ItemMenuUI->ItemObject = ItemObject;
+		}
+		if (ItemMenuUI)
+		{
+			ItemMenuUI->AddToViewport(100);
+
+			const FGeometry& Geometry = GetCachedGeometry();
+			FVector2D AbsoluteScreenPos = Geometry.GetAbsolutePosition();
+			float ViewportScale = UWidgetLayoutLibrary::GetViewportScale(this);
+			FVector2D DPIAdjustedPosition = AbsoluteScreenPos / ViewportScale;
+
+			const float MenuOffsetX = Size.X + 10.0f; 
+			FVector2D MenuPosition = DPIAdjustedPosition + FVector2D(MenuOffsetX, 0.f);
+
+			ItemMenuUI->SetPositionInViewport(MenuPosition, false);
+			ItemObject->bIsMenu = !ItemObject->bIsMenu;
+		}
+		
+		//if (ItemObject)
+		//{
+		//	ItemObject->ItemActorOwner->UseItem();
+		//}
 		return FReply::Handled();
 	}
 
@@ -94,6 +127,9 @@ void UInventory_ItemWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent
 
 void UInventory_ItemWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
 {
+	if (ItemMenuUI) {
+		ItemMenuUI->RemoveFromParent();
+	}
 	if (IsMoving || ItemObject->bIsUseFunction) return;
 	IsMoving = true;
 
