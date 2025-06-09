@@ -96,6 +96,18 @@ void UAC_InventoryComponent::SetupInputBinding(class UEnhancedInputComponent* In
 
 void UAC_InventoryComponent::ShowInventory()
 {
+
+	if (InventoryMainUI)
+	{
+		InventoryMainUI->RemoveFromParent();
+		bIsLootableMode = false;
+		bIsInventoryMode = false;
+		FInputModeGameOnly GameInputMode;
+		pc->SetInputMode(GameInputMode);
+		pc->bShowMouseCursor = false;
+		return;
+	}
+
 	if (bIsLootableMode) return;
 
 	if (!bIsInventoryMode) {
@@ -152,6 +164,18 @@ void UAC_InventoryComponent::RotateItem()
 
 void UAC_InventoryComponent::ShowLootableInventory()
 {
+
+	if (InventoryMainUI)
+	{
+		InventoryMainUI->RemoveFromParent();
+		bIsLootableMode = false;
+		bIsInventoryMode = false;
+		FInputModeGameOnly GameInputMode;
+		pc->SetInputMode(GameInputMode);
+		pc->bShowMouseCursor = false;
+		return;
+	}
+
 	if (bIsInventoryMode) return;
 
 	if (bIsLootableMode) {
