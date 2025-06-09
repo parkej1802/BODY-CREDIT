@@ -18,7 +18,7 @@
 #include "Lobby/LobbyWidget_Market.h"
 
 
-void UInventory_GridWidget::InitInventory(class UAC_InventoryBaseComponent* InventoryComponent, float Inventoy_TileSize)
+void UInventory_GridWidget::InitInventory(UAC_InventoryBaseComponent* InventoryComponent, float Inventoy_TileSize)
 {
 	InventoryBaseComp = InventoryComponent;
 	InventoryRows = InventoryBaseComp->Rows; 

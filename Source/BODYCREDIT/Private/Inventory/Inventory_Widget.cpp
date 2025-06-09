@@ -18,6 +18,9 @@
 #include "Characters/CNox_Controller.h"
 #include "Components/CNoxHPComponent.h"
 #include "Components/TextBlock.h"
+#include "Components/Image.h"
+#include "Components/Button.h"
+#include "AC_LootingInventoryComponent.h"
 
 void UInventory_Widget::NativeConstruct()
 {
@@ -78,6 +81,13 @@ void UInventory_Widget::NativeConstruct()
         InventoryItemGridWidget->SetVisibility(ESlateVisibility::Hidden);
     }
 
+    if (Button_Back)
+    {
+        Button_Back->OnClicked.AddDynamic(this, &ThisClass::OnBackClicked);
+        Button_Back->OnHovered.AddDynamic(this, &ThisClass::OnBackHovered);
+        Button_Back->OnUnhovered.AddDynamic(this, &ThisClass::OnBackUnhovered);
+    }
+
     EquipComp->EquipmentChanged.AddDynamic(this, &UInventory_Widget::SetItemInventory);
 }
 
@@ -91,6 +101,27 @@ bool UInventory_Widget::NativeOnDragOver(const FGeometry& InGeometry, const FDra
 {
     Super::NativeOnDragOver(InGeometry, InDragDropEvent, InOperation);
     return true;
+}
+
+void UInventory_Widget::OnBackClicked()
+{
+   InventoryComp->ShowLootableInventory();
+}
+
+void UInventory_Widget::OnBackHovered()
+{
+    if (Image_Button_Back_Hovered)
+    {
+        Image_Button_Back_Hovered->SetVisibility(ESlateVisibility::Visible);
+    }
+}
+
+void UInventory_Widget::OnBackUnhovered()
+{
+    if (Image_Button_Back_Hovered)
+    {
+        Image_Button_Back_Hovered->SetVisibility(ESlateVisibility::Hidden);
+    }
 }
 
 //void UInventory_Widget::IsMouseOnGrid()
