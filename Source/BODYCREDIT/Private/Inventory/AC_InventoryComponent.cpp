@@ -13,6 +13,7 @@
 #include "Inventory/AC_EquipComponent.h"
 #include "Item/Item_Base.h"
 #include "Components/CMovementComponent.h"
+#include "Camera/CameraComponent.h"
 
 // Sets default values for this component's properties
 UAC_InventoryComponent::UAC_InventoryComponent()
@@ -173,11 +174,11 @@ void UAC_InventoryComponent::ShowLootableInventory()
 	FCollisionQueryParams TraceParams;
 	TraceParams.AddIgnoredActor(GetOwner());
 
-	FVector StartPos = PlayerCharacter->GetActorLocation();
-	FVector ForwardVector = PlayerCharacter->GetControlRotation().Vector();
-	FVector EndPos = StartPos + (ForwardVector * 300.f);
+	FVector StartPos = CHelpers::GetComponent<UCameraComponent>(PlayerCharacter)->GetComponentLocation();
+	FVector ForwardVector = CHelpers::GetComponent<UCameraComponent>(PlayerCharacter)->GetForwardVector();
+	FVector EndPos = StartPos + (ForwardVector * 350.f);
 
-	DrawDebugLine(GetWorld(), StartPos, EndPos, FColor::Red, false, 1.0f, 0, 2.0f);
+	//DrawDebugLine(GetWorld(), StartPos, EndPos, FColor::Red);
 
 	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, StartPos, EndPos, ECC_Visibility, TraceParams);
 
