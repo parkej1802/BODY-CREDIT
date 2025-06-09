@@ -33,37 +33,58 @@ void ULobbyWidget_Market::NativeConstruct()
     if (Button_Back)
     {
         Button_Back->OnClicked.AddDynamic(this, &ThisClass::OnBackClicked);
+		Button_Back->OnHovered.AddDynamic(this, &ThisClass::OnBackHovered);
+		Button_Back->OnUnhovered.AddDynamic(this, &ThisClass::OnBackUnhovered);
     }
 
     if (Button_SelectWeapon)
     {
         Button_SelectWeapon->OnClicked.AddDynamic(this, &ThisClass::OnSelectWeaponClicked);
+		Button_SelectWeapon->OnHovered.AddDynamic(this, &ThisClass::OnSelectWeaponHovered);
+		Button_SelectWeapon->OnUnhovered.AddDynamic(this, &ThisClass::OnSelectWeaponUnhovered);
     }
 
     if (Button_SelectHead)
     {
         Button_SelectHead->OnClicked.AddDynamic(this, &ThisClass::OnSelectHeadClicked);
+		Button_SelectHead->OnHovered.AddDynamic(this, &ThisClass::OnSelectHeadHovered);
+		Button_SelectHead->OnUnhovered.AddDynamic(this, &ThisClass::OnSelectHeadUnhovered);
     }
 
     if (Button_SelectBody)
     {
         Button_SelectBody->OnClicked.AddDynamic(this, &ThisClass::OnSelectBodyClicked);
+		Button_SelectBody->OnHovered.AddDynamic(this, &ThisClass::OnSelectBodyHovered);
+		Button_SelectBody->OnUnhovered.AddDynamic(this, &ThisClass::OnSelectBodyUnhovered);
     }
 
     if (Button_SelectArm)
     {
         Button_SelectArm->OnClicked.AddDynamic(this, &ThisClass::OnSelectArmClicked);
+		Button_SelectArm->OnHovered.AddDynamic(this, &ThisClass::OnSelectArmHovered);
+		Button_SelectArm->OnUnhovered.AddDynamic(this, &ThisClass::OnSelectArmUnhovered);
     }
 
     if (Button_SelectLeg)
     {
         Button_SelectLeg->OnClicked.AddDynamic(this, &ThisClass::OnSelectLegClicked);
+		Button_SelectLeg->OnHovered.AddDynamic(this, &ThisClass::OnSelectLegHovered);
+		Button_SelectLeg->OnUnhovered.AddDynamic(this, &ThisClass::OnSelectLegUnhovered);
     }
 
-    if (Button_SelectUtility)
+    if (Button_SelectBackpack)
     {
-        Button_SelectUtility->OnClicked.AddDynamic(this, &ThisClass::OnSelectUtilityClicked);
+        Button_SelectBackpack->OnClicked.AddDynamic(this, &ThisClass::OnSelectBackpackClicked);
+		Button_SelectBackpack->OnHovered.AddDynamic(this, &ThisClass::OnSelectBackpackHovered);
+		Button_SelectBackpack->OnUnhovered.AddDynamic(this, &ThisClass::OnSelectBackpackUnhovered);
     }
+
+	if (Button_SelectChestrig)
+	{
+		Button_SelectChestrig->OnClicked.AddDynamic(this, &ThisClass::OnSelectChestrigClicked);
+		Button_SelectChestrig->OnHovered.AddDynamic(this, &ThisClass::OnSelectChestrigHovered);
+		Button_SelectChestrig->OnUnhovered.AddDynamic(this, &ThisClass::OnSelectChestrigUnhovered);
+	}
 
 	GI = Cast<UNetGameInstance>(GetGameInstance());
 	if (GI) {
@@ -85,7 +106,9 @@ void ULobbyWidget_Market::NativeConstruct()
 
     MarketComp = PlayerCharacter->MarketComp;
 
-	
+	OnSelectWeaponClicked();
+	PreviousImage = Image_SelectWeapon_Hovered;
+	PreviousImage->SetVisibility(ESlateVisibility::Visible);
 }
 
 void ULobbyWidget_Market::OnBackClicked()
@@ -102,12 +125,35 @@ void ULobbyWidget_Market::OnBackClicked()
     }
 }
 
+void ULobbyWidget_Market::OnBackHovered()
+{
+	if (Image_Button_Back_Hovered)
+	{
+		Image_Button_Back_Hovered->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+void ULobbyWidget_Market::OnBackUnhovered()
+{
+	if (Image_Button_Back_Hovered)
+	{
+		Image_Button_Back_Hovered->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
 void ULobbyWidget_Market::OnSelectWeaponClicked()
 {
 	if (!MarketComp || !MarketItemWidget || !VerticalBox_MarketItem)
 	{
 		return;
 	}
+
+	if (PreviousImage == Image_SelectWeapon_Hovered) return;
+	
+	TurnOffPreviousImage();
+	PreviousImage = Image_SelectWeapon_Hovered;
+	TurnOnPreviousImage();
+	
 
 	VerticalBox_MarketItem->ClearChildren();
 
@@ -167,12 +213,45 @@ void ULobbyWidget_Market::OnSelectWeaponClicked()
 	}
 }
 
+void ULobbyWidget_Market::OnSelectWeaponHovered()
+{
+	if (PreviousImage == Image_SelectWeapon_Hovered)
+	{
+		return;
+	}
+
+	if (Image_SelectWeapon_Hovered)
+	{
+		Image_SelectWeapon_Hovered->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+
+void ULobbyWidget_Market::OnSelectWeaponUnhovered()
+{
+	if (PreviousImage == Image_SelectWeapon_Hovered)
+	{
+		return;
+	}
+
+	if (Image_SelectWeapon_Hovered)
+	{
+		Image_SelectWeapon_Hovered->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
 void ULobbyWidget_Market::OnSelectHeadClicked()
 {
 	if (!MarketComp || !MarketItemWidget || !VerticalBox_MarketItem)
 	{
 		return;
 	}
+
+	if (PreviousImage == Image_SelectHead_Hovered) return;
+
+	TurnOffPreviousImage();
+	PreviousImage = Image_SelectHead_Hovered;
+	TurnOnPreviousImage();
 
 	VerticalBox_MarketItem->ClearChildren();
 
@@ -232,12 +311,42 @@ void ULobbyWidget_Market::OnSelectHeadClicked()
 	}
 }
 
+void ULobbyWidget_Market::OnSelectHeadHovered()
+{
+	if (PreviousImage == Image_SelectHead_Hovered)
+	{
+		return;
+	}
+	if (Image_SelectHead_Hovered)
+	{
+		Image_SelectHead_Hovered->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+void ULobbyWidget_Market::OnSelectHeadUnhovered()
+{
+	if (PreviousImage == Image_SelectHead_Hovered)
+	{
+		return;
+	}
+	if (Image_SelectHead_Hovered)
+	{
+		Image_SelectHead_Hovered->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
 void ULobbyWidget_Market::OnSelectBodyClicked()
 {
 	if (!MarketComp || !MarketItemWidget || !VerticalBox_MarketItem)
 	{
 		return;
 	}
+
+	if (PreviousImage == Image_SelectBody_Hovered) return;
+
+	TurnOffPreviousImage();
+	PreviousImage = Image_SelectBody_Hovered;
+	TurnOnPreviousImage();
 
 	VerticalBox_MarketItem->ClearChildren();
 
@@ -297,12 +406,42 @@ void ULobbyWidget_Market::OnSelectBodyClicked()
 	}
 }
 
+void ULobbyWidget_Market::OnSelectBodyHovered()
+{
+	if (PreviousImage == Image_SelectBody_Hovered)
+	{
+		return;
+	}
+	if (Image_SelectBody_Hovered)
+	{
+		Image_SelectBody_Hovered->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+void ULobbyWidget_Market::OnSelectBodyUnhovered()
+{
+	if (PreviousImage == Image_SelectBody_Hovered)
+	{
+		return;
+	}
+	if (Image_SelectBody_Hovered)
+	{
+		Image_SelectBody_Hovered->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
 void ULobbyWidget_Market::OnSelectArmClicked()
 {
 	if (!MarketComp || !MarketItemWidget || !VerticalBox_MarketItem)
 	{
 		return;
 	}
+
+	if (PreviousImage == Image_SelectArm_Hovered) return;
+
+	TurnOffPreviousImage();
+	PreviousImage = Image_SelectArm_Hovered;
+	TurnOnPreviousImage();
 
 	VerticalBox_MarketItem->ClearChildren();
 
@@ -362,12 +501,42 @@ void ULobbyWidget_Market::OnSelectArmClicked()
 	}
 }
 
+void ULobbyWidget_Market::OnSelectArmHovered()
+{
+	if (PreviousImage == Image_SelectArm_Hovered)
+	{
+		return;
+	}
+	if (Image_SelectArm_Hovered)
+	{
+		Image_SelectArm_Hovered->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+void ULobbyWidget_Market::OnSelectArmUnhovered()
+{
+	if (PreviousImage == Image_SelectArm_Hovered)
+	{
+		return;
+	}
+	if (Image_SelectArm_Hovered)
+	{
+		Image_SelectArm_Hovered->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
 void ULobbyWidget_Market::OnSelectLegClicked()
 {
 	if (!MarketComp || !MarketItemWidget || !VerticalBox_MarketItem)
 	{
 		return;
 	}
+
+	if (PreviousImage == Image_SelectLeg_Hovered) return;
+
+	TurnOffPreviousImage();
+	PreviousImage = Image_SelectLeg_Hovered;
+	TurnOnPreviousImage();
 
 	VerticalBox_MarketItem->ClearChildren();
 
@@ -428,19 +597,52 @@ void ULobbyWidget_Market::OnSelectLegClicked()
 	}
 }
 
-void ULobbyWidget_Market::OnSelectUtilityClicked()
+void ULobbyWidget_Market::OnSelectLegHovered()
+{
+	if (PreviousImage == Image_SelectLeg_Hovered)
+	{
+		return;
+	}
+
+	if (Image_SelectLeg_Hovered)
+	{
+		Image_SelectLeg_Hovered->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+void ULobbyWidget_Market::OnSelectLegUnhovered()
+{
+	if (PreviousImage == Image_SelectLeg_Hovered)
+	{
+		return;
+	}
+
+	if (Image_SelectLeg_Hovered)
+	{
+		Image_SelectLeg_Hovered->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+void ULobbyWidget_Market::OnSelectBackpackClicked()
 {
 	if (!MarketComp || !MarketItemWidget || !VerticalBox_MarketItem)
 	{
 		return;
 	}
 
+
+	if (PreviousImage == Image_SelectBackpack_Hovered) return;
+
+	TurnOffPreviousImage();
+	PreviousImage = Image_SelectBackpack_Hovered;
+	TurnOnPreviousImage();
+
 	VerticalBox_MarketItem->ClearChildren();
 
 	TArray<FItemData> Weapons = MarketComp->GetMarketItems(EPlayerPart::Backpack);
-	TArray<FItemData> ChestRigs = MarketComp->GetMarketItems(EPlayerPart::ChestRigs);
+	/*TArray<FItemData> ChestRigs = MarketComp->GetMarketItems(EPlayerPart::ChestRigs);
 
-	Weapons.Append(ChestRigs);
+	Weapons.Append(ChestRigs);*/
 
 	const int32 NumPerRow = 2;
 	TArray<UHorizontalBox*> RowBoxes;
@@ -493,6 +695,129 @@ void ULobbyWidget_Market::OnSelectUtilityClicked()
 				VSlot->SetHorizontalAlignment(HAlign_Fill);
 			}
 		}
+	}
+}
+
+void ULobbyWidget_Market::OnSelectBackpackHovered()
+{
+	if (PreviousImage == Image_SelectBackpack_Hovered)
+	{
+		return;
+	}
+
+	if (Image_SelectBackpack_Hovered)
+	{
+		Image_SelectBackpack_Hovered->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+void ULobbyWidget_Market::OnSelectBackpackUnhovered()
+{
+	if (PreviousImage == Image_SelectBackpack_Hovered)
+	{
+		return;
+	}
+
+	if (Image_SelectBackpack_Hovered)
+	{
+		Image_SelectBackpack_Hovered->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+void ULobbyWidget_Market::OnSelectChestrigClicked()
+{
+	if (!MarketComp || !MarketItemWidget || !VerticalBox_MarketItem)
+	{
+		return;
+	}
+
+	if (PreviousImage == Image_SelectChestrig_Hovered) return;
+
+	TurnOffPreviousImage();
+	PreviousImage = Image_SelectChestrig_Hovered;
+	TurnOnPreviousImage();
+
+	VerticalBox_MarketItem->ClearChildren();
+
+	TArray<FItemData> Weapons = MarketComp->GetMarketItems(EPlayerPart::ChestRigs);
+
+	const int32 NumPerRow = 2;
+	TArray<UHorizontalBox*> RowBoxes;
+
+	const int32 NumRows = FMath::CeilToInt((float)Weapons.Num() / NumPerRow);
+	for (int32 Row = 0; Row < NumRows; ++Row)
+	{
+		UHorizontalBox* NewRow = NewObject<UHorizontalBox>(this, UHorizontalBox::StaticClass());
+		RowBoxes.Add(NewRow);
+	}
+
+	for (int32 i = 0; i < Weapons.Num(); ++i)
+	{
+		int32 RowIndex = i / NumPerRow;
+
+		UMarket_ItemTile* ItemWidget = CreateWidget<UMarket_ItemTile>(this, MarketItemWidget);
+		if (ItemWidget)
+		{
+			ItemWidget->OwningMarket = this;
+			if (ItemWidget->Image_Item && Weapons[i].Thumbnail)
+			{
+				FSlateBrush NewBrush;
+				NewBrush.SetResourceObject(Weapons[i].Thumbnail);
+				NewBrush.ImageSize = ImageSize;
+				ItemWidget->Image_Item->SetBrush(NewBrush);
+				ItemWidget->ItemData = Weapons[i];
+				ItemWidget->InventoryBaseComp = InventoryComp;
+			}
+
+			UHorizontalBox* TargetRow = RowBoxes[RowIndex];
+			if (TargetRow)
+			{
+				UHorizontalBoxSlot* SlotH = TargetRow->AddChildToHorizontalBox(ItemWidget);
+				if (Slot)
+				{
+					SlotH->SetHorizontalAlignment(HAlign_Center);
+					SlotH->SetVerticalAlignment(VAlign_Center);
+				}
+			}
+		}
+	}
+
+	for (UHorizontalBox* RowBox : RowBoxes)
+	{
+		if (RowBox)
+		{
+			UVerticalBoxSlot* VSlot = VerticalBox_MarketItem->AddChildToVerticalBox(RowBox);
+			if (VSlot)
+			{
+				VSlot->SetHorizontalAlignment(HAlign_Fill);
+			}
+		}
+	}
+}
+
+void ULobbyWidget_Market::OnSelectChestrigHovered()
+{
+	if (PreviousImage == Image_SelectChestrig_Hovered)
+	{
+		return;
+	}
+
+	if (Image_SelectChestrig_Hovered)
+	{
+		Image_SelectChestrig_Hovered->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+void ULobbyWidget_Market::OnSelectChestrigUnhovered()
+{
+	if (PreviousImage == Image_SelectChestrig_Hovered)
+	{
+		return;
+	}
+
+	if (Image_SelectChestrig_Hovered)
+	{
+		Image_SelectChestrig_Hovered->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 
@@ -567,5 +892,21 @@ void ULobbyWidget_Market::HandleSellCancel(class UItemObject* ItemObject)
 	if (ItemObject)
 	{
 		InventoryComp->TryAddItem(ItemObject);
+	}
+}
+
+void ULobbyWidget_Market::TurnOffPreviousImage()
+{
+	if (PreviousImage)
+	{
+		PreviousImage->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+void ULobbyWidget_Market::TurnOnPreviousImage()
+{
+	if (PreviousImage)
+	{
+		PreviousImage->SetVisibility(ESlateVisibility::Visible);
 	}
 }

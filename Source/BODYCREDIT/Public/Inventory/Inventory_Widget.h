@@ -152,6 +152,18 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UPlayer3DOverlayWidget* Player3DOverlayWidget;
 
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UButton* Button_Back;
 
+	UFUNCTION()
+	void OnBackClicked();
 
+	UFUNCTION()
+	void OnBackHovered();
+
+	UFUNCTION()
+	void OnBackUnhovered();
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UImage* Image_Button_Back_Hovered;
 };

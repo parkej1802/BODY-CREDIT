@@ -64,5 +64,6 @@ public:
 
 	void SetPlayerStat(class UItemObject* Item, int32 Direction);
 
-
+	UPROPERTY()
+	class UWidget* InnerWidget;
 };

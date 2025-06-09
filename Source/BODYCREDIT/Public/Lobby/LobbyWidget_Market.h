@@ -17,47 +17,133 @@ class BODYCREDIT_API ULobbyWidget_Market : public UUserWidget
 public:
 	virtual void NativeConstruct() override;
 	
+// Back
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UButton* Button_Back;
 
 	UFUNCTION()
 	void OnBackClicked();
 
+	UFUNCTION()
+	void OnBackHovered();
+
+	UFUNCTION()
+	void OnBackUnhovered();
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UImage* Image_Button_Back_Hovered;
+
+// Weapon
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UButton* Button_SelectWeapon;
 
 	UFUNCTION()
 	void OnSelectWeaponClicked();
 
+	UFUNCTION()
+	void OnSelectWeaponHovered();
+
+	UFUNCTION()
+	void OnSelectWeaponUnhovered();
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UImage* Image_SelectWeapon_Hovered;
+
+// Head
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UButton* Button_SelectHead;
 
 	UFUNCTION()
 	void OnSelectHeadClicked();
 
+	UFUNCTION()
+	void OnSelectHeadHovered();
+
+	UFUNCTION()
+	void OnSelectHeadUnhovered();
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UImage* Image_SelectHead_Hovered;
+
+// Body
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UButton* Button_SelectBody;
 
 	UFUNCTION()
 	void OnSelectBodyClicked();
 
+	UFUNCTION()
+	void OnSelectBodyHovered();
+
+	UFUNCTION()
+	void OnSelectBodyUnhovered();
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UImage* Image_SelectBody_Hovered;
+
+// Arm
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UButton* Button_SelectArm;
 
 	UFUNCTION()
 	void OnSelectArmClicked();
 
+	UFUNCTION()
+	void OnSelectArmHovered();
+
+	UFUNCTION()
+	void OnSelectArmUnhovered();
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UImage* Image_SelectArm_Hovered;
+
+// Leg
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UButton* Button_SelectLeg;
 
 	UFUNCTION()
 	void OnSelectLegClicked();
 
-	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UButton* Button_SelectUtility;
+	UFUNCTION()
+	void OnSelectLegHovered();
 
 	UFUNCTION()
-	void OnSelectUtilityClicked();
+	void OnSelectLegUnhovered();
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UImage* Image_SelectLeg_Hovered;
+
+// Backpack
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UButton* Button_SelectBackpack;
+
+	UFUNCTION()
+	void OnSelectBackpackClicked();
+
+	UFUNCTION()
+	void OnSelectBackpackHovered();
+
+	UFUNCTION()
+	void OnSelectBackpackUnhovered();
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UImage* Image_SelectBackpack_Hovered;
+
+// ChestRig
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UButton* Button_SelectChestrig;
+
+	UFUNCTION()
+	void OnSelectChestrigClicked();
+
+	UFUNCTION()
+	void OnSelectChestrigHovered();
+
+	UFUNCTION()
+	void OnSelectChestrigUnhovered();
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UImage* Image_SelectChestrig_Hovered;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
 	TSubclassOf<UUserWidget> LobbySelectionWidgetClass;
@@ -114,4 +200,12 @@ public:
 	void ShowSellUI(class UItemObject* ItemObject);
 	void HandleSellConfirm(class UItemObject* ItemObject);
 	void HandleSellCancel(class UItemObject* ItemObject);
+
+	UPROPERTY()
+	class UImage* PreviousImage;
+
+	void TurnOffPreviousImage();
+
+	void TurnOnPreviousImage();
+
 };

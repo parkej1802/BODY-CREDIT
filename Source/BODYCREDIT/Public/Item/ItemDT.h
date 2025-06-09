@@ -35,6 +35,8 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
 	float Humanity = 0.f;
+
+
 };
 
 UENUM(BlueprintType)
