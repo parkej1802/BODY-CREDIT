@@ -11,9 +11,10 @@ ACElectricGrenade::ACElectricGrenade()
 	CHelpers::CreateComponent<USceneComponent>(this, &RootComp, "RootComp");
 	CHelpers::CreateComponent<UStaticMeshComponent>(this, &MeshComp, "MeshComp", RootComp);
 	CHelpers::CreateActorComponent<UProjectileMovementComponent>(this, &ProjectileComp, "ProjectileComp");
-	CHelpers::CreateComponent<UNiagaraComponent>(this, &FlashFX, "FlashFX", RootComp);
 	ProjectileComp->bRotationFollowsVelocity = true;
 	ProjectileComp->bAutoActivate = false;
+	CHelpers::CreateComponent<UNiagaraComponent>(this, &FlashFX, "FlashFX", RootComp);
+	FlashFX->bAutoActivate = false;
 
 	MeshComp->SetCollisionProfileName(FName("EnemyWeapon"));
 }
@@ -21,6 +22,7 @@ ACElectricGrenade::ACElectricGrenade()
 void ACElectricGrenade::BeginPlay()
 {
 	Super::BeginPlay();
+	UseFX(false);
 	Init(false);
 }
 
@@ -83,7 +85,14 @@ void ACElectricGrenade::Explode()
 	}
 
 	// 이펙트 처리
-	Init(false);
+	UseFX(true);
+	FTimerHandle TimerHandle;
+	Owner->GetWorldTimerManager().SetTimer(TimerHandle, [this]()
+	{
+		UseFX(false);
+		Init(false);
+	}, 1.f, false);
+	
 }
 
 void ACElectricGrenade::Init(bool bInit)
