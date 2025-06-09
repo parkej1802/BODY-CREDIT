@@ -1,6 +1,6 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 #include "Inventory/AC_InventoryComponent.h"
-
+#include "Global.h"
 #include "AC_LootingInventoryComponent.h"
 #include "../../../../Plugins/EnhancedInput/Source/EnhancedInput/Public/InputAction.h"
 #include "../../../../Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputComponent.h"
@@ -12,6 +12,7 @@
 #include "Characters/CNox_Controller.h"
 #include "Inventory/AC_EquipComponent.h"
 #include "Item/Item_Base.h"
+#include "Components/CMovementComponent.h"
 
 // Sets default values for this component's properties
 UAC_InventoryComponent::UAC_InventoryComponent()
@@ -160,6 +161,7 @@ void UAC_InventoryComponent::ShowLootableInventory()
 		{
 			InventoryMainUI->bIsLootable = bIsLootableMode;
 			InventoryMainUI->RemoveFromParent();
+			CHelpers::GetComponent<UCMovementComponent>(PlayerCharacter)->Move();
 		}
 		FInputModeGameOnly GameInputMode;
 		pc->SetInputMode(GameInputMode);
@@ -225,6 +227,7 @@ void UAC_InventoryComponent::ShowLootableInventory()
 			if (InventoryMainUI)
 			{
 				InventoryMainUI->AddToViewport();
+				CHelpers::GetComponent<UCMovementComponent>(PlayerCharacter)->Stop();
 			}
 
 			FInputModeGameAndUI UIInputMode;

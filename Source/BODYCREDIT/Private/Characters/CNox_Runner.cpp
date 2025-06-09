@@ -197,13 +197,8 @@ void ACNox_Runner::Init()
 		// UpperBody
 		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &UpperBody, "UpperBody", GetMesh());
 
-		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Clothes, "Clothes", GetMesh());
-
 		// Arms
 		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Arms, "Arms", GetMesh());
-
-		// Hands
-		//CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Hands, "Hands", Arms);
 
 		// LowerBody
 		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &LowerBody, "LowerBody", GetMesh());

@@ -249,6 +249,8 @@ void UCMovementComponent::OnCrouch(const FInputActionValue& InVal)
 
 	//SetCrouchState(!bCrouch);
 
+	CheckFalse(bCanMove);
+
 	if (bCrouch)
 	{
 		bCrouch = false;

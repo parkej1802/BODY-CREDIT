@@ -169,6 +169,8 @@ void UCWeaponComponent::SubAction_Released()
 
 void UCWeaponComponent::SetMode(EWeaponType InType)
 {
+	CheckFalse(CHelpers::GetComponent<UCMovementComponent>(OwnerCharacter)->CanMove());
+
 	if (Type == InType)
 	{
 		SetUnarmedMode();

@@ -24,10 +24,10 @@ protected: // Modular Character Mesh
 	class USkeletalMeshComponent* UpperBody;
 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh")
-	class USkeletalMeshComponent* Clothes;
+	class USkeletalMeshComponent* Arms;
 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh")
-	class USkeletalMeshComponent* Arms;
+	class USkeletalMeshComponent* Bag;
 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh")
 	class USkeletalMeshComponent* LowerBody;
