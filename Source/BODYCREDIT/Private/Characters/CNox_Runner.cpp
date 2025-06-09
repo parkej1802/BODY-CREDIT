@@ -111,34 +111,34 @@ void ACNox_Runner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-#if WITH_EDITOR
-	const FVector Location = GetActorLocation();
-
-	// 1. Actor Rotation (청록색)
-	const FRotator ActorRot = GetActorRotation();
-	const FVector ActorDir = ActorRot.Vector() * 300.0f;
-	DrawDebugDirectionalArrow(GetWorld(), Location, Location + ActorDir, 100.f, FColor::Cyan, false, -1.f, 0, 2.f);
-	DrawDebugString(GetWorld(), Location + ActorDir + FVector(0, 0, 20.f),
-	                FString::Printf(TEXT("ActorYaw: %.1f"), ActorRot.Yaw), nullptr, FColor::Cyan, 0.f, true);
-
-	// 2. Control Rotation (노란색)
-	const FRotator ControlRot = GetControlRotation();
-	const FVector ControlDir = ControlRot.Vector() * 300.0f;
-	DrawDebugDirectionalArrow(GetWorld(), Location, Location + ControlDir, 100.f, FColor::Yellow, false, -1.f, 0, 2.f);
-	DrawDebugString(GetWorld(), Location + ControlDir + FVector(0, 0, 40.f),
-	                FString::Printf(TEXT("ControlYaw: %.1f"), ControlRot.Yaw), nullptr, FColor::Yellow, 0.f, true);
-
-	// 3. Velocity Rotation (빨간색)
-	if (!GetVelocity().IsNearlyZero())
-	{
-		const FRotator VelocityRot = GetVelocity().ToOrientationRotator();
-		const FVector VelocityDir = VelocityRot.Vector() * 300.0f;
-		DrawDebugDirectionalArrow(GetWorld(), Location, Location + VelocityDir, 100.f, FColor::Red, false, -1.f, 0,
-		                          2.f);
-		DrawDebugString(GetWorld(), Location + VelocityDir + FVector(0, 0, 60.f),
-		                FString::Printf(TEXT("VelocityYaw: %.1f"), VelocityRot.Yaw), nullptr, FColor::Red, 0.f, true);
-	}
-#endif
+//#if WITH_EDITOR
+//	const FVector Location = GetActorLocation();
+//
+//	// 1. Actor Rotation (청록색)
+//	const FRotator ActorRot = GetActorRotation();
+//	const FVector ActorDir = ActorRot.Vector() * 300.0f;
+//	DrawDebugDirectionalArrow(GetWorld(), Location, Location + ActorDir, 100.f, FColor::Cyan, false, -1.f, 0, 2.f);
+//	DrawDebugString(GetWorld(), Location + ActorDir + FVector(0, 0, 20.f),
+//	                FString::Printf(TEXT("ActorYaw: %.1f"), ActorRot.Yaw), nullptr, FColor::Cyan, 0.f, true);
+//
+//	// 2. Control Rotation (노란색)
+//	const FRotator ControlRot = GetControlRotation();
+//	const FVector ControlDir = ControlRot.Vector() * 300.0f;
+//	DrawDebugDirectionalArrow(GetWorld(), Location, Location + ControlDir, 100.f, FColor::Yellow, false, -1.f, 0, 2.f);
+//	DrawDebugString(GetWorld(), Location + ControlDir + FVector(0, 0, 40.f),
+//	                FString::Printf(TEXT("ControlYaw: %.1f"), ControlRot.Yaw), nullptr, FColor::Yellow, 0.f, true);
+//
+//	// 3. Velocity Rotation (빨간색)
+//	if (!GetVelocity().IsNearlyZero())
+//	{
+//		const FRotator VelocityRot = GetVelocity().ToOrientationRotator();
+//		const FVector VelocityDir = VelocityRot.Vector() * 300.0f;
+//		DrawDebugDirectionalArrow(GetWorld(), Location, Location + VelocityDir, 100.f, FColor::Red, false, -1.f, 0,
+//		                          2.f);
+//		DrawDebugString(GetWorld(), Location + VelocityDir + FVector(0, 0, 60.f),
+//		                FString::Printf(TEXT("VelocityYaw: %.1f"), VelocityRot.Yaw), nullptr, FColor::Red, 0.f, true);
+//	}
+//#endif
 }
 
 void ACNox_Runner::NotifyControllerChanged()
@@ -197,13 +197,8 @@ void ACNox_Runner::Init()
 		// UpperBody
 		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &UpperBody, "UpperBody", GetMesh());
 
-		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Clothes, "Clothes", GetMesh());
-
 		// Arms
 		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Arms, "Arms", GetMesh());
-
-		// Hands
-		//CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Hands, "Hands", Arms);
 
 		// LowerBody
 		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &LowerBody, "LowerBody", GetMesh());

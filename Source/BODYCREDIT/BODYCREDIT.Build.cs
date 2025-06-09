@@ -25,8 +25,7 @@ public class BODYCREDIT : ModuleRules
             "Json",
             "JsonUtilities",
             "OnlineSubsystem",
-            "OnlineSubsystemSteam",
-            "UnrealEd"
+            "OnlineSubsystemSteam"
         });
 
 		// Uncomment if you are using Slate UI

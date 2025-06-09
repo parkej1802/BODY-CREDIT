@@ -1,6 +1,6 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 #include "Inventory/AC_InventoryComponent.h"
-
+#include "Global.h"
 #include "AC_LootingInventoryComponent.h"
 #include "../../../../Plugins/EnhancedInput/Source/EnhancedInput/Public/InputAction.h"
 #include "../../../../Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputComponent.h"
@@ -12,6 +12,8 @@
 #include "Characters/CNox_Controller.h"
 #include "Inventory/AC_EquipComponent.h"
 #include "Item/Item_Base.h"
+#include "Components/CMovementComponent.h"
+#include "Camera/CameraComponent.h"
 
 // Sets default values for this component's properties
 UAC_InventoryComponent::UAC_InventoryComponent()
@@ -184,6 +186,7 @@ void UAC_InventoryComponent::ShowLootableInventory()
 		{
 			InventoryMainUI->bIsLootable = bIsLootableMode;
 			InventoryMainUI->RemoveFromParent();
+			CHelpers::GetComponent<UCMovementComponent>(PlayerCharacter)->Move();
 		}
 		FInputModeGameOnly GameInputMode;
 		pc->SetInputMode(GameInputMode);
@@ -195,11 +198,11 @@ void UAC_InventoryComponent::ShowLootableInventory()
 	FCollisionQueryParams TraceParams;
 	TraceParams.AddIgnoredActor(GetOwner());
 
-	FVector StartPos = PlayerCharacter->GetActorLocation();
-	FVector ForwardVector = PlayerCharacter->GetControlRotation().Vector();
-	FVector EndPos = StartPos + (ForwardVector * 300.f);
+	FVector StartPos = CHelpers::GetComponent<UCameraComponent>(PlayerCharacter)->GetComponentLocation();
+	FVector ForwardVector = CHelpers::GetComponent<UCameraComponent>(PlayerCharacter)->GetForwardVector();
+	FVector EndPos = StartPos + (ForwardVector * 350.f);
 
-	DrawDebugLine(GetWorld(), StartPos, EndPos, FColor::Red, false, 1.0f, 0, 2.0f);
+	//DrawDebugLine(GetWorld(), StartPos, EndPos, FColor::Red);
 
 	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, StartPos, EndPos, ECC_Visibility, TraceParams);
 
@@ -249,6 +252,7 @@ void UAC_InventoryComponent::ShowLootableInventory()
 			if (InventoryMainUI)
 			{
 				InventoryMainUI->AddToViewport();
+				CHelpers::GetComponent<UCMovementComponent>(PlayerCharacter)->Stop();
 			}
 
 			FInputModeGameAndUI UIInputMode;
