@@ -56,7 +56,7 @@ void ACElectricGrenade::Explode()
 		Overlaps,
 		Origin,
 		FQuat::Identity,
-		ECC_EngineTraceChannel1,
+		ECC_GameTraceChannel1,
 		FCollisionShape::MakeSphere(Radius),
 		Params
 	);
