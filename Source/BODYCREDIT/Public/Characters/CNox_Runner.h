@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GenericTeamAgentInterface.h"
 #include "Characters/CNox.h"
+#include "Components/CStateComponent.h"
 #include "CNox_Runner.generated.h"
 
 struct FItemSaveData;
@@ -60,6 +61,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UCZoomComponent* Zoom;
 
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	class UCMontageComponent* Montage;
+
 private:
 	UPROPERTY(VisibleAnywhere, Category = "EnhancedInput")
 	class UInputMappingContext* MappingContext;
@@ -79,6 +83,10 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+private:
+	UFUNCTION()
+	void OnStateTypeChanged(EStateType InPrevType, EStateType InNewType);
+
 public:
 	FORCEINLINE USkeletalMeshComponent* GetHead() { return GetMesh(); }
 	FORCEINLINE USkeletalMeshComponent* GetUpperBody() { return UpperBody; }
@@ -89,9 +97,12 @@ public:
 	TMap<EPlayerPart, USkeletalMesh*> DefaultMeshes;
 
 	void CacheDefaultSkeletalMeshes();
+
 private:
 	void Init();
-	
+
+	void Dead();
+
 /**
  *	Team ID Setting - LHJ (2025.05.02)
  *	IGenericTeamAgentInterface 상속 추가

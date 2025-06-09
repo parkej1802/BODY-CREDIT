@@ -449,6 +449,13 @@ void UCMovementComponent::Stop()
 
 }
 
+void UCMovementComponent::Dead()
+{
+	IA_Movement = nullptr;
+	IA_Look = nullptr;
+
+}
+
 void UCMovementComponent::Init()
 {
 	// Movement

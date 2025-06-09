@@ -67,6 +67,8 @@ public:
 	virtual void TakeDamage(float Amount); // For Player
 	virtual void Die();
 	void SetStatus(float newHP, float newDefense);
+
+	UFUNCTION(BlueprintCallable)
 	bool IsDead() const { return bIsDead; }
 
 protected:
@@ -74,4 +76,8 @@ protected:
 
 public:
 	float GetHealthPercent() const { return Health / MaxHealth; }
+
+private:
+	class ACNox_Runner* OwnerCharacter;
+
 };
