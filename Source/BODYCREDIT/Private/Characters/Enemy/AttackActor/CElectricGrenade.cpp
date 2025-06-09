@@ -1,4 +1,4 @@
-#include "Characters/Enemy/AttackActor/CElectricGrenade.h"
+﻿#include "Characters/Enemy/AttackActor/CElectricGrenade.h"
 #include "Global.h"
 #include "Characters/CNox_Runner.h"
 #include "Engine/OverlapResult.h"
@@ -42,6 +42,15 @@ void ACElectricGrenade::Explode()
 	FVector Origin = GetActorLocation();
 	float Radius = 500.f; // 폭발 반경
 
+	//if (ACNox_Runner* runner = Cast<ACNox_Runner>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
+	//{
+	//	FVector Origin = GetActorLocation();
+	//	float Radius = 500.f; // 폭발 반경
+
+	//	if (UKismetMathLibrary::Vector_Distance2D(runner->GetActorLocation(), GetActorLocation()) <= Radius)
+	//		runner->ReactFlashBang(GetActorLocation());
+	//}
+
 	TArray<FOverlapResult> Overlaps;
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this); // 수류탄 자신 제외
@@ -77,7 +86,7 @@ void ACElectricGrenade::Explode()
 			TraceParams
 		);
 
-		if (bBlocked && Hit.GetActor() == Target) Cast<ACNox_Runner>(Target)->ReactFlashBang();
+		if (bBlocked && Hit.GetActor() == Target) Cast<ACNox_Runner>(Target)->ReactFlashBang(GetActorLocation());
 	}
 
 	// 이펙트 처리
