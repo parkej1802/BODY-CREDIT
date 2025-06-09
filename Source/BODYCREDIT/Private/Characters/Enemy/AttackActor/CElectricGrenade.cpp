@@ -1,5 +1,6 @@
 #include "Characters/Enemy/AttackActor/CElectricGrenade.h"
 #include "Global.h"
+#include "NiagaraComponent.h"
 #include "Characters/CNox_Runner.h"
 #include "Engine/OverlapResult.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -10,6 +11,7 @@ ACElectricGrenade::ACElectricGrenade()
 	CHelpers::CreateComponent<USceneComponent>(this, &RootComp, "RootComp");
 	CHelpers::CreateComponent<UStaticMeshComponent>(this, &MeshComp, "MeshComp", RootComp);
 	CHelpers::CreateActorComponent<UProjectileMovementComponent>(this, &ProjectileComp, "ProjectileComp");
+	CHelpers::CreateComponent<UNiagaraComponent>(this, &FlashFX, "FlashFX", RootComp);
 	ProjectileComp->bRotationFollowsVelocity = true;
 	ProjectileComp->bAutoActivate = false;
 
@@ -100,6 +102,11 @@ void ACElectricGrenade::Init(bool bInit)
 		ProjectileComp->Activate(false);
 		SetActorTickEnabled(false);
 	}
+}
+
+void ACElectricGrenade::UseFX(bool bUse)
+{
+	bUse ? FlashFX->Activate(true) : FlashFX->DeactivateImmediate();
 }
 
 void ACElectricGrenade::InitializeGrenade(const FVector& InStartLocation, const FVector& InTargetLocation,

@@ -25,11 +25,14 @@ private:
 	UStaticMeshComponent* MeshComp;
 	UPROPERTY(EditAnywhere)
 	class UProjectileMovementComponent* ProjectileComp;
+	UPROPERTY(EditAnywhere, Category=FX)
+	class UNiagaraComponent* FlashFX;
 
 	FVector TargetLocation;
 	float TriggerRadius = 100.f;
 
 	void Init(bool bInit);
+	void UseFX(bool bUse);
 	void Explode();
 
 public:
