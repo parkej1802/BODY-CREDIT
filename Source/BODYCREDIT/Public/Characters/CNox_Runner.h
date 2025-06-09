@@ -34,11 +34,11 @@ protected: // Modular Character Mesh
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh")
 	class USkeletalMeshComponent* Foot;
 
-private:
+protected:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	class USpringArmComponent* SpringArm;
 
-	UPROPERTY(VisibleAnywhere, Category = "Camera")
+	UPROPERTY(BlueprintReadWrite, Category = "Camera")
 	class UCameraComponent* TPSCamera;
 
 	//UPROPERTY(VisibleAnywhere, Category = "Camera")
@@ -143,7 +143,9 @@ public:
 	UItemObject* CreateItemFromData(const FItemSaveData& Data);
 
 public: // Flash Bang
-	void ReactFlashBang();
+	UFUNCTION(BlueprintNativeEvent)
+		void ReactFlashBang(FVector InLocation);
+	virtual void ReactFlashBang_Implementation(FVector InLocation) {};
 
 private: // ObserverComp
 	UPROPERTY(EditDefaultsOnly)

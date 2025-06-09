@@ -247,10 +247,6 @@ UItemObject* ACNox_Runner::CreateItemFromData(const FItemSaveData& Data)
 	return NewItem;
 }
 
-void ACNox_Runner::ReactFlashBang()
-{
-}
-
 void ACNox_Runner::RegisterAttack()
 {
 	ObserverComp->RegisterAttack();
