@@ -13,6 +13,8 @@ void UCNoxEnemy_Animinstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	if (!OwnerEnemy) return;
 
+	IdleIdx = FMath::RandRange(0, 8);
+
 	{
 		FVector velo = OwnerEnemy->GetVelocity();
 		Speed = velo.Size();
