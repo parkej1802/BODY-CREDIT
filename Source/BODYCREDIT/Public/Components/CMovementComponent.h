@@ -119,6 +119,8 @@ public:
 	void Move();
 	void Stop();
 
+	void Dead();
+
 private:
 	void Init();
 
