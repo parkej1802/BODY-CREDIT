@@ -108,7 +108,7 @@ int32 UInventory_GridWidget::NativePaint(const FPaintArgs& Args, const FGeometry
 
 			FSlateDrawElement::MakeLines(
 				OutDrawElements,
-				LayerId - 3,
+				LayerId + 1,
 				GridGeom,
 				Points,
 				ESlateDrawEffect::None,

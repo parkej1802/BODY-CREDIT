@@ -75,6 +75,7 @@ void ULobbyWidget_WorkShop::NativeConstruct()
     Equip_Backpack_1->PlayerCharacter = PlayerCharacter;
     Equip_Backpack_1->InitEquipment();
 
+    PlayerStatChange();
     SetItemInventory();
 
     EquipComp->EquipmentChanged.AddDynamic(this, &ULobbyWidget_WorkShop::SetItemInventory);

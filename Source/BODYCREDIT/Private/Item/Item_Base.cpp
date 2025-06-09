@@ -67,7 +67,7 @@ void AItem_Base::BeginPlay()
 			// ItemData = *TempData;
 			StaticMeshComp->SetStaticMesh(ItemObject->ItemData.Mesh);
 
-			// GetDefaultItemObject();
+			//GetDefaultItemObject();
 		}
 	}
 

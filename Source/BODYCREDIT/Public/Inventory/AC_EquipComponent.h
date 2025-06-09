@@ -58,9 +58,11 @@ public:
 	UPROPERTY()
 	class UItemObject* BackpackItem;
 
-
 	UItemObject* CreateItemFromData(const FItemSaveData& Data);
 
 	bool IsStatChanged = false;
+
+	void SetPlayerStat(class UItemObject* Item, int32 Direction);
+
 
 };

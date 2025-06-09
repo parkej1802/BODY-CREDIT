@@ -48,7 +48,7 @@ void ULobbyWidget_Pause::OnContinueClicked()
 
 void ULobbyWidget_Pause::OnExitClicked()
 {
-    this->RemoveFromParent();
+    RemoveFromParent();
     PC->SetInputMode(FInputModeGameAndUI());
     PC->bShowMouseCursor = true;
 }

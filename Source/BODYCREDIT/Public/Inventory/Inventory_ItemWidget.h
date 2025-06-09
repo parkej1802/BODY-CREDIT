@@ -57,6 +57,12 @@ public:
 	UPROPERTY()
 	bool IsMoving = false;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UUserWidget> ItemMenuWidget;
+
+	UPROPERTY()
+	class ULobbyWidget_ItemMenu* ItemMenuUI;
+
 public:
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;

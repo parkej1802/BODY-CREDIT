@@ -96,4 +96,22 @@ public:
 	FVector2D ImageSize = FVector2D(150, 100);
 
 	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation) override;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* Text_PlayerGold;
+
+	UPROPERTY()
+	class UNetGameInstance* GI;
+
+	void UpdatePlayerGoldText(int32 NewGold);
+	 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UUserWidget> SellItemWidget;
+
+	UPROPERTY()
+	class ULobbyWidget_SellItem* SellItemUI;
+
+	void ShowSellUI(class UItemObject* ItemObject);
+	void HandleSellConfirm(class UItemObject* ItemObject);
+	void HandleSellCancel(class UItemObject* ItemObject);
 };

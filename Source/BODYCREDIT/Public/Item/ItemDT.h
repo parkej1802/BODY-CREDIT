@@ -32,6 +32,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
 	float CarryWeight = 0.f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
+	float Humanity = 0.f;
 };
 
 UENUM(BlueprintType)

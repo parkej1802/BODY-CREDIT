@@ -9,9 +9,8 @@
 #include "Item/ItemObject.h"
 #include "NetGameInstance.generated.h"
 
-/**
- * 
- */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGoldChanged, int32, NewGold);
+
 UCLASS()
 class BODYCREDIT_API UNetGameInstance : public UGameInstance
 {
@@ -39,4 +38,19 @@ public:
 
 	UPROPERTY()	
 	TArray<FItemSaveData> SavedInventoryItems;
+
+	UPROPERTY()
+	int32 Debt = 10000000;
+
+	UPROPERTY()
+	int32 PlayerGold = 5000;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnGoldChanged OnGoldChanged;
+
+	UFUNCTION(BlueprintCallable)
+	void SetPlayerGold(int32 NewGold);
+
+	UPROPERTY()	
+	class ULobbyWidget_Market* MarketUI;
 };
