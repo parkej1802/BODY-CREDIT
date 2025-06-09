@@ -21,6 +21,8 @@ public:
 private:
 	UPROPERTY(EditDefaultsOnly)
 	UStaticMeshComponent* SphereComp;
+	UPROPERTY(EditDefaultsOnly)
+	class ACNox_EBase* OwnerAI;
 
 public:
 	void StartWave();

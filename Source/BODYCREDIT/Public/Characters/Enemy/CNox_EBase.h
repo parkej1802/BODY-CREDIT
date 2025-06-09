@@ -80,7 +80,7 @@ public:
 #pragma endregion
 
 #pragma region Apply Damage
-protected:
+public:
 	void SetApplyDamage(AActor* DamagedPlayer, const float DamageAmout);
 #pragma endregion
 

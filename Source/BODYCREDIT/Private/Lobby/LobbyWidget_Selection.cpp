@@ -3,6 +3,7 @@
 
 #include "Lobby/LobbyWidget_Selection.h"
 #include "Components/Button.h"
+#include "Lobby/CLobbyWidget_Play.h"
 #include "Lobby/LobbyWidget_Market.h"
 #include "Lobby/LobbyWidget_WorkShop.h"
 #include "Kismet/GameplayStatics.h"
@@ -35,11 +36,23 @@ void ULobbyWidget_Selection::NativeConstruct()
 
 void ULobbyWidget_Selection::OnPlayClicked()
 {
-    UGameplayStatics::OpenLevel(this, FName(TEXT("/Game/Levels/Untitled")));
-    this->RemoveFromParent();
-    PC = GetWorld()->GetFirstPlayerController();
-    PC->SetInputMode(FInputModeGameOnly());
-    PC->bShowMouseCursor = false;
+    if (LobbyPlayWidgetClass)
+    {
+        LobbyWidget_Play = CreateWidget<UCLobbyWidget_Play>(GetWorld(), LobbyPlayWidgetClass);
+        if (LobbyWidget_Play)
+        {
+            LobbyWidget_Play->AddToViewport();
+
+            this->RemoveFromParent();
+        }
+    }
+
+    //// OpenLevel
+    //UGameplayStatics::OpenLevel(this, FName(TEXT("/Game/Levels/Lab")));
+    //this->RemoveFromParent();
+    //PC = GetWorld()->GetFirstPlayerController();
+    //PC->SetInputMode(FInputModeGameOnly());
+    //PC->bShowMouseCursor = false;
 
 }
 

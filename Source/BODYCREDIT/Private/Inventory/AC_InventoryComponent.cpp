@@ -1,5 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 #include "Inventory/AC_InventoryComponent.h"
+
+#include "AC_LootingInventoryComponent.h"
 #include "../../../../Plugins/EnhancedInput/Source/EnhancedInput/Public/InputAction.h"
 #include "../../../../Plugins/EnhancedInput/Source/EnhancedInput/Public/EnhancedInputComponent.h"
 #include "Inventory/Inventory_Widget.h"
@@ -228,6 +230,8 @@ void UAC_InventoryComponent::ShowLootableInventory()
 			FInputModeGameAndUI UIInputMode;
 			pc->SetInputMode(UIInputMode);
 			pc->bShowMouseCursor = true;
+
+			PlayerCharacter->RegisterLooting();
 		}
 	}
 }

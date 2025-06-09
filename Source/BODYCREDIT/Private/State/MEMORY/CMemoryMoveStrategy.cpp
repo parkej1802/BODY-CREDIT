@@ -15,15 +15,18 @@ void CMemoryMoveStrategy::Move(ACNox_EBase* Owner, float DeltaTime)
 	switch (CurMoveState)
 	{
 	case None: // 아직 이동 수단을 선택하지 않음
-		// 1. 기억 조각의 위치가 같은 층인지 다른 층인지 확인
+		// 기억 조각의 위치가 같은 층인지 다른 층인지 확인
 		if (IsOtherFloor(Owner))
 		{
-			// 2. 이동 수단 선택
+			// 이동 수단 선택
+			EvaluateTransferPath(Owner);
 		}
 		break;
 	case MoveToStairState: // 계단으로 이동
+		MoveToStair(Owner);
 		break;
 	case MoveToVentState: // 벤트로 이동
+		MoveToVent(Owner);
 		break;
 	case MoveToMemoryState: // 기억 조각으로 이동(같은 층일때)
 		MoveToMemory(Owner);
@@ -69,12 +72,20 @@ void CMemoryMoveStrategy::EvaluateTransferPath(ACNox_EBase* Owner)
 
 	// 밴트 후보
 	ACVent* BestEntry = nullptr;
-	ACVent* BestExit = nullptr;
+	ACVent* BestExit = nullptr;                                                                  
 	float MinEntryDist = TNumericLimits<float>::Max();
 	float MinExitDist = TNumericLimits<float>::Max();
+
+	const FName VIPZoneID = FName("VIP");
+	const bool bTargetIsVIP = (MemoryTarget.ZoneID == VIPZoneID);
 	// 밴트 후보 검색
 	for (auto* Vent : AllVents)
 	{
+		const bool bVentIsVIP = (Vent->Tags[0] == VIPZoneID);
+
+		// MemoryTarget이 VIP가 아니면 VIP 벤트는 무시
+		if (!bTargetIsVIP && bVentIsVIP) continue;
+		
 		float EntryDist = FVector::Dist(AILocation, Vent->GetActorLocation());
 		float ExitDist = FVector::Dist(MemoryTarget.Location, Vent->GetActorLocation());
 
@@ -98,7 +109,6 @@ void CMemoryMoveStrategy::EvaluateTransferPath(ACNox_EBase* Owner)
 		Candidates.Add({Score, BestEntry->GetActorLocation(), BestExit->GetActorLocation(), EMovementPathType::Vent});
 	}
 	//============================
-
 	// 계단 후보 검색
 	for (auto* Stair : AllStairs)
 	{
@@ -148,11 +158,14 @@ void CMemoryMoveStrategy::MoveToVent(ACNox_EBase* Owner)
 	}
 	else
 	{
-		if (MoveToLoc(Owner, NextTargetAfterTransfer))
-		{
-			bMoving = false;
-			CurMoveState = MoveToMemoryState;
-		}
+		Owner->SetActorLocation(NextTargetAfterTransfer);
+		bMoving = false;
+		CurMoveState = MoveToMemoryState;
+		// if (MoveToLoc(Owner, NextTargetAfterTransfer))
+		// {
+		// 	bMoving = false;
+		// 	CurMoveState = MoveToMemoryState;
+		// }
 	}
 }
 

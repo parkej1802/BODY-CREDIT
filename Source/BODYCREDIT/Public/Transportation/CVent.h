@@ -21,7 +21,7 @@ public:
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Vent")
 	USceneComponent* Root;
-
+	
 public:
 	FVector GetLocation() const;
 };

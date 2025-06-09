@@ -2,6 +2,7 @@
 
 #include "EngineUtils.h"
 #include "Global.h"
+#include "Characters/CNox_Runner.h"
 #include "Characters/Enemy/CNox_MemoryCollectorAI.h"
 #include "Trigger/CAreaTriggerBox.h"
 

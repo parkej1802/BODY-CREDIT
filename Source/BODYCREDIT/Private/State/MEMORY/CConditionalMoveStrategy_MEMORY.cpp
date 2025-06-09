@@ -33,6 +33,8 @@ void CConditionalMoveStrategy_MEMORY::ResetVal(ACNox_EBase* Owner)
 
 void CConditionalMoveStrategy_MEMORY::CovertToCombatState(ACNox_EBase* Owner)
 {
+	if (!Owner->IsPlayerInForwardDegree(RangeAttackRange)) return;
+	
 	// Beam, PulseWave 중 스킬을 선택하고
 	ECombatState ChooseSkill;
 	if (ChooseRandomSkill(Owner, ChooseSkill))
@@ -41,7 +43,7 @@ void CConditionalMoveStrategy_MEMORY::CovertToCombatState(ACNox_EBase* Owner)
 		Owner->SetEnemyState(EEnemyState::Combat);
 	}
 	// 만약, 둘 중 하나도 선택되지 않았다면 기본 공격 조건을 체크한다.
-	else if (Owner->IsSkillReady(ESkillCoolDown::Ranged) && Owner->IsPlayerInForwardDegree(RangeAttackRange))
+	else if (Owner->IsSkillReady(ESkillCoolDown::Ranged))
 	{
 		// 기본 공격이 사용가능하면 기본 공격으로 상태 전환
 		Owner->SetCombatState(ECombatState::Default);

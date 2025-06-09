@@ -3,8 +3,12 @@
 #include "CoreMinimal.h"
 #include "GenericTeamAgentInterface.h"
 #include "Characters/CNox.h"
-#include "AC_LootingInventoryComponent.h"
 #include "CNox_Runner.generated.h"
+
+struct FItemSaveData;
+class UItemObject;
+enum class EPlayerPart : uint8;
+enum class EMemoryTriggerType : uint8;
 
 UCLASS()
 class BODYCREDIT_API ACNox_Runner : public ACNox, public IGenericTeamAgentInterface
@@ -123,12 +127,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USceneComponent* CaptureRoot;
 
+
 /**
  *	Memory Piece Add Function - LHJ (2025.05.12)
  */
 public:	
 	UFUNCTION(BlueprintCallable)
-	void MakeMemoryPiece();
+	void MakeMemoryPiece(const EMemoryTriggerType& Trigger);
 
 	// Looting
 public: 
@@ -139,4 +144,18 @@ public:
 
 public: // Flash Bang
 	void ReactFlashBang();
+
+private: // ObserverComp
+	UPROPERTY(EditDefaultsOnly)
+	class UCNoxObserverComp* ObserverComp;
+public:
+	void RegisterAttack();
+	void RegisterLooting();
+
+public: // Card Key Check
+	UFUNCTION(BlueprintCallable)
+	bool CheckCardKey() const { return bHasCardKey; }
+	void SetDropCardKey(bool bDrop) { bHasCardKey = bDrop; }
+private:
+	bool bHasCardKey = false;
 };
