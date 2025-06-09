@@ -135,7 +135,7 @@ void UCDoAction_Bow::CreateArrow()
 	arrow->AddIgnoreActor(OwnerCharacter);
 
 	FAttachmentTransformRules rule = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
-	arrow->AttachToComponent(Bow->SkeletalMesh, rule, "Arrow");
+	arrow->AttachToComponent(OwnerCharacter->GetMesh(), rule, "Hand_Bow_Arrow");
 
 	Arrows.Add(arrow);
 	UGameplayStatics::FinishSpawningActor(arrow, transform);

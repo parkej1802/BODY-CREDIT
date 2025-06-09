@@ -35,6 +35,12 @@ public:
 	UFUNCTION()
 	void OnWorkShopClicked();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UUserWidget> LobbyPlayWidgetClass;
+
+	UPROPERTY()
+	class UCLobbyWidget_Play* LobbyWidget_Play;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
 	TSubclassOf<UUserWidget> LobbyMarketWidgetClass;
 
