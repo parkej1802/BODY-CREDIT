@@ -11,6 +11,7 @@
 #include "Components/CMovementComponent.h"
 #include "Components/CWeaponComponent.h"
 #include "Components/CZoomComponent.h"
+#include "Components/CMontageComponent.h"
 #include "Inventory/AC_InventoryComponent.h"
 #include "Components/CNoxHPComponent.h"
 #include "Games/CMainGM.h"
@@ -86,6 +87,8 @@ void ACNox_Runner::BeginPlay()
 		}*/
 		
 	}
+
+	State->OnStateTypeChanged.AddDynamic(this, &ACNox_Runner::OnStateTypeChanged);
 
 	// 서버 관련 메시 숨김 처리 함수
 	//GetMesh()->SetOnlyOwnerSee();
@@ -165,6 +168,19 @@ void ACNox_Runner::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	}
 }
 
+void ACNox_Runner::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
+{
+	switch (InNewType)
+	{
+		case EStateType::Hitted:
+			break;
+		case EStateType::Avoid:
+			break;
+		case EStateType::Dead: Dead(); break;
+	}
+
+}
+
 void ACNox_Runner::Init()
 {
 	UCapsuleComponent* capsule = Cast<UCapsuleComponent>(RootComponent);
@@ -185,7 +201,6 @@ void ACNox_Runner::Init()
 
 		// Arms
 		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Arms, "Arms", GetMesh());
-
 
 		// Hands
 		//CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Hands, "Hands", Arms);
@@ -233,6 +248,18 @@ void ACNox_Runner::Init()
 	// Zoom
 	CHelpers::CreateActorComponent<UCZoomComponent>(this, &Zoom, "Zoom");
 
+	// Montage
+	CHelpers::CreateActorComponent<UCMontageComponent>(this, &Montage, "Montage");
+
+}
+
+void ACNox_Runner::Dead()
+{
+	//GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	Movement->Dead();
+
+	Montage->PlayDeadMode();
+
 }
 
 void ACNox_Runner::MakeMemoryPiece(const EMemoryTriggerType& Trigger)
@@ -245,10 +272,6 @@ UItemObject* ACNox_Runner::CreateItemFromData(const FItemSaveData& Data)
 	UItemObject* NewItem = NewObject<UItemObject>();
 	NewItem->ImportData(Data);
 	return NewItem;
-}
-
-void ACNox_Runner::ReactFlashBang()
-{
 }
 
 void ACNox_Runner::RegisterAttack()

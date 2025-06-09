@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GenericTeamAgentInterface.h"
 #include "Characters/CNox.h"
+#include "Components/CStateComponent.h"
 #include "CNox_Runner.generated.h"
 
 struct FItemSaveData;
@@ -34,11 +35,11 @@ protected: // Modular Character Mesh
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh")
 	class USkeletalMeshComponent* Foot;
 
-private:
+protected:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
 	class USpringArmComponent* SpringArm;
 
-	UPROPERTY(VisibleAnywhere, Category = "Camera")
+	UPROPERTY(BlueprintReadWrite, Category = "Camera")
 	class UCameraComponent* TPSCamera;
 
 	//UPROPERTY(VisibleAnywhere, Category = "Camera")
@@ -60,6 +61,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UCZoomComponent* Zoom;
 
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	class UCMontageComponent* Montage;
+
 private:
 	UPROPERTY(VisibleAnywhere, Category = "EnhancedInput")
 	class UInputMappingContext* MappingContext;
@@ -79,6 +83,10 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+private:
+	UFUNCTION()
+	void OnStateTypeChanged(EStateType InPrevType, EStateType InNewType);
+
 public:
 	FORCEINLINE USkeletalMeshComponent* GetHead() { return GetMesh(); }
 	FORCEINLINE USkeletalMeshComponent* GetUpperBody() { return UpperBody; }
@@ -89,9 +97,12 @@ public:
 	TMap<EPlayerPart, USkeletalMesh*> DefaultMeshes;
 
 	void CacheDefaultSkeletalMeshes();
+
 private:
 	void Init();
-	
+
+	void Dead();
+
 /**
  *	Team ID Setting - LHJ (2025.05.02)
  *	IGenericTeamAgentInterface 상속 추가
@@ -143,7 +154,9 @@ public:
 	UItemObject* CreateItemFromData(const FItemSaveData& Data);
 
 public: // Flash Bang
-	void ReactFlashBang();
+	UFUNCTION(BlueprintNativeEvent)
+		void ReactFlashBang(FVector InLocation);
+	virtual void ReactFlashBang_Implementation(FVector InLocation) {};
 
 private: // ObserverComp
 	UPROPERTY(EditDefaultsOnly)

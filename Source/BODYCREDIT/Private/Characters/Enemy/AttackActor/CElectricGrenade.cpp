@@ -1,5 +1,6 @@
-#include "Characters/Enemy/AttackActor/CElectricGrenade.h"
+﻿#include "Characters/Enemy/AttackActor/CElectricGrenade.h"
 #include "Global.h"
+#include "NiagaraComponent.h"
 #include "Characters/CNox_Runner.h"
 #include "Engine/OverlapResult.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -12,6 +13,8 @@ ACElectricGrenade::ACElectricGrenade()
 	CHelpers::CreateActorComponent<UProjectileMovementComponent>(this, &ProjectileComp, "ProjectileComp");
 	ProjectileComp->bRotationFollowsVelocity = true;
 	ProjectileComp->bAutoActivate = false;
+	CHelpers::CreateComponent<UNiagaraComponent>(this, &FlashFX, "FlashFX", RootComp);
+	FlashFX->bAutoActivate = false;
 
 	MeshComp->SetCollisionProfileName(FName("EnemyWeapon"));
 }
@@ -19,6 +22,7 @@ ACElectricGrenade::ACElectricGrenade()
 void ACElectricGrenade::BeginPlay()
 {
 	Super::BeginPlay();
+	UseFX(false);
 	Init(false);
 }
 
@@ -42,6 +46,15 @@ void ACElectricGrenade::Explode()
 	FVector Origin = GetActorLocation();
 	float Radius = 500.f; // 폭발 반경
 
+	//if (ACNox_Runner* runner = Cast<ACNox_Runner>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
+	//{
+	//	FVector Origin = GetActorLocation();
+	//	float Radius = 500.f; // 폭발 반경
+
+	//	if (UKismetMathLibrary::Vector_Distance2D(runner->GetActorLocation(), GetActorLocation()) <= Radius)
+	//		runner->ReactFlashBang(GetActorLocation());
+	//}
+
 	TArray<FOverlapResult> Overlaps;
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this); // 수류탄 자신 제외
@@ -52,7 +65,7 @@ void ACElectricGrenade::Explode()
 		Overlaps,
 		Origin,
 		FQuat::Identity,
-		ECC_EngineTraceChannel1,
+		ECC_GameTraceChannel1,
 		FCollisionShape::MakeSphere(Radius),
 		Params
 	);
@@ -77,11 +90,18 @@ void ACElectricGrenade::Explode()
 			TraceParams
 		);
 
-		if (bBlocked && Hit.GetActor() == Target) Cast<ACNox_Runner>(Target)->ReactFlashBang();
+		if (bBlocked && Hit.GetActor() == Target) Cast<ACNox_Runner>(Target)->ReactFlashBang(GetActorLocation());
 	}
 
 	// 이펙트 처리
-	Init(false);
+	UseFX(true);
+	FTimerHandle TimerHandle;
+	Owner->GetWorldTimerManager().SetTimer(TimerHandle, [this]()
+	{
+		UseFX(false);
+		Init(false);
+	}, 1.f, false);
+	
 }
 
 void ACElectricGrenade::Init(bool bInit)
@@ -100,6 +120,11 @@ void ACElectricGrenade::Init(bool bInit)
 		ProjectileComp->Activate(false);
 		SetActorTickEnabled(false);
 	}
+}
+
+void ACElectricGrenade::UseFX(bool bUse)
+{
+	bUse ? FlashFX->Activate(true) : FlashFX->DeactivateImmediate();
 }
 
 void ACElectricGrenade::InitializeGrenade(const FVector& InStartLocation, const FVector& InTargetLocation,

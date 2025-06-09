@@ -1,6 +1,7 @@
-#include "Components/CNoxHPComponent.h"
-
+﻿#include "Components/CNoxHPComponent.h"
 #include "Global.h"
+#include "Characters/CNox_Runner.h"
+#include "Components/CStateComponent.h"
 
 UCNoxHPComponent::UCNoxHPComponent()
 {
@@ -11,6 +12,9 @@ void UCNoxHPComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	InitStatus();
+
+	OwnerCharacter = Cast<ACNox_Runner>(GetOwner());
+
 }
 
 void UCNoxHPComponent::TickComponent(float DeltaTime, ELevelTick TickType,
@@ -46,13 +50,20 @@ void UCNoxHPComponent::TakeDamage(float Amount, bool ActiveShield, bool& OutIsSh
 void UCNoxHPComponent::TakeDamage(float Amount)
 {
 	Health = FMath::Max(0.f, Health - Amount);
-	if (Health <= 0) bIsDead = true;
+	if (Health <= 0) Die();
 	CLog::Print(FString::Printf(TEXT("%s TakeDamage: %f"), *GetOwner()->GetName() ,Amount));
 }
 
 void UCNoxHPComponent::Die()
 {
 	bIsDead = true;
+
+	CheckNull(OwnerCharacter);
+	if (UCStateComponent* state = CHelpers::GetComponent<UCStateComponent>(OwnerCharacter))
+	{
+		state->SetDeadMode();
+	}
+
 }
 
 void UCNoxHPComponent::SetStatus(float newHP, float newDefense)
