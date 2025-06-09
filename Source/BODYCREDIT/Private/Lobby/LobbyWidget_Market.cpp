@@ -514,7 +514,6 @@ bool ULobbyWidget_Market::NativeOnDrop(const FGeometry& InGeometry, const FDragD
 
 	ShowSellUI(ItemObject);
 	
-
 	return true;
 }
 
@@ -529,10 +528,10 @@ void ULobbyWidget_Market::UpdatePlayerGoldText(int32 NewGold)
 
 void ULobbyWidget_Market::ShowSellUI(UItemObject* ItemObject)
 {
-	if (SellItemUI) {
-		SellItemUI->RemoveFromParent();
-		return;
-	}
+	//if (SellItemUI) {
+	//	SellItemUI->RemoveFromParent();
+	//	return;
+	//}
 
 	if (SellItemWidget)
 	{
@@ -555,10 +554,10 @@ void ULobbyWidget_Market::HandleSellConfirm(UItemObject* ItemObject)
 	//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Blue, TEXT("HandleSellConfirm"));
 	if (ItemObject)
 	{
-		InventoryComp->RemoveItem(ItemObject);
 		int32 NewGold = GI->PlayerGold + (ItemObject->ItemData.Price * 0.7);
 		GI->SetPlayerGold(NewGold);
 		UpdatePlayerGoldText(NewGold);
+		InventoryComp->RemoveItem(ItemObject);
 	}
 }
 

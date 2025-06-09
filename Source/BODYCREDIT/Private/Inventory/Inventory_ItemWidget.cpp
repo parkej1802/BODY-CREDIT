@@ -77,10 +77,10 @@ FReply UInventory_ItemWidget::NativeOnMouseButtonDown(const FGeometry& InGeometr
 				ItemMenuUI->RemoveFromParent();
 			}
 			
-			FReply::Handled();
+			return FReply::Handled();
 		}
 
-		if (ItemMenuWidget)
+		if (!ItemObject->bIsMenu && ItemMenuWidget)
 		{
 			ItemMenuUI = CreateWidget<ULobbyWidget_ItemMenu>(this, ItemMenuWidget);
 			ItemMenuUI->ItemObject = ItemObject;
@@ -127,6 +127,9 @@ void UInventory_ItemWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent
 
 void UInventory_ItemWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
 {
+	if (ItemMenuUI) {
+		ItemMenuUI->RemoveFromParent();
+	}
 	if (IsMoving || ItemObject->bIsUseFunction) return;
 	IsMoving = true;
 

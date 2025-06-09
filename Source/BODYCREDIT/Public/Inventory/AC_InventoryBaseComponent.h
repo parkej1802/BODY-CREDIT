@@ -91,4 +91,6 @@ public:
 	class ACMainGM* GameMode;
 
 	UItemObject* CreateItemFromData(const FItemSaveData& Data);
+
+	void DestroyItem(UItemObject* ItemObject);
 };
