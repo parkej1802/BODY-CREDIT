@@ -121,13 +121,14 @@ void ACNox_MemoryCollectorAI::Tick(float DeltaTime)
 
 	if (bRotateToTarget)
 	{
-		FVector TargetLoc = Target->GetActorLocation();
-		float newYaw = (TargetLoc - GetActorLocation()).GetSafeNormal().Rotation().Yaw;
-		FRotator TargetRot = FRotator(0, newYaw, 0);
-
-		// 보간
-		FRotator NewRot = FMath::RInterpTo(GetActorRotation(), TargetRot, DeltaTime, 5.f);
-		SetActorRotation(NewRot);
+		RotateToTarget(DeltaTime, GetTransform(), Target->GetActorLocation());
+		// FVector TargetLoc = Target->GetActorLocation();
+		// float newYaw = (TargetLoc - GetActorLocation()).GetSafeNormal().Rotation().Yaw;
+		// FRotator TargetRot = FRotator(0, newYaw, 0);
+		//
+		// // 보간
+		// FRotator NewRot = FMath::RInterpTo(GetActorRotation(), TargetRot, DeltaTime, 5.f);
+		// SetActorRotation(NewRot);
 	}
 }
 
