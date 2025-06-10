@@ -65,6 +65,12 @@ public:
 	UAnimMontage* WavePulseMontage;
 #pragma endregion
 
+#pragma region Idle
+private:
+	UPROPERTY(BlueprintReadOnly, Category=Anim, meta=(AllowPrivateAccess=true))
+	int32 IdleIdx = 0;
+#pragma endregion
+
 #pragma region Attacking
 
 public:
