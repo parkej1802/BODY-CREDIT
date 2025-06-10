@@ -22,7 +22,7 @@ void CConditionalMoveStrategy_MEMORY::Move(ACNox_EBase* Owner, float DeltaTime)
 	switch (result)
 	{
 	case EPathFollowingRequestResult::AlreadyAtGoal:
-		return;
+		break;
 	default:
 		bIsMove = true;
 		break;
@@ -45,7 +45,11 @@ void CConditionalMoveStrategy_MEMORY::CovertToCombatState(ACNox_EBase* Owner)
 	if (!bIsMove && !Owner->IsPlayerInForwardDegree(RangeAttackRange))
 	{
 		// 이동하지 않았고, 공격 범위 내 플레이어가 없다면 플레이어를 향해 회전
-		Owner->RotateToTarget(Owner->GetWorld()->GetDeltaSeconds(), Owner->GetTransform(), Owner->GetTargetLocation());
+		//Owner->RotateToTarget(Owner->GetWorld()->GetDeltaSeconds(), Owner->GetTransform(), Owner->GetTarget()->GetActorLocation());
+		FRotator CurRot = Owner->GetActorRotation();
+		float TargetYaw = (Owner->GetTarget()->GetActorLocation() - Owner->GetActorLocation()).Rotation().Yaw;
+		FRotator TargetRot(CurRot.Pitch, TargetYaw, CurRot.Roll);
+		Owner->SetActorRotation(TargetRot);
 	}
 	else
 	{
@@ -63,7 +67,7 @@ void CConditionalMoveStrategy_MEMORY::CovertToCombatState(ACNox_EBase* Owner)
 			Owner->SetCombatState(ECombatState::Default);
 			Owner->SetEnemyState(EEnemyState::Combat);
 		}
-
+		
 		bIsMove = false;
 	}	
 }
