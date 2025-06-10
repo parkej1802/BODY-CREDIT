@@ -92,4 +92,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ACNox_Runner* PlayerCharacter;
+
+
 };

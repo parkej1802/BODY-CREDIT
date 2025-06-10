@@ -13,6 +13,7 @@
 #include "Item/Lootable/Lootable_Box.h"
 #include "AC_LootingInventoryComponent.h"
 #include "EngineUtils.h"
+#include "Components/TextBlock.h"
 
 void ULobbyWidget_Selection::NativeConstruct()
 {
@@ -42,6 +43,10 @@ void ULobbyWidget_Selection::NativeConstruct()
 
     PlayerCharacter = Cast<ACNox_Runner>(Pawn);
     // UGameplayStatics::SetGamePaused(GetWorld(), true);
+
+    GI = Cast<UNetGameInstance>(GetGameInstance());
+    FString DayString = FString::Printf(TEXT("%d"), GI->Day);
+    Text_DayCount->SetText(FText::FromString(DayString));
 }
 
 void ULobbyWidget_Selection::OnPlayClicked()
@@ -71,11 +76,10 @@ void ULobbyWidget_Selection::OnPlayClicked()
 
     FVector StartLocation(285.0f, 15.0f, -408.0f);
     PlayerCharacter->SetActorLocation(StartLocation);
-    
-
-    GI = Cast<UNetGameInstance>(GetGameInstance());
+ 
     if (GI) {
         GI->BeforePlayerGold = PlayerCharacter->EquipComp->CalculatePriceOfEquippedItem();
+        GI->Day = GI->Day + 1;
     }
 
     //// OpenLevel
