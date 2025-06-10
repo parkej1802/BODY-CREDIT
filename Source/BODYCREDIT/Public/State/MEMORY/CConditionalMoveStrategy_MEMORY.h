@@ -27,6 +27,7 @@ public:
 class BODYCREDIT_API CConditionalMoveStrategy_MEMORY : public ICMoveStrategy
 {
 private:
+	bool bIsMove = false;
 	float AcceptanceThreshold = 800.f;
     const float RangeAttackRange = 800.f;
 

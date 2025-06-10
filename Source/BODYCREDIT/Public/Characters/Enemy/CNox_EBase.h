@@ -168,4 +168,10 @@ public:
 	bool IsSkillReady(ESkillCoolDown Skill) const;
 	void UsingSkill(ESkillCoolDown Skill);
 #pragma endregion
+
+#pragma region Rotate To Targer
+public:
+	bool RotateToTarget(const float DeltaTime, const FTransform& CurTrans, const FVector& TargetLoc,
+	                    float InteropSpeed = 5.f);
+#pragma endregion
 };

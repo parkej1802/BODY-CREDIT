@@ -202,4 +202,17 @@ void ACNox_EBase::UsingSkill(ESkillCoolDown Skill)
 {
 	FSMComp->UsingSkill(Skill);
 }
+
+bool ACNox_EBase::RotateToTarget(const float DeltaTime, const FTransform& CurTrans, const FVector& TargetLoc,
+                                 float InteropSpeed)
+{
+	float newYaw = (TargetLoc - CurTrans.GetLocation()).GetSafeNormal().Rotation().Yaw;
+	FRotator TargetRot = FRotator(0, newYaw, 0);
+
+	// 보간
+	FRotator NewRot = FMath::RInterpTo(CurTrans.GetRotation().Rotator(), TargetRot, DeltaTime, InteropSpeed);
+	SetActorRotation(NewRot);
+
+	return true;
+}
 #pragma endregion
