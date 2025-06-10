@@ -30,5 +30,7 @@ public:
 	UDataTable* ItemDataTable;
 
 	void AddRandomItem();
+
+	void RefreshInventory();
 	
 };

@@ -26,7 +26,7 @@ void UAC_LootingInventoryComponent::BeginPlay()
 		return;
 	}
 
-	AddRandomItem();
+	// RefreshInventory();
 
 	// PreAddItem();
 }
@@ -115,5 +115,11 @@ void UAC_LootingInventoryComponent::AddRandomItem()
 			break;
 		}
 	}
+}
+
+void UAC_LootingInventoryComponent::RefreshInventory()
+{
+	Items.Empty();
+	AddRandomItem();
 }
 

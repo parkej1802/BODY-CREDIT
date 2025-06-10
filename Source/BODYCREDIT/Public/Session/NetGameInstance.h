@@ -53,4 +53,18 @@ public:
 
 	UPROPERTY()	
 	class ULobbyWidget_Market* MarketUI;
+
+	int32 BeforePlayerGold = 0;
+	int32 AfterPlayerGold = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class ACNox_Runner* PlayerCharacter;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class APlayerController* PC;
+
+	void SetActorInitLocation();
+
+	int32 Day = 1;
+
 };
