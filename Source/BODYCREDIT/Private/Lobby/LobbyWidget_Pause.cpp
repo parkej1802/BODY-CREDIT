@@ -9,6 +9,8 @@
 #include "Animation/WidgetAnimation.h"
 #include "Kismet/GameplayStatics.h"
 #include "Characters/CNox_Controller.h"
+#include "Lobby/LobbyWidget_Selection.h"
+#include "Session/NetGameInstance.h"
 
 
 void ULobbyWidget_Pause::NativeConstruct()
@@ -20,6 +22,8 @@ void ULobbyWidget_Pause::NativeConstruct()
     APawn* Pawn = PC->GetPawn();
 
     PlayerCharacter = Cast<ACNox_Runner>(Pawn);
+
+    UGameplayStatics::SetGamePaused(GetWorld(), true);
 
     if (Button_Continue)
     {
@@ -43,11 +47,24 @@ void ULobbyWidget_Pause::NativeConstruct()
 
 void ULobbyWidget_Pause::OnContinueClicked()
 {
+    UGameplayStatics::SetGamePaused(GetWorld(), false);
     PlayerCharacter->InventoryComp->PauseGame();
 }
 
 void ULobbyWidget_Pause::OnExitClicked()
 {
+    if (LobbySelectionWidgetClass)
+    {
+        LobbyWidget_Selection = CreateWidget<ULobbyWidget_Selection>(GetWorld(), LobbySelectionWidgetClass);
+        if (LobbyWidget_Selection)
+        {
+            LobbyWidget_Selection->AddToViewport();
+        }
+    }
+    UNetGameInstance* GI = Cast<UNetGameInstance>(GetGameInstance());
+    GI->SetActorInitLocation();
+
+    UGameplayStatics::SetGamePaused(GetWorld(), false);
     RemoveFromParent();
     PC->SetInputMode(FInputModeGameAndUI());
     PC->bShowMouseCursor = true;

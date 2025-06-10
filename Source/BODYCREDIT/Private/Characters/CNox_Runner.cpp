@@ -55,7 +55,7 @@ void ACNox_Runner::BeginPlay()
 	UNetGameInstance* GI = Cast<UNetGameInstance>(GetGameInstance());
 	if (GI && EquipComp)
 	{
-
+		GI->PlayerGold = PlayerGold;
 		AGameState_BodyCredit* MyGameState = GetWorld()->GetGameState<AGameState_BodyCredit>();
 		for (auto& Pair : GI->SavedEquippedItems)
 		{
