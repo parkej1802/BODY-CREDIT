@@ -70,15 +70,15 @@ void ULobbyWidget_SellItem::OnCancelUnhovered()
 
 void ULobbyWidget_SellItem::HandleConfirmClicked()
 {
-    //OnConfirmSell.Broadcast(ItemObjctSell);
-    MarketUI->HandleSellConfirm(ItemObjctSell);
+    OnConfirmSell.Broadcast(ItemObjctSell);
+    //MarketUI->HandleSellConfirm(ItemObjctSell);
     RemoveFromParent();
 }
 
 void ULobbyWidget_SellItem::HandleCancelClicked()
 {
-    //OnCancelSell.Broadcast(ItemObjctSell);
-    MarketUI->HandleSellCancel(ItemObjctSell);
+    OnCancelSell.Broadcast(ItemObjctSell);
+   // MarketUI->HandleSellCancel(ItemObjctSell);
     RemoveFromParent();
 }
 

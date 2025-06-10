@@ -66,4 +66,7 @@ public:
 
 	UPROPERTY()
 	class UWidget* InnerWidget;
+
+	int32 CalculatePriceOfEquippedItem();
+
 };

@@ -87,4 +87,9 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UTextBlock* Text_DayCount;
 
+	UPROPERTY()
+	class UNetGameInstance* GI;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class ACNox_Runner* PlayerCharacter;
 };

@@ -2,6 +2,8 @@
 
 #include "Session/NetGameInstance.h"
 #include "BODYCREDIT.h"
+#include "Characters/CNox_Controller.h"
+#include "Characters/CNox_Runner.h"
 
 void UNetGameInstance::Init()
 {	
@@ -75,5 +77,16 @@ void UNetGameInstance::SetPlayerGold(int32 NewGold)
 {
 	PlayerGold = NewGold;
 	OnGoldChanged.Broadcast(NewGold);
+}
+
+void UNetGameInstance::SetActorInitLocation()
+{
+	PC = GetWorld()->GetFirstPlayerController();
+	APawn* Pawn = PC->GetPawn();
+
+	PlayerCharacter = Cast<ACNox_Runner>(Pawn);
+
+	FVector StartLocation(-2270.f, -6370.f, 1360.f);
+	PlayerCharacter->SetActorLocation(StartLocation);
 }
 
