@@ -101,4 +101,7 @@ private:
 	UPROPERTY()
 	class UCWeapon_Data* Datas[(int32)EWeaponType::MAX];
 
+private:
+	bool bInSubAction = false;
+
 };

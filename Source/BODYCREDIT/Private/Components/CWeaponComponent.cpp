@@ -155,6 +155,8 @@ void UCWeaponComponent::SubAction_Pressed()
 	if (!!GetSubAction())
 		GetSubAction()->Pressed();
 
+	bInSubAction = true;
+
 }
 
 void UCWeaponComponent::SubAction_Released()
@@ -165,11 +167,14 @@ void UCWeaponComponent::SubAction_Released()
 	if (!!GetSubAction())
 		GetSubAction()->Released();
 
+	bInSubAction = false;
+
 }
 
 void UCWeaponComponent::SetMode(EWeaponType InType)
 {
 	CheckFalse(CHelpers::GetComponent<UCMovementComponent>(OwnerCharacter)->CanMove());
+	CheckTrue(bInSubAction);
 
 	if (Type == InType)
 	{
