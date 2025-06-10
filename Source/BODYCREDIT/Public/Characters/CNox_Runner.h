@@ -123,6 +123,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UAC_InventoryComponent* InventoryComp;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 PlayerGold = 10000;
 
 // Equip Item
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -171,4 +173,6 @@ public: // Card Key Check
 	void SetDropCardKey(bool bDrop) { bHasCardKey = bDrop; }
 private:
 	bool bHasCardKey = false;
+
+	
 };

@@ -91,7 +91,8 @@ void ULobbyWidget_Market::NativeConstruct()
 		GI->MarketUI = this;
 		GI->OnGoldChanged.RemoveDynamic(this, &ULobbyWidget_Market::UpdatePlayerGoldText);
 		GI->OnGoldChanged.AddDynamic(this, &ULobbyWidget_Market::UpdatePlayerGoldText);
-		UpdatePlayerGoldText(GI->PlayerGold);
+		GI->SetPlayerGold(GI->PlayerGold);
+		// UpdatePlayerGoldText(GI->PlayerGold);
 	}
 
     APawn* Pawn = PC->GetPawn();
@@ -881,7 +882,6 @@ void ULobbyWidget_Market::HandleSellConfirm(UItemObject* ItemObject)
 	{
 		int32 NewGold = GI->PlayerGold + (ItemObject->ItemData.Price * 0.7);
 		GI->SetPlayerGold(NewGold);
-		UpdatePlayerGoldText(NewGold);
 		InventoryComp->RemoveItem(ItemObject);
 	}
 }
