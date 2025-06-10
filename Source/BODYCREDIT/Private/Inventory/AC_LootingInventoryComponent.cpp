@@ -26,7 +26,7 @@ void UAC_LootingInventoryComponent::BeginPlay()
 		return;
 	}
 
-	// RefreshInventory();
+	RefreshInventory();
 
 	// PreAddItem();
 }
