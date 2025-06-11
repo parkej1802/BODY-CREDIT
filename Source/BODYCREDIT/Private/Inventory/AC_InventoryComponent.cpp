@@ -237,6 +237,20 @@ void UAC_InventoryComponent::ShowLootableInventory()
 				}
 			}
 		}
+		else
+		{
+			// 액터의 블루프린트에 있는 함수를 가져와서 있다면 호출한다.
+			UFunction* InteractFunction = HitActor->FindFunction(FName("StartExtractWave"));
+			if (InteractFunction && InteractFunction->HasAnyFunctionFlags(FUNC_BlueprintCallable))
+			{
+				struct {
+					ACNox_Runner* Player;  // 함수 시그니처에 맞는 변수
+				} ExtractParam;
+				ExtractParam.Player = PlayerCharacter;
+				HitActor->ProcessEvent(InteractFunction, &ExtractParam);
+				return;
+			}
+		}
 		
 		UAC_LootingInventoryComponent* LootComp = HitActor->FindComponentByClass<UAC_LootingInventoryComponent>();
 

@@ -67,6 +67,16 @@ bool ACMainGM::IsInVIPZone(const FName& ZoneID)
 	return ZoneID.ToString().Equals(VIPZoneID);
 }
 
+void ACMainGM::PlayGameStart()
+{
+	GameStartTime = GetWorld()->GetTimeSeconds();
+}
+
+double ACMainGM::GetGamePlayTime()
+{
+	return GetWorld()->GetTimeSeconds() - GameStartTime;
+}
+
 // bool ACMainGM::IsInVIPZone(ACNox_Runner* Player)
 // {
 // 	if (!Player) return false;

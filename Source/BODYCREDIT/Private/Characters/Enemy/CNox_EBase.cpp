@@ -12,6 +12,7 @@
 ACNox_EBase::ACNox_EBase()
 {
 	InitComp();
+	Tags.Add("Enemy");
 }
 
 void ACNox_EBase::InitComp()
@@ -229,5 +230,11 @@ bool ACNox_EBase::RotateToTarget(const float DeltaTime, const FTransform& CurTra
 	SetActorRotation(NewRot);
 
 	return true;
+}
+
+void ACNox_EBase::ExtractCallFunction(ACNox* InTarget)
+{
+	RetentionTime = 0.f; // 타겟 잃어버림 방지용, 컨트롤러에서 RetentionTime으로 잊게 해놈
+	SetTarget(InTarget);
 }
 #pragma endregion

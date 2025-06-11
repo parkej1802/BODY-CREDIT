@@ -14,6 +14,7 @@
 #include "AC_LootingInventoryComponent.h"
 #include "EngineUtils.h"
 #include "Components/TextBlock.h"
+#include "Games/CMainGM.h"
 
 void ULobbyWidget_Selection::NativeConstruct()
 {
@@ -53,6 +54,8 @@ void ULobbyWidget_Selection::OnPlayClicked()
 {
     if (LobbyPlayWidgetClass)
     {
+        Cast<ACMainGM>(GetWorld()->GetAuthGameMode())->PlayGameStart();
+        
         LobbyWidget_Play = CreateWidget<UCLobbyWidget_Play>(GetWorld(), LobbyPlayWidgetClass);
         if (LobbyWidget_Play)
         {

@@ -35,4 +35,11 @@ private:
 	FName GetZoneID(class ACNox_Runner* Player);
 	// bool IsInVIPZone(class ACNox_Runner* Player);
 	bool IsInVIPZone(const FName& ZoneID);
+
+private:
+	double GameStartTime = 0;
+public:
+	void PlayGameStart();
+	UFUNCTION(BlueprintCallable)
+	double GetGamePlayTime(); // 게임 플레이 타임 리턴	
 };

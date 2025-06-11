@@ -218,7 +218,7 @@ void ACNox_Runner::Init()
 	CHelpers::CreateComponent<UCameraComponent>(this, &TPSCamera, "TPSCamera", SpringArm);
 	TPSCamera->SetRelativeLocation(FVector(~79, 60, 100));
 	TPSCamera->bUsePawnControlRotation = false;
-
+	
 	//// FPSCamera
 	//CHelpers::CreateComponent<UCameraComponent>(this, &FPSCamera, "FPSCamera", GetMesh(), FName("FPSCamera"));
 	//FPSCamera->bUsePawnControlRotation = false;
