@@ -13,6 +13,15 @@ class BODYCREDIT_API UCNoxEnemy_Animinstance : public UAnimInstance
 {
 	GENERATED_BODY()
 
+#pragma region Init
+
+private: // InIt
+	UPROPERTY(BlueprintReadOnly, Category=Anim, meta=(AllowPrivateAccess=true))
+	int32 IdleIdx = 0;
+
+	virtual void NativeBeginPlay() override;
+#pragma endregion
+
 #pragma region Update Animation
 
 private:
@@ -63,12 +72,6 @@ public:
 	UAnimMontage* BeamMontage;
 	UPROPERTY(VisibleAnywhere)
 	UAnimMontage* WavePulseMontage;
-#pragma endregion
-
-#pragma region Idle
-private:
-	UPROPERTY(BlueprintReadOnly, Category=Anim, meta=(AllowPrivateAccess=true))
-	int32 IdleIdx = 0;
 #pragma endregion
 
 #pragma region Attacking

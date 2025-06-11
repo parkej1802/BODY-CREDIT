@@ -62,6 +62,11 @@ void ACNox_EBase::Tick(float DeltaTime)
 
 	if (FSMComp) FSMComp->UpdateState();
 
+	// if (Target)
+	// {
+	// 	float Dot = FVector::DotProduct(GetActorForwardVector(), (Target->GetActorLocation() - GetActorLocation()).GetSafeNormal());
+	// 	CLog::Print(Dot);		
+	// }
 	if (bDebug)
 	{
 		if (FSMComp) // Print Current State
@@ -169,9 +174,16 @@ bool ACNox_EBase::IsPlayerInForwardDegree(const float InForwardRange, const floa
 		CLog::Log("Out Of Range");
 		return false;
 	}
-	
-	float Dot = FVector::DotProduct(GetActorForwardVector(), (Target->GetActorLocation() - GetActorLocation()).GetSafeNormal());
-	return Dot <= InDegree;
+
+	FVector Forward2D = GetActorForwardVector();  Forward2D.Z = 0.f;
+	FVector ToTarget2D = Target->GetActorLocation() - GetActorLocation(); ToTarget2D.Z = 0.f;
+
+	float Dot = FVector::DotProduct(Forward2D.GetSafeNormal(), ToTarget2D.GetSafeNormal());
+	// 수치 오차 때문에 Dot이 ±1을 살짝 넘을 수 있으므로 먼저 Clamp
+	Dot = FMath::Clamp(Dot, -1.f, 1.f);
+	// 라디안 → 도(°) 변환
+	float AngleDeg = FMath::RadiansToDegrees( FMath::Acos(Dot) );
+	return AngleDeg <= InDegree;
 }
 #pragma endregion
 
@@ -201,5 +213,21 @@ bool ACNox_EBase::IsSkillReady(ESkillCoolDown Skill) const
 void ACNox_EBase::UsingSkill(ESkillCoolDown Skill)
 {
 	FSMComp->UsingSkill(Skill);
+}
+
+bool ACNox_EBase::RotateToTarget(const float DeltaTime, const FTransform& CurTrans, const FVector& TargetLoc,
+                                 float InteropSpeed)
+{
+	FRotator ToRot = (TargetLoc - CurTrans.GetLocation()).Rotation();
+	float newYaw = FMath::FInterpTo(CurTrans.GetRotation().Rotator().Yaw, ToRot.Yaw, DeltaTime, InteropSpeed);
+	FRotator CurRot = CurTrans.GetRotation().Rotator();
+	FRotator NewRot(CurRot.Pitch, newYaw, CurRot.Roll);
+	// float newYaw = UKismetMathLibrary::FindLookAtRotation(CurTrans.GetLocation(), TargetLoc).Yaw;
+	// FRotator CurRot = CurTrans.GetRotation().Rotator();
+	// // 보간
+	// FRotator NewRot(CurRot.Pitch, CurRot.Roll, FMath::FInterpTo(CurTrans.GetRotation().Rotator().Yaw, newYaw, DeltaTime, InteropSpeed));
+	SetActorRotation(NewRot);
+
+	return true;
 }
 #pragma endregion

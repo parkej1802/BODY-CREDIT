@@ -19,9 +19,11 @@ void UCLobbyWidget_Play::OnPlayClicked()
 		pc->SetInputMode(FInputModeGameOnly());
 		pc->bShowMouseCursor = false;
 
-		this->RemoveFromParent();
+		/*this->RemoveFromParent();
 
-		UGameplayStatics::OpenLevel(this, FName(TEXT("/Game/Levels/Lab")));
+		UGameplayStatics::OpenLevel(this, FName(TEXT("/Game/Levels/Lab")));*/
 	}
+	UGameplayStatics::SetGamePaused(GetWorld(), false);
+	RemoveFromParent();
 
 }

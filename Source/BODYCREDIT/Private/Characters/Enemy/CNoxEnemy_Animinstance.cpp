@@ -7,13 +7,17 @@
 #include "Global.h"
 
 #pragma region Update Animation
+void UCNoxEnemy_Animinstance::NativeBeginPlay()
+{
+	Super::NativeBeginPlay();
+	IdleIdx = FMath::RandRange(0, 8);
+}
+
 void UCNoxEnemy_Animinstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
 	if (!OwnerEnemy) return;
-
-	IdleIdx = FMath::RandRange(0, 8);
 
 	{
 		FVector velo = OwnerEnemy->GetVelocity();

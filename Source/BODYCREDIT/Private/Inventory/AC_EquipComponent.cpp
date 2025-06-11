@@ -207,3 +207,18 @@ void UAC_EquipComponent::SetPlayerStat(UItemObject* Item, int32 Direction)
 	PlayerCharacter->HPComp->Humanity += Direction * Item->ItemData.StatIncrease.Humanity;
 }
 
+int32 UAC_EquipComponent::CalculatePriceOfEquippedItem()
+{
+	int32 TotalPrice = 0;
+
+	for (const auto& Pair : EquippedItems)
+	{
+		if (const UItemObject* Item = Pair.Value)
+		{
+			TotalPrice += Item->ItemData.Price;
+		}
+	}
+
+	return TotalPrice;
+}
+

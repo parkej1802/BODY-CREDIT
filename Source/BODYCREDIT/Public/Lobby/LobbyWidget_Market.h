@@ -189,6 +189,7 @@ public:
 	UPROPERTY()
 	class UNetGameInstance* GI;
 
+	UFUNCTION()
 	void UpdatePlayerGoldText(int32 NewGold);
 	 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -198,7 +199,11 @@ public:
 	class ULobbyWidget_SellItem* SellItemUI;
 
 	void ShowSellUI(class UItemObject* ItemObject);
+
+	UFUNCTION()
 	void HandleSellConfirm(class UItemObject* ItemObject);
+
+	UFUNCTION()
 	void HandleSellCancel(class UItemObject* ItemObject);
 
 	UPROPERTY()

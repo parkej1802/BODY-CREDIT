@@ -5,6 +5,9 @@
 #include "Components/Button.h"
 #include "Lobby/LobbyWidget_Selection.h"
 #include "Components/Image.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Kismet/GameplayStatics.h"
+#include "Session/NetGameInstance.h"
 
 void ULobbyWidget_Main::NativeConstruct()
 {
@@ -15,6 +18,7 @@ void ULobbyWidget_Main::NativeConstruct()
     FInputModeGameAndUI InputMode;
     PC->SetInputMode(InputMode);
     PC->bShowMouseCursor = true;
+    // UGameplayStatics::SetGamePaused(GetWorld(), true);
 
     if (Button_NewGame)
     {
@@ -40,7 +44,8 @@ void ULobbyWidget_Main::NativeConstruct()
     PlayAnimation(Anim_Start_NewGame);
     PlayAnimation(Anim_Start_Setting);
     PlayAnimation(Anim_Start_Exit);
-
+    UNetGameInstance* GI = Cast<UNetGameInstance>(GetGameInstance());
+    GI->SetActorInitLocation();
 }
 
 void ULobbyWidget_Main::OnNewGameClicked()
@@ -116,7 +121,8 @@ void ULobbyWidget_Main::OnSettingUnhovered()
 
 void ULobbyWidget_Main::OnExitClicked()
 {
-    
+    PC = GetWorld()->GetFirstPlayerController();
+    UKismetSystemLibrary::QuitGame(this, PC, EQuitPreference::Quit, false);
 }
 
 void ULobbyWidget_Main::OnExitHovered()

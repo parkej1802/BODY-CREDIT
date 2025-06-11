@@ -7,11 +7,17 @@
 #include "Lobby/LobbyWidget_Market.h"
 #include "Lobby/LobbyWidget_WorkShop.h"
 #include "Kismet/GameplayStatics.h"
+#include "Session/NetGameInstance.h"
+#include "Inventory/AC_EquipComponent.h"
+#include "Characters/CNox_Runner.h"
+#include "Item/Lootable/Lootable_Box.h"
+#include "AC_LootingInventoryComponent.h"
+#include "EngineUtils.h"
+#include "Components/TextBlock.h"
 
 void ULobbyWidget_Selection::NativeConstruct()
 {
     Super::NativeConstruct();
-
 
     PC = GetOwningPlayer();
     FInputModeGameAndUI InputMode;
@@ -32,6 +38,15 @@ void ULobbyWidget_Selection::NativeConstruct()
     {
         Button_WorkShop->OnClicked.AddDynamic(this, &ThisClass::OnWorkShopClicked);
     }
+
+    APawn* Pawn = PC->GetPawn();
+
+    PlayerCharacter = Cast<ACNox_Runner>(Pawn);
+    // UGameplayStatics::SetGamePaused(GetWorld(), true);
+
+    GI = Cast<UNetGameInstance>(GetGameInstance());
+    FString DayString = FString::Printf(TEXT("%d"), GI->Day);
+    Text_DayCount->SetText(FText::FromString(DayString));
 }
 
 void ULobbyWidget_Selection::OnPlayClicked()
@@ -45,6 +60,26 @@ void ULobbyWidget_Selection::OnPlayClicked()
 
             this->RemoveFromParent();
         }
+    }
+
+    UWorld* World = GetWorld();
+    if (!World) return;
+
+    for (TActorIterator<ALootable_Box> It(World); It; ++It)
+    {
+        ALootable_Box* LootableActor = *It;
+        if (LootableActor && LootableActor->LootInventoryComp)
+        {
+            LootableActor->LootInventoryComp->RefreshInventory();
+        }
+    }
+
+    FVector StartLocation(285.0f, 15.0f, -408.0f);
+    PlayerCharacter->SetActorLocation(StartLocation);
+ 
+    if (GI) {
+        GI->BeforePlayerGold = PlayerCharacter->EquipComp->CalculatePriceOfEquippedItem();
+        GI->Day = GI->Day + 1;
     }
 
     //// OpenLevel
@@ -65,7 +100,7 @@ void ULobbyWidget_Selection::OnMarketClicked()
         {
             LobbyWidget_Market->AddToViewport();
 
-            this->RemoveFromParent();
+            RemoveFromParent();
         }
     }
 }
@@ -79,7 +114,8 @@ void ULobbyWidget_Selection::OnWorkShopClicked()
         {
             LobbyWidget_WorkShop->AddToViewport();
 
-            this->RemoveFromParent();
+            RemoveFromParent();
         }
     }
 }
+
