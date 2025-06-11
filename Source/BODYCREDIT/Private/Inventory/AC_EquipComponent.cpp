@@ -2,6 +2,7 @@
 
 
 #include "Inventory/AC_EquipComponent.h"
+#include "Global.h"
 #include "Characters/CNox_Runner.h"
 #include "Inventory/AC_InventoryComponent.h"
 #include "Inventory/Inventory_Widget.h"
@@ -10,6 +11,7 @@
 #include "Components/CNoxHPComponent.h"
 #include "Components/Image.h"
 #include "Components/Border.h"
+#include "Components/CWeaponComponent.h"
 
 // Sets default values for this component's properties
 UAC_EquipComponent::UAC_EquipComponent()
@@ -75,79 +77,41 @@ void UAC_EquipComponent::EquipItem(EPlayerPart Part, UItemObject* Item)
 
 	SetPlayerStat(Item, 1);
 	EquippedItems.Add(Part, Item);
+	
+	UCWeaponComponent* weapon = CHelpers::GetComponent<UCWeaponComponent>(PlayerCharacter);
 
 	if (Item->ItemData.SkeletalMesh)
-	{
+	{		
 		switch (Part)
 		{
 		case EPlayerPart::Head:
 			PlayerCharacter->GetHead()->SetSkeletalMeshAsset(Item->ItemData.SkeletalMesh);
-			/*InnerWidget = PlayerCharacter->InventoryComp->InventoryMainUI->Border_Head->GetContent();
 
-			if (UImage* InnerImage = Cast<UImage>(InnerWidget))
-			{
-				InnerImage->SetVisibility(ESlateVisibility::Hidden);
-			}*/
 			break;
 		case EPlayerPart::Body:
 			PlayerCharacter->GetUpperBody()->SetSkeletalMeshAsset(Item->ItemData.SkeletalMesh);
-			/*InnerWidget = PlayerCharacter->InventoryComp->InventoryMainUI->Border_Body->GetContent();
 
-			if (UImage* InnerImage = Cast<UImage>(InnerWidget))
-			{
-				InnerImage->SetVisibility(ESlateVisibility::Hidden);
-			}*/
 			break;
 		case EPlayerPart::Arm:
 			PlayerCharacter->GetArms()->SetSkeletalMeshAsset(Item->ItemData.SkeletalMesh);
-			/*InnerWidget = PlayerCharacter->InventoryComp->InventoryMainUI->Border_Arm->GetContent();
 
-			if (UImage* InnerImage = Cast<UImage>(InnerWidget))
-			{
-				InnerImage->SetVisibility(ESlateVisibility::Hidden);
-			}*/
 			break;
 		case EPlayerPart::Leg:
 			PlayerCharacter->GetLowerBody()->SetSkeletalMeshAsset(Item->ItemData.SkeletalMesh);
-			/*InnerWidget = PlayerCharacter->InventoryComp->InventoryMainUI->Border_Leg->GetContent();
 
-			if (UImage* InnerImage = Cast<UImage>(InnerWidget))
-			{
-				InnerImage->SetVisibility(ESlateVisibility::Hidden);
-			}*/
 			break;
-		/*case EPlayerPart::Weapon1:
-			InnerWidget = PlayerCharacter->InventoryComp->InventoryMainUI->Border_Weapon_1->GetContent();
-
-			if (UImage* InnerImage = Cast<UImage>(InnerWidget))
-			{
-				InnerImage->SetVisibility(ESlateVisibility::Hidden);
-			}
+		case EPlayerPart::Weapon1:
+			PlayerCharacter->GetWeapon1()->SetSkeletalMeshAsset(Item->ItemData.SkeletalMesh);
 			break;
 		case EPlayerPart::Weapon2:
-			InnerWidget = PlayerCharacter->InventoryComp->InventoryMainUI->Border_Weapon_2->GetContent();
-
-			if (UImage* InnerImage = Cast<UImage>(InnerWidget))
-			{
-				InnerImage->SetVisibility(ESlateVisibility::Hidden);
-			}
+			PlayerCharacter->GetWeapon2()->SetSkeletalMeshAsset(Item->ItemData.SkeletalMesh);
 			break;
 		case EPlayerPart::Backpack:
-			InnerWidget = PlayerCharacter->InventoryComp->InventoryMainUI->Border_Backpack->GetContent();
-
-			if (UImage* InnerImage = Cast<UImage>(InnerWidget))
-			{
-				InnerImage->SetVisibility(ESlateVisibility::Hidden);
-			}
+			PlayerCharacter->GetBackpack()->SetSkeletalMeshAsset(Item->ItemData.SkeletalMesh);
 			break;
 		case EPlayerPart::ChestRigs:
-			InnerWidget = PlayerCharacter->InventoryComp->InventoryMainUI->Border_ChestRigs->GetContent();
-
-			if (UImage* InnerImage = Cast<UImage>(InnerWidget))
-			{
-				InnerImage->SetVisibility(ESlateVisibility::Hidden);
-			}
-			break;*/
+			PlayerCharacter->GetChestRig()->SetSkeletalMeshAsset(Item->ItemData.SkeletalMesh);
+			break;
 		default:
 			break;
 		}
@@ -160,89 +124,38 @@ void UAC_EquipComponent::UnequipItem(EPlayerPart Part)
 	{
 		SetPlayerStat(EquippedItems[Part], -1);
 		EquippedItems.Remove(Part);
-
-		/*switch (Part)
-		{
-		case EPlayerPart::Weapon1:
-			InnerWidget = PlayerCharacter->InventoryComp->InventoryMainUI->Border_Weapon_1->GetContent();
-
-			if (UImage* InnerImage = Cast<UImage>(InnerWidget))
-			{
-				InnerImage->SetVisibility(ESlateVisibility::Visible);
-			}
-			break;
-		case EPlayerPart::Weapon2:
-			InnerWidget = PlayerCharacter->InventoryComp->InventoryMainUI->Border_Weapon_2->GetContent();
-
-			if (UImage* InnerImage = Cast<UImage>(InnerWidget))
-			{
-				InnerImage->SetVisibility(ESlateVisibility::Visible);
-			}
-			break;
-		case EPlayerPart::Backpack:
-			InnerWidget = PlayerCharacter->InventoryComp->InventoryMainUI->Border_Backpack->GetContent();
-
-			if (UImage* InnerImage = Cast<UImage>(InnerWidget))
-			{
-				InnerImage->SetVisibility(ESlateVisibility::Visible);
-			}
-			break;
-		case EPlayerPart::ChestRigs:
-			InnerWidget = PlayerCharacter->InventoryComp->InventoryMainUI->Border_ChestRigs->GetContent();
-
-			if (UImage* InnerImage = Cast<UImage>(InnerWidget))
-			{
-				InnerImage->SetVisibility(ESlateVisibility::Visible);
-			}
-			break;
-		default:
-			break;
-		}*/
-
+		
 		if (PlayerCharacter && PlayerCharacter->DefaultMeshes.Contains(Part))
 		{
 			USkeletalMesh* DefaultMesh = PlayerCharacter->DefaultMeshes[Part];
 			switch (Part)
 			{
-			case EPlayerPart::Head:
-				PlayerCharacter->GetHead()->SetSkeletalMeshAsset(DefaultMesh);
-				/*InnerWidget = PlayerCharacter->InventoryComp->InventoryMainUI->Border_Head->GetContent();
-
-				if (UImage* InnerImage = Cast<UImage>(InnerWidget))
-				{
-					InnerImage->SetVisibility(ESlateVisibility::Visible);
-				}*/
-				break;
-			case EPlayerPart::Body:
-				PlayerCharacter->GetUpperBody()->SetSkeletalMeshAsset(DefaultMesh);
-				/*InnerWidget = PlayerCharacter->InventoryComp->InventoryMainUI->Border_Body->GetContent();
-
-				if (UImage* InnerImage = Cast<UImage>(InnerWidget))
-				{
-					InnerImage->SetVisibility(ESlateVisibility::Visible);
-				}*/
-				break;
-			case EPlayerPart::Arm:
-				PlayerCharacter->GetArms()->SetSkeletalMeshAsset(DefaultMesh);
-				/*InnerWidget = PlayerCharacter->InventoryComp->InventoryMainUI->Border_Arm->GetContent();
-
-				if (UImage* InnerImage = Cast<UImage>(InnerWidget))
-				{
-					InnerImage->SetVisibility(ESlateVisibility::Visible);
-				}*/
-				break;
-			case EPlayerPart::Leg:
-				PlayerCharacter->GetLowerBody()->SetSkeletalMeshAsset(DefaultMesh);
-				/*InnerWidget = PlayerCharacter->InventoryComp->InventoryMainUI->Border_Leg->GetContent();
-
-				if (UImage* InnerImage = Cast<UImage>(InnerWidget))
-				{
-					InnerImage->SetVisibility(ESlateVisibility::Visible);
-				}*/
-				break;
-			default:
-				break;
-
+				case EPlayerPart::Head:
+					PlayerCharacter->GetHead()->SetSkeletalMeshAsset(DefaultMesh);
+					break;
+				case EPlayerPart::Body:
+					PlayerCharacter->GetUpperBody()->SetSkeletalMeshAsset(DefaultMesh);
+					break;
+				case EPlayerPart::Arm:
+					PlayerCharacter->GetArms()->SetSkeletalMeshAsset(DefaultMesh);
+					break;
+				case EPlayerPart::Leg:
+					PlayerCharacter->GetLowerBody()->SetSkeletalMeshAsset(DefaultMesh);
+					break;
+				case EPlayerPart::Weapon1:
+					PlayerCharacter->GetWeapon1()->SetSkeletalMeshAsset(DefaultMesh);
+					break;
+				case EPlayerPart::Weapon2:
+					PlayerCharacter->GetWeapon2()->SetSkeletalMeshAsset(DefaultMesh);
+					break;
+				case EPlayerPart::Backpack:
+					PlayerCharacter->GetBackpack()->SetSkeletalMeshAsset(DefaultMesh);
+					break;
+				case EPlayerPart::ChestRigs:
+					PlayerCharacter->GetChestRig()->SetSkeletalMeshAsset(DefaultMesh);
+					break;
+				default:
+					break;
 			}
 		}
 	}

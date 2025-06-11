@@ -31,11 +31,11 @@ public:
 public:
 	UFUNCTION(BlueprintNativeEvent)
 	void OnBeginEquip();
-	virtual void OnBeginEquip_Implementation() {}
+	virtual void OnBeginEquip_Implementation() {};
 
 	UFUNCTION(BlueprintNativeEvent)
 	void OnUnequip();
-	virtual void OnUnequip_Implementation() {}
+	virtual void OnUnequip_Implementation() {};
 
 public:
 	void OnCollisions();
@@ -67,5 +67,13 @@ public:
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Game")
 	TArray<class UShapeComponent*> Collisions;
+
+protected:
+	UPROPERTY(EditAnywhere, Category = "Attachment")
+	FName AttachmentName = "";
+
+public:
+	UPROPERTY(VisibleAnywhere, Category = "Valid")
+	bool bValid = false;
 
 };

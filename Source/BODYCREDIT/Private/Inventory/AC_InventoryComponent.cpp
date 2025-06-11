@@ -178,6 +178,7 @@ void UAC_InventoryComponent::ShowLootableInventory()
 		FInputModeGameOnly GameInputMode;
 		pc->SetInputMode(GameInputMode);
 		pc->bShowMouseCursor = false;
+		CHelpers::GetComponent<UCMovementComponent>(PlayerCharacter)->Move();
 		return;
 	}
 
@@ -189,11 +190,11 @@ void UAC_InventoryComponent::ShowLootableInventory()
 		{
 			InventoryMainUI->bIsLootable = bIsLootableMode;
 			InventoryMainUI->RemoveFromParent();
-			CHelpers::GetComponent<UCMovementComponent>(PlayerCharacter)->Move();
 		}
 		FInputModeGameOnly GameInputMode;
 		pc->SetInputMode(GameInputMode);
 		pc->bShowMouseCursor = false;
+		CHelpers::GetComponent<UCMovementComponent>(PlayerCharacter)->Move();
 		return;
 	}
 
@@ -203,7 +204,7 @@ void UAC_InventoryComponent::ShowLootableInventory()
 
 	FVector StartPos = CHelpers::GetComponent<UCameraComponent>(PlayerCharacter)->GetComponentLocation();
 	FVector ForwardVector = CHelpers::GetComponent<UCameraComponent>(PlayerCharacter)->GetForwardVector();
-	FVector EndPos = StartPos + (ForwardVector * 350.f);
+	FVector EndPos = StartPos + (ForwardVector * 400.f);
 
 	//DrawDebugLine(GetWorld(), StartPos, EndPos, FColor::Red);
 
@@ -304,6 +305,7 @@ void UAC_InventoryComponent::PauseGame()
 		if (PauseGameUI)
 		{
 			PauseGameUI->AddToViewport();
+			CHelpers::GetComponent<UCMovementComponent>(PlayerCharacter)->Stop();
 		}
 		FInputModeGameAndUI UIInputMode;
 		pc->SetInputMode(UIInputMode);

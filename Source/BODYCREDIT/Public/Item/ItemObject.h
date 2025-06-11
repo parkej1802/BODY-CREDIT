@@ -115,6 +115,8 @@ public:
 
 	UMaterialInterface* GetIcon();
 
+	UMaterialInterface* GetThumbnail();
+
 	TSubclassOf<AItem_Base> GetItemClass();
 
 	UPROPERTY()

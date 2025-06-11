@@ -27,6 +27,11 @@ UMaterialInterface* UItemObject::GetIcon()
 	return ItemData.Icon;
 }
 
+UMaterialInterface* UItemObject::GetThumbnail()
+{
+	return ItemData.EquipedThumbnail;
+}
+
 TSubclassOf<AItem_Base> UItemObject::GetItemClass()
 {
 	return ItemData.ItemClass;
