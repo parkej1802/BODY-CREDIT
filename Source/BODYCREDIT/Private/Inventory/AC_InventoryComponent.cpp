@@ -176,7 +176,7 @@ void UAC_InventoryComponent::ShowLootableInventory()
 
 	FVector StartPos = CHelpers::GetComponent<UCameraComponent>(PlayerCharacter)->GetComponentLocation();
 	FVector ForwardVector = CHelpers::GetComponent<UCameraComponent>(PlayerCharacter)->GetForwardVector();
-	FVector EndPos = StartPos + (ForwardVector * 350.f);
+	FVector EndPos = StartPos + (ForwardVector * 400.f);
 
 	//DrawDebugLine(GetWorld(), StartPos, EndPos, FColor::Red);
 

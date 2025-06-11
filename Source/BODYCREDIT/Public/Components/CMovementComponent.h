@@ -15,7 +15,7 @@ enum class ESpeedType : uint8
 	CROUCH_WALK_FWD,	// Crouch W
 	CROUCH_WALK_BWD,	// Crouch S
 	CROUCH_WALK_RLWD,	// Crouch D or A
-	SPRINT,			 // LShift 보류
+	SPRINT,				// LShift 보류
 	MAX,
 };
 
@@ -175,5 +175,24 @@ public:
 	float SlideElapsedTime = 0.0f;
 
 	FVector LastSlideLocation;
+
+	// Sprint Stamina Handle
+	FTimerHandle StaminaDrainTimerHandle;
+
+	UPROPERTY(EditAnywhere, Category = "Stamina")
+	float StaminaDrainInterval = 0.1f;
+
+	UPROPERTY(EditAnywhere, Category = "Stamina")
+	float StaminaDrainAmount = 2.0f;
+
+	FTimerHandle StaminaRecoverTimerHandle;
+
+	UPROPERTY(EditAnywhere, Category = "Stamina")
+	float StaminaRecoverInterval = 0.1f;
+
+	UPROPERTY(EditAnywhere, Category = "Stamina")
+	float StaminaRecoverAmount = 1.0f;
+
+	FTimerHandle StaminaRecoverDelayTimerHandle;
 
 };

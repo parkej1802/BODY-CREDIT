@@ -27,13 +27,22 @@ protected: // Modular Character Mesh
 	class USkeletalMeshComponent* Arms;
 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh")
-	class USkeletalMeshComponent* Bag;
+	class USkeletalMeshComponent* Backpack;
+
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh")
+	class USkeletalMeshComponent* ChestRig;
 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh")
 	class USkeletalMeshComponent* LowerBody;
 
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh")
 	class USkeletalMeshComponent* Foot;
+
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh")
+	class USkeletalMeshComponent* Weapon1;
+
+	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh")
+	class USkeletalMeshComponent* Weapon2;
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Camera")
@@ -66,7 +75,20 @@ private:
 
 private:
 	UPROPERTY(VisibleAnywhere, Category = "EnhancedInput")
-	class UInputMappingContext* MappingContext;
+	class UInputMappingContext* IMC_Movement;
+
+	UPROPERTY(VisibleAnywhere, Category = "EnhancedInput")
+	class UInputMappingContext* IMC_Weapon;
+
+	UPROPERTY(VisibleAnywhere, Category = "EnhancedInput")
+	class UInputMappingContext* IMC_Invectory;
+
+private: // UI
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<class UCUserWidget_RunnerUI> RunnerUIClass;
+
+	UPROPERTY()
+	class UCUserWidget_RunnerUI* RunnerUIWidget;
 	
 public:
 	ACNox_Runner();
@@ -90,8 +112,12 @@ private:
 public:
 	FORCEINLINE USkeletalMeshComponent* GetHead() { return GetMesh(); }
 	FORCEINLINE USkeletalMeshComponent* GetUpperBody() { return UpperBody; }
+	FORCEINLINE USkeletalMeshComponent* GetChestRig() { return ChestRig; }
 	FORCEINLINE USkeletalMeshComponent* GetArms() { return Arms; }
+	FORCEINLINE USkeletalMeshComponent* GetBackpack() { return Backpack; }
 	FORCEINLINE USkeletalMeshComponent* GetLowerBody() { return LowerBody; }
+	FORCEINLINE USkeletalMeshComponent* GetWeapon1() { return Weapon1; }
+	FORCEINLINE USkeletalMeshComponent* GetWeapon2() { return Weapon2; }
 
 	UPROPERTY(EditDefaultsOnly, Category = "Default Meshes")
 	TMap<EPlayerPart, USkeletalMesh*> DefaultMeshes;

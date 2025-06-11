@@ -35,6 +35,26 @@ FSlateBrush UInventory_EquipmentTile::GetIconImage()
 	return Brush;
 }
 
+FSlateBrush UInventory_EquipmentTile::GetThumbnailImage()
+{
+
+	UMaterialInterface* Material = ItemObject->GetThumbnail();
+
+	FSlateBrush Brush;
+	Brush.SetResourceObject(Material);
+	/*if (ItemObject && EquipMainWidget)
+	{
+		Brush.ImageSize = NewSize;
+	}
+	else
+	{
+		Brush.ImageSize = FVector2D(BorderSize);
+	}*/
+
+	Brush.ImageSize = FVector2D(BorderSize);
+	return Brush;
+}
+
 
 void UInventory_EquipmentTile::Refresh()
 {
@@ -78,7 +98,7 @@ void UInventory_EquipmentTile::SetItem(UItemObject* NewItem)
 
 		if (Image_Item)
 		{
-			FSlateBrush IconBrush = GetIconImage();
+			FSlateBrush IconBrush = GetThumbnailImage();
 			Image_Item->SetBrush(IconBrush);
 		}
 	}

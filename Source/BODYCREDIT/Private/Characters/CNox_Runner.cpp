@@ -14,6 +14,7 @@
 #include "Components/CMontageComponent.h"
 #include "Inventory/AC_InventoryComponent.h"
 #include "Components/CNoxHPComponent.h"
+#include "Widgets/Runners/CUserWidget_RunnerUI.h"
 #include "Games/CMainGM.h"
 #include "Inventory/AC_EquipComponent.h"
 #include "Session/NetGameInstance.h"
@@ -62,6 +63,24 @@ void ACNox_Runner::BeginPlay()
 			EquipComp->EquippedItems.Add(Pair.Key, CreateItemFromData(Pair.Value));
 
 			MyGameState->SpawnItemHiddenFromActor(EquipComp->EquippedItems[Pair.Key], this, true);
+			if (Weapon and Pair.Key == EPlayerPart::Weapon1)
+			{
+				if (Pair.Value.ItemName == "Bow")
+					Weapon->EquippedWeaponType.Add(EWeaponSlot::Weapon1, EWeaponType::BOW);
+				else if (Pair.Value.ItemName == "Katana")
+					Weapon->EquippedWeaponType.Add(EWeaponSlot::Weapon1, EWeaponType::KATANA);
+				else if (Pair.Value.ItemName == "Rifle")
+					Weapon->EquippedWeaponType.Add(EWeaponSlot::Weapon1, EWeaponType::RIFLE);
+			}
+			else if (Weapon and Pair.Key == EPlayerPart::Weapon2)
+			{
+				if (Pair.Value.ItemName == "Bow")
+					Weapon->EquippedWeaponType.Add(EWeaponSlot::Weapon2, EWeaponType::BOW);
+				else if (Pair.Value.ItemName == "Katana")
+					Weapon->EquippedWeaponType.Add(EWeaponSlot::Weapon2, EWeaponType::KATANA);
+				else if (Pair.Value.ItemName == "Rifle")
+					Weapon->EquippedWeaponType.Add(EWeaponSlot::Weapon2, EWeaponType::RIFLE);
+			}
 		}
 
 
@@ -86,6 +105,22 @@ void ACNox_Runner::BeginPlay()
 			}
 		}*/
 		
+	}
+
+	// 위젯 클래스가 유효한지 확인
+	if (RunnerUIClass)
+	{
+		// 위젯 생성
+		UCUserWidget_RunnerUI* RunnerUI = CreateWidget<UCUserWidget_RunnerUI>(GetWorld(), RunnerUIClass);
+
+		if (RunnerUI)
+		{
+			// 화면에 추가
+			RunnerUI->AddToViewport();
+
+			// 캐릭터의 HealthComponent를 바인딩
+			RunnerUI->BindToHealthComponent(HPComp);
+		}
 	}
 
 	State->OnStateTypeChanged.AddDynamic(this, &ACNox_Runner::OnStateTypeChanged);
@@ -150,7 +185,11 @@ void ACNox_Runner::NotifyControllerChanged()
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
 			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
-			Subsystem->AddMappingContext(MappingContext, 0);
+		{
+			Subsystem->AddMappingContext(IMC_Movement, 10);
+			Subsystem->AddMappingContext(IMC_Weapon, 9);
+			Subsystem->AddMappingContext(IMC_Invectory, 11);
+		}
 	}
 }
 
@@ -197,14 +236,29 @@ void ACNox_Runner::Init()
 		// UpperBody
 		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &UpperBody, "UpperBody", GetMesh());
 
+		// ChestRig
+		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &ChestRig, "ChestRig", GetMesh());
+		
 		// Arms
 		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Arms, "Arms", GetMesh());
+
+		// Backpack
+		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Backpack, "Backpack", GetMesh());
 
 		// LowerBody
 		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &LowerBody, "LowerBody", GetMesh());
 
 		// Foot
 		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Foot, "Foot", GetMesh());
+
+		// Weapon1
+		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Weapon1, "Weapon1", GetMesh());
+		Weapon1->SetHiddenInGame(true);
+
+		// Weapon2
+		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Weapon2, "Weapon2", GetMesh());
+		Weapon2->SetHiddenInGame(true);
+
 	}
 
 	// SpringArm
@@ -224,9 +278,17 @@ void ACNox_Runner::Init()
 	//FPSCamera->bUsePawnControlRotation = false;
 
 	// MappingContext
-	CHelpers::GetAsset<UInputMappingContext>(&MappingContext,
+	CHelpers::GetAsset<UInputMappingContext>(&IMC_Movement,
 	                                         TEXT(
-		                                         "/Script/EnhancedInput.InputMappingContext'/Game/Inputs/IMC_Runner.IMC_Runner'"));
+		                                         "/Script/EnhancedInput.InputMappingContext'/Game/Inputs/IMC_Movement.IMC_Movement'"));
+
+	CHelpers::GetAsset<UInputMappingContext>(&IMC_Weapon,
+										 TEXT(
+											 "/Script/EnhancedInput.InputMappingContext'/Game/Inputs/IMC_Weapon.IMC_Weapon'"));
+
+	CHelpers::GetAsset<UInputMappingContext>(&IMC_Invectory,
+										 TEXT(
+											 "/Script/EnhancedInput.InputMappingContext'/Game/Inputs/IMC_Runner.IMC_Runner'"));
 
 	// Trajectory
 	//CHelpers::CreateActorComponent<UCharacterTrajectoryComponent>(this, &Trajectory, "Trajectory");
@@ -283,7 +345,11 @@ void ACNox_Runner::CacheDefaultSkeletalMeshes()
 {
 	DefaultMeshes.Add(EPlayerPart::Head, GetMesh()->GetSkeletalMeshAsset());
 	DefaultMeshes.Add(EPlayerPart::Body, UpperBody->GetSkeletalMeshAsset());
+	DefaultMeshes.Add(EPlayerPart::ChestRigs, ChestRig->GetSkeletalMeshAsset());
 	DefaultMeshes.Add(EPlayerPart::Arm, Arms->GetSkeletalMeshAsset());
 	DefaultMeshes.Add(EPlayerPart::Leg, LowerBody->GetSkeletalMeshAsset());
+	DefaultMeshes.Add(EPlayerPart::Backpack, Backpack->GetSkeletalMeshAsset());
+	DefaultMeshes.Add(EPlayerPart::Weapon1, Weapon1->GetSkeletalMeshAsset());
+	DefaultMeshes.Add(EPlayerPart::Weapon2, Weapon2->GetSkeletalMeshAsset());
 }
 

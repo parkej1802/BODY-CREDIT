@@ -39,4 +39,7 @@ public:
 private:
 	FVector2D OriginViewPitchRange;
 
+public:
+	TArray<class ACAddOn_Arrow*> Arrows;
+
 };

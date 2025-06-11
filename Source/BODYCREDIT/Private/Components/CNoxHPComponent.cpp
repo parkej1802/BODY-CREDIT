@@ -26,7 +26,9 @@ void UCNoxHPComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 void UCNoxHPComponent::InitStatus()
 {
 	Health = MaxHealth;
+	Stamina = MaxStamina;
 	Defense = MaxDefense;
+
 }
 
 void UCNoxHPComponent::TakeDamage(float Amount, bool ActiveShield, bool& OutIsShieldCrash)
@@ -50,6 +52,7 @@ void UCNoxHPComponent::TakeDamage(float Amount, bool ActiveShield, bool& OutIsSh
 void UCNoxHPComponent::TakeDamage(float Amount)
 {
 	Health = FMath::Max(0.f, Health - Amount);
+	SetHealth(Health);
 	if (Health <= 0) Die();
 	CLog::Print(FString::Printf(TEXT("%s TakeDamage: %f"), *GetOwner()->GetName() ,Amount));
 }
@@ -70,4 +73,18 @@ void UCNoxHPComponent::SetStatus(float newHP, float newDefense)
 {
 	Health = newHP;
 	Defense = newDefense;
+}
+
+void UCNoxHPComponent::SetHealth(float InNewHealth)
+{
+	Health = FMath::Clamp(InNewHealth, 0.f, MaxHealth);
+	OnHealthChanged.Broadcast(Health, MaxHealth);
+
+}
+
+void UCNoxHPComponent::SetStamina(float InNewStamina)
+{
+	Stamina = FMath::Clamp(InNewStamina, 0.f, MaxStamina);
+	OnStaminaChanged.Broadcast(Stamina, MaxStamina);
+
 }
