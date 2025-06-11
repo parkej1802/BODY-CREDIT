@@ -51,7 +51,7 @@ void UCNoxHPComponent::TakeDamage(float Amount)
 {
 	Health = FMath::Max(0.f, Health - Amount);
 	if (Health <= 0) Die();
-	CLog::Print(FString::Printf(TEXT("%s TakeDamage: %f"), *GetOwner()->GetName() ,Amount));
+	// CLog::Print(FString::Printf(TEXT("%s TakeDamage: %f"), *GetOwner()->GetName() ,Amount));
 }
 
 void UCNoxHPComponent::Die()
