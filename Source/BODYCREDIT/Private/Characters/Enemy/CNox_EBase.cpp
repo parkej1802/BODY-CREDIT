@@ -61,7 +61,7 @@ void ACNox_EBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (FSMComp) FSMComp->UpdateState();
+	if (FSMComp && !bExtractSucceed) FSMComp->UpdateState();
 
 	// if (Target)
 	// {

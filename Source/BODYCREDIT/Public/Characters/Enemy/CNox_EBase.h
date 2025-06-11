@@ -179,5 +179,9 @@ public:
 public:
 	UFUNCTION(BlueprintCallable)
 	void ExtractCallFunction(ACNox* InTarget);
+	UFUNCTION(BlueprintCallable)
+	void ExtractSucceed() { bExtractSucceed = true; }
+private:
+	bool bExtractSucceed = false;
 #pragma endregion
 };
