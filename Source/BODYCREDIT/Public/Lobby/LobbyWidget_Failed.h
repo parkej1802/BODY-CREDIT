@@ -69,4 +69,21 @@ public:
 
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
 	class UWidgetAnimation* Anim_BackGround;
+
+	UPROPERTY()
+	class UNetGameInstance* GI;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UImage* Image_LostPart;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class ACNox_Controller* PC;
+
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
+	TSubclassOf<UUserWidget> LobbySelectionWidgetClass;
+
+	UPROPERTY()
+	class ULobbyWidget_Selection* LobbyWidget_Selection;
+
 };

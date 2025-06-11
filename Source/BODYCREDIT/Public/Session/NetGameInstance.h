@@ -67,4 +67,19 @@ public:
 
 	int32 Day = 1;
 
+	TMap<EPlayerPart, bool> AlivePart;
+
+	EPlayerPart SelectedPart;
+
+	UPROPERTY()
+	class UImage* SaveImageHead;
+
+	UPROPERTY()
+	class UImage* SaveImageBody;
+
+	UPROPERTY()
+	class UImage* SaveImageArm;
+
+	UPROPERTY()
+	class UImage* SaveImageLeg;
 };

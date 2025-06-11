@@ -25,6 +25,11 @@ void UNetGameInstance::Init()
 				}
 			), 2.f, false);
 	}
+
+	AlivePart.Add(EPlayerPart::Head, true);
+	AlivePart.Add(EPlayerPart::Body, true);
+	AlivePart.Add(EPlayerPart::Arm, true);
+	AlivePart.Add(EPlayerPart::Leg, true);
 }
 
 void UNetGameInstance::CreateMySession(FString roomName, int32 playerCount)

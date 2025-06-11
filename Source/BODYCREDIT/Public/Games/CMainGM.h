@@ -44,5 +44,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	double GetGamePlayTime(); // 게임 플레이 타임 리턴	
 
-	float GameTimer = 120.f;
-};
+	float GameTimer = 10.f;
+
+	bool bIsFailed = false;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUserWidget> FailedWidgetClass;
+
+
+}; 

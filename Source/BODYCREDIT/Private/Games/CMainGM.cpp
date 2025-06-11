@@ -5,6 +5,7 @@
 #include "Characters/CNox_Runner.h"
 #include "Characters/Enemy/CNox_MemoryCollectorAI.h"
 #include "Trigger/CAreaTriggerBox.h"
+#include "Lobby/LobbyWidget_Failed.h"
 
 ACMainGM::ACMainGM()
 {
@@ -36,8 +37,31 @@ void ACMainGM::Tick(float DeltaSeconds)
 	if (GameTimer > 0.f)
 	{
 		GameTimer -= DeltaSeconds;
-		GameTimer = FMath::Max(0.f, GameTimer); 
+		GameTimer = FMath::Max(0.f, GameTimer);
 	}
+	else if (!bIsFailed)
+	{
+		bIsFailed = true;
+
+		if (FailedWidgetClass)
+		{
+			APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
+			if (PC)
+			{
+				ULobbyWidget_Failed* FailedWidget = CreateWidget<ULobbyWidget_Failed>(PC, FailedWidgetClass);
+				if (FailedWidget)
+				{
+					FailedWidget->AddToViewport();
+
+					FInputModeUIOnly InputMode;
+					InputMode.SetWidgetToFocus(FailedWidget->TakeWidget());
+					PC->SetInputMode(InputMode);
+					PC->bShowMouseCursor = true;
+				}
+			}
+		}
+	}
+
 }
 
 void ACMainGM::RegisterMemoryFromPlayer(ACNox_Runner* Player, EMemoryTriggerType Trigger)
