@@ -46,7 +46,10 @@ void UCSubAction_Bow::Tick_Implementation(float InDeltaTime)
 	Timeline.TickTimeline(InDeltaTime);
 
 	if (bInAction)
+	{
+		CheckTrue(Bow->Arrows.Last()->IsHidden());
 		Bow->Arrows.Last()->SetActorHiddenInGame(false);
+	}
 	else
 	{
 		// SubAction중이 아니거나 Arrows가 비어 있거나 마지막 화살의 활성화 상태일 경우
