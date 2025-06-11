@@ -2,6 +2,7 @@
 #include "Global.h"
 #include "Components/Button.h"
 #include "Characters/CNox_Controller.h"
+#include "Characters/CNox_Runner.h"
 
 void UCLobbyWidget_Play::NativeConstruct()
 {
@@ -22,8 +23,14 @@ void UCLobbyWidget_Play::OnPlayClicked()
 		/*this->RemoveFromParent();
 
 		UGameplayStatics::OpenLevel(this, FName(TEXT("/Game/Levels/Lab")));*/
-	}
-	UGameplayStatics::SetGamePaused(GetWorld(), false);
-	RemoveFromParent();
 
+		UGameplayStatics::SetGamePaused(GetWorld(), false);
+		RemoveFromParent();
+
+		APawn* Pawn = pc->GetPawn();
+
+		ACNox_Runner* PlayerCharacter = Cast<ACNox_Runner>(Pawn);
+
+		PlayerCharacter->ShowPlayerMainUI();
+	}
 }

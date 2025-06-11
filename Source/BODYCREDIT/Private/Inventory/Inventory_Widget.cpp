@@ -32,8 +32,6 @@ void UInventory_Widget::NativeConstruct()
 
     PlayerCharacter = Cast<ACNox_Runner>(Pawn);
 
-    PlayerCharacter->SceneCapture2D->ShowOnlyActorComponents(PlayerCharacter);
-
     InventoryComp = PlayerCharacter->InventoryComp;
 
     EquipComp = PlayerCharacter->EquipComp;
@@ -69,16 +67,20 @@ void UInventory_Widget::NativeConstruct()
     Equip_Backpack->PlayerCharacter = PlayerCharacter;
     Equip_Backpack->InitEquipment();
 
+    Text_LootableBox->SetVisibility(ESlateVisibility::Hidden);
+
     if (bIsLootable) {
         LootingInventoryComp = PlayerCharacter->LootableInventoryComp;
         InventoryItemGridWidget->SetVisibility(ESlateVisibility::Visible);
         InventoryItemGridWidget->InitInventory(LootingInventoryComp, InventoryComp->InventoryTileSize);
         InventoryItemGridWidget->GridID = 1;
         InventoryItemGridWidget->PlayerController = PC;
+        Text_LootableBox->SetVisibility(ESlateVisibility::Visible);
     }
     else {
 
         InventoryItemGridWidget->SetVisibility(ESlateVisibility::Hidden);
+        Text_LootableBox->SetVisibility(ESlateVisibility::Hidden);
     }
 
     if (Button_Back)

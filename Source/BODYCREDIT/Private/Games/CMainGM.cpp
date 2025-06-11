@@ -8,6 +8,8 @@
 
 ACMainGM::ACMainGM()
 {
+	PrimaryActorTick.bCanEverTick = true;
+
 	ConstructorHelpers::FClassFinder<APawn> pawn(
 		TEXT("/Script/Engine.Blueprint'/Game/Characters/Runner/BP_CNox_Runner.BP_CNox_Runner_C'"));
 	if (pawn.Succeeded())
@@ -24,6 +26,17 @@ void ACMainGM::BeginPlay()
 	for (TActorIterator<ACAreaTriggerBox> It(GetWorld(), ACAreaTriggerBox::StaticClass()); It; ++It)
 	{
 		ZoneVolumes.Add(*It);
+	}
+}
+
+void ACMainGM::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (GameTimer > 0.f)
+	{
+		GameTimer -= DeltaSeconds;
+		GameTimer = FMath::Max(0.f, GameTimer); 
 	}
 }
 

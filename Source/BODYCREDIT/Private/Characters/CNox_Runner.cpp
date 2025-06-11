@@ -51,6 +51,8 @@ void ACNox_Runner::BeginPlay()
 
 	CacheDefaultSkeletalMeshes();
 
+	SceneCapture2D->ShowOnlyActorComponents(this);
+
 	Movement->EnableControlRotation();
 
 	UNetGameInstance* GI = Cast<UNetGameInstance>(GetGameInstance());
@@ -90,21 +92,7 @@ void ACNox_Runner::BeginPlay()
 		
 	}
 
-	// 위젯 클래스가 유효한지 확인
-	if (RunnerUIClass)
-	{
-		// 위젯 생성
-		UCUserWidget_RunnerUI* RunnerUI = CreateWidget<UCUserWidget_RunnerUI>(GetWorld(), RunnerUIClass);
-
-		if (RunnerUI)
-		{
-			// 화면에 추가
-			RunnerUI->AddToViewport();
-
-			// 캐릭터의 HealthComponent를 바인딩
-			RunnerUI->BindToHealthComponent(HPComp);
-		}
-	}
+	
 
 	State->OnStateTypeChanged.AddDynamic(this, &ACNox_Runner::OnStateTypeChanged);
 
@@ -300,6 +288,35 @@ void ACNox_Runner::Dead()
 
 	Montage->PlayDeadMode();
 
+}
+
+void ACNox_Runner::ShowPlayerMainUI()
+{
+	// 위젯 클래스가 유효한지 확인
+
+	if (RunnerUIClass)
+	{
+		// 위젯 생성
+		RunnerUIWidget = CreateWidget<UCUserWidget_RunnerUI>(GetWorld(), RunnerUIClass);
+
+		if (RunnerUIWidget)
+		{
+			// 화면에 추가
+			RunnerUIWidget->AddToViewport();
+
+			// 캐릭터의 HealthComponent를 바인딩
+			RunnerUIWidget->BindToHealthComponent(HPComp);
+		}
+	}
+}
+
+void ACNox_Runner::RemovePlayerMainUI()
+{
+	if (RunnerUIWidget)
+	{
+		RunnerUIWidget->RemoveFromParent();
+		RunnerUIWidget = nullptr;
+	}
 }
 
 void ACNox_Runner::MakeMemoryPiece(const EMemoryTriggerType& Trigger)

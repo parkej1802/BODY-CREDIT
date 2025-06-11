@@ -30,6 +30,9 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UTextBlock* Text_Name;
 
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* TextBlock_P;
+
 	UFUNCTION()
 	void OnBuyItemClicked();
 
@@ -70,4 +73,12 @@ public:
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UImage* Image_Hovered;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UVerticalBox* VerticalBox_ItemData;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UVerticalBox* VerticalBox_ItemNamePrice;
+
+	void SetItemDescription();
 };

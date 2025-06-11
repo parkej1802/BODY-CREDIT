@@ -25,6 +25,12 @@ protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	class UTextBlock* Text_MaxHealth;
 
+	UPROPERTY()
+	class ACMainGM* GameMode;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* Text_Timer;
+
 public:
 	virtual void NativeConstruct() override;
 

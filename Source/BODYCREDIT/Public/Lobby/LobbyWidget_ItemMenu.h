@@ -67,4 +67,6 @@ public:
 
 	UPROPERTY()
 	class UNetGameInstance* GI;
+
+	void ResetInputMode();
 };

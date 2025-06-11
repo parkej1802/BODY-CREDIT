@@ -96,6 +96,9 @@ public:
 	UPROPERTY()
 	class UItemObject* ChestRigsItem;
 
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* Text_LootableBox;
+
 	UFUNCTION()
 	void SetItemInventory();
 

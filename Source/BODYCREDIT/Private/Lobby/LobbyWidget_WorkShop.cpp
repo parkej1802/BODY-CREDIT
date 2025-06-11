@@ -43,8 +43,6 @@ void ULobbyWidget_WorkShop::NativeConstruct()
     InventoryComp = PlayerCharacter->InventoryComp;
     EquipComp = PlayerCharacter->EquipComp;
 
-    PlayerCharacter->SceneCapture2D->ShowOnlyActorComponents(PlayerCharacter);
-
     InventoryGridWidget->InitInventory(InventoryComp, InventoryComp->InventoryTileSize);
     InventoryGridWidget->GridID = 4;
     InventoryGridWidget->PlayerController = PC;

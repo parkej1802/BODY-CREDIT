@@ -54,13 +54,14 @@ void ULobbyWidget_Selection::NativeConstruct()
 
     PlayerCharacter = Cast<ACNox_Runner>(Pawn);
     // UGameplayStatics::SetGamePaused(GetWorld(), true);
-    PlayerCharacter->SceneCapture2D->ShowOnlyActorComponents(PlayerCharacter);
 
     GI = Cast<UNetGameInstance>(GetGameInstance());
     FString DayString = FString::Printf(TEXT("%d"), GI->Day);
     Text_DayCount->SetText(FText::FromString(DayString));
 
     PlayerStatChange();
+
+    PlayerCharacter->RemovePlayerMainUI();
 }
 
 void ULobbyWidget_Selection::OnPlayClicked()
@@ -192,6 +193,7 @@ void ULobbyWidget_Selection::PlayerStatChange()
     float Weight = PlayerCharacter->HPComp->Weight;
     float Stamina = PlayerCharacter->HPComp->Stamina;
     float Humanity = PlayerCharacter->HPComp->Humanity;
+    float Debt = GI->Debt;
 
     Text_Power->SetText(FText::AsNumber(Power));
     Text_Health->SetText(FText::AsNumber(Health));
@@ -199,4 +201,5 @@ void ULobbyWidget_Selection::PlayerStatChange()
     Text_Weight->SetText(FText::AsNumber(Weight));
     Text_Energy->SetText(FText::AsNumber(Stamina));
     Text_Humanity->SetText(FText::AsNumber(Humanity));
+    Text_Debt->SetText(FText::AsNumber(Debt));
 }
