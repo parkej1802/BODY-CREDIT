@@ -19,6 +19,7 @@
 #include "Characters/CNox_Controller.h"
 #include "Components/CNoxHPComponent.h"
 #include "Components/TextBlock.h"
+#include "AC_LootingInventoryComponent.h"
 
 void ULobbyWidget_WorkShop::NativeConstruct()
 {
@@ -236,5 +237,4 @@ void ULobbyWidget_WorkShop::PlayerStatChange()
     Text_Weight->SetText(FText::AsNumber(Weight));
     Text_Energy->SetText(FText::AsNumber(Stamina));
     Text_Humanity->SetText(FText::AsNumber(Humanity));
-
 }

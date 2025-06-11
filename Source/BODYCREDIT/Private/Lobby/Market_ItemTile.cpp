@@ -14,6 +14,7 @@
 #include "Session/NetGameInstance.h"
 #include "Lobby/LobbyWidget_InsufficientGold.h"
 #include "Lobby/LobbyWidget_Market.h"
+#include "Components/Image.h"
 
 
 void UMarket_ItemTile::NativeConstruct()
@@ -23,6 +24,7 @@ void UMarket_ItemTile::NativeConstruct()
 	if (Button_BuyItem)
 	{
 		Button_BuyItem->OnClicked.AddDynamic(this, &ThisClass::OnBuyItemClicked);
+		Button_BuyItem->OnHovered.AddDynamic(this, &ThisClass::OnBuyItemHovered);
 	}
 
 	PC = Cast<ACNox_Controller>(GetOwningPlayer());
@@ -70,6 +72,22 @@ void UMarket_ItemTile::OnBuyItemClicked()
 		if (OwningMarket) {
 			OwningMarket->UpdatePlayerGoldText(NewGold);
 		}
+	}
+}
+
+void UMarket_ItemTile::OnBuyItemHovered()
+{
+	if (Image_Hovered)
+	{
+		Image_Hovered->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+void UMarket_ItemTile::OnBuyItemUnhovered()
+{
+	if (Image_Hovered)
+	{
+		Image_Hovered->SetVisibility(ESlateVisibility::Hidden);
 	}
 }
 

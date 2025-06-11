@@ -33,6 +33,12 @@ public:
 	UFUNCTION()
 	void OnBuyItemClicked();
 
+	UFUNCTION()
+	void OnBuyItemHovered();
+
+	UFUNCTION()
+	void OnBuyItemUnhovered();
+
 	UPROPERTY()
 	FItemData ItemData;
 
@@ -62,5 +68,6 @@ public:
 	UPROPERTY()
 	class ULobbyWidget_Market* OwningMarket;
 
-
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UImage* Image_Hovered;
 };
