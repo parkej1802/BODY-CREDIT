@@ -55,6 +55,8 @@ void ACAddOn_Arrow::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* Ot
 {
 	SetLifeSpan(LifeSpanAfterCollision);
 
+	AttachToComponent(OtherComp, FAttachmentTransformRules::KeepWorldTransform);
+
 	for (AActor* actor : Ignores)
 		CheckTrue(actor == OtherActor);
 

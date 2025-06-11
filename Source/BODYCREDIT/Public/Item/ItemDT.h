@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
+#include "Components/CWeaponComponent.h"
 #include "ItemDT.generated.h"
 
 USTRUCT(BlueprintType)
@@ -103,6 +104,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	class UMaterialInterface* RotatedIcon;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+    class UMaterialInterface* EquipedThumbnail;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	TSubclassOf<class AItem_Base> ItemClass;
 
@@ -126,6 +130,9 @@ public:
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
     FName ItemName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+	EWeaponType WeaponType;
 
     FItemData()
         : ID(0)

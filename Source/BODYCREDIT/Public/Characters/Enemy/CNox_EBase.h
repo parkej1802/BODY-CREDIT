@@ -174,4 +174,14 @@ public:
 	bool RotateToTarget(const float DeltaTime, const FTransform& CurTrans, const FVector& TargetLoc,
 	                    float InteropSpeed = 5.f);
 #pragma endregion
+
+#pragma region Extract Call Function
+public:
+	UFUNCTION(BlueprintCallable)
+	void ExtractCallFunction(ACNox* InTarget);
+	UFUNCTION(BlueprintCallable)
+	void ExtractSucceed() { bExtractSucceed = true; }
+private:
+	bool bExtractSucceed = false;
+#pragma endregion
 };

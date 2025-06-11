@@ -57,6 +57,7 @@ private:
 	void OnAiming(FVector Output);
 
 private:
+	class ACAttachment_Bow* Bow;
 	class USpringArmComponent* SpringArm;
 	class UCameraComponent* Camera;
 

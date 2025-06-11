@@ -40,6 +40,8 @@ public:
 public:
 	void Shoot(const FVector& InForward);
 
+	UProjectileMovementComponent* GetProjectileMovement() const { return Projectile; }
+
 private:
 	UFUNCTION()
 	void OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);

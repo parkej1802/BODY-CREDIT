@@ -33,7 +33,7 @@ void UCNoxEnemy_Animinstance::NativeUpdateAnimation(float DeltaSeconds)
 	if (loopCheck) // laser Beam (Medic)
 	{
 		float Elapsed = GetWorld()->GetTimeSeconds() - LoopStartTime;
-		CLog::Print(FString::Printf(TEXT("Elapsed : %.2f"), Elapsed));
+		// CLog::Print(FString::Printf(TEXT("Elapsed : %.2f"), Elapsed));
 		if (Elapsed >= MaxLoopDuration)
 		{
 			loopCheck = false;

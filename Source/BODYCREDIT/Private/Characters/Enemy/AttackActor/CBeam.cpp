@@ -102,7 +102,7 @@ void ACBeam::Tick(float DeltaTime)
 		FCollisionQueryParams params;
 		params.AddIgnoredActor(this);
 		params.AddIgnoredActor(OwnerAI);
-		if (GetWorld()->LineTraceSingleByChannel(HitResult, start, end, ECC_Camera, params))
+		if (GetWorld()->LineTraceSingleByChannel(HitResult, start, end, ECC_Visibility, params))
 		{
 			// CLog::Print(
 			// 	FString::Printf(TEXT("Hit OK, Distance : %.2f"), FVector::Distance(start, HitResult.Location)));

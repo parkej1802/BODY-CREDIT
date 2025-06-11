@@ -178,6 +178,7 @@ void UAC_InventoryComponent::ShowLootableInventory()
 		FInputModeGameOnly GameInputMode;
 		pc->SetInputMode(GameInputMode);
 		pc->bShowMouseCursor = false;
+		CHelpers::GetComponent<UCMovementComponent>(PlayerCharacter)->Move();
 		return;
 	}
 
@@ -189,11 +190,11 @@ void UAC_InventoryComponent::ShowLootableInventory()
 		{
 			InventoryMainUI->bIsLootable = bIsLootableMode;
 			InventoryMainUI->RemoveFromParent();
-			CHelpers::GetComponent<UCMovementComponent>(PlayerCharacter)->Move();
 		}
 		FInputModeGameOnly GameInputMode;
 		pc->SetInputMode(GameInputMode);
 		pc->bShowMouseCursor = false;
+		CHelpers::GetComponent<UCMovementComponent>(PlayerCharacter)->Move();
 		return;
 	}
 
@@ -203,7 +204,7 @@ void UAC_InventoryComponent::ShowLootableInventory()
 
 	FVector StartPos = CHelpers::GetComponent<UCameraComponent>(PlayerCharacter)->GetComponentLocation();
 	FVector ForwardVector = CHelpers::GetComponent<UCameraComponent>(PlayerCharacter)->GetForwardVector();
-	FVector EndPos = StartPos + (ForwardVector * 350.f);
+	FVector EndPos = StartPos + (ForwardVector * 400.f);
 
 	//DrawDebugLine(GetWorld(), StartPos, EndPos, FColor::Red);
 
@@ -235,6 +236,20 @@ void UAC_InventoryComponent::ShowLootableInventory()
 					ItemActor->SetActorEnableCollision(false);
 					return;
 				}
+			}
+		}
+		else
+		{
+			// 액터의 블루프린트에 있는 함수를 가져와서 있다면 호출한다.
+			UFunction* InteractFunction = HitActor->FindFunction(FName("StartExtractWave"));
+			if (InteractFunction && InteractFunction->HasAnyFunctionFlags(FUNC_BlueprintCallable))
+			{
+				struct {
+					ACNox_Runner* Player;  // 함수 시그니처에 맞는 변수
+				} ExtractParam;
+				ExtractParam.Player = PlayerCharacter;
+				HitActor->ProcessEvent(InteractFunction, &ExtractParam);
+				return;
 			}
 		}
 		
@@ -290,6 +305,7 @@ void UAC_InventoryComponent::PauseGame()
 		if (PauseGameUI)
 		{
 			PauseGameUI->AddToViewport();
+			CHelpers::GetComponent<UCMovementComponent>(PlayerCharacter)->Stop();
 		}
 		FInputModeGameAndUI UIInputMode;
 		pc->SetInputMode(UIInputMode);

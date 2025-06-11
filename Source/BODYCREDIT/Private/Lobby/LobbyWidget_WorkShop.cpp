@@ -2,6 +2,8 @@
 
 
 #include "Lobby/LobbyWidget_WorkShop.h"
+
+#include "AC_LootingInventoryComponent.h"
 #include "Components/Button.h"
 #include "Lobby/LobbyWidget_Selection.h"
 #include "Characters/CNox_Runner.h"
