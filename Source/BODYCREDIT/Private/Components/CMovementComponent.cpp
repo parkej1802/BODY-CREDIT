@@ -6,7 +6,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/CWeaponComponent.h"
 #include "Camera/CameraComponent.h"
-#include "Net/UnrealNetwork.h"
+#include "Components/CNoxHPComponent.h"
 
 UCMovementComponent::UCMovementComponent()
 {
@@ -25,6 +25,15 @@ void UCMovementComponent::BeginPlay()
 void UCMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if (GetWorld()->GetTimerManager().IsTimerActive(StaminaRecoverTimerHandle))
+	{
+		UCNoxHPComponent* hp = CHelpers::GetComponent<UCNoxHPComponent>(OwnerCharacter);
+		CheckNull(hp);
+
+		if (hp->Stamina >= hp->MaxStamina or bSprint)
+			GetWorld()->GetTimerManager().ClearTimer(StaminaRecoverTimerHandle);
+	}
 
 	// MaxWalkSpeed 보간 처리
 	OwnerCharacter->GetCharacterMovement()->MaxWalkSpeed = FMath::FInterpTo(OwnerCharacter->GetCharacterMovement()->MaxWalkSpeed, DesiredMaxWalkSpeed, DeltaTime, InterpSpeed);
@@ -222,6 +231,33 @@ void UCMovementComponent::OnVerticalLook(const FInputActionValue& InVal)
 
 void UCMovementComponent::OnSprint(const FInputActionValue& InVal)
 {
+	// 유효성 확인
+	CheckNull(CHelpers::GetComponent<UCNoxHPComponent>(OwnerCharacter));
+
+	// Delegate에 람다 바인딩
+	FTimerDelegate StaminaDrainDelegate;
+	StaminaDrainDelegate.BindLambda([this]()
+		{
+			UCNoxHPComponent* component = CHelpers::GetComponent<UCNoxHPComponent>(OwnerCharacter);
+
+			float NewStamina = component->Stamina - StaminaDrainAmount;
+			NewStamina = FMath::Max(0.0f, NewStamina);
+
+			component->SetStamina(NewStamina);
+
+			// 스태미나가 0이 되면 자동으로 정지
+			if (NewStamina <= 0.0f)
+				OnReset(FInputActionValue());
+		});
+
+	// 타이머 시작
+	GetWorld()->GetTimerManager().SetTimer(
+		StaminaDrainTimerHandle,
+		StaminaDrainDelegate,
+		StaminaDrainInterval,
+		true
+	);
+
 	if (bSlide)
 		OffSlide(FInputActionValue());
 
@@ -235,6 +271,46 @@ void UCMovementComponent::OnReset(const FInputActionValue& InVal)
 {
 	bSprint = false;
 
+	// 스프린트 타이머 정지
+	GetWorld()->GetTimerManager().ClearTimer(StaminaDrainTimerHandle);
+
+	// 회복 타이머 중복 방지
+	if (GetWorld()->GetTimerManager().IsTimerActive(StaminaRecoverTimerHandle) or
+		GetWorld()->GetTimerManager().IsTimerActive(StaminaRecoverDelayTimerHandle))
+	{
+		return;
+	}
+
+	// 1초 후에 회복 타이머를 시작하는 람다 등록
+	GetWorld()->GetTimerManager().SetTimer(
+		StaminaRecoverDelayTimerHandle,
+		FTimerDelegate::CreateLambda([this]()
+			{
+				FTimerDelegate RecoverDelegate;
+				RecoverDelegate.BindLambda([this]()
+					{
+						UCNoxHPComponent* component = CHelpers::GetComponent<UCNoxHPComponent>(OwnerCharacter);
+						CheckNull(component);
+
+						float NewStamina = component->Stamina + StaminaRecoverAmount;
+						float MaxStamina = component->MaxStamina;
+
+						NewStamina = FMath::Min(NewStamina, MaxStamina);
+						component->SetStamina(NewStamina);
+					});
+
+				// 회복 타이머 시작
+				GetWorld()->GetTimerManager().SetTimer(
+					StaminaRecoverTimerHandle,
+					RecoverDelegate,
+					StaminaRecoverInterval,
+					true
+				);
+
+			}),
+		1.0f,  // 딜레이 시간
+		false  // 반복 없음
+	);
 }
 
 void UCMovementComponent::OnCrouch(const FInputActionValue& InVal)
@@ -266,55 +342,61 @@ void UCMovementComponent::OnCrouch(const FInputActionValue& InVal)
 
 void UCMovementComponent::OnSlide(const FInputActionValue& InVal)
 {
-	CheckTrue(OwnerCharacter->GetVelocity().Size2D() <= 500);
+	CheckTrue(OwnerCharacter->GetVelocity().Size2D() < 510);
+	if (UCNoxHPComponent* comp = CHelpers::GetComponent<UCNoxHPComponent>(OwnerCharacter))
+	{
+		CheckTrue(comp->Stamina < 20);
+		comp->Stamina -= 20;
+		comp->SetStamina(FMath::Clamp(comp->Stamina, 0, comp->MaxStamina));
 
-	//if (bSprint)
-	//{
-	//	OffSlide(FInputActionValue());
+		//if (bSprint)
+		//{
+		//	OffSlide(FInputActionValue());
 
-	//	return;
-	//}
+		//	return;
+		//}
 
-	//OwnerCharacter->Crouch();
+		//OwnerCharacter->Crouch();
 
-	bSlide = true;
+		bSlide = true;
 
-	//if (!bIsSliding && OwnerCharacter->GetCharacterMovement()->Velocity.Size() >= SlideInitialSpeed)
-	//{
-	//	bSlide = true;
-	//	SlideElapsedTime = 0.0f;
+		//if (!bIsSliding && OwnerCharacter->GetCharacterMovement()->Velocity.Size() >= SlideInitialSpeed)
+		//{
+		//	bSlide = true;
+		//	SlideElapsedTime = 0.0f;
 
-	//	OwnerCharacter->Crouch();
+		//	OwnerCharacter->Crouch();
 
-	//	// 슬라이딩 중 마찰력 제거
-	//	OwnerCharacter->GetCharacterMovement()->BrakingFrictionFactor = 0.0f;
+		//	// 슬라이딩 중 마찰력 제거
+		//	OwnerCharacter->GetCharacterMovement()->BrakingFrictionFactor = 0.0f;
 
-	//	// 슬라이딩 방향은 현재 속도 방향
-	//	FRotator rot = FRotator(0, OwnerCharacter->GetControlRotation().Yaw, 0);
+		//	// 슬라이딩 방향은 현재 속도 방향
+		//	FRotator rot = FRotator(0, OwnerCharacter->GetControlRotation().Yaw, 0);
 
-	//	OwnerCharacter->GetCharacterMovement()->AddImpulse(FQuat(rot).GetForwardVector() * OwnerCharacter->GetVelocity().Size2D(), true);
-	//}
+		//	OwnerCharacter->GetCharacterMovement()->AddImpulse(FQuat(rot).GetForwardVector() * OwnerCharacter->GetVelocity().Size2D(), true);
+		//}
 
-	// 슬라이딩 조건: 지면 + 달리기 중 + 이미 슬라이딩 중이 아님
-	if (bIsSliding or !OwnerCharacter->GetCharacterMovement()->IsMovingOnGround() or !bSprint)
-		return;
+		// 슬라이딩 조건: 지면 + 달리기 중 + 이미 슬라이딩 중이 아님
+		if (bIsSliding or !OwnerCharacter->GetCharacterMovement()->IsMovingOnGround() or !bSprint)
+			return;
 
-	LastSlideLocation = OwnerCharacter->GetActorLocation();
+		LastSlideLocation = OwnerCharacter->GetActorLocation();
 
-	bIsSliding = true;
-	SlideElapsedTime = 0.0f;
+		bIsSliding = true;
+		SlideElapsedTime = 0.0f;
 
-	// 마찰력 제거로 감속 늦춤
-	OwnerCharacter->GetCharacterMovement()->BrakingFrictionFactor = 0.0f;
-	OwnerCharacter->GetCharacterMovement()->GroundFriction = 0.0f;
-	OwnerCharacter->GetCharacterMovement()->BrakingDecelerationWalking = 0.0f;
+		// 마찰력 제거로 감속 늦춤
+		OwnerCharacter->GetCharacterMovement()->BrakingFrictionFactor = 0.0f;
+		OwnerCharacter->GetCharacterMovement()->GroundFriction = 0.0f;
+		OwnerCharacter->GetCharacterMovement()->BrakingDecelerationWalking = 0.0f;
 
-	// MovementMode 유지 (공중 상태 방지)
-	OwnerCharacter->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+		// MovementMode 유지 (공중 상태 방지)
+		OwnerCharacter->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 
-	// 지면 방향으로 밀기
-	FVector SlideDirection = OwnerCharacter->GetVelocity().GetSafeNormal();
-	OwnerCharacter->GetCharacterMovement()->AddImpulse(SlideDirection * SlideInitialSpeed, true);
+		// 지면 방향으로 밀기
+		FVector SlideDirection = OwnerCharacter->GetVelocity().GetSafeNormal();
+		OwnerCharacter->GetCharacterMovement()->AddImpulse(SlideDirection * SlideInitialSpeed, true);
+	}
 
 }
 

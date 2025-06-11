@@ -6,13 +6,9 @@
 #include "CItem.generated.h"
 
 UCLASS()
-class BODYCREDIT_API ACItem : public AActor
+class BODYCREDIT_API ACItem : public AItem_Base
 {
 	GENERATED_BODY()
-
-protected:
-	UPROPERTY(EditAnywhere)
-	class USceneComponent* Root;
 	
 public:	
 	ACItem();

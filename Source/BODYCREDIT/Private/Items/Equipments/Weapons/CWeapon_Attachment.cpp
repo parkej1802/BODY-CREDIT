@@ -3,6 +3,9 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Characters/CNox.h"
 #include "Components/ShapeComponent.h"
+#include "Inventory/AC_EquipComponent.h"
+#include "Item/ItemDT.h"
+#include "Item/ItemObject.h"
 
 ACWeapon_Attachment::ACWeapon_Attachment()
 {

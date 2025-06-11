@@ -7,7 +7,11 @@
 #include "Camera/CameraComponent.h"
 #include "AIController.h"
 #include "Components/CStateComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
+#include "Implicit/SparseNarrowBandMeshSDF.h"
+#include "Items/Equipments/Weapons/AddOns/CAddOn_Arrow.h"
 #include "Items/Equipments/Weapons/Attachments/CAttachment_Bow.h"
+#include "Items/Equipments/Weapons/DoActions/CDoAction_Bow.h"
 
 UCSubAction_Bow::UCSubAction_Bow()
 {
@@ -28,10 +32,10 @@ void UCSubAction_Bow::BeginPlay(ACNox* InOwner, ACWeapon_Attachment* InAttachmen
 	Timeline.AddInterpVector(Curve, timeline);
 	Timeline.SetPlayRate(AimingSpeed);
 
-	ACAttachment_Bow* bow = Cast<ACAttachment_Bow>(InAttachment);
+	Bow = Cast<ACAttachment_Bow>(InAttachment);
 
-	if (!!bow)
-		Bend = bow->GetBend();
+	if (!!Bow)
+		Bend = Bow->GetBend();
 
 }
 
@@ -40,6 +44,17 @@ void UCSubAction_Bow::Tick_Implementation(float InDeltaTime)
 	Super::Tick_Implementation(InDeltaTime);
 
 	Timeline.TickTimeline(InDeltaTime);
+
+	if (bInAction)
+		Bow->Arrows.Last()->SetActorHiddenInGame(false);
+	else
+	{
+		// SubAction중이 아니거나 Arrows가 비어 있거나 마지막 화살의 활성화 상태일 경우
+		CheckTrue(Bow->Arrows.IsEmpty());
+		CheckTrue(Bow->Arrows.Last()->GetProjectileMovement()->IsActive());
+		
+		Bow->Arrows.Last()->SetActorHiddenInGame(true);
+	}
 
 }
 

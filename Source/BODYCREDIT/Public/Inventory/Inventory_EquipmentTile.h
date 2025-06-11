@@ -64,6 +64,8 @@ public:
 
 	FSlateBrush GetIconImage();
 
+	FSlateBrush GetThumbnailImage();
+
 	virtual void NativeConstruct() override;
 
 	void SetItem(class UItemObject* NewItem);

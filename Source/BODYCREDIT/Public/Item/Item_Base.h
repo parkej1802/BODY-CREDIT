@@ -27,7 +27,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 public:
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USceneComponent* Root;
 

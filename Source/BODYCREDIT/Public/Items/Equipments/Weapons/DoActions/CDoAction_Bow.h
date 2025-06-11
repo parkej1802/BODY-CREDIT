@@ -66,6 +66,4 @@ private:
 	UPROPERTY()
 	class ACAttachment_Bow* Bow;
 
-	TArray<class ACAddOn_Arrow*> Arrows;
-
 };

@@ -6,6 +6,12 @@
 #include "CWeaponComponent.generated.h"
 
 UENUM(BlueprintType)
+enum class EWeaponSlot : uint8
+{
+	Weapon1, Weapon2, MAX,
+};
+
+UENUM(BlueprintType)
 enum class EWeaponType : uint8
 {
 	KATANA, BOW, RIFLE, MAX,
@@ -20,14 +26,24 @@ class BODYCREDIT_API UCWeaponComponent
 	GENERATED_BODY()
 
 private:
-	UPROPERTY(VisibleAnywhere, Category = "Enhanced")
-	class UInputAction* IA_Bow;
+	UPROPERTY()
+	class UEnhancedInputComponent* EnhancedInputComponent;
+
+private:
+	// UPROPERTY(VisibleAnywhere, Category = "Enhanced")
+	// class UInputAction* IA_Bow;
+	//
+	// UPROPERTY(VisibleAnywhere, Category = "Enhanced")
+	// class UInputAction* IA_Rifle;
+	//
+	// UPROPERTY(VisibleAnywhere, Category = "Enhanced")
+	// class UInputAction* IA_Katana;
 
 	UPROPERTY(VisibleAnywhere, Category = "Enhanced")
-	class UInputAction* IA_Rifle;
+	class UInputAction* IA_WeaponSlot1;
 
 	UPROPERTY(VisibleAnywhere, Category = "Enhanced")
-	class UInputAction* IA_Katana;
+	class UInputAction* IA_WeaponSlot2;
 
 	UPROPERTY(VisibleAnywhere, Category = "Enhanced")
 	class UInputAction* IA_Action;
@@ -41,12 +57,12 @@ private:
 
 public:
 	FORCEINLINE EWeaponType GetWeaponType() { return Type; }
-
+ 
 public:
 	FORCEINLINE bool IsKatanaMode() { return Type == EWeaponType::KATANA; }
 	FORCEINLINE bool IsBowMode() { return Type == EWeaponType::BOW; }
 	FORCEINLINE bool IsRifleMode() { return Type == EWeaponType::RIFLE; }
-	FORCEINLINE bool IsUnarmedMode() { return Type == EWeaponType::MAX; }
+	FORCEINLINE bool IsUnarmedMode() { return Type == EWeaponType::MAX;}
 
 public:
 	UCWeaponComponent();
@@ -68,16 +84,22 @@ public:
 	class UCWeapon_Equipment* GetEquipment();
 	class UCWeapon_DoAction* GetDoAction();
 
+	// class UInputAction* GetBow() { return IA_Bow; }
+	// class UInputAction* GetKatana() { return IA_Katana; }
+	// class UInputAction* GetRifle() { return IA_Rifle; }
+	
 public:
 	UFUNCTION(BlueprintCallable)
 	class UCWeapon_SubAction* GetSubAction();
 
-public:
+public:	
 	void SetKatanaMode();
 	void SetBowMode();
 	void SetRifleMode();
 	void SetUnarmedMode();
 
+	void SetWeaponSlot1();
+	void SetWeaponSlot2();
 	void DoAction();
 
 public:
@@ -95,11 +117,15 @@ public:
 	FWeaponTypeChanged OnWeaponTypeChange;
 
 private:
+	TMap<EWeaponSlot, EWeaponType> EquippedWeapon;
 	EWeaponType Type = EWeaponType::MAX;
 
 private:
 	UPROPERTY()
 	class UCWeapon_Data* Datas[(int32)EWeaponType::MAX];
+	
+	UPROPERTY(EditAnywhere, Category = "Data")
+	TMap<EWeaponType, class UCWeapon_DoAction*> WeaponDataMap;
 
 private:
 	bool bInSubAction = false;

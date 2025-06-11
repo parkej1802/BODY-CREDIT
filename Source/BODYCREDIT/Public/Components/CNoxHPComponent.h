@@ -6,6 +6,9 @@
 #include "Components/ActorComponent.h"
 #include "CNoxHPComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHealthChanged, float, CurrentHealth, float, MaxHealth);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnStaminaChanged, float, CurrentStamina, float, MaxStamina);
+
 /**
  *	Base Hp Component
  */
@@ -53,8 +56,11 @@ public:
 	UPROPERTY(EditAnywhere, Category="Status")
 	float Weight = 60.f;
 
+	UPROPERTY(EditAnywhere, Category = "Status")
+	float MaxStamina = 100.f;
+
 	UPROPERTY(EditAnywhere, Category="Status")
-	float Stamina = 100.f;
+	float Stamina = 0;
 
 	UPROPERTY(EditAnywhere, Category="Status")
 	float Humanity = 100.f;
@@ -70,6 +76,23 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool IsDead() const { return bIsDead; }
+
+	// Widget Bind Function for RunnerUI
+	// Health
+	FOnHealthChanged OnHealthChanged;
+
+	void SetHealth(float InNewHealth);
+
+	float GetCurrentHealth() const { return Health; }
+	float GetMaxHealth() const { return MaxHealth; }
+
+	// Stamina
+	FOnStaminaChanged OnStaminaChanged;
+
+	void SetStamina(float InNewStamina);
+
+	float GetCurrentStamina() const { return Stamina; }
+	float GetMaxStamina() const { return MaxStamina; }
 
 protected:
 	virtual void InitStatus();
