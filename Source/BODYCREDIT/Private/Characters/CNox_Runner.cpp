@@ -63,24 +63,7 @@ void ACNox_Runner::BeginPlay()
 			EquipComp->EquippedItems.Add(Pair.Key, CreateItemFromData(Pair.Value));
 
 			MyGameState->SpawnItemHiddenFromActor(EquipComp->EquippedItems[Pair.Key], this, true);
-			if (Weapon and Pair.Key == EPlayerPart::Weapon1)
-			{
-				if (Pair.Value.ItemName == "Bow")
-					Weapon->EquippedWeaponType.Add(EWeaponSlot::Weapon1, EWeaponType::BOW);
-				else if (Pair.Value.ItemName == "Katana")
-					Weapon->EquippedWeaponType.Add(EWeaponSlot::Weapon1, EWeaponType::KATANA);
-				else if (Pair.Value.ItemName == "Rifle")
-					Weapon->EquippedWeaponType.Add(EWeaponSlot::Weapon1, EWeaponType::RIFLE);
-			}
-			else if (Weapon and Pair.Key == EPlayerPart::Weapon2)
-			{
-				if (Pair.Value.ItemName == "Bow")
-					Weapon->EquippedWeaponType.Add(EWeaponSlot::Weapon2, EWeaponType::BOW);
-				else if (Pair.Value.ItemName == "Katana")
-					Weapon->EquippedWeaponType.Add(EWeaponSlot::Weapon2, EWeaponType::KATANA);
-				else if (Pair.Value.ItemName == "Rifle")
-					Weapon->EquippedWeaponType.Add(EWeaponSlot::Weapon2, EWeaponType::RIFLE);
-			}
+
 		}
 
 

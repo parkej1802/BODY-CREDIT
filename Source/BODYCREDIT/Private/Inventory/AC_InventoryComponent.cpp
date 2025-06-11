@@ -178,6 +178,7 @@ void UAC_InventoryComponent::ShowLootableInventory()
 		FInputModeGameOnly GameInputMode;
 		pc->SetInputMode(GameInputMode);
 		pc->bShowMouseCursor = false;
+		CHelpers::GetComponent<UCMovementComponent>(PlayerCharacter)->Move();
 		return;
 	}
 
@@ -189,11 +190,11 @@ void UAC_InventoryComponent::ShowLootableInventory()
 		{
 			InventoryMainUI->bIsLootable = bIsLootableMode;
 			InventoryMainUI->RemoveFromParent();
-			CHelpers::GetComponent<UCMovementComponent>(PlayerCharacter)->Move();
 		}
 		FInputModeGameOnly GameInputMode;
 		pc->SetInputMode(GameInputMode);
 		pc->bShowMouseCursor = false;
+		CHelpers::GetComponent<UCMovementComponent>(PlayerCharacter)->Move();
 		return;
 	}
 
@@ -290,6 +291,7 @@ void UAC_InventoryComponent::PauseGame()
 		if (PauseGameUI)
 		{
 			PauseGameUI->AddToViewport();
+			CHelpers::GetComponent<UCMovementComponent>(PlayerCharacter)->Stop();
 		}
 		FInputModeGameAndUI UIInputMode;
 		pc->SetInputMode(UIInputMode);

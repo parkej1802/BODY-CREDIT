@@ -136,14 +136,14 @@ void UCWeaponComponent::SetWeaponSlot1()
 {
 	CheckFalse(IsIdleMode());
 
-	SetMode(EquippedWeaponType[EWeaponSlot::Weapon1]);
+	// SetMode(EquippedWeaponType[EWeaponSlot::Weapon1]);
 }
 
 void UCWeaponComponent::SetWeaponSlot2()
 {
 	CheckFalse(IsIdleMode());
 
-	SetMode(EquippedWeaponType[EWeaponSlot::Weapon1]);
+	// SetMode(EquippedWeaponType[EWeaponSlot::Weapon1]);
 }
 
 void UCWeaponComponent::DoAction()
