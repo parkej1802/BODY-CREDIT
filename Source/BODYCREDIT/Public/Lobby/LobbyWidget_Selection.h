@@ -35,6 +35,24 @@ public:
 	UFUNCTION()
 	void OnWorkShopClicked();
 
+	UFUNCTION()
+	void OnPlayHovered();
+
+	UFUNCTION()
+	void OnPlayUnhovered();
+
+	UFUNCTION()
+	void OnMarketHovered();
+
+	UFUNCTION()
+	void OnMarketUnhovered();
+
+	UFUNCTION()
+	void OnWorkShopHovered();
+
+	UFUNCTION()
+	void OnWorkShopUnhovered();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<UUserWidget> LobbyPlayWidgetClass;
 
@@ -93,5 +111,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ACNox_Runner* PlayerCharacter;
 
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UImage* Image_Button_Play_Hovered;
 
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UImage* Image_Button_Market_Hovered;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UImage* Image_Button_WorkShop_Hovered;
+
+	void PlayerStatChange();
 };

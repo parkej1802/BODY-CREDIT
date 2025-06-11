@@ -5,9 +5,12 @@
 #include "Characters/CNox_Runner.h"
 #include "Characters/Enemy/CNox_MemoryCollectorAI.h"
 #include "Trigger/CAreaTriggerBox.h"
+#include "Lobby/LobbyWidget_Failed.h"
 
 ACMainGM::ACMainGM()
 {
+	PrimaryActorTick.bCanEverTick = true;
+
 	ConstructorHelpers::FClassFinder<APawn> pawn(
 		TEXT("/Script/Engine.Blueprint'/Game/Characters/Runner/BP_CNox_Runner.BP_CNox_Runner_C'"));
 	if (pawn.Succeeded())
@@ -25,6 +28,40 @@ void ACMainGM::BeginPlay()
 	{
 		ZoneVolumes.Add(*It);
 	}
+}
+
+void ACMainGM::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (GameTimer > 0.f)
+	{
+		GameTimer -= DeltaSeconds;
+		GameTimer = FMath::Max(0.f, GameTimer);
+	}
+	else if (!bIsFailed)
+	{
+		bIsFailed = true;
+
+		if (FailedWidgetClass)
+		{
+			APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
+			if (PC)
+			{
+				ULobbyWidget_Failed* FailedWidget = CreateWidget<ULobbyWidget_Failed>(PC, FailedWidgetClass);
+				if (FailedWidget)
+				{
+					FailedWidget->AddToViewport();
+
+					FInputModeUIOnly InputMode;
+					InputMode.SetWidgetToFocus(FailedWidget->TakeWidget());
+					PC->SetInputMode(InputMode);
+					PC->bShowMouseCursor = true;
+				}
+			}
+		}
+	}
+
 }
 
 void ACMainGM::RegisterMemoryFromPlayer(ACNox_Runner* Player, EMemoryTriggerType Trigger)

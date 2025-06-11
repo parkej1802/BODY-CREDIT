@@ -166,11 +166,14 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USceneComponent* CaptureRoot;
 
-
 /**
  *	Memory Piece Add Function - LHJ (2025.05.12)
  */
 public:	
+
+	void ShowPlayerMainUI();
+	void RemovePlayerMainUI();
+
 	UFUNCTION(BlueprintCallable)
 	void MakeMemoryPiece(const EMemoryTriggerType& Trigger);
 

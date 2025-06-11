@@ -121,7 +121,7 @@ void AGameState_BodyCredit::SpawnItemHiddenFromActor(class UItemObject* ItemObje
 	}
 }
 
-void AGameState_BodyCredit::SpawnItemPlayerInventory(class UItemObject* ItemObject, AActor* Actor, bool GroundClamp)
+bool AGameState_BodyCredit::SpawnItemPlayerInventory(class UItemObject* ItemObject, AActor* Actor, bool GroundClamp)
 {
 	FVector SpawnLocation;
 
@@ -152,8 +152,12 @@ void AGameState_BodyCredit::SpawnItemPlayerInventory(class UItemObject* ItemObje
 		ItemActor->SetActorEnableCollision(false);
 	}
 
-
 	PlayerCharacter = Cast<ACNox_Runner>(Actor);
 	PlayerInventory = PlayerCharacter->InventoryComp;
-	PlayerInventory->TryAddItem(ItemObject);
+
+	if (PlayerInventory->TryAddItem(ItemObject)) {
+		return true;
+	}
+	
+	return false;
 }

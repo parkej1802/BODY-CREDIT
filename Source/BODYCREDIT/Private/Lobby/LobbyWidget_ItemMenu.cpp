@@ -43,6 +43,7 @@ void ULobbyWidget_ItemMenu::OnUseClicked()
         ItemObject->ItemActorOwner->UseItem();
     }
     RemoveFromParent();
+    ResetInputMode();
 }
 
 void ULobbyWidget_ItemMenu::OnSellClicked()
@@ -52,11 +53,13 @@ void ULobbyWidget_ItemMenu::OnSellClicked()
         GI->MarketUI->ShowSellUI(ItemObject);
     }
     RemoveFromParent();
+    ResetInputMode();
 }
 
 void ULobbyWidget_ItemMenu::OnDescriptionClicked()
 {
     RemoveFromParent();
+    ResetInputMode();
 }
 
 void ULobbyWidget_ItemMenu::OnUseHovered()
@@ -104,5 +107,18 @@ void ULobbyWidget_ItemMenu::OnDescriptionUnhovered()
     if (Image_Button_Description_Hovered)
     {
         Image_Button_Description_Hovered->SetVisibility(ESlateVisibility::Hidden);
+    }
+}
+
+void ULobbyWidget_ItemMenu::ResetInputMode()
+{
+    if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
+    {
+        FInputModeGameAndUI InputMode;
+        InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+        InputMode.SetHideCursorDuringCapture(false);
+
+        PC->SetInputMode(InputMode);
+        PC->bShowMouseCursor = true;
     }
 }

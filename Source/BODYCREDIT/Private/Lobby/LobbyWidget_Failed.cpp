@@ -5,10 +5,18 @@
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "Animation/WidgetAnimation.h"
+#include "Session/NetGameInstance.h"
+#include "Characters/CNox_Controller.h"
+#include "Lobby/LobbyWidget_Selection.h"
 
 void ULobbyWidget_Failed::NativeConstruct()
 {
      Super::NativeConstruct();
+
+     PC = Cast<ACNox_Controller>(GetOwningPlayer());
+     FInputModeGameAndUI InputMode;
+     PC->SetInputMode(InputMode);
+     PC->bShowMouseCursor = true;
 
     if (Button_Continue)
     {
@@ -28,16 +36,56 @@ void ULobbyWidget_Failed::NativeConstruct()
     {
         PlayAnimation(Anim_BackGround, 0.0f, 9999, EUMGSequencePlayMode::Forward);
     }
+
+    GI = Cast<UNetGameInstance>(GetGameInstance());
+
+	switch (GI->SelectedPart)
+	{
+	case EPlayerPart::Head:
+        Image_LostPart->SetBrush(GI->SaveImageHead->GetBrush());
+		break;
+	case EPlayerPart::Body:
+        Image_LostPart->SetBrush(GI->SaveImageBody->GetBrush());
+		break;
+	case EPlayerPart::Arm:
+        Image_LostPart->SetBrush(GI->SaveImageArm->GetBrush());
+		break;
+	case EPlayerPart::Leg:
+        Image_LostPart->SetBrush(GI->SaveImageLeg->GetBrush());
+		break;
+	default:
+		break;
+	}
+
+    GI->AlivePart[GI->SelectedPart] = false;
 }
 
 void ULobbyWidget_Failed::OnContinueClicked()
 {
+    if (LobbySelectionWidgetClass)
+    {
+        LobbyWidget_Selection = CreateWidget<ULobbyWidget_Selection>(GetWorld(), LobbySelectionWidgetClass);
+        if (LobbyWidget_Selection)
+        {
+            LobbyWidget_Selection->AddToViewport();
 
+            this->RemoveFromParent();
+        }
+    }
 }
 
 void ULobbyWidget_Failed::OnExitClicked()
 {
-	
+    if (LobbySelectionWidgetClass)
+    {
+        LobbyWidget_Selection = CreateWidget<ULobbyWidget_Selection>(GetWorld(), LobbySelectionWidgetClass);
+        if (LobbyWidget_Selection)
+        {
+            LobbyWidget_Selection->AddToViewport();
+
+            this->RemoveFromParent();
+        }
+    }
 }
 
 void ULobbyWidget_Failed::OnContinueHovered()
