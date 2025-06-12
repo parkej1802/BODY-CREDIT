@@ -19,7 +19,7 @@ public:
 
 	void SpawnItemHiddenFromActor(class UItemObject* ItemObject, AActor* Actor, bool GroundClamp);
 
-	void SpawnItemPlayerInventory(class UItemObject* ItemObject, AActor* Actor, bool GroundClamp);
+	bool SpawnItemPlayerInventory(class UItemObject* ItemObject, AActor* Actor, bool GroundClamp);
 
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

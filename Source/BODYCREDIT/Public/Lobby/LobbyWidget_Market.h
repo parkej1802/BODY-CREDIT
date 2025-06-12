@@ -213,4 +213,29 @@ public:
 
 	void TurnOnPreviousImage();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UUserWidget> BuyItemWidget;
+
+	UPROPERTY()
+	class ULobbyWidget_BuyItem* BuyItemUI;
+
+	void ShowBuyUI(class UItemObject* ItemObject);
+
+	UFUNCTION()
+	void HandleBuyConfirm(class UItemObject* ItemObject);
+
+	UFUNCTION()
+	void HandleBuyCancel(class UItemObject* ItemObject);
+
+	UPROPERTY()
+	class AGameState_BodyCredit* GameState;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UUserWidget> NoSpaceWidget;
+
+	UPROPERTY()
+	class ULobbyWidget_NoSpace* NoSpaceUI;
+
+	void ShowNoSpaceUI();
+
 };

@@ -259,6 +259,14 @@ void UAC_InventoryBaseComponent::DestroyItem(UItemObject* ItemObject)
 	}
 }	
 
+void UAC_InventoryBaseComponent::ResetInventoryItem()
+{
+	for (auto& Item : Items)
+	{
+		Item = nullptr;
+	}
+}
+
 void UAC_InventoryBaseComponent::OnInventoryChanged()
 {
 	InventoryChanged.Broadcast();

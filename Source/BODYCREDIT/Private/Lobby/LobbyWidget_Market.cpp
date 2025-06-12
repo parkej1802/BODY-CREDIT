@@ -20,6 +20,9 @@
 #include "Session/NetGameInstance.h"
 #include "Components/TextBlock.h"
 #include "Lobby/LobbyWidget_SellItem.h"
+#include "Lobby/LobbyWidget_BuyItem.h"
+#include "GameState_BodyCredit.h"
+#include "Lobby/LobbyWidget_NoSpace.h"
 
 void ULobbyWidget_Market::NativeConstruct()
 {
@@ -110,6 +113,8 @@ void ULobbyWidget_Market::NativeConstruct()
 	OnSelectWeaponClicked();
 	PreviousImage = Image_SelectWeapon_Hovered;
 	PreviousImage->SetVisibility(ESlateVisibility::Visible);
+
+	GameState = GetWorld()->GetGameState<AGameState_BodyCredit>();
 }
 
 void ULobbyWidget_Market::OnBackClicked()
@@ -908,5 +913,59 @@ void ULobbyWidget_Market::TurnOnPreviousImage()
 	if (PreviousImage)
 	{
 		PreviousImage->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+void ULobbyWidget_Market::ShowBuyUI(class UItemObject* ItemObject)
+{
+	if (BuyItemWidget)
+	{
+		BuyItemUI = CreateWidget<ULobbyWidget_BuyItem>(this, BuyItemWidget);
+
+	}
+	if (BuyItemUI)
+	{
+		BuyItemUI->MarketUI = this;
+		BuyItemUI->SetItemToBuy(ItemObject);
+		BuyItemUI->AddToViewport();
+		BuyItemUI->OnConfirmBuy.AddDynamic(this, &ULobbyWidget_Market::HandleBuyConfirm);
+		BuyItemUI->OnCancelBuy.AddDynamic(this, &ULobbyWidget_Market::HandleBuyCancel);
+
+	}
+}
+
+void ULobbyWidget_Market::HandleBuyConfirm(class UItemObject* ItemObject)
+{
+	if (GameState)
+	{
+		if (GameState->SpawnItemPlayerInventory(ItemObject, GetOwningPlayerPawn(), false))
+		{
+			int32 NewGold = GI->PlayerGold - ItemObject->ItemData.Price;
+			GI->SetPlayerGold(NewGold);
+
+			UpdatePlayerGoldText(NewGold);
+		}
+		else
+		{
+			ShowNoSpaceUI();
+		}
+	}
+}
+
+void ULobbyWidget_Market::HandleBuyCancel(class UItemObject* ItemObject)
+{
+
+}
+
+void ULobbyWidget_Market::ShowNoSpaceUI()
+{
+	if (NoSpaceWidget)
+	{
+		NoSpaceUI = CreateWidget<ULobbyWidget_NoSpace>(this, NoSpaceWidget);
+
+	}
+	if (NoSpaceUI)
+	{
+		NoSpaceUI->AddToViewport();
 	}
 }

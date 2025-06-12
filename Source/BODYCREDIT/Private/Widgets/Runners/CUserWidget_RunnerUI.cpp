@@ -3,10 +3,15 @@
 #include "Components/CNoxHPComponent.h"
 #include "Components/TextBlock.h"
 #include "Components/ProgressBar.h"
+#include "Games/CMainGM.h"
+#include "Kismet/GameplayStatics.h"
 
 void UCUserWidget_RunnerUI::NativeConstruct()
 {
 	Super::NativeConstruct();
+
+	GameMode = Cast<ACMainGM>(UGameplayStatics::GetGameMode(this));
+
 
 }
 
@@ -50,6 +55,17 @@ void UCUserWidget_RunnerUI::NativeTick(const FGeometry& MyGeometry, float InDelt
 	if (ProgressBar_Stamina)
 		ProgressBar_Stamina->SetPercent(DisplayedStaminaPercent);
 
+	if (GameMode)
+	{
+		float RemainingTime = GameMode->GameTimer;
+
+		int32 Minutes = FMath::FloorToInt(RemainingTime / 60.f);
+		float SecondsFloat = FMath::Fmod(RemainingTime, 60.f);
+
+		FString TimeText = FString::Printf(TEXT("%02d:%05.2f"), Minutes, SecondsFloat);
+
+		Text_Timer->SetText(FText::FromString(TimeText));
+	}
 }
 
 void UCUserWidget_RunnerUI::BindToHealthComponent(UCNoxHPComponent* InHealthComponent)

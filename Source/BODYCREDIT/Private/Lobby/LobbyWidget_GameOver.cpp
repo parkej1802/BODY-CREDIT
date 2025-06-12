@@ -5,10 +5,17 @@
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "Animation/WidgetAnimation.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Lobby/LobbyWidget_Main.h"
 
 void ULobbyWidget_GameOver::NativeConstruct()
 {
     Super::NativeConstruct();
+
+    PC = GetOwningPlayer();
+    FInputModeGameAndUI InputMode;
+    PC->SetInputMode(InputMode);
+    PC->bShowMouseCursor = true;
 
     if (Button_NewGame)
     {
@@ -38,13 +45,20 @@ void ULobbyWidget_GameOver::NativeConstruct()
 
 void ULobbyWidget_GameOver::OnNewGameClicked()
 {
-
+    if (LobbyMainWidgetClass)
+    {
+        LobbyMainUI = CreateWidget<ULobbyWidget_Main>(GetWorld(), LobbyMainWidgetClass);
+    }
+    if (LobbyMainUI)
+    {
+        LobbyMainUI->AddToViewport();
+        RemoveFromParent();
+    }
 }
-
 
 void ULobbyWidget_GameOver::OnExitClicked()
 {
-
+    UKismetSystemLibrary::QuitGame(this, PC, EQuitPreference::Quit, false);
 }
 
 void ULobbyWidget_GameOver::OnNewGameHovered()

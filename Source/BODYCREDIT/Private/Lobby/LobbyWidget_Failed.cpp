@@ -5,10 +5,19 @@
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "Animation/WidgetAnimation.h"
+#include "Session/NetGameInstance.h"
+#include "Characters/CNox_Controller.h"
+#include "Lobby/LobbyWidget_Selection.h"
+#include "Lobby/LobbyWidget_GameOver.h"
 
 void ULobbyWidget_Failed::NativeConstruct()
 {
      Super::NativeConstruct();
+
+     PC = Cast<ACNox_Controller>(GetOwningPlayer());
+     FInputModeGameAndUI InputMode;
+     PC->SetInputMode(InputMode);
+     PC->bShowMouseCursor = true;
 
     if (Button_Continue)
     {
@@ -28,16 +37,82 @@ void ULobbyWidget_Failed::NativeConstruct()
     {
         PlayAnimation(Anim_BackGround, 0.0f, 9999, EUMGSequencePlayMode::Forward);
     }
+
+    GI = Cast<UNetGameInstance>(GetGameInstance());
+
+    switch (GI->SelectedPart)
+    {
+    case EPlayerPart::Head:
+        if (GI->SaveImageHead)
+            Image_LostPart->SetBrush(GI->SaveImageHead->GetBrush());
+        break;
+    case EPlayerPart::Body:
+        if (GI->SaveImageBody)
+            Image_LostPart->SetBrush(GI->SaveImageBody->GetBrush());
+        break;
+    case EPlayerPart::Arm:
+        if (GI->SaveImageArm)
+            Image_LostPart->SetBrush(GI->SaveImageArm->GetBrush());
+        break;
+    case EPlayerPart::Leg:
+        if (GI->SaveImageLeg)
+            Image_LostPart->SetBrush(GI->SaveImageLeg->GetBrush());
+        break;
+    default:
+        break;
+    }
+
+    if (GI->AlivePart.Contains(GI->SelectedPart))
+    {
+        GI->AlivePart[GI->SelectedPart] = false;
+        GI->SelectedPart = EPlayerPart::Basic;
+        --RemainingLife;
+    }
 }
 
 void ULobbyWidget_Failed::OnContinueClicked()
 {
+    if (RemainingLife == 0) 
+    {
+        if (LobbyGameOverWidgetClass)
+        {
+            LobbyWidget_LobbyGameOver = CreateWidget<ULobbyWidget_GameOver>(GetWorld(), LobbyGameOverWidgetClass);
+            if (LobbyWidget_LobbyGameOver)
+            {
+                LobbyWidget_LobbyGameOver->AddToViewport();
 
+                RemoveFromParent();
+            }
+        }
+        return;
+    }
+
+    GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, FString::Printf(TEXT("Part Left %d"), RemainingLife));
+
+    if (LobbySelectionWidgetClass)
+    {
+        LobbyWidget_Selection = CreateWidget<ULobbyWidget_Selection>(GetWorld(), LobbySelectionWidgetClass);
+        if (LobbyWidget_Selection)
+        {
+            LobbyWidget_Selection->AddToViewport();
+
+            this->RemoveFromParent();
+        }
+    }
 }
 
 void ULobbyWidget_Failed::OnExitClicked()
 {
-	
+    if (LobbySelectionWidgetClass)
+    {
+        LobbyWidget_Selection = CreateWidget<ULobbyWidget_Selection>(GetWorld(), LobbySelectionWidgetClass);
+        if (LobbyWidget_Selection)
+        {
+            LobbyWidget_Selection->AddToViewport();
+
+            this->RemoveFromParent();
+        }
+    }
 }
 
 void ULobbyWidget_Failed::OnContinueHovered()

@@ -25,6 +25,11 @@ void UNetGameInstance::Init()
 				}
 			), 2.f, false);
 	}
+
+	AlivePart.Add(EPlayerPart::Head, true);
+	AlivePart.Add(EPlayerPart::Body, true);
+	AlivePart.Add(EPlayerPart::Arm, true);
+	AlivePart.Add(EPlayerPart::Leg, true);
 }
 
 void UNetGameInstance::CreateMySession(FString roomName, int32 playerCount)
@@ -86,7 +91,7 @@ void UNetGameInstance::SetActorInitLocation()
 
 	PlayerCharacter = Cast<ACNox_Runner>(Pawn);
 
-	FVector StartLocation(-2270.f, -6370.f, 1360.f);
+	FVector StartLocation(10000.f, 0.f, 100.f);
 	PlayerCharacter->SetActorLocation(StartLocation);
 }
 

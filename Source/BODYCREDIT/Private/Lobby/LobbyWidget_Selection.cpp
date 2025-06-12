@@ -14,7 +14,11 @@
 #include "AC_LootingInventoryComponent.h"
 #include "EngineUtils.h"
 #include "Components/TextBlock.h"
+#include "Components/Image.h"
+#include "Components/CNoxHPComponent.h"
+#include "Components/SceneCaptureComponent2D.h"
 #include "Games/CMainGM.h"
+
 
 void ULobbyWidget_Selection::NativeConstruct()
 {
@@ -28,16 +32,22 @@ void ULobbyWidget_Selection::NativeConstruct()
     if (Button_Play)
     {
         Button_Play->OnClicked.AddDynamic(this, &ThisClass::OnPlayClicked);
+        Button_Play->OnHovered.AddDynamic(this, &ThisClass::OnPlayHovered);
+        Button_Play->OnUnhovered.AddDynamic(this, &ThisClass::OnPlayUnhovered);
     }
 
     if (Button_Market)
     {
         Button_Market->OnClicked.AddDynamic(this, &ThisClass::OnMarketClicked);
+        Button_Market->OnHovered.AddDynamic(this, &ThisClass::OnMarketHovered);
+        Button_Market->OnUnhovered.AddDynamic(this, &ThisClass::OnMarketUnhovered);
     }
 
     if (Button_WorkShop)
     {
         Button_WorkShop->OnClicked.AddDynamic(this, &ThisClass::OnWorkShopClicked);
+        Button_WorkShop->OnHovered.AddDynamic(this, &ThisClass::OnWorkShopHovered);
+        Button_WorkShop->OnUnhovered.AddDynamic(this, &ThisClass::OnWorkShopUnhovered);
     }
 
     APawn* Pawn = PC->GetPawn();
@@ -48,14 +58,20 @@ void ULobbyWidget_Selection::NativeConstruct()
     GI = Cast<UNetGameInstance>(GetGameInstance());
     FString DayString = FString::Printf(TEXT("%d"), GI->Day);
     Text_DayCount->SetText(FText::FromString(DayString));
+
+    GI->SetActorInitLocation();
+
+    PlayerStatChange();
+
+    Cast<ACMainGM>(GetWorld()->GetAuthGameMode())->IsStart = false;
+
+    PlayerCharacter->RemovePlayerMainUI();
 }
 
 void ULobbyWidget_Selection::OnPlayClicked()
 {
     if (LobbyPlayWidgetClass)
-    {
-        Cast<ACMainGM>(GetWorld()->GetAuthGameMode())->PlayGameStart();
-        
+    {     
         LobbyWidget_Play = CreateWidget<UCLobbyWidget_Play>(GetWorld(), LobbyPlayWidgetClass);
         if (LobbyWidget_Play)
         {
@@ -122,3 +138,70 @@ void ULobbyWidget_Selection::OnWorkShopClicked()
     }
 }
 
+void ULobbyWidget_Selection::OnPlayHovered()
+{
+	if (Image_Button_Play_Hovered)
+	{
+		Image_Button_Play_Hovered->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+void ULobbyWidget_Selection::OnPlayUnhovered()
+{
+    if (Image_Button_Play_Hovered)
+    {
+        Image_Button_Play_Hovered->SetVisibility(ESlateVisibility::Hidden);
+    }
+}
+
+void ULobbyWidget_Selection::OnMarketHovered()
+{
+    if (Image_Button_Market_Hovered)
+    {
+        Image_Button_Market_Hovered->SetVisibility(ESlateVisibility::Visible);
+    }
+}
+
+void ULobbyWidget_Selection::OnMarketUnhovered()
+{
+    if (Image_Button_Market_Hovered)
+    {
+        Image_Button_Market_Hovered->SetVisibility(ESlateVisibility::Hidden);
+    }
+}
+
+void ULobbyWidget_Selection::OnWorkShopHovered()
+{
+    if (Image_Button_WorkShop_Hovered)
+    {
+        Image_Button_WorkShop_Hovered->SetVisibility(ESlateVisibility::Visible);
+    }
+}
+
+void ULobbyWidget_Selection::OnWorkShopUnhovered()
+{
+    if (Image_Button_WorkShop_Hovered)
+    {
+        Image_Button_WorkShop_Hovered->SetVisibility(ESlateVisibility::Hidden);
+    }
+}
+
+void ULobbyWidget_Selection::PlayerStatChange()
+{
+    float Power = PlayerCharacter->HPComp->Strength;
+    float Health = PlayerCharacter->HPComp->Health;
+    float Defense = PlayerCharacter->HPComp->Defense;
+    float MovementSpeed = PlayerCharacter->HPComp->MovementSpeed;
+    float Weight = PlayerCharacter->HPComp->Weight;
+    float Stamina = PlayerCharacter->HPComp->Stamina;
+    float Humanity = PlayerCharacter->HPComp->Humanity;
+    float Debt = GI->Debt;
+
+    Text_Power->SetText(FText::AsNumber(Power));
+    Text_Health->SetText(FText::AsNumber(Health));
+    Text_Speed->SetText(FText::AsNumber(MovementSpeed));
+    Text_Weight->SetText(FText::AsNumber(Weight));
+    Text_Energy->SetText(FText::AsNumber(Stamina));
+    Text_Humanity->SetText(FText::AsNumber(Humanity));
+    Text_Debt->SetText(FText::AsNumber(Debt));
+}
