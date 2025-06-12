@@ -123,7 +123,7 @@ public:
 	TMap<EPlayerPart, USkeletalMesh*> DefaultMeshes;
 
 	void CacheDefaultSkeletalMeshes();
-
+	
 private:
 	void Init();
 

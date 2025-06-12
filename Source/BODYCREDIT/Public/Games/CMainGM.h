@@ -38,6 +38,8 @@ public:
 private:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
+	
+	virtual AActor* ChoosePlayerStart_Implementation(AController* Player) override;
 
 private:
 	UPROPERTY()

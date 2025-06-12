@@ -8,6 +8,7 @@
 #include "Lobby/LobbyWidget_Failed.h"
 #include "Characters/CNox_Controller.h"
 #include "Trigger/CSpawnBoundaryBox.h"
+#include "GameFramework/PlayerStart.h"
 
 ACMainGM::ACMainGM()
 {
@@ -75,6 +76,20 @@ void ACMainGM::Tick(float DeltaSeconds)
 			}
 		}
 	}
+}
+
+AActor* ACMainGM::ChoosePlayerStart_Implementation(AController* Player)
+{
+	for (TActorIterator<APlayerStart> It(GetWorld()); It; ++It)
+	{
+		if (It->PlayerStartTag == FName(TEXT("Lobby")))
+		{
+			return *It;
+		}
+	}
+
+	// 그 이후(또는 'Initial' 못 찾음)엔 기본 로직 사용
+	return Super::ChoosePlayerStart_Implementation(Player);
 }
 
 void ACMainGM::RegisterMemoryFromPlayer(ACNox_Runner* Player, EMemoryTriggerType Trigger)
