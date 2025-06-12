@@ -96,10 +96,11 @@ private:
 	FVector GetSpawnRandomLoc(const ACSpawnBoundaryBox* SpawnBoundaryBox);
 	void SpawnEnemy(const TSubclassOf<ACNox_EBase>& SpawnCls, const FVector& SpawnLoc) const;
 public:
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadWrite)
 	bool ExtractTimerTriggerStart = false;
 	
 	UFUNCTION(BlueprintCallable)
 	void SpawnEnemy();
+	UFUNCTION(BlueprintCallable)
 	void DestroyEnemy();
 }; 

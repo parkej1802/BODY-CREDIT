@@ -5,6 +5,7 @@
 #include "Components/Button.h"
 #include "Components/Image.h"
 #include "Animation/WidgetAnimation.h"
+#include "Games/CMainGM.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Lobby/LobbyWidget_Main.h"
 
@@ -45,6 +46,8 @@ void ULobbyWidget_GameOver::NativeConstruct()
 
 void ULobbyWidget_GameOver::OnNewGameClicked()
 {
+    Cast<ACMainGM>(GetWorld()->GetAuthGameMode())->DestroyEnemy();
+    
     if (LobbyMainWidgetClass)
     {
         LobbyMainUI = CreateWidget<ULobbyWidget_Main>(GetWorld(), LobbyMainWidgetClass);
@@ -58,6 +61,7 @@ void ULobbyWidget_GameOver::OnNewGameClicked()
 
 void ULobbyWidget_GameOver::OnExitClicked()
 {
+    Cast<ACMainGM>(GetWorld()->GetAuthGameMode())->ExtractTimerTriggerStart = false;
     UKismetSystemLibrary::QuitGame(this, PC, EQuitPreference::Quit, false);
 }
 

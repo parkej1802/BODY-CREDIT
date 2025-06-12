@@ -2,6 +2,8 @@
 
 
 #include "Lobby/LobbyWidget_Main.h"
+
+#include "EngineUtils.h"
 #include "Components/Button.h"
 #include "Lobby/LobbyWidget_Selection.h"
 #include "Components/Image.h"
@@ -11,6 +13,7 @@
 #include "Characters/CNox_Runner.h"
 #include "Inventory/AC_InventoryComponent.h"
 #include "Inventory/AC_EquipComponent.h"
+#include "Utilities/CLog.h"
 
 void ULobbyWidget_Main::NativeConstruct()
 {
@@ -46,8 +49,8 @@ void ULobbyWidget_Main::NativeConstruct()
     PlayAnimation(Anim_Start_NewGame);
     PlayAnimation(Anim_Start_Setting);
     PlayAnimation(Anim_Start_Exit);
-    UNetGameInstance* GI = Cast<UNetGameInstance>(GetGameInstance());
-    GI->SetActorInitLocation();
+    // UNetGameInstance* GI = Cast<UNetGameInstance>(GetGameInstance());
+    // GI->SetActorInitLocation();
 }
 
 void ULobbyWidget_Main::OnNewGameClicked()
@@ -64,6 +67,18 @@ void ULobbyWidget_Main::OnNewGameClicked()
             LobbyWidget_Selection->AddToViewport();
 
             this->RemoveFromParent();
+        }
+    }
+
+    for (TActorIterator<AActor> It(GetWorld(), AActor::StaticClass()); It; ++It)
+    {
+        AActor* Actor = *It;
+        if (IsValid(Actor) && Actor->ActorHasTag(FName("PlayerStart")))
+        {
+            PlayerCharacter->SetActorLocation(Actor->GetActorLocation());
+            // CLog::Log(FString::Printf(TEXT("PlayerStart Rotation : %.2f, %.2f, %.2f"), Actor->GetActorRotation().Roll, Actor->GetActorRotation().Pitch, Actor->GetActorRotation().Yaw));
+            PlayerCharacter->SetActorRotation(Actor->GetActorRotation()); //  값은 제대로 찍히는데, 회전은 적용 안됌
+            // CLog::Log(FString::Printf(TEXT("PlayerStart Rotation : %.2f, %.2f, %.2f"), Actor->GetActorRotation().Roll, Actor->GetActorRotation().Pitch, Actor->GetActorRotation().Yaw));
         }
     }
 }
