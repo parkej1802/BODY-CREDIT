@@ -80,6 +80,7 @@ void ACMainGM::Tick(float DeltaSeconds)
 void ACMainGM::RegisterMemoryFromPlayer(ACNox_Runner* Player, EMemoryTriggerType Trigger)
 {
 	if (!ExtractTimerTriggerStart && !Player) return;
+	if (FMath::FRandRange(0.0, 1.0) > RegisterPercent) return;
 
 	FMemoryFragment NewMemory;
 	NewMemory.Location = Player->GetActorLocation();

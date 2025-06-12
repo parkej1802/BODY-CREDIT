@@ -42,6 +42,8 @@ private:
 private:
 	UPROPERTY()
 	class ACNox_MemoryCollectorAI* MemoryCollectorAI;
+	UPROPERTY(EditAnywhere)
+	float RegisterPercent = 0.4f;
 
 public:
 	void RegisterMemoryFromPlayer(class ACNox_Runner* Player, EMemoryTriggerType Trigger);
