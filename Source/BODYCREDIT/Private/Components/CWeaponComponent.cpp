@@ -148,12 +148,48 @@ void UCWeaponComponent::SetWeaponSlot2()
 
 void UCWeaponComponent::DoAction()
 {
-	if (!!GetDoAction())
+	CheckNull(GetDoAction());
+
+	switch (Type)
 	{
-		GetDoAction()->DoAction();
-		Cast<ACNox_Runner>(OwnerCharacter)->RegisterAttack();
+	case EWeaponType::KATANA:
+		break;
+	case EWeaponType::BOW:
+	case EWeaponType::RIFLE:
+		// 눌렀을 때 → 내부에서 차징 시작 + Fire 조건 처리
+		GetDoAction()->Pressed(); 
+		break;
+	case EWeaponType::MAX:
+	default:
+		break;
 	}
 
+	Cast<ACNox_Runner>(OwnerCharacter)->RegisterAttack();
+	
+	// if (!!GetDoAction())
+	// {
+	// 	GetDoAction()->DoAction();
+	// 	Cast<ACNox_Runner>(OwnerCharacter)->RegisterAttack();
+	// }
+
+}
+
+void UCWeaponComponent::EndDoAction()
+{
+	CheckNull(GetDoAction());
+
+	switch (Type)
+	{
+	case EWeaponType::KATANA:
+		break;
+	case EWeaponType::BOW:
+	case EWeaponType::RIFLE:
+		GetDoAction()->Released(); 
+		break;
+	case EWeaponType::MAX:
+	default:
+		break;
+	}
 }
 
 void UCWeaponComponent::SubAction_Pressed()
@@ -194,7 +230,6 @@ void UCWeaponComponent::SubAction_Released()
 
 void UCWeaponComponent::SetMode(EWeaponType InType)
 {
-	CheckNull(CHelpers::GetComponent<UAC_EquipComponent>(OwnerCharacter));
 	CheckFalse(CHelpers::GetComponent<UCMovementComponent>(OwnerCharacter)->CanMove());
 	CheckTrue(bInSubAction);
 
@@ -236,10 +271,11 @@ void UCWeaponComponent::BindInput(UEnhancedInputComponent* InEnhancedInputCompon
 	// InEnhancedInputComponent->BindAction(IA_Rifle, ETriggerEvent::Started, this, &UCWeaponComponent::SetRifleMode);
 	// InEnhancedInputComponent->BindAction(IA_Katana, ETriggerEvent::Started, this, &UCWeaponComponent::SetKatanaMode);
 
-	InEnhancedInputComponent->BindAction(IA_WeaponSlot1, ETriggerEvent::Started, this, &UCWeaponComponent::SetWeaponSlot1);
+	InEnhancedInputComponent->BindAction(IA_WeaponSlot1, ETriggerEvent::Started, this, &UCWeaponComponent::SetBowMode);
 	InEnhancedInputComponent->BindAction(IA_WeaponSlot2, ETriggerEvent::Started, this, &UCWeaponComponent::SetWeaponSlot2);
 
 	InEnhancedInputComponent->BindAction(IA_Action, ETriggerEvent::Started, this, &UCWeaponComponent::DoAction);
+	InEnhancedInputComponent->BindAction(IA_Action, ETriggerEvent::Completed, this, &UCWeaponComponent::EndDoAction);
 
 	InEnhancedInputComponent->BindAction(IA_SubAction, ETriggerEvent::Started, this, &UCWeaponComponent::SubAction_Pressed);
 	InEnhancedInputComponent->BindAction(IA_SubAction, ETriggerEvent::Completed, this, &UCWeaponComponent::SubAction_Released);

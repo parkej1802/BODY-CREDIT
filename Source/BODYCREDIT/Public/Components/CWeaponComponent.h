@@ -101,6 +101,7 @@ public:
 	void SetWeaponSlot1();
 	void SetWeaponSlot2();
 	void DoAction();
+	void EndDoAction();
 
 public:
 	UFUNCTION(BlueprintCallable)
@@ -117,16 +118,12 @@ public:
 	FWeaponTypeChanged OnWeaponTypeChange;
 
 private:
-	TMap<EWeaponSlot, EWeaponType> EquippedWeapon;
 	EWeaponType Type = EWeaponType::MAX;
 
 private:
 	UPROPERTY()
 	class UCWeapon_Data* Datas[(int32)EWeaponType::MAX];
 	
-	UPROPERTY(EditAnywhere, Category = "Data")
-	TMap<EWeaponType, class UCWeapon_DoAction*> WeaponDataMap;
-
 private:
 	bool bInSubAction = false;
 
