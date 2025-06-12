@@ -63,9 +63,11 @@ void ULobbyWidget_Selection::NativeConstruct()
 
     PlayerStatChange();
 
-    Cast<ACMainGM>(GetWorld()->GetAuthGameMode())->IsStart = false;
-
-    PlayerCharacter->RemovePlayerMainUI();
+    GM = Cast<ACMainGM>(GetWorld()->GetAuthGameMode());
+    GM->IsStart = false;
+    GM->SpawnEnemy();
+    
+    PlayerCharacter->RemovePlayerMainUI();    
 }
 
 void ULobbyWidget_Selection::OnPlayClicked()

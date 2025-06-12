@@ -1,8 +1,11 @@
 ﻿#include "Lobby/CLobbyWidget_Play.h"
+
+#include "EngineUtils.h"
 #include "Global.h"
 #include "Components/Button.h"
 #include "Characters/CNox_Controller.h"
 #include "Characters/CNox_Runner.h"
+#include "Characters/Enemy/CNox_EBase.h"
 #include "Session/NetGameInstance.h"
 #include "Components/Image.h"
 #include "Games/CMainGM.h"
@@ -82,7 +85,7 @@ void UCLobbyWidget_Play::OnContinueClicked()
 		GameMode->GameTimer = GameMode->SetGameTimer;
 		GameMode->bIsFailed = false;
 		GameMode->IsStart = true;
-		GameMode->PlayGameStart();
+		GameMode->ExtractTimerTriggerStart = true;
 		
 		pc->SetInputMode(FInputModeGameOnly());
 		pc->bShowMouseCursor = false;
@@ -96,7 +99,10 @@ void UCLobbyWidget_Play::OnContinueClicked()
 
 		PlayerCharacter->ShowPlayerMainUI();
 
-
+		for (TActorIterator<ACNox_EBase> It(GetWorld()); It; ++It)
+		{
+			(*It)->DayStart();
+		}
 	}
 }
 
