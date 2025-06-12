@@ -59,7 +59,11 @@ void ULobbyWidget_Selection::NativeConstruct()
     FString DayString = FString::Printf(TEXT("%d"), GI->Day);
     Text_DayCount->SetText(FText::FromString(DayString));
 
+    GI->SetActorInitLocation();
+
     PlayerStatChange();
+
+    Cast<ACMainGM>(GetWorld()->GetAuthGameMode())->IsStart = false;
 
     PlayerCharacter->RemovePlayerMainUI();
 }

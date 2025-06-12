@@ -91,7 +91,7 @@ void UNetGameInstance::SetActorInitLocation()
 
 	PlayerCharacter = Cast<ACNox_Runner>(Pawn);
 
-	FVector StartLocation(-2270.f, -6370.f, 1360.f);
+	FVector StartLocation(10000.f, 0.f, 100.f);
 	PlayerCharacter->SetActorLocation(StartLocation);
 }
 

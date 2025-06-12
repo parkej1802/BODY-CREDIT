@@ -8,11 +8,13 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Kismet/GameplayStatics.h"
 #include "Session/NetGameInstance.h"
+#include "Characters/CNox_Runner.h"
+#include "Inventory/AC_InventoryComponent.h"
+#include "Inventory/AC_EquipComponent.h"
 
 void ULobbyWidget_Main::NativeConstruct()
 {
     Super::NativeConstruct();
-
 
     PC = GetOwningPlayer();
     FInputModeGameAndUI InputMode;
@@ -50,6 +52,10 @@ void ULobbyWidget_Main::NativeConstruct()
 
 void ULobbyWidget_Main::OnNewGameClicked()
 {
+    ACNox_Runner* PlayerCharacter = Cast<ACNox_Runner>(PC->GetPawn());
+    PlayerCharacter->InventoryComp->ResetInventoryItem();
+    PlayerCharacter->EquipComp->EquippedItems.Empty();
+
     if (LobbySelectionWidgetClass)
     {
         LobbyWidget_Selection = CreateWidget<ULobbyWidget_Selection>(GetWorld(), LobbySelectionWidgetClass);
