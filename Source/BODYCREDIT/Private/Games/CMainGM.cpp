@@ -79,7 +79,7 @@ void ACMainGM::Tick(float DeltaSeconds)
 
 void ACMainGM::RegisterMemoryFromPlayer(ACNox_Runner* Player, EMemoryTriggerType Trigger)
 {
-	if (!HasAuthority() || !Player) return;
+	if (!ExtractTimerTriggerStart && !Player) return;
 
 	FMemoryFragment NewMemory;
 	NewMemory.Location = Player->GetActorLocation();
