@@ -19,11 +19,23 @@ public:
 	UFUNCTION()
 	void OnContinueClicked();
 
+	UFUNCTION()
+	void OnContinueHovered();
+
+	UFUNCTION()
+	void OnContinueUnhovered();
+
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UButton* Button_Head;
 
 	UFUNCTION()
 	void OnHeadClicked();
+
+	UFUNCTION()
+	void OnHeadHovered();
+
+	UFUNCTION()
+	void OnHeadUnhovered();
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UButton* Button_Body;
@@ -31,11 +43,23 @@ public:
 	UFUNCTION()
 	void OnBodyClicked();
 
+	UFUNCTION()
+	void OnBodyHovered();
+
+	UFUNCTION()
+	void OnBodyUnhovered();
+
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UButton* Button_Arm;
 	
 	UFUNCTION()
 	void OnArmClicked();
+
+	UFUNCTION()
+	void OnArmHovered();
+
+	UFUNCTION()
+	void OnArmUnhovered();
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UButton* Button_Leg;
@@ -43,8 +67,29 @@ public:
 	UFUNCTION()
 	void OnLegClicked();
 
+	UFUNCTION()
+	void OnLegHovered();
+
+	UFUNCTION()
+	void OnLegUnhovered();
+
 	UPROPERTY()
 	class UNetGameInstance* GI;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UImage* Image_Button_Continue_Hovered;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UImage* Image_Button_Head_Hovered;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UImage* Image_Button_Body_Hovered;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UImage* Image_Button_Arm_Hovered;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UImage* Image_Button_Leg_Hovered;
 
 	
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
@@ -59,7 +104,13 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UImage* ImageLeg;
 
+	class UImage* PreviousImage;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ACMainGM* GameMode;
+
+	void TurnOffPreviousImage();
+
+	void TurnOnPreviousImage();
 
 };

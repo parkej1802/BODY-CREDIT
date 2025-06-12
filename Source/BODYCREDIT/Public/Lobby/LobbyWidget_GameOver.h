@@ -68,8 +68,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ACNox_Runner* PlayerCharacter;
 
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class ACNox_Controller* PC;
+	class APlayerController* PC;
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UImage* Image_BackGround;
@@ -80,6 +81,9 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UImage* Image_GameOver1;
 
-	//UPROPERTY(meta = (BindWidgetAnim), Transient)
-	//class UWidgetAnimation* Anim_GameOver;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UUserWidget> LobbyMainWidgetClass;
+
+	UPROPERTY()
+	class ULobbyWidget_Main* LobbyMainUI;
 };

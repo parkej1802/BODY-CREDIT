@@ -18,6 +18,7 @@ void UInventory_EquipmentTile::NativeConstruct()
 FSlateBrush UInventory_EquipmentTile::GetIconImage()
 {
 	ItemObject->ItemData.Rotated = false;
+
 	UMaterialInterface* Material = ItemObject->GetIcon();
 
 	FSlateBrush Brush;
@@ -39,6 +40,10 @@ FSlateBrush UInventory_EquipmentTile::GetThumbnailImage()
 {
 
 	UMaterialInterface* Material = ItemObject->GetThumbnail();
+
+	if (ItemObject->GetThumbnail() != nullptr) {
+		Material = ItemObject->GetIcon();
+	}
 
 	FSlateBrush Brush;
 	Brush.SetResourceObject(Material);

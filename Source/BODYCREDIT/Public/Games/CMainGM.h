@@ -44,6 +44,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	double GetGamePlayTime(); // 게임 플레이 타임 리턴	
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float SetGameTimer = 3.f;
+
 	float GameTimer = 10.f;
 
 	bool bIsFailed = false;
@@ -51,5 +54,11 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UUserWidget> FailedWidgetClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class ACNox_Runner* PlayerCharacter;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class ACNox_Controller* PC;
+
+	bool IsStart = false;
 }; 

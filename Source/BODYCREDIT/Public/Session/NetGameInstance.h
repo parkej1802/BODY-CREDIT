@@ -69,7 +69,7 @@ public:
 
 	TMap<EPlayerPart, bool> AlivePart;
 
-	EPlayerPart SelectedPart;
+	EPlayerPart SelectedPart = EPlayerPart::Basic;
 
 	UPROPERTY()
 	class UImage* SaveImageHead;

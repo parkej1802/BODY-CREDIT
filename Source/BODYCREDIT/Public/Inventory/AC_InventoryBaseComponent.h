@@ -93,4 +93,6 @@ public:
 	UItemObject* CreateItemFromData(const FItemSaveData& Data);
 
 	void DestroyItem(UItemObject* ItemObject);
+
+	void ResetInventoryItem();
 };

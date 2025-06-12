@@ -86,4 +86,11 @@ public:
 	UPROPERTY()
 	class ULobbyWidget_Selection* LobbyWidget_Selection;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
+	TSubclassOf<UUserWidget> LobbyGameOverWidgetClass;
+
+	UPROPERTY()
+	class ULobbyWidget_GameOver* LobbyWidget_LobbyGameOver;
+
+	int32 RemainingLife = 3;
 };
