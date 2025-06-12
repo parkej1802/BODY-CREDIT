@@ -9,6 +9,7 @@
 #include "Session/NetGameInstance.h"
 #include "Components/Image.h"
 #include "Games/CMainGM.h"
+#include "GameFramework/PlayerStart.h"
 
 void UCLobbyWidget_Play::NativeConstruct()
 {
@@ -89,14 +90,12 @@ void UCLobbyWidget_Play::OnContinueClicked()
 		
 		pc->SetInputMode(FInputModeGameOnly());
 		pc->bShowMouseCursor = false;
-
+		
 		UGameplayStatics::SetGamePaused(GetWorld(), false);
 		RemoveFromParent();
 
 		APawn* Pawn = pc->GetPawn();
-
 		ACNox_Runner* PlayerCharacter = Cast<ACNox_Runner>(Pawn);
-
 		PlayerCharacter->ShowPlayerMainUI();
 
 		for (TActorIterator<ACNox_EBase> It(GetWorld()); It; ++It)

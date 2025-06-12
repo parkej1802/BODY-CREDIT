@@ -95,8 +95,8 @@ void ULobbyWidget_Selection::OnPlayClicked()
         }
     }
 
-    FVector StartLocation(285.0f, 15.0f, -408.0f);
-    PlayerCharacter->SetActorLocation(StartLocation);
+    // FVector StartLocation(285.0f, 15.0f, -408.0f);
+    // PlayerCharacter->SetActorLocation(StartLocation);
  
     if (GI) {
         GI->BeforePlayerGold = PlayerCharacter->EquipComp->CalculatePriceOfEquippedItem();

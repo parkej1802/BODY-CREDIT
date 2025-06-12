@@ -14,6 +14,7 @@
 #include "Inventory/AC_InventoryComponent.h"
 #include "Inventory/AC_EquipComponent.h"
 #include "Utilities/CLog.h"
+#include "GameFramework/PlayerStart.h"
 
 void ULobbyWidget_Main::NativeConstruct()
 {
@@ -69,18 +70,21 @@ void ULobbyWidget_Main::OnNewGameClicked()
             this->RemoveFromParent();
         }
     }
-
-    for (TActorIterator<AActor> It(GetWorld(), AActor::StaticClass()); It; ++It)
+    
+    APlayerStart* Start = nullptr;
+    for (TActorIterator<APlayerStart> It(GetWorld()); It; ++It)
     {
-        AActor* Actor = *It;
-        if (IsValid(Actor) && Actor->ActorHasTag(FName("PlayerStart")))
+        if (It->PlayerStartTag == "Start")
         {
-            PlayerCharacter->SetActorLocation(Actor->GetActorLocation());
-            // CLog::Log(FString::Printf(TEXT("PlayerStart Rotation : %.2f, %.2f, %.2f"), Actor->GetActorRotation().Roll, Actor->GetActorRotation().Pitch, Actor->GetActorRotation().Yaw));
-            PlayerCharacter->SetActorRotation(Actor->GetActorRotation()); //  값은 제대로 찍히는데, 회전은 적용 안됌
-            // CLog::Log(FString::Printf(TEXT("PlayerStart Rotation : %.2f, %.2f, %.2f"), Actor->GetActorRotation().Roll, Actor->GetActorRotation().Pitch, Actor->GetActorRotation().Yaw));
+            Start = *It;
+
+            break;
         }
     }
+		
+    PlayerCharacter->SetActorLocation(Start->GetActorLocation());
+    PlayerCharacter->GetController()->SetControlRotation(Start->GetActorRotation());
+    
 }
 
 void ULobbyWidget_Main::OnNewGameHovered()

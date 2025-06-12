@@ -352,4 +352,3 @@ void ACNox_Runner::CacheDefaultSkeletalMeshes()
 	DefaultMeshes.Add(EPlayerPart::Weapon1, Weapon1->GetSkeletalMeshAsset());
 	DefaultMeshes.Add(EPlayerPart::Weapon2, Weapon2->GetSkeletalMeshAsset());
 }
-
