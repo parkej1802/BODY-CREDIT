@@ -31,6 +31,10 @@ public:
 	virtual void DoAction();
 	virtual void Begin_DoAction();
 	virtual void End_DoAction();
+	
+	/** Bow/Rifle 등 누름/뗌 기반 무기를 위한 가상 함수 */
+	virtual void Pressed() {};   // 좌클릭 누름: 차징 시작
+	virtual void Released() {};  // 좌클릭 뗌: 발사
 
 public:
 	UFUNCTION()

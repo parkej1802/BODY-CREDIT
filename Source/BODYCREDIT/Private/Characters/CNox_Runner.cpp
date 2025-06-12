@@ -158,7 +158,7 @@ void ACNox_Runner::NotifyControllerChanged()
 			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(IMC_Movement, 10);
-			Subsystem->AddMappingContext(IMC_Weapon, 9);
+			Subsystem->AddMappingContext(IMC_Weapon, 11);
 			Subsystem->AddMappingContext(IMC_Invectory, 11);
 		}
 	}
