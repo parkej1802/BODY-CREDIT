@@ -41,7 +41,7 @@ FSlateBrush UInventory_EquipmentTile::GetThumbnailImage()
 
 	UMaterialInterface* Material = ItemObject->GetThumbnail();
 
-	if (ItemObject->GetThumbnail() != nullptr) {
+	if (ItemObject->GetThumbnail() == nullptr) {
 		Material = ItemObject->GetIcon();
 	}
 
