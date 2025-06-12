@@ -18,8 +18,6 @@ AItem_Grenade::AItem_Grenade()
 		RotatedIcon = Temp_MatR.Object;
 	}*/
 
-	ItemName = "Grenade";
-
 	Width = 1;
 	Height = 1;
 }

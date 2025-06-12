@@ -9,6 +9,7 @@
 #include "Inventory/Inventory_EquipmentWidget.h"
 #include "Inventory/AC_EquipComponent.h"
 #include "Components/SizeBox.h"
+#include "Characters/CNox_Runner.h"
 
 void UInventory_EquipmentTile::NativeConstruct()
 {
@@ -16,6 +17,8 @@ void UInventory_EquipmentTile::NativeConstruct()
 
 FSlateBrush UInventory_EquipmentTile::GetIconImage()
 {
+	ItemObject->ItemData.Rotated = false;
+
 	UMaterialInterface* Material = ItemObject->GetIcon();
 
 	FSlateBrush Brush;
@@ -33,9 +36,53 @@ FSlateBrush UInventory_EquipmentTile::GetIconImage()
 	return Brush;
 }
 
+FSlateBrush UInventory_EquipmentTile::GetThumbnailImage()
+{
+
+	UMaterialInterface* Material = ItemObject->GetThumbnail();
+
+	if (ItemObject->GetThumbnail() == nullptr) {
+		Material = ItemObject->GetIcon();
+	}
+
+	FSlateBrush Brush;
+	Brush.SetResourceObject(Material);
+	/*if (ItemObject && EquipMainWidget)
+	{
+		Brush.ImageSize = NewSize;
+	}
+	else
+	{
+		Brush.ImageSize = FVector2D(BorderSize);
+	}*/
+
+	Brush.ImageSize = FVector2D(BorderSize);
+	return Brush;
+}
+
+
+void UInventory_EquipmentTile::Refresh()
+{
+	if (!IsValid(ItemObject)) return;
+
+	FIntPoint ItemDim = ItemObject->GetDimension();
+	NewSize = FVector2D(ItemDim.X * EquipMainWidget->TileSize, ItemDim.Y * EquipMainWidget->TileSize);
+
+	if (UCanvasPanelSlot* CanvasSlot = Cast<UCanvasPanelSlot>(Image_Item->Slot))
+	{
+		CanvasSlot->SetSize(NewSize);
+	}
+
+	FSlateBrush IconBrush;
+	IconBrush.SetResourceObject(ItemObject->GetIcon());
+	IconBrush.ImageSize = NewSize;
+
+	Image_Item->SetBrush(IconBrush);
+}
+
 void UInventory_EquipmentTile::SetItem(UItemObject* NewItem)
 {
-	if (NewItem->ItemType != ItemType) return;
+	if (NewItem->ItemData.ItemType != ItemType) return;
 
 	ItemObject = NewItem;
 
@@ -56,7 +103,7 @@ void UInventory_EquipmentTile::SetItem(UItemObject* NewItem)
 
 		if (Image_Item)
 		{
-			FSlateBrush IconBrush = GetIconImage();
+			FSlateBrush IconBrush = GetThumbnailImage();
 			Image_Item->SetBrush(IconBrush);
 		}
 	}
@@ -99,10 +146,14 @@ void UInventory_EquipmentTile::NativeOnMouseLeave(const FPointerEvent& InMouseEv
 
 void UInventory_EquipmentTile::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
 {
+	if (IsMoving) return;
+	IsMoving = true;
+
 	Super::NativeOnDragDetected(InGeometry, InMouseEvent, OutOperation);
 
 	UDragDropOperation* DragOperation = UWidgetBlueprintLibrary::CreateDragDropOperation(UDragDropOperation::StaticClass());
 	if (!DragOperation) return;
+
 
 	SizeBox_BackGround->SetWidthOverride(NewSize.X);
 	SizeBox_BackGround->SetHeightOverride(NewSize.Y);
@@ -127,7 +178,8 @@ void UInventory_EquipmentTile::NativeOnDragDetected(const FGeometry& InGeometry,
 
 	RemoveFromParent();
 
-	EquipMainWidget->EquipComp->EquippedItems.Remove(ItemType);
-
+	EquipMainWidget->PlayerCharacter->EquipComp->UnequipItem(ItemType);
+	EquipMainWidget->PlayerCharacter->EquipComp->IsStatChanged = true;
+	EquipMainWidget->PlayerCharacter->EquipComp->IsChanged = true;
 	OutOperation = DragOperation;
 }

@@ -13,10 +13,6 @@ UCLASS()
 class BODYCREDIT_API AItem_Base : public AActor
 {
 	GENERATED_BODY()
-
-protected:
-	UPROPERTY(EditAnywhere)
-	class USceneComponent* Root;
 	
 public:	
 	// Sets default values for this actor's properties
@@ -32,6 +28,9 @@ public:
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USceneComponent* Root;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UStaticMeshComponent* StaticMeshComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -46,7 +45,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UDataTable* ItemDataTable;
 
-	FItemData ItemData = FItemData();
+	/*UPROPERTY()
+	FItemData ItemData = FItemData();*/
 	
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	//class UMaterialInterface* Icon;
@@ -54,12 +54,13 @@ public:
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	//class UMaterialInterface* RotatedIcon;
 
+	UPROPERTY()
 	FString ContextString = TEXT("Item Data");
 public:
 	UFUNCTION()
     void OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY()
 	class UItemObject* ItemObject;
 
 	//UItemObject* GetDefaultItemObject();
@@ -70,11 +71,22 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FName ItemName;
 
-		
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ACMainGM* GameMode;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UAC_LootingInventoryComponent* LootInventoryComp;
 
 //#if WITH_EDITOR
 //	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 //#endif
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Strategy")
+	class UItemStrategy* ItemStrategy;
+
+	UFUNCTION(BlueprintCallable, Category="Item")
+	void SetItemStrategy(class UItemStrategy* NewStrategy);
+
+	UFUNCTION(BlueprintCallable, Category="Item")
+	void UseItem();
 };

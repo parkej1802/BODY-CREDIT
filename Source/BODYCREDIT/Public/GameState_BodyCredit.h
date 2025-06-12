@@ -17,5 +17,20 @@ class BODYCREDIT_API AGameState_BodyCredit : public AGameStateBase
 public:
 	void SpawnItemFromActor(class UItemObject* ItemObject, AActor* Actor, bool GroundClamp);
 
+	void SpawnItemHiddenFromActor(class UItemObject* ItemObject, AActor* Actor, bool GroundClamp);
 
+	bool SpawnItemPlayerInventory(class UItemObject* ItemObject, AActor* Actor, bool GroundClamp);
+
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class APlayerController* PC;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class ACNox_Runner* PlayerCharacter;
+
+	UPROPERTY(EditAnywhere)
+	class UAC_InventoryComponent* PlayerInventory;
+
+	void RestoreItemAndSubItems(UItemObject* ItemObject, FVector SpawnLocation, AActor* OwnerActor);
 };

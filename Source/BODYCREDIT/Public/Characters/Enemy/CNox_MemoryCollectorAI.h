@@ -7,6 +7,7 @@
 #include "Data/CMemoryData.h"
 #include "CNox_MemoryCollectorAI.generated.h"
 
+class ACRangeProjectile;
 /**
  * 기억 추적 AI
  */
@@ -34,6 +35,8 @@ private:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetPerceptionInfo() override;
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
+							AController* EventInstigator, AActor* DamageCauser) override;
 
 public:
 	void GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed,
@@ -45,18 +48,16 @@ private:
 
 	UPROPERTY(EditAnywhere, Category="Memory")
 	FMemoryFragment CurrentTargetMemory;
-
+	
 	float MemoryExpireTime = 15.0f; // TTL 기준
+	
 
 public:
 	void RegisterMemory(const FMemoryFragment& InNewMemory);
-	void EvaluateMemory();
+	bool EvaluateMemory();
 	const FMemoryFragment GetMemoryTarget();
-	FORCEINLINE bool IsMemoryEmpty() { return MemoryQueue.Num() > 0; }
-
-public:
-	void SetPatrolLocation(const FVector& InPatrolLocation);
-	FVector GetPatrolLocation();
+	void SetMemoryTarget_MemoryMoveEnd(const FMemoryFragment& InNewMemory);
+	bool IsMemoryEmpty() const { return MemoryQueue.Num() > 0; }
 
 private:
 	UPROPERTY()
@@ -86,9 +87,9 @@ private:
 	FCriticalSection ProjectileArrayCriticalSection;
 
 	UPROPERTY()
-	TSubclassOf<class ACRangeProjectile> RangeProjectileCls;
+	TSubclassOf<ACRangeProjectile> RangeProjectileCls;
 	UPROPERTY(VisibleAnywhere)
-	TArray<class ACRangeProjectile*> RangeProjectileArray;
+	TArray<ACRangeProjectile*> RangeProjectileArray;
 	UPROPERTY(EditAnywhere)
 	int32 SpawnProjectileCount = 16;
 
@@ -99,5 +100,5 @@ private:
 
 public:
 	void StartRangeAttack(bool bIsRight);
-	void ReturnToPool(class ACRangeProjectile* ReturnedProjectile);
+	void ReturnToPool(ACRangeProjectile* ReturnedProjectile);
 };

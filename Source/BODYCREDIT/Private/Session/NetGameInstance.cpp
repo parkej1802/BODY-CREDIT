@@ -2,10 +2,14 @@
 
 #include "Session/NetGameInstance.h"
 #include "BODYCREDIT.h"
+#include "Characters/CNox_Controller.h"
+#include "Characters/CNox_Runner.h"
 
 void UNetGameInstance::Init()
 {	
 	Super::Init();
+
+	ItemDataTable = LoadObject<UDataTable>(nullptr, TEXT("/Game/Item/DT_ItemData.DT_ItemData"));
 
 	if (auto subsys = IOnlineSubsystem::Get())
 	{
@@ -22,7 +26,10 @@ void UNetGameInstance::Init()
 			), 2.f, false);
 	}
 
-
+	AlivePart.Add(EPlayerPart::Head, true);
+	AlivePart.Add(EPlayerPart::Body, true);
+	AlivePart.Add(EPlayerPart::Arm, true);
+	AlivePart.Add(EPlayerPart::Leg, true);
 }
 
 void UNetGameInstance::CreateMySession(FString roomName, int32 playerCount)
@@ -62,11 +69,29 @@ void UNetGameInstance::CreateMySession(FString roomName, int32 playerCount)
 	// netID
 	FUniqueNetIdPtr netID = GetWorld()->GetFirstLocalPlayerFromController()->GetUniqueNetIdForPlatformUser().GetUniqueNetId();
 
-	PRINTLOG(TEXT("Create Session Strat : %s"), *mySessionName);
+	//PRINTLOG(TEXT("Create Session Strat : %s"), *mySessionName);
 	sessionInterface->CreateSession(*netID, FName(mySessionName), sessionSettings);
 }
 
 void UNetGameInstance::OnCreateSessionComplete(FName SessionName, bool bWasSuccessful)
 {
-	PRINTLOG(TEXT("SessionName : %s, bWasSuccessful : %d"), *SessionName.ToString(), bWasSuccessful);
+	//PRINTLOG(TEXT("SessionName : %s, bWasSuccessful : %d"), *SessionName.ToString(), bWasSuccessful);
 }
+
+void UNetGameInstance::SetPlayerGold(int32 NewGold)
+{
+	PlayerGold = NewGold;
+	OnGoldChanged.Broadcast(NewGold);
+}
+
+void UNetGameInstance::SetActorInitLocation()
+{
+	PC = GetWorld()->GetFirstPlayerController();
+	APawn* Pawn = PC->GetPawn();
+
+	PlayerCharacter = Cast<ACNox_Runner>(Pawn);
+
+	FVector StartLocation(10000.f, 0.f, 100.f);
+	PlayerCharacter->SetActorLocation(StartLocation);
+}
+

@@ -32,10 +32,10 @@ public:
 
 	// Inventory Data
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ExposeOnSpawn = "true"))
-	int32 Columns = 6.f;
+	int32 Columns = 4.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (ExposeOnSpawn = "true"))
-	int32 Rows = 15.f;
+	int32 Rows = 5.f;
 
 	// Item
 public:
@@ -44,7 +44,7 @@ public:
 	bool IsRoomAvailable(class UItemObject* ItemObject, int32 TopLeftIndex);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float InventoryTileSize = 50.f;
+	float InventoryTileSize = 75.f;
 
 	FInventoryTile IndexToTile(int32 Index);
 
@@ -59,6 +59,7 @@ public:
 
 	void AddItemAt(class UItemObject* ItemObject, int32 TopLeftIndex);
 
+	UPROPERTY()
 	bool IsDirty = false;
 
 	TMap<class UItemObject*, FInventoryTile> GetAllItems();
@@ -88,4 +89,10 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ACMainGM* GameMode;
+
+	UItemObject* CreateItemFromData(const FItemSaveData& Data);
+
+	void DestroyItem(UItemObject* ItemObject);
+
+	void ResetInventoryItem();
 };

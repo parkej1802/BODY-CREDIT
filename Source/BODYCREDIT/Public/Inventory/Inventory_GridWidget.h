@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Inventory/Inventory_Line.h"
+#include "Characters/CNox_Controller.h"
 #include "Inventory_GridWidget.generated.h"
 
 /**
@@ -17,8 +18,14 @@ class BODYCREDIT_API UInventory_GridWidget : public UUserWidget
 
 public:
 
+	/*UPROPERTY()
+	class UInventory_Widget* OwningInventoryWidget;
+
 	UPROPERTY()
-    class UInventory_Widget* OwningInventoryWidget;
+	class ULobbyWidget_Market* OwningMarketInventoryWidget;
+
+	UPROPERTY()
+	class ULobbyWidget_WorkShop* OwningWorkShopInventoryWidget;*/
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UBorder* Border_Grid;
@@ -30,7 +37,9 @@ public:
 	int32 GridID;
 	
 	UPROPERTY()
-	class APlayerController* PlayerController;
+	ACNox_Controller* PlayerController;
+
+	bool CurrentlyHovered = false;
 
 // Widget Functions
 public:
@@ -43,15 +52,18 @@ public:
 	UPROPERTY()
     UAC_InventoryBaseComponent* InventoryBaseComp;
 	
-	float TileSize = 50.f;
+	UPROPERTY()
+	float TileSize = 75.f;
 
 	int32 InventoryRows = 0;
 	int32 InventoryColumns = 0;
 	int32 LootRows = 0;
 	int32 LootColumns = 0;
 
+	UPROPERTY()
 	bool IsEquipment = false;
 
+	UPROPERTY()
 	TArray<FInventoryLine> Lines;
 
 	virtual int32 NativePaint(
@@ -75,24 +87,30 @@ public:
 
 	bool IsRoomAvailableForPayload(class UItemObject* ItemObject) const;
 
+	UPROPERTY()
 	FIntPoint DraggedItemTopLeftTile;
+
+	UPROPERTY()
 	bool DrawDropLocation = false;
 
 	TPair<bool, bool> MousePositionInTile(FVector2D MousePosition);
 
 	bool IsCurrentlyHovered() const;
 
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
+	
 public:
 	UPROPERTY(EditAnywhere, Category = Widget)
 	TSubclassOf<UUserWidget> InventoryItemWidget;
 
-	void InitEquipment(class UAC_InventoryBaseComponent* InventoryComponent, float Equipment_TileSize);
-
+	UPROPERTY()
 	class UInventory_ItemWidget* InventoryItemUI;
 
 	FGeometry GetGridContentGeometry();
 
+	void ClearInventory();
 public:
 
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;

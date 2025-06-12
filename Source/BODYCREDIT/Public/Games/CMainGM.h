@@ -19,6 +19,7 @@ public:
 
 private:
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
 
 private:
 	UPROPERTY()
@@ -28,11 +29,36 @@ public:
 	void RegisterMemoryFromPlayer(class ACNox_Runner* Player, EMemoryTriggerType Trigger);
 
 private:
-	const FString VIPZoneID = "VipZone";
+	const FString VIPZoneID = "VIP";
 	UPROPERTY()
 	TArray<class ACAreaTriggerBox*> ZoneVolumes;
 
 	FName GetZoneID(class ACNox_Runner* Player);
 	// bool IsInVIPZone(class ACNox_Runner* Player);
 	bool IsInVIPZone(const FName& ZoneID);
-};
+
+private:
+	double GameStartTime = 0;
+public:
+	void PlayGameStart();
+	UFUNCTION(BlueprintCallable)
+	double GetGamePlayTime(); // 게임 플레이 타임 리턴	
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float SetGameTimer = 3.f;
+
+	float GameTimer = 10.f;
+
+	bool bIsFailed = false;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUserWidget> FailedWidgetClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class ACNox_Runner* PlayerCharacter;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class ACNox_Controller* PC;
+
+	bool IsStart = false;
+}; 

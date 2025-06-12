@@ -31,11 +31,11 @@ public:
 public:
 	UFUNCTION(BlueprintNativeEvent)
 	void OnBeginEquip();
-	virtual void OnBeginEquip_Implementation() {}
+	virtual void OnBeginEquip_Implementation() {};
 
 	UFUNCTION(BlueprintNativeEvent)
 	void OnUnequip();
-	virtual void OnUnequip_Implementation() {}
+	virtual void OnUnequip_Implementation() {};
 
 public:
 	void OnCollisions();
@@ -48,7 +48,7 @@ private:
 	UFUNCTION()
 	void OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
-protected:
+public:
 	UFUNCTION(BlueprintCallable, Category = "Attach")
 	void AttachTo(FName InSocketName);
 
@@ -67,5 +67,13 @@ public:
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Game")
 	TArray<class UShapeComponent*> Collisions;
+
+protected:
+	UPROPERTY(EditAnywhere, Category = "Attachment")
+	FName AttachmentName = "";
+
+public:
+	UPROPERTY(VisibleAnywhere, Category = "Valid")
+	bool bValid = false;
 
 };

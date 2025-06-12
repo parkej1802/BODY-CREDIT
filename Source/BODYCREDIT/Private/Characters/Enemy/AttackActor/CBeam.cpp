@@ -1,9 +1,9 @@
 #include "Characters/Enemy/AttackActor/CBeam.h"
 #include "Global.h"
-#include "MaterialHLSLTree.h"
 #include "NiagaraComponent.h"
 #include "Characters/Enemy/CNox_MemoryCollectorAI.h"
 #include "Global.h"
+#include "Characters/CNox_Runner.h"
 
 ACBeam::ACBeam()
 {
@@ -14,9 +14,17 @@ ACBeam::ACBeam()
 	CHelpers::CreateComponent<UNiagaraComponent>(this, &HitVFX, "HitVFX", RootComponent);
 
 	UNiagaraSystem* LaserBeamVFXSys = nullptr;
+	// CHelpers::GetAsset<UNiagaraSystem>(&LaserBeamVFXSys,
+	//                                    TEXT(
+	// 	                                   "/Game/Assets/LaserBeam/Niagara/LaserBeam/NS_RibbonBeam1V3.NS_RibbonBeam1V3"));
+	// if (LaserBeamVFXSys)
+	// {
+	// 	LaserBeamVFX->SetAsset(LaserBeamVFXSys);
+	// 	LaserBeamVFX->SetAutoActivate(false);
+	// }
 	CHelpers::GetAsset<UNiagaraSystem>(&LaserBeamVFXSys,
 	                                   TEXT(
-		                                   "/Game/Assets/LaserBeam/Niagara/LaserBeam/NS_RibbonBeam1V3.NS_RibbonBeam1V3"));
+		                                   "/Game/Assets/3D_Lasers/Effects/NS_Beam_3.NS_Beam_3"));
 	if (LaserBeamVFXSys)
 	{
 		LaserBeamVFX->SetAsset(LaserBeamVFXSys);
@@ -31,33 +39,40 @@ ACBeam::ACBeam()
 		FireBallVFX->SetAutoActivate(false);
 	}
 
+	// CHelpers::GetAsset<UNiagaraSystem>(&LaserBeamVFXSys,
+	//                                    TEXT("/Game/Assets/LaserBeam/Niagara/HitPoint/NS_LiquidHit.NS_LiquidHit"));
+	// if (LaserBeamVFXSys)
+	// {
+	// 	HitVFX->SetAsset(LaserBeamVFXSys);
+	// 	HitVFX->SetAutoActivate(false);
+	// }
 	CHelpers::GetAsset<UNiagaraSystem>(&LaserBeamVFXSys,
-	                                   TEXT("/Game/Assets/LaserBeam/Niagara/HitPoint/NS_LiquidHit.NS_LiquidHit"));
+	                                   TEXT("/Game/Assets/3D_Lasers/Effects/NS_LaserHit_3.NS_LaserHit_3"));
 	if (LaserBeamVFXSys)
 	{
 		HitVFX->SetAsset(LaserBeamVFXSys);
 		HitVFX->SetAutoActivate(false);
 	}
 
-	TSubclassOf<UMaterialInstance> tmpDecal = nullptr;
-	CHelpers::GetClass<UMaterialInstance>(&tmpDecal,
-	                                      TEXT(
-		                                      "/Game/Assets/LaserBeam/Materials/Instance/MI_Fire_DecalGoldern.MI_Fire_DecalGoldern"));
-	if (tmpDecal)
-		FireDecal = tmpDecal.GetDefaultObject();
-	CHelpers::GetClass<UMaterialInstance>(&tmpDecal,
-	                                      TEXT(
-		                                      "/Game/Assets/LaserBeam/Materials/Decal/M_FireDecal.M_FireDecal"));
-	if (tmpDecal)
-		GlowDecal = tmpDecal.GetDefaultObject();
+	// TSubclassOf<UMaterialInstance> tmpDecal = nullptr;
+	// CHelpers::GetClass<UMaterialInstance>(&tmpDecal,
+	//                                       TEXT(
+	// 	                                      "/Game/Assets/LaserBeam/Materials/Instance/MI_Fire_DecalGoldern.MI_Fire_DecalGoldern"));
+	// if (tmpDecal)
+	// 	FireDecal = tmpDecal.GetDefaultObject();
+	// CHelpers::GetClass<UMaterialInstance>(&tmpDecal,
+	//                                       TEXT(
+	// 	                                      "/Game/Assets/LaserBeam/Materials/Decal/M_FireDecal.M_FireDecal"));
+	// if (tmpDecal)
+	// 	GlowDecal = tmpDecal.GetDefaultObject();
 }
 
 void ACBeam::BeginPlay()
 {
 	Super::BeginPlay();
-	LaserBeamVFX->Deactivate();
+	LaserBeamVFX->DeactivateImmediate();
 	FireBallVFX->Deactivate();
-	HitVFX->Deactivate();
+	HitVFX->DeactivateImmediate();
 
 	OwnerAI = Cast<ACNox_MemoryCollectorAI>(GetOwner());
 }
@@ -68,7 +83,7 @@ void ACBeam::Tick(float DeltaTime)
 	if (TargetActor && AttackStart)
 	{
 		FVector start = rootScene->GetComponentLocation();
-		LaserBeamVFX->SetVariableVec3(FName("User.Start"), start);
+		// LaserBeamVFX->SetVariableVec3(FName("User.Start"), start);
 
 		float newPitch = FMath::Lerp(
 			CurPitch, (TargetActor->GetActorLocation() - GetActorLocation()).GetSafeNormal().Rotation().Pitch,
@@ -87,30 +102,32 @@ void ACBeam::Tick(float DeltaTime)
 		FCollisionQueryParams params;
 		params.AddIgnoredActor(this);
 		params.AddIgnoredActor(OwnerAI);
-		if (GetWorld()->LineTraceSingleByChannel(HitResult, start, end, ECC_Camera, params))
+		if (GetWorld()->LineTraceSingleByChannel(HitResult, start, end, ECC_Visibility, params))
 		{
 			// CLog::Print(
 			// 	FString::Printf(TEXT("Hit OK, Distance : %.2f"), FVector::Distance(start, HitResult.Location)));
-			LaserBeamVFX->SetVariableVec3(FName("User.End"), HitResult.Location);
-			if (!HitVFX->IsActive()) HitVFX->Activate();
+			// LaserBeamVFX->SetVariableVec3(FName("User.End"), HitResult.Location);
+			LaserBeamVFX->SetVariableVec3(FName("User.LaserEnd"), HitResult.Location);
+			if (!HitVFX->IsActive()) HitVFX->Activate(true);
 			HitVFX->SetWorldLocation(HitResult.Location + 10);
 
-			UGameplayStatics::SpawnDecalAtLocation(this->GetWorld(), this->FireDecal,
-			                                       FVector(FMath::FRandRange(5.f, 20.f),
-			                                               FMath::FRandRange(5.f, 20.f),
-			                                               FMath::FRandRange(5.f, 20.f)),
-			                                       HitResult.Location, FRotator(-90.f, 0.f, 0.f), 2.f);
-			UGameplayStatics::SpawnDecalAtLocation(this->GetWorld(), this->GlowDecal,
-			                                       FVector(FMath::FRandRange(10.f, 40.f),
-			                                               FMath::FRandRange(10.f, 40.f),
-			                                               FMath::FRandRange(10.f, 40.f)),
-			                                       HitResult.Location, FRotator(-90.f, 0.f, 0.f), 4.f);
+			// UGameplayStatics::SpawnDecalAtLocation(this->GetWorld(), this->FireDecal,
+			//                                        FVector(FMath::FRandRange(5.f, 20.f),
+			//                                                FMath::FRandRange(5.f, 20.f),
+			//                                                FMath::FRandRange(5.f, 20.f)),
+			//                                        HitResult.Location, FRotator(-90.f, 0.f, 0.f), 2.f);
+			// UGameplayStatics::SpawnDecalAtLocation(this->GetWorld(), this->GlowDecal,
+			//                                        FVector(FMath::FRandRange(10.f, 40.f),
+			//                                                FMath::FRandRange(10.f, 40.f),
+			//                                                FMath::FRandRange(10.f, 40.f)),
+			//                                        HitResult.Location, FRotator(-90.f, 0.f, 0.f), 4.f);
 		}
 		else
 		{
 			// CLog::Print(FString::Printf(TEXT("Hit NO, Distance : %.2f"), FVector::Distance(start, end)));
-			LaserBeamVFX->SetVariableVec3(FName("User.End"), end);
-			HitVFX->Deactivate();
+			// LaserBeamVFX->SetVariableVec3(FName("User.End"), end);
+			LaserBeamVFX->SetVariableVec3(FName("User.LaserEnd"), end);
+			HitVFX->DeactivateImmediate();
 		}
 
 		CurAttackDelay += DeltaTime;
@@ -149,13 +166,15 @@ void ACBeam::SetBeamActive(bool bInActive, AActor* InTarget)
 	else
 	{
 		AttackStart = false;
-		FireBallVFX->ResetSystem();
+		// FireBallVFX->ResetSystem();
 		FireBallVFX->Deactivate();
 		
-		LaserBeamVFX->ResetSystem();
-		LaserBeamVFX->Deactivate();
+		// LaserBeamVFX->ResetSystem();
+		// LaserBeamVFX->Deactivate();
+		LaserBeamVFX->DeactivateImmediate();
 		
-		HitVFX->ResetSystem();
-		HitVFX->Deactivate();
+		// HitVFX->ResetSystem();
+		// HitVFX->Deactivate();
+		HitVFX->DeactivateImmediate();
 	}
 }

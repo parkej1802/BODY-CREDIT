@@ -1,4 +1,7 @@
-#include "Components/CNoxHPComponent.h"
+﻿#include "Components/CNoxHPComponent.h"
+#include "Global.h"
+#include "Characters/CNox_Runner.h"
+#include "Components/CStateComponent.h"
 
 UCNoxHPComponent::UCNoxHPComponent()
 {
@@ -9,6 +12,9 @@ void UCNoxHPComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	InitStatus();
+
+	OwnerCharacter = Cast<ACNox_Runner>(GetOwner());
+
 }
 
 void UCNoxHPComponent::TickComponent(float DeltaTime, ELevelTick TickType,
@@ -20,7 +26,9 @@ void UCNoxHPComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 void UCNoxHPComponent::InitStatus()
 {
 	Health = MaxHealth;
+	Stamina = MaxStamina;
 	Defense = MaxDefense;
+
 }
 
 void UCNoxHPComponent::TakeDamage(float Amount, bool ActiveShield, bool& OutIsShieldCrash)
@@ -37,10 +45,46 @@ void UCNoxHPComponent::TakeDamage(float Amount, bool ActiveShield, bool& OutIsSh
 	}
 	else
 	{
-		Health = FMath::Max(0.f, Health - Amount);		
+		Health = FMath::Max(0.f, Health - Amount);
 	}
+}
+
+void UCNoxHPComponent::TakeDamage(float Amount)
+{
+	Health = FMath::Max(0.f, Health - Amount);
+	SetHealth(Health);
+	if (Health <= 0) Die();
+	// CLog::Print(FString::Printf(TEXT("%s TakeDamage: %f"), *GetOwner()->GetName() ,Amount));
 }
 
 void UCNoxHPComponent::Die()
 {
+	bIsDead = true;
+
+	CheckNull(OwnerCharacter);
+	if (UCStateComponent* state = CHelpers::GetComponent<UCStateComponent>(OwnerCharacter))
+	{
+		state->SetDeadMode();
+	}
+
+}
+
+void UCNoxHPComponent::SetStatus(float newHP, float newDefense)
+{
+	Health = newHP;
+	Defense = newDefense;
+}
+
+void UCNoxHPComponent::SetHealth(float InNewHealth)
+{
+	Health = FMath::Clamp(InNewHealth, 0.f, MaxHealth);
+	OnHealthChanged.Broadcast(Health, MaxHealth);
+
+}
+
+void UCNoxHPComponent::SetStamina(float InNewStamina)
+{
+	Stamina = FMath::Clamp(InNewStamina, 0.f, MaxStamina);
+	OnStaminaChanged.Broadcast(Stamina, MaxStamina);
+
 }

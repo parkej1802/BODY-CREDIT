@@ -2,75 +2,35 @@
 
 #include "global.h"
 #include "Characters/Enemy/CNoxEnemy_Animinstance.h"
-#include "Components/Enemy/CNox_BehaviorComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "BehaviorTree/behaviorTree.h"
+#include "Components/Enemy/CFSMComponent.h"
 #include "Characters/Enemy/AI/CEnemyController.h"
 #include "Components/Enemy/CNoxEnemyHPComponent.h"
 #include "Navigation/PathFollowingComponent.h"
 
+#pragma region Init
 ACNox_EBase::ACNox_EBase()
 {
+	InitComp();
+	Tags.Add("Enemy");
+}
+
+void ACNox_EBase::InitComp()
+{
 	TeamID = 2;
-
-	CHelpers::CreateActorComponent<UCNox_BehaviorComponent>(this, &BehaviorComp, "Behavior");
-
-	// Controller Setting
-	CHelpers::GetClass(&AIControllerClass, TEXT("/Game/Characters/Enemy/AI/BP_NoxController.BP_NoxController_C"));
-	// AIControllerClass = ACEnemyController::StaticClass();
-	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
-
-	// 목표에 거리가 가까워지면서 속도가 줄어드는 현상 방지
-	// GetCharacterMovement()->GetNavMovementProperties()->bUseFixedBrakingDistanceForPaths = false;
-	GetCharacterMovement()->GetNavMovementProperties()->FixedPathBrakingDistance = 0;
-
-	CHelpers::GetAsset(&BehaviorTree,
-	                   TEXT("/Game/Characters/Enemy/AI/BT_Nox.BT_Nox"));
-	CHelpers::CreateActorComponent<UCNoxEnemyHPComponent>(this, &HPComp, "HPComp");
-
 	GetCapsuleComponent()->SetCollisionProfileName(FName("Enemy"));
-}
-
-void ACNox_EBase::BeginPlay()
-{
-	Super::BeginPlay();
-
-	GetCharacterMovement()->MaxAcceleration = AccelValue; // 가속도 설정
-
-	if (bUseBehaviorTree)
 	{
-		BehaviorComp->SetEnemyType(EnemyType);
+		CHelpers::GetClass(&AIControllerClass, TEXT("/Game/Characters/Enemy/AI/BP_NoxController.BP_NoxController_C"));
+		AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	}
-
-	if (auto Anim = GetMesh()->GetAnimInstance())
 	{
-		EnemyAnim = Cast<UCNoxEnemy_Animinstance>(Anim);
-		EnemyAnim->SetEnemy(this);
-		if (bUseBehaviorTree)
-			EnemyAnim->SetBT(BehaviorComp);
+		// 목표에 거리가 가까워지면서 속도가 줄어드는 현상 방지
+		// GetCharacterMovement()->GetNavMovementProperties()->bUseFixedBrakingDistanceForPaths = false;
+		GetCharacterMovement()->GetNavMovementProperties()->FixedPathBrakingDistance = 0;
 	}
-
-	if (HPComp)
-		HPComp->SetEnemy(this);
-}
-
-void ACNox_EBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	if (bAutoMove && Target)
 	{
-		float dist = FVector::Dist(GetActorLocation(), Target->GetActorLocation());
-		if (dist > MoveDistance)
-		{
-			// CLog::Log(FString::Printf(TEXT("MoveDistance: %f, dist: %f"), MoveDistance, dist));
-			FAIMoveRequest request;
-			request.SetGoalActor(Target);
-			request.SetAcceptanceRadius(MoveDistance);
-			FPathFollowingRequestResult result = EnemyController->MoveTo(request);
-			// FVector DirectionVector = (Target->GetActorLocation() - GetActorLocation()).GetSafeNormal();
-			// AddMovementInput(DirectionVector);
-		}
+		CHelpers::CreateActorComponent<UCNoxEnemyHPComponent>(this, &HPComp, "HPComp");
+		CHelpers::CreateActorComponent<UCFSMComponent>(this, &FSMComp, "FSMComp");
 	}
 }
 
@@ -80,14 +40,84 @@ void ACNox_EBase::PossessedBy(AController* NewController)
 	EnemyController = Cast<ACEnemyController>(NewController);
 }
 
+void ACNox_EBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (auto Anim = GetMesh()->GetAnimInstance())
+	{
+		EnemyAnim = Cast<UCNoxEnemy_Animinstance>(Anim);
+		EnemyAnim->SetEnemy(this);
+	}
+
+	if (HPComp) HPComp->SetEnemy(this);
+
+	if (FSMComp) FSMComp->InitializeFSM(this);
+}
+#pragma endregion
+
+#pragma region Tick
+void ACNox_EBase::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (FSMComp && !bExtractSucceed) FSMComp->UpdateState();
+
+	// if (Target)
+	// {
+	// 	float Dot = FVector::DotProduct(GetActorForwardVector(), (Target->GetActorLocation() - GetActorLocation()).GetSafeNormal());
+	// 	CLog::Print(Dot);		
+	// }
+	if (bDebug)
+	{
+		if (FSMComp) // Print Current State
+		{
+			FString myState = UEnum::GetValueOrBitfieldAsString(FSMComp->GetEnemyState());
+			DrawDebugString(GetWorld(), GetActorLocation(), myState, nullptr, FColor::Yellow, 0);
+			myState = UEnum::GetValueOrBitfieldAsString(FSMComp->GetCombatState());
+			DrawDebugString(
+				GetWorld(), FVector(GetActorLocation().X, GetActorLocation().Y,
+									GetActorLocation().Z - 50), myState, nullptr, FColor::Yellow, 0);
+		}
+		if (HPComp)
+		{
+			FString myHP = FString::Printf(TEXT("%.2f"), HPComp->GetHealthPercent());
+			DrawDebugString(
+				GetWorld(), FVector(GetActorLocation().X, GetActorLocation().Y,
+									GetActorLocation().Z - 100), myHP, nullptr, FColor::Red, 0);
+		}
+	}
+}
+#pragma endregion
+
+#pragma region Apply Damage
+void ACNox_EBase::SetApplyDamage(AActor* DamagedPlayer, const float DamageAmout)
+{
+	UGameplayStatics::ApplyDamage(DamagedPlayer, DamageAmout, EnemyController, this, UDamageType::StaticClass());
+}
+#pragma endregion
+
+#pragma region Set Target
 void ACNox_EBase::SetTarget(ACNox* InTarget)
 {
-	BehaviorComp->SetTarget(InTarget);
+	Target = InTarget;
+	Target ? FSMComp->SetEnemyState(EEnemyState::Sense) : FSMComp->SetEnemyState(EEnemyState::IDLE);
 }
+#pragma endregion
 
-void ACNox_EBase::HandleAttack(float InAttackDistance)
+#pragma region Set Movement Speed
+void ACNox_EBase::SetMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed)
 {
-	AttackDistance = InAttackDistance;
+	float newSpeed = 0.f, newAccelSpeed = 0.f;
+	GetNewMovementSpeed(InMovementSpeed, newSpeed, newAccelSpeed);
+	GetCharacterMovement()->MaxWalkSpeed = newSpeed;
+	GetCharacterMovement()->MaxAcceleration = newAccelSpeed;
+}
+#pragma endregion
+
+#pragma region Attacking
+void ACNox_EBase::HandleAttack()
+{
 	EnemyAnim->PlayAttackMontage();
 }
 
@@ -95,67 +125,116 @@ bool ACNox_EBase::IsAttacking()
 {
 	return EnemyAnim->IsAttacking();
 }
+#pragma endregion
 
-bool ACNox_EBase::IsPlayerInDistance()
+#pragma region BroadCast To Near Enemy
+void ACNox_EBase::SetTargetCallByDelegate(ACNox* InTarget)
 {
-	if (!Target) return false;
-	float dist = FVector::Dist(GetActorLocation(), Target->GetActorLocation());
-	//CLog::Log(FString::Printf(TEXT("dist <= AttackDistance: %d"), dist <= AttackDistance));
-	return dist <= AttackDistance;
+	EnemyController->SetTargetPlayer(InTarget);
+}
+#pragma endregion
+
+#pragma region Hitting
+void ACNox_EBase::HandleHit(const int32 sectionIdx)
+{
+	EnemyAnim->PlayHitMontage(sectionIdx);
 }
 
+bool ACNox_EBase::IsHitting()
+{
+	return EnemyAnim->IsHitting();
+}
+
+void ACNox_EBase::ResetVal() const
+{
+	FSMComp->ResetVal(EnemyType);
+}
+#pragma endregion
+
+#pragma region Die
+void ACNox_EBase::HandleDie(const int32 sectionIdx)
+{
+	GetCapsuleComponent()->SetCollisionProfileName(FName("EnemyDie"));
+	if (EnemyAnim) EnemyAnim->PlayDieMontage(sectionIdx);
+	EnemyController->PerceptionDeactive();
+}
+#pragma endregion
+
+#pragma region Heal Hp (Medic)
 void ACNox_EBase::HealHP()
 {
 	HPComp->HealHP(HealAmount);
 }
+#pragma endregion
 
-void ACNox_EBase::SetGrenadeEnded(bool InbEndedAnim)
+#pragma region Check Player In Forward Degree
+bool ACNox_EBase::IsPlayerInForwardDegree(const float InForwardRange, const float InDegree)
 {
-	BehaviorComp->SetGrenadeEnded(InbEndedAnim);
-}
-
-void ACNox_EBase::SetMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed)
-{
-	float newSpeed=0.f, newAccelSpeed=0.f;
-	GetNewMovementSpeed(InMovementSpeed, newSpeed, newAccelSpeed);
-	GetCharacterMovement()->MaxWalkSpeed = newSpeed;
-	GetCharacterMovement()->MaxAcceleration = newAccelSpeed;
-}
-
-bool ACNox_EBase::IsPlayerInForwardRange(ACNox* InTarget, float InForwardRange)
-{
-	FVector Start = GetActorLocation();
-	FVector End = Start + GetActorForwardVector() * InForwardRange;
-	FCollisionQueryParams Params;
-	Params.bTraceComplex = true;
-
-	TArray<FHitResult> HitResults;
-	bool bHit = GetWorld()->LineTraceMultiByChannel(
-		HitResults,
-		Start,
-		End,
-		ECC_Visibility,
-		Params
-	);
-	// DrawDebugLine(GetWorld(), Start, End, FColor::Red, false, 0.1f, 0, 2.f);
-
-	for (const FHitResult& Hit : HitResults)
+	if (FVector::Dist(Target->GetActorLocation(), GetActorLocation()) > InForwardRange)
 	{
-		if (Hit.GetActor())
-		{
-			UE_LOG(LogTemp, Log, TEXT("Hit: %s"), *Hit.GetActor()->GetName());
-
-			// 특정 물체에 닿았으면 그 뒤는 검사하지 않음
-			if (Hit.GetActor()->ActorHasTag("BlockTrace"))
-			{
-				break;
-			}
-			else if (Hit.GetActor() == InTarget)
-			{
-				return true;
-			}
-		}
+		CLog::Log("Out Of Range");
+		return false;
 	}
 
-	return false;
+	FVector Forward2D = GetActorForwardVector();  Forward2D.Z = 0.f;
+	FVector ToTarget2D = Target->GetActorLocation() - GetActorLocation(); ToTarget2D.Z = 0.f;
+
+	float Dot = FVector::DotProduct(Forward2D.GetSafeNormal(), ToTarget2D.GetSafeNormal());
+	// 수치 오차 때문에 Dot이 ±1을 살짝 넘을 수 있으므로 먼저 Clamp
+	Dot = FMath::Clamp(Dot, -1.f, 1.f);
+	// 라디안 → 도(°) 변환
+	float AngleDeg = FMath::RadiansToDegrees( FMath::Acos(Dot) );
+	return AngleDeg <= InDegree;
 }
+#pragma endregion
+
+#pragma region FSM Set State
+void ACNox_EBase::SetEnemyState(EEnemyState NewState)
+{
+	FSMComp->SetEnemyState(NewState);
+}
+
+void ACNox_EBase::SetCombatState(ECombatState NewCombatState)
+{
+	FSMComp->SetCombatState(NewCombatState);
+}
+#pragma endregion
+
+#pragma region FSM Skill Cool Downs
+void ACNox_EBase::UpdateSkillCoolDowns(ESkillCoolDown Skill, float DeltaTime)
+{
+	FSMComp->UpdateSkillCoolDowns(Skill, DeltaTime);
+}
+
+bool ACNox_EBase::IsSkillReady(ESkillCoolDown Skill) const
+{
+	return FSMComp->IsSkillReady(Skill);
+}
+
+void ACNox_EBase::UsingSkill(ESkillCoolDown Skill)
+{
+	FSMComp->UsingSkill(Skill);
+}
+
+bool ACNox_EBase::RotateToTarget(const float DeltaTime, const FTransform& CurTrans, const FVector& TargetLoc,
+                                 float InteropSpeed)
+{
+	FRotator ToRot = (TargetLoc - CurTrans.GetLocation()).Rotation();
+	float newYaw = FMath::FInterpTo(CurTrans.GetRotation().Rotator().Yaw, ToRot.Yaw, DeltaTime, InteropSpeed);
+	FRotator CurRot = CurTrans.GetRotation().Rotator();
+	FRotator NewRot(CurRot.Pitch, newYaw, CurRot.Roll);
+	// float newYaw = UKismetMathLibrary::FindLookAtRotation(CurTrans.GetLocation(), TargetLoc).Yaw;
+	// FRotator CurRot = CurTrans.GetRotation().Rotator();
+	// // 보간
+	// FRotator NewRot(CurRot.Pitch, CurRot.Roll, FMath::FInterpTo(CurTrans.GetRotation().Rotator().Yaw, newYaw, DeltaTime, InteropSpeed));
+	SetActorRotation(NewRot);
+
+	return true;
+}
+
+void ACNox_EBase::ExtractCallFunction(ACNox* InTarget)
+{
+	RetentionTime = 0.f; // 타겟 잃어버림 방지용, 컨트롤러에서 RetentionTime으로 잊게 해놈
+	SetTarget(InTarget);
+}
+#pragma endregion

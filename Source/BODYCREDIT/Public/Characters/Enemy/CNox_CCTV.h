@@ -20,6 +20,9 @@ public:
 private:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
+	virtual void PossessedBy(AController* NewController) override;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+							 class AController* EventInstigator, AActor* DamageCauser) override;
 
 private:
 	FRotator InitialRotation;
@@ -41,10 +44,20 @@ private:
 	bool bIsPaused = false;
 
 	float SumRotYaw = 0.f;
-	
+
+public:
 	void RotateCCTV(float DeltaTime);
 
 private:
 	UPROPERTY(EditDefaultsOnly)
 	class UStaticMeshComponent* CCTVMesh;
+
+	UFUNCTION()
+	void BroadCastDetectPlayer(ACNox* DetectPlayer);	// 주변 적에게 정보 전달
+
+public: // Die Effect
+	UPROPERTY(EditDefaultsOnly, Category=FX)
+	class UNiagaraSystem* DieEffect = nullptr;
+	UPROPERTY(EditDefaultsOnly, Category=FX)
+	class UNiagaraSystem* DieSpark = nullptr;
 };

@@ -3,6 +3,9 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "Characters/CNox.h"
 #include "Components/ShapeComponent.h"
+#include "Inventory/AC_EquipComponent.h"
+#include "Item/ItemDT.h"
+#include "Item/ItemObject.h"
 
 ACWeapon_Attachment::ACWeapon_Attachment()
 {
@@ -56,14 +59,14 @@ void ACWeapon_Attachment::OffCollisions()
 		OnWeaponAttachmentEndCollision.Broadcast();
 
 	for (UShapeComponent* shape : Collisions)
-		shape->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+		shape->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 }
 
 void ACWeapon_Attachment::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	CheckTrue(OwnerCharacter == OtherActor);
-	//CheckTrue(OwnerCharacter->GetClass() == OtherActor->GetClass());
+	CheckTrue(OwnerCharacter->GetClass() == OtherActor->GetClass());
 
 	if (OnWeaponAttachmentBeginOverlap.IsBound())
 		OnWeaponAttachmentBeginOverlap.Broadcast(OwnerCharacter, this, Cast<ACNox>(OtherActor));
@@ -73,7 +76,7 @@ void ACWeapon_Attachment::OnComponentBeginOverlap(UPrimitiveComponent* Overlappe
 void ACWeapon_Attachment::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	CheckTrue(OwnerCharacter == OtherActor);
-	//CheckTrue(OwnerCharacter->GetClass() == OtherActor->GetClass());
+	CheckTrue(OwnerCharacter->GetClass() == OtherActor->GetClass());
 
 	if (OnWeaponAttachmentEndOverlap.IsBound())
 		OnWeaponAttachmentEndOverlap.Broadcast(OwnerCharacter, Cast<ACNox>(OtherActor));

@@ -20,7 +20,9 @@ class BODYCREDIT_API UInventory_EquipmentTile : public UUserWidget
 	
 
 public:
+	UPROPERTY()
 	FIntPoint DraggedItemTopLeftTile;
+	UPROPERTY()
 	bool DrawDropLocation = false;
 
 	TPair<bool, bool> MousePositionInTile(FVector2D MousePosition);
@@ -42,23 +44,36 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UImage* Image_Item;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY()
 	class UItemObject* ItemObject;
+
+	//UPROPERTY(EditAnywhere)
+	//class UAC_LootingInventoryComponent* EquipBackpackInventoryComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EPlayerPart ItemType;
 
+	UPROPERTY()
 	FVector2D BorderSize;
 
+	UPROPERTY()
 	FVector2D NewSize;
 
+	UPROPERTY()
 	FVector2D Size;
 
 	FSlateBrush GetIconImage();
 
+	FSlateBrush GetThumbnailImage();
+
 	virtual void NativeConstruct() override;
 
 	void SetItem(class UItemObject* NewItem);
+
+	UPROPERTY()
+	bool IsMoving = false;
+
+	void Refresh();
 
 public:
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;

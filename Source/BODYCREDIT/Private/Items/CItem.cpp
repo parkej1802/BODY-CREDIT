@@ -7,8 +7,6 @@ ACItem::ACItem()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	//CHelpers::CreateComponent<USceneComponent>(this, &Root, "Root");
-
 }
 
 void ACItem::BeginPlay()

@@ -4,8 +4,55 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataTable.h"
-#include "ItemObject.h"
+#include "Components/CWeaponComponent.h"
 #include "ItemDT.generated.h"
+
+USTRUCT(BlueprintType)
+struct FItemStatIncrease
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
+	float Health = 0.f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
+	float Strength = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
+	float Stamina = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
+	float MoveSpeed = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
+	float Armor = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
+	float Accuracy = 0.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
+	float CarryWeight = 0.f;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stat")
+	float Humanity = 0.f;
+
+
+};
+
+UENUM(BlueprintType)
+enum class EPlayerPart : uint8
+{
+	Basic	 UMETA(DisplayName = "Basic"),
+    Head     UMETA(DisplayName = "Head"),
+    Body     UMETA(DisplayName = "Body"),
+	Arm		 UMETA(DisplayName = "Arm"),
+	Leg      UMETA(DisplayName = "Leg"),
+    Weapon1   UMETA(DisplayName = "Weapon1"),
+	Weapon2  UMETA(DisplayName = "Weapon2"),
+	Backpack	UMETA(DisplayName = "Backpack"),
+	ChestRigs	UMETA(DisplayName = "ChestRigs")
+};
 
 UENUM(BlueprintType)
 enum class EItemRarity : uint8
@@ -57,6 +104,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	class UMaterialInterface* RotatedIcon;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+    class UMaterialInterface* EquipedThumbnail;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	TSubclassOf<class AItem_Base> ItemClass;
 
@@ -69,6 +119,21 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
     EPlayerPart ItemType;
 
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+    float Weight;
+
+     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+     class USkeletalMesh* SkeletalMesh;
+
+     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+     FItemStatIncrease StatIncrease;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+    FName ItemName;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+	EWeaponType WeaponType;
+
     FItemData()
         : ID(0)
         , Mesh(nullptr)
@@ -78,6 +143,7 @@ public:
         , Thumbnail(nullptr)
         , Index(-1)
         , Rarity(EItemRarity::Common)
+        , Price(0)
         , Description(TEXT(""))
         , Icon(nullptr)
         , RotatedIcon(nullptr)
@@ -85,6 +151,10 @@ public:
         , Rotated(false)
         , StartPosition(0, 0)
         , ItemType(EPlayerPart::Basic)
+        , Weight(1)
+        , SkeletalMesh(nullptr)
+        , StatIncrease()
+        , ItemName()
     {
     }
 };

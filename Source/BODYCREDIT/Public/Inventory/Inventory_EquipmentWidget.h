@@ -32,7 +32,11 @@ public:
 	UPROPERTY(EditAnywhere, Category = Widget)
 	TSubclassOf<UUserWidget> InventoryItemTileWidget;
 
+	UPROPERTY()
 	class UInventory_EquipmentTile* InventoryItemTileUI;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class ACNox_Controller* PC;
 
 	UPROPERTY(EditAnywhere)
 	class UAC_EquipComponent* EquipComp;
@@ -40,13 +44,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EPlayerPart ItemType;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY()
 	class UItemObject* ItemObject;
 
+	UPROPERTY()
 	FVector2D NewSize;
 
+	UPROPERTY()
 	float TileSize;
 
+	UPROPERTY()
 	bool DrawDropLocation = false;
 
 	bool IsValidItemType(class UItemObject* TempItemObject) const;
@@ -70,5 +77,7 @@ public:
 		const FWidgetStyle& InWidgetStyle,
 		bool bParentEnabled
 	) const override;
+	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
+	virtual void NativeOnMouseLeave(const FPointerEvent& InMouseEvent) override;
 };

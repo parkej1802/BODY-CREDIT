@@ -12,31 +12,40 @@
 #include "Transportation/CStair.h"
 #include "Transportation/CVent.h"
 #include "Characters/Enemy/AttackActor/CRangeProjectile.h"
+#include "Components/Enemy/CFSMComponent.h"
+#include "Components/Enemy/CNoxEnemyHPComponent.h"
 
 ACNox_MemoryCollectorAI::ACNox_MemoryCollectorAI()
 {
-	ConstructorHelpers::FObjectFinder<USkeletalMesh> tmpMesh(TEXT(
-		"/Game/Assets/Sci_Fi_Characters_Pack/Mesh/Sci_Fi_Character_04/SK_Sci_Fi_Character_04_Full.SK_Sci_Fi_Character_04_Full"));
-	if (tmpMesh.Succeeded())
-		GetMesh()->SetSkeletalMesh(tmpMesh.Object);
+	{
+		ConstructorHelpers::FObjectFinder<USkeletalMesh> tmpMesh(TEXT(
+			"/Game/Assets/Sci_Fi_Characters_Pack/Mesh/Sci_Fi_Character_04/SK_Sci_Fi_Character_04_Full.SK_Sci_Fi_Character_04_Full"));
+		if (tmpMesh.Succeeded())
+			GetMesh()->SetSkeletalMesh(tmpMesh.Object);
 
-	GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -85), FRotator(0, -90, 0));
-	GetMesh()->SetRelativeScale3D(FVector(1.1));
+		GetMesh()->SetRelativeLocationAndRotation(FVector(0, 0, -85), FRotator(0, -90, 0));
+		GetMesh()->SetRelativeScale3D(FVector(1.1));
 
-	GetCapsuleComponent()->SetCapsuleHalfHeight(95.f);
-	GetCapsuleComponent()->SetCapsuleRadius(34.f);
+		GetCapsuleComponent()->SetCapsuleHalfHeight(100.f);
+		GetCapsuleComponent()->SetCapsuleRadius(34.f);
 
-	CHelpers::GetClass<ACBeam>(&BeamOrgCls, TEXT("/Game/Characters/Enemy/AttackActor/BP_LaserBeam.BP_LaserBeam_C"));
-	CHelpers::GetClass<ACWavePulse>(&WavePulseOrgCls,
-	                                TEXT("/Game/Characters/Enemy/AttackActor/BP_WavePulse.BP_WavePulse_C"));
-	CHelpers::GetClass<ACRangeProjectile>(&RangeProjectileCls,
-	                                      TEXT(
-		                                      "/Game/Characters/Enemy/AttackActor/BP_RangeProjectile.BP_RangeProjectile_C"));
+		GetMesh()->SetRelativeLocation(FVector(0, 0, -100));
+	}
 
-	ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClass(
-		TEXT("/Game/Characters/Enemy/Anim/MemoryAnim/ABP_MemoryAnim.ABP_MemoryAnim_C"));
-	if (AnimInstanceClass.Succeeded())
-		GetMesh()->SetAnimInstanceClass(AnimInstanceClass.Class);
+	{
+		CHelpers::GetClass<ACBeam>(&BeamOrgCls, TEXT("/Game/Characters/Enemy/AttackActor/BP_LaserBeam.BP_LaserBeam_C"));
+		CHelpers::GetClass<ACWavePulse>(&WavePulseOrgCls,
+		                                TEXT("/Game/Characters/Enemy/AttackActor/BP_WavePulse.BP_WavePulse_C"));
+		CHelpers::GetClass<ACRangeProjectile>(&RangeProjectileCls,
+		                                      TEXT(
+			                                      "/Game/Characters/Enemy/AttackActor/BP_RangeProjectile.BP_RangeProjectile_C"));
+	}
+
+	{
+		ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClass(
+			TEXT("/Game/Characters/Enemy/Anim/MemoryAnim/ABP_MemoryAnim.ABP_MemoryAnim_C"));
+		if (AnimInstanceClass.Succeeded()) GetMesh()->SetAnimInstanceClass(AnimInstanceClass.Class);
+	}
 
 	EnemyType = EEnemyType::MemoryCollector;
 	SetPerceptionInfo();
@@ -45,21 +54,29 @@ ACNox_MemoryCollectorAI::ACNox_MemoryCollectorAI()
 void ACNox_MemoryCollectorAI::BeginPlay()
 {
 	Super::BeginPlay();
-	CHelpers::FindActors<ACVent>(GetWorld(), AllVent);
-	CHelpers::FindActors<ACStair>(GetWorld(), AllStair);
+	{
+		CHelpers::FindActors<ACVent>(GetWorld(), AllVent);
+		CHelpers::FindActors<ACStair>(GetWorld(), AllStair);
+	}
 
-	CHelpers::GetAssetDynamic(&(EnemyAnim->Attack1Montage),
-	                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_Attack1.AM_Attack1"));
-	CHelpers::GetAssetDynamic(&(EnemyAnim->Attack2Montage),
-	                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_Attack2.AM_Attack2"));
-	CHelpers::GetAssetDynamic(&(EnemyAnim->Attack3Montage),
-	                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_Attack3.AM_Attack3"));
-	CHelpers::GetAssetDynamic(&(EnemyAnim->Attack4Montage),
-	                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_Attack4.AM_Attack4"));
-	CHelpers::GetAssetDynamic(&(EnemyAnim->BeamMontage),
-	                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_Beam.AM_Beam"));
-	CHelpers::GetAssetDynamic(&(EnemyAnim->WavePulseMontage),
-	                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_WavePulse.AM_WavePulse"));
+	{
+		CHelpers::GetAssetDynamic(&(EnemyAnim->Attack1Montage),
+		                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_Attack1.AM_Attack1"));
+		CHelpers::GetAssetDynamic(&(EnemyAnim->Attack2Montage),
+		                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_Attack2.AM_Attack2"));
+		CHelpers::GetAssetDynamic(&(EnemyAnim->Attack3Montage),
+		                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_Attack3.AM_Attack3"));
+		CHelpers::GetAssetDynamic(&(EnemyAnim->Attack4Montage),
+		                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_Attack4.AM_Attack4"));
+		CHelpers::GetAssetDynamic(&(EnemyAnim->BeamMontage),
+		                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_Beam.AM_Beam"));
+		CHelpers::GetAssetDynamic(&(EnemyAnim->WavePulseMontage),
+		                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_WavePulse.AM_WavePulse"));
+
+		// 테스트 애니메이션
+		CHelpers::GetAssetDynamic(&(EnemyAnim->HitMontage), TEXT("/Game/Assets/MedicAnim/DamageAnim/AM_Hit.AM_Hit"));
+		CHelpers::GetAssetDynamic(&(EnemyAnim->DieMontage), TEXT("/Game/Assets/MedicAnim/DieAnim/AM_Die.AM_Die"));
+	}
 
 	{
 		// Beam
@@ -104,13 +121,14 @@ void ACNox_MemoryCollectorAI::Tick(float DeltaTime)
 
 	if (bRotateToTarget)
 	{
-		FVector TargetLoc = BehaviorComp->GetTarget()->GetActorLocation();
-		float newYaw = (TargetLoc - GetActorLocation()).GetSafeNormal().Rotation().Yaw;
-		FRotator TargetRot = FRotator(0, newYaw, 0);
-
-		// 보간
-		FRotator NewRot = FMath::RInterpTo(GetActorRotation(), TargetRot, DeltaTime, 5.f);
-		SetActorRotation(NewRot);
+		RotateToTarget(DeltaTime, GetTransform(), Target->GetActorLocation());
+		// FVector TargetLoc = Target->GetActorLocation();
+		// float newYaw = (TargetLoc - GetActorLocation()).GetSafeNormal().Rotation().Yaw;
+		// FRotator TargetRot = FRotator(0, newYaw, 0);
+		//
+		// // 보간
+		// FRotator NewRot = FMath::RInterpTo(GetActorRotation(), TargetRot, DeltaTime, 5.f);
+		// SetActorRotation(NewRot);
 	}
 }
 
@@ -118,7 +136,33 @@ void ACNox_MemoryCollectorAI::SetPerceptionInfo()
 {
 	Super::SetPerceptionInfo();
 
+	SightRadius = 800.f;
+	HearingRange = 1000.f;
+
 	RetentionTime = 0.f;
+}
+
+float ACNox_MemoryCollectorAI::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,
+                                          AController* EventInstigator, AActor* DamageCauser)
+{
+	if (!GetTarget())
+		if (ACNox* player = Cast<ACNox>(DamageCauser->GetOwner())) SetTarget(player);
+
+	HPComp->TakeDamage(DamageAmount);
+	if (HPComp->IsDead()) FSMComp->SetEnemyState(EEnemyState::Die);
+	else
+	{
+		if (FSMComp->GetEnemyState() == EEnemyState::Combat) return DamageAmount;
+
+		const float HitChance = 0.3f; // 30% 확률로 피격 상태 진입
+		const float rand = FMath::FRand(); // 0~1 랜덤
+		if (rand <= HitChance)
+		{
+			ResetVal();
+			FSMComp->SetEnemyState(EEnemyState::Hit);
+		}
+	}
+	return DamageAmount;
 }
 
 void ACNox_MemoryCollectorAI::GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed,
@@ -132,40 +176,34 @@ void ACNox_MemoryCollectorAI::GetNewMovementSpeed(const EEnemyMovementSpeed& InM
 		break;
 	case EEnemyMovementSpeed::Walking:
 		OutNewSpeed = 400.f;
-		OutNewAccelSpeed = 450.f;
-		break;
-	case EEnemyMovementSpeed::Jogging:
-		OutNewSpeed = 500.f;
-		OutNewAccelSpeed = 800.f;
+		OutNewAccelSpeed = 728.f;
 		break;
 	case EEnemyMovementSpeed::Sprinting:
-		OutNewSpeed = 500.f;
-		OutNewAccelSpeed = 600.f;
+		OutNewSpeed = 400.f;
+		OutNewAccelSpeed = 1024.f;
 		break;
 	}
 }
 
 void ACNox_MemoryCollectorAI::RegisterMemory(const FMemoryFragment& InNewMemory)
 {
-	if (!HasAuthority()) return;
-
 	// TTL 체크: 오래된 기억 제거
-	const float Now = GetWorld()->GetTimeSeconds();
-	MemoryQueue.RemoveAll([Now, this](const FMemoryFragment& Mem)
-	{
-		return (Now - Mem.TimeStamp) > MemoryExpireTime;
-	});
+	// const float Now = GetWorld()->GetTimeSeconds();
+	// MemoryQueue.RemoveAll([Now, this](const FMemoryFragment& Mem)
+	// {
+	// 	return (Now - Mem.TimeStamp) > MemoryExpireTime;
+	// });
 
 	// TTL 삭제 후 현재 기억이 포함됐는지 검사
-	if (!MemoryQueue.Contains(CurrentTargetMemory))
-	{
-		CurrentTargetMemory = FMemoryFragment(); // 초기화
-		// // 또는 다음 우선순위 기억으로 갱신
-		// if (MemoryQueue.Num() > 0)
-		// {
-		// 	CurrentTargetMemory = MemoryQueue[0];
-		// }
-	}
+	// if (!MemoryQueue.Contains(CurrentTargetMemory))
+	// {
+	// 	CurrentTargetMemory = FMemoryFragment(); // 초기화
+	// 	// // 또는 다음 우선순위 기억으로 갱신
+	// 	// if (MemoryQueue.Num() > 0)
+	// 	// {
+	// 	// 	CurrentTargetMemory = MemoryQueue[0];
+	// 	// }
+	// }
 
 	// 중복 방지: 동일 위치/플레이어 기억은 덮어쓰기 또는 무시
 	for (FMemoryFragment& Mem : MemoryQueue)
@@ -194,14 +232,14 @@ void ACNox_MemoryCollectorAI::RegisterMemory(const FMemoryFragment& InNewMemory)
 	MemoryQueue.Sort(); // operator< 로 우선순위 내림차순 정렬
 
 	// 가장 우선순위가 높은 기억으로 현재 목표 갱신
-	if (MemoryQueue.Num() > 0 && MemoryQueue[0].CalculatedPriority > CurrentTargetMemory.CalculatedPriority)
-	{
-		CurrentTargetMemory = MemoryQueue[0];
-		// Blackboard에 등록된 위치 갱신 등 추가 가능
-	}
+	// if (MemoryQueue.Num() > 0 && MemoryQueue[0].CalculatedPriority > CurrentTargetMemory.CalculatedPriority)
+	// {
+	// 	CurrentTargetMemory = MemoryQueue[0];
+	// 	// Blackboard에 등록된 위치 갱신 등 추가 가능
+	// }
 }
 
-void ACNox_MemoryCollectorAI::EvaluateMemory()
+bool ACNox_MemoryCollectorAI::EvaluateMemory()
 {
 	float Now = GetWorld()->GetTimeSeconds();
 	float BestScore = -1.0f;
@@ -220,13 +258,13 @@ void ACNox_MemoryCollectorAI::EvaluateMemory()
 		// 기억의 종류에 따라 가중치 부여
 		switch (Mem.TriggerType)
 		{
-		case EMemoryTriggerType::Intrusion:
+		case EMemoryTriggerType::Stay:
 			Score += 20.f;
 			break;
 		case EMemoryTriggerType::Combat:
 			Score += 40.f;
 			break;
-		case EMemoryTriggerType::Loitering:
+		case EMemoryTriggerType::Looting:
 			Score += 15.f;
 			break;
 		default:
@@ -249,30 +287,21 @@ void ACNox_MemoryCollectorAI::EvaluateMemory()
 		}
 	}
 
-	if (BestMemory)
-	{
-		BehaviorComp->SetMemoryTarget(*BestMemory);
-		BehaviorComp->SetHasMemoryTarget(true);
-	}
-	else
-	{
-		BehaviorComp->SetHasMemoryTarget(false);
-	}
+	if (BestMemory) CurrentTargetMemory = *BestMemory;
+
+	return BestMemory ? true : false;
 }
 
 const FMemoryFragment ACNox_MemoryCollectorAI::GetMemoryTarget()
 {
-	return BehaviorComp->GetMemoryTarget();
+	return CurrentTargetMemory;
 }
 
-void ACNox_MemoryCollectorAI::SetPatrolLocation(const FVector& InPatrolLocation)
+void ACNox_MemoryCollectorAI::SetMemoryTarget_MemoryMoveEnd(const FMemoryFragment& InNewMemory)
 {
-	BehaviorComp->SetPatrolLocation(InPatrolLocation);
-}
-
-FVector ACNox_MemoryCollectorAI::GetPatrolLocation()
-{
-	return BehaviorComp->GetPatrolLocation();
+	if (MemoryQueue.Contains(CurrentTargetMemory))
+		MemoryQueue.Remove(CurrentTargetMemory);
+	CurrentTargetMemory = InNewMemory;
 }
 
 void ACNox_MemoryCollectorAI::ShutBeam()
@@ -287,14 +316,14 @@ bool ACNox_MemoryCollectorAI::IsPlayBeam()
 
 void ACNox_MemoryCollectorAI::BeamAttack()
 {
-	Beam->SetBeamActive(true, BehaviorComp->GetTarget());
+	Beam->SetBeamActive(true, Target);
 	bRotateToTarget = true;
 }
 
 void ACNox_MemoryCollectorAI::BeamAttackEnd()
 {
 	EnemyAnim->StopBeamAttack();
-	Beam->SetBeamActive(false, BehaviorComp->GetTarget());
+	Beam->SetBeamActive(false, Target);
 	bRotateToTarget = false;
 }
 
@@ -315,7 +344,6 @@ void ACNox_MemoryCollectorAI::PulseWaveAttack()
 
 void ACNox_MemoryCollectorAI::SpawnRangeProjectile()
 {
-	// RangeProjectileArray.Reserve(RangeProjectileArray.Max() + SpawnProjectileCount);
 	for (int32 i = 0; i < SpawnProjectileCount; ++i)
 	{
 		FTransform Transform(FRotator::ZeroRotator, FVector::ZeroVector, SpawnScale);
@@ -343,14 +371,14 @@ void ACNox_MemoryCollectorAI::StartRangeAttack(bool bIsRight)
 	SpawnTransform.SetScale3D(SpawnScale);
 
 	auto* PoolObj = RangeProjectileArray.Pop();
-	PoolObj->InitializeProjectile(SpawnTransform.GetLocation(), BehaviorComp->GetTarget());
+	PoolObj->InitializeProjectile(SpawnTransform.GetLocation(), Target);
 	PoolObj->SetActorTransform(SpawnTransform);
 	PoolObj->SetActorEnableCollision(true);
 	PoolObj->SetActorHiddenInGame(false);
 	PoolObj->SetActorTickEnabled(true);
 }
 
-void ACNox_MemoryCollectorAI::ReturnToPool(class ACRangeProjectile* ReturnedProjectile)
+void ACNox_MemoryCollectorAI::ReturnToPool(ACRangeProjectile* ReturnedProjectile)
 {
 	if (RangeProjectileArray.Num() == 0 || !RangeProjectileArray.Contains(ReturnedProjectile))
 	{

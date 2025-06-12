@@ -2,16 +2,13 @@
 
 #include "CoreMinimal.h"
 #include "Item/Item_Base.h"
+#include "GameFramework/Actor.h"
 #include "CItem.generated.h"
 
 UCLASS()
 class BODYCREDIT_API ACItem : public AItem_Base
 {
 	GENERATED_BODY()
-
-//protected:
-//	UPROPERTY(EditAnywhere)
-//	class USceneComponent* Root;
 	
 public:	
 	ACItem();

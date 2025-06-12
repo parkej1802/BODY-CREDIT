@@ -4,25 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Characters/CNox.h"
+#include "Components/Enemy/CEnemyState.h"
 #include "CNox_EBase.generated.h"
-
-UENUM(BlueprintType)
-enum class EEnemyType : uint8
-{
-	Cctv = 0,
-	Zero,
-	MedicAndroid,
-	MemoryCollector,
-};
-
-UENUM(BlueprintType)
-enum class EEnemyMovementSpeed : uint8
-{
-	Idle = 0,
-	Walking,
-	Jogging,
-	Sprinting
-};
 
 /**
  * Enemy Base
@@ -32,9 +15,35 @@ class BODYCREDIT_API ACNox_EBase : public ACNox
 {
 	GENERATED_BODY()
 
+#pragma region Init
 public:
 	ACNox_EBase();
 
+protected: // Virtual Function
+	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+	virtual void PossessedBy(AController* NewController) override;
+
+protected:
+	UPROPERTY()
+	class ACEnemyController* EnemyController;
+	UPROPERTY(EditAnywhere, Category=Debug)
+	bool bDebug = true;
+
+	void InitComp();
+#pragma endregion
+
+#pragma region Component
+protected:
+	UPROPERTY(VisibleDefaultsOnly)
+	class UCNoxEnemy_Animinstance* EnemyAnim;
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	class UCNoxEnemyHPComponent* HPComp;
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	class UCFSMComponent* FSMComp;
+#pragma endregion
+
+#pragma region Sensing
 protected: // Sensing Property
 	UPROPERTY(EditDefaultsOnly, Category="Sensing")
 	float SightRadius = 300.f;
@@ -59,46 +68,77 @@ protected: // Set Sensing Function
 	virtual void SetPerceptionInfo()
 	{
 	}
+#pragma endregion
 
-protected: // Status
+#pragma region EnemyType
+protected:
 	UPROPERTY(EditDefaultsOnly)
 	EEnemyType EnemyType;
-	UPROPERTY(EditDefaultsOnly)
-	float AccelValue = 150.f;
 
-protected: // Virtual Function
-	virtual void BeginPlay() override;
-	virtual void Tick(float DeltaTime) override;
-	virtual void PossessedBy(AController* NewController) override;
+public:
+	EEnemyType GetEnemyType() const { return EnemyType; }
+#pragma endregion
 
-protected: // Component
-	UPROPERTY(VisibleDefaultsOnly)
-	class UCNox_BehaviorComponent* BehaviorComp;
-	UPROPERTY(VisibleDefaultsOnly)
-	class UCNoxEnemy_Animinstance* EnemyAnim;
-	UPROPERTY(VisibleAnywhere, Category = "Components")
-	class UCNoxEnemyHPComponent* HPComp;
+#pragma region Apply Damage
+public:
+	void SetApplyDamage(AActor* DamagedPlayer, const float DamageAmout);
+#pragma endregion
+
+#pragma region Target
 
 protected:
-	UPROPERTY()
-	class ACEnemyController* EnemyController;
+	UPROPERTY(EditDefaultsOnly)
+	ACNox* Target = nullptr;
 
 public:
-	bool bUseBehaviorTree = true;
-
-private:
-	UPROPERTY(EditDefaultsOnly, Category = "AI")
-	class UBehaviorTree* BehaviorTree;
-
-public:
-	FORCEINLINE class UBehaviorTree* GetBehaviorTree() { return BehaviorTree; }
-
-public:
-	// CCTV에서는 Blackboard에 세팅은 안하고 주변 Enemy에게만 전달한다.
 	virtual void SetTarget(ACNox* InTarget);
-	void HandleAttack(float InAttackDistance);
+	ACNox* GetTarget() const { return Target; }
+#pragma endregion
+	
+#pragma region Set Movement Speed
+
+protected:
+	virtual void GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed,
+									 float& OutNewAccelSpeed)
+	{
+	};
+
+public:
+	void SetMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed);
+#pragma endregion
+	
+#pragma region Attacking
+
+public:
+	void HandleAttack();
 	bool IsAttacking();
-	bool IsPlayerInDistance();
+
+	virtual void AttackCollision(bool bOn, bool IsRightHand = true)
+	{
+	}
+#pragma endregion
+
+#pragma region BroadCast To Near Enemy
+
+public:
+	void SetTargetCallByDelegate(ACNox* InTarget);
+#pragma endregion
+
+#pragma region Hitting
+
+public:
+	void HandleHit(const int32 sectionIdx = 1);
+	bool IsHitting();
+	void ResetVal() const;
+#pragma endregion
+
+#pragma region Die
+
+public:
+	void HandleDie(const int32 sectionIdx = 1);
+#pragma endregion
+
+#pragma region Heal (Medic)
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category=Health)
@@ -106,29 +146,42 @@ protected:
 
 public:
 	void HealHP();
+#pragma endregion
 
-public: // Medic Android
-	void SetGrenadeEnded(bool InbEndedAnim);
+#pragma region Check Player In Forward Degree
 
+public:
+	bool IsPlayerInForwardDegree(const float InForwardRange, const float InDegree = 10.f);
+#pragma endregion
+
+#pragma region FSM Set State
+
+public:
+	void SetEnemyState(EEnemyState NewState);
+	void SetCombatState(ECombatState NewCombatState);
+#pragma endregion
+
+#pragma region FSM Skill Cool Downs
+
+public:
+	void UpdateSkillCoolDowns(ESkillCoolDown Skill, float DeltaTime);
+	bool IsSkillReady(ESkillCoolDown Skill) const;
+	void UsingSkill(ESkillCoolDown Skill);
+#pragma endregion
+
+#pragma region Rotate To Targer
+public:
+	bool RotateToTarget(const float DeltaTime, const FTransform& CurTrans, const FVector& TargetLoc,
+	                    float InteropSpeed = 5.f);
+#pragma endregion
+
+#pragma region Extract Call Function
+public:
+	UFUNCTION(BlueprintCallable)
+	void ExtractCallFunction(ACNox* InTarget);
+	UFUNCTION(BlueprintCallable)
+	void ExtractSucceed() { bExtractSucceed = true; }
 private:
-	bool bAutoMove = false;
-	UPROPERTY(EditDefaultsOnly, Category=AutoMove)
-	ACNox* Target = nullptr;
-	UPROPERTY(EditDefaultsOnly, Category=AutoMove)
-	float MoveDistance = 100.f;
-	UPROPERTY(EditDefaultsOnly, Category=AutoMove)
-	float AttackDistance = 100.f;
-
-public:
-	FORCEINLINE void SetAutoMove(bool InbAutoMove, ACNox* InTarget, float InMoveDistance)
-	{
-		bAutoMove = InbAutoMove;
-		Target = InTarget;
-		MoveDistance = InMoveDistance;
-	}
-	virtual void GetNewMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed, float& OutNewSpeed, float& OutNewAccelSpeed){};
-	void SetMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed);
-
-public:
-	bool IsPlayerInForwardRange(ACNox* InTarget, float InForwardRange);
+	bool bExtractSucceed = false;
+#pragma endregion
 };
