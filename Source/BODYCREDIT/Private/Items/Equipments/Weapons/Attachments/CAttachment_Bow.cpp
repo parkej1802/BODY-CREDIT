@@ -34,10 +34,10 @@ void ACAttachment_Bow::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AttachTo("Holster_Bow");
+	// AttachTo("Holster_Bow");
 
 	SkeletalMesh->SetVisibility(false);
-	// PoseableMesh->SetVisibility(false);
+	PoseableMesh->SetVisibility(false);
 
 	PoseableMesh->SetSkeletalMesh(SkeletalMesh->GetSkeletalMeshAsset());
 	PoseableMesh->CopyPoseFromSkeletalComponent(SkeletalMesh);
