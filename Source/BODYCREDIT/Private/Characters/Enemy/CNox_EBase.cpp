@@ -170,21 +170,26 @@ void ACNox_EBase::HealHP()
 #pragma region Check Player In Forward Degree
 bool ACNox_EBase::IsPlayerInForwardDegree(const float InForwardRange, const float InDegree)
 {
-	if (FVector::Dist(Target->GetActorLocation(), GetActorLocation()) > InForwardRange)
+	if (!Target) return false;
+
+	const FVector MyLocation = GetActorLocation();
+	FVector TargetLocation = Target->GetActorLocation();
+	const float DistanceSquared = FVector::DistSquared(MyLocation, TargetLocation);
+	
+	// 거리 제곱으로 비교하여 제곱근 연산 방지
+	if (DistanceSquared > FMath::Square(InForwardRange))
 	{
 		CLog::Log("Out Of Range");
 		return false;
 	}
 
-	FVector Forward2D = GetActorForwardVector();  Forward2D.Z = 0.f;
-	FVector ToTarget2D = Target->GetActorLocation() - GetActorLocation(); ToTarget2D.Z = 0.f;
+	const FVector Forward2D = FVector(GetActorForwardVector().X, GetActorForwardVector().Y, 0.f).GetSafeNormal();
+	TargetLocation.Z = 0.f;
+	const FVector ToTarget2D = FVector(TargetLocation - MyLocation).GetSafeNormal2D();
 
-	float Dot = FVector::DotProduct(Forward2D.GetSafeNormal(), ToTarget2D.GetSafeNormal());
-	// 수치 오차 때문에 Dot이 ±1을 살짝 넘을 수 있으므로 먼저 Clamp
-	Dot = FMath::Clamp(Dot, -1.f, 1.f);
-	// 라디안 → 도(°) 변환
-	float AngleDeg = FMath::RadiansToDegrees( FMath::Acos(Dot) );
-	return AngleDeg <= InDegree;
+	// 내적 계산 후 각도 변환
+	const float Dot = FMath::Clamp(FVector::DotProduct(Forward2D, ToTarget2D), -1.f, 1.f);
+	return FMath::RadiansToDegrees(FMath::Acos(Dot)) <= InDegree;
 }
 #pragma endregion
 
@@ -219,19 +224,47 @@ void ACNox_EBase::UsingSkill(ESkillCoolDown Skill)
 bool ACNox_EBase::RotateToTarget(const float DeltaTime, const FTransform& CurTrans, const FVector& TargetLoc,
                                  float InteropSpeed)
 {
-	FRotator ToRot = (TargetLoc - CurTrans.GetLocation()).Rotation();
-	float newYaw = FMath::FInterpTo(CurTrans.GetRotation().Rotator().Yaw, ToRot.Yaw, DeltaTime, InteropSpeed);
-	FRotator CurRot = CurTrans.GetRotation().Rotator();
-	FRotator NewRot(CurRot.Pitch, newYaw, CurRot.Roll);
-	// float newYaw = UKismetMathLibrary::FindLookAtRotation(CurTrans.GetLocation(), TargetLoc).Yaw;
-	// FRotator CurRot = CurTrans.GetRotation().Rotator();
-	// // 보간
-	// FRotator NewRot(CurRot.Pitch, CurRot.Roll, FMath::FInterpTo(CurTrans.GetRotation().Rotator().Yaw, newYaw, DeltaTime, InteropSpeed));
-	SetActorRotation(NewRot);
-
-	return true;
+    // 1. 현재 위치와 목표 위치를 2D로 변환
+    const FVector CurrentLocation = CurTrans.GetLocation();
+    const FVector DirectionToTarget = (TargetLoc - CurrentLocation).GetSafeNormal2D();
+    
+    // 2. 목표 회전값 계산
+    const FRotator TargetRotation = DirectionToTarget.Rotation();
+    
+    // 3. 현재 회전값 가져오기
+    const FRotator CurrentRotation = CurTrans.GetRotation().Rotator();
+    
+    // 4. Yaw만 보간
+    const float NewYaw = FMath::FInterpTo(
+        CurrentRotation.Yaw,
+        TargetRotation.Yaw,
+        DeltaTime,
+        InteropSpeed
+    );
+    
+    // 5. 새로운 회전값 설정 (Pitch와 Roll은 유지)
+    const FRotator NewRotation(CurrentRotation.Pitch, NewYaw, CurrentRotation.Roll);
+    SetActorRotation(NewRotation);
+    
+    return true;
 }
 
+void ACNox_EBase::SetRotateToTarget()
+{
+	// 1. 현재 회전값 가져오기
+	const FRotator CurrentRotation = GetActorRotation();
+		
+	// 2. 목표 방향 계산
+	const FVector DirectionToTarget = (GetTarget()->GetActorLocation() - GetActorLocation()).GetSafeNormal2D();
+	const float TargetYaw = DirectionToTarget.Rotation().Yaw;
+		
+	// 3. 새로운 회전값 설정 (Pitch와 Roll은 유지)
+	const FRotator NewRotation(CurrentRotation.Pitch, TargetYaw, CurrentRotation.Roll);
+	SetActorRotation(NewRotation);
+}
+#pragma endregion
+
+#pragma region Extract Call Function
 void ACNox_EBase::ExtractCallFunction(ACNox* InTarget)
 {
 	RetentionTime = 0.f; // 타겟 잃어버림 방지용, 컨트롤러에서 RetentionTime으로 잊게 해놈

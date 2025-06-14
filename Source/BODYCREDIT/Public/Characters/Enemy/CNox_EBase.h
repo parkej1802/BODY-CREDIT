@@ -173,6 +173,7 @@ public:
 public:
 	bool RotateToTarget(const float DeltaTime, const FTransform& CurTrans, const FVector& TargetLoc,
 	                    float InteropSpeed = 5.f);
+	void SetRotateToTarget();
 #pragma endregion
 
 #pragma region Extract Call Function

@@ -11,7 +11,15 @@ void CConditionalMoveStrategy_MEDIC::Move(ACNox_EBase* Owner, float DeltaTime)
 	if (!AICon) return;
 
 	Owner->SetMovementSpeed(EEnemyMovementSpeed::Sprinting);
-	AICon->MoveToActor(Owner->GetTarget(), AcceptanceThreshold, true);
+	EPathFollowingRequestResult::Type result = AICon->MoveToActor(Owner->GetTarget(), AcceptanceThreshold, true);
+	switch (result)
+	{
+	case EPathFollowingRequestResult::AlreadyAtGoal:
+		break;
+	default:
+		bIsMove = true;
+		break;
+	}
 	CovertToCombatState(Owner); // 공격 쿨타임이 지났으면 공격 상태로 전환
 }
 
@@ -27,6 +35,8 @@ void CConditionalMoveStrategy_MEDIC::CovertToCombatState(ACNox_EBase* Owner)
 	// 플레이어가 공격사거리에 있는지 확인
 	if (Owner->IsSkillReady(ESkillCoolDown::Melee) && Owner->IsPlayerInForwardDegree(MeleeAttackRange))
 	{
+		if (!bIsMove) Owner->SetRotateToTarget();
+			
 		Owner->SetCombatState(ECombatState::Default);
 		Owner->SetEnemyState(EEnemyState::Combat);
 	}
@@ -42,4 +52,6 @@ void CConditionalMoveStrategy_MEDIC::CovertToCombatState(ACNox_EBase* Owner)
 		Owner->SetCombatState(ECombatState::Heal);
 		Owner->SetEnemyState(EEnemyState::Combat);
 	}
+
+	bIsMove = false;
 }
