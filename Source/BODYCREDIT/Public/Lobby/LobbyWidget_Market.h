@@ -238,4 +238,6 @@ public:
 
 	void ShowNoSpaceUI();
 
+	void Refresh();
+
 };

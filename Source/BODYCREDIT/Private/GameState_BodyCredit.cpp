@@ -50,8 +50,6 @@ void AGameState_BodyCredit::SpawnItemFromActor(UItemObject* ItemObject, AActor* 
 		ItemActor->SetActorHiddenInGame(false);
 		ItemActor->SetActorEnableCollision(true);
 	}
-
-
 }
 
 void AGameState_BodyCredit::SpawnItemHiddenFromActor(class UItemObject* ItemObject, AActor* Actor, bool GroundClamp)

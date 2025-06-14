@@ -176,10 +176,10 @@ void UInventory_EquipmentTile::NativeOnDragDetected(const FGeometry& InGeometry,
 	DragOperation->Pivot = EDragPivot::CenterCenter;
 	DragOperation->Payload = ItemObject;
 
-	RemoveFromParent();
-
 	EquipMainWidget->PlayerCharacter->EquipComp->UnequipItem(ItemType);
 	EquipMainWidget->PlayerCharacter->EquipComp->IsStatChanged = true;
 	EquipMainWidget->PlayerCharacter->EquipComp->IsChanged = true;
 	OutOperation = DragOperation;
+
+	RemoveFromParent();
 }

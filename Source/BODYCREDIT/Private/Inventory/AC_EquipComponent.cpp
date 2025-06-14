@@ -12,6 +12,9 @@
 #include "Components/Image.h"
 #include "Components/Border.h"
 #include "Components/CWeaponComponent.h"
+#include "Item/ItemObject.h"
+#include "Item/Item_Base.h"
+#include "AC_LootingInventoryComponent.h"
 
 // Sets default values for this component's properties
 UAC_EquipComponent::UAC_EquipComponent()
@@ -211,14 +214,48 @@ int32 UAC_EquipComponent::CalculatePriceOfEquippedItem()
 {
 	int32 TotalPrice = 0;
 
-	for (const auto& Pair : EquippedItems)
+	for (auto& Pair : EquippedItems)
 	{
-		if (const UItemObject* Item = Pair.Value)
+		if (UItemObject* Item = Pair.Value)
 		{
 			TotalPrice += Item->ItemData.Price;
+
+			if (Item->ItemData.ItemType == EPlayerPart::Backpack || Item->ItemData.ItemType == EPlayerPart::ChestRigs)
+			{
+				
+				TotalPrice += CalculatePriceRecursively(Item);
+			}
 		}
 	}
 
 	return TotalPrice;
 }
 
+int32 UAC_EquipComponent::CalculatePriceRecursively(UItemObject* ItemObject)
+{
+	AItem_Base* ItemActor = ItemObject->ItemActorOwner.Get();
+
+	if (!ItemObject || !ItemActor || !ItemActor->LootInventoryComp)
+	{
+		return 0;
+	}
+
+	int32 ContainerPrice = 0;
+
+	TMap<UItemObject*, FInventoryTile> ContainedItems = ItemObject->ItemActorOwner->LootInventoryComp->GetAllItems();
+
+	for (const TPair<UItemObject*, FInventoryTile>& Pair : ContainedItems)
+	{
+		UItemObject* ContainedItem = Pair.Key;
+		if (!ContainedItem) continue;
+
+		ContainerPrice += ContainedItem->ItemData.Price;
+
+		if (ContainedItem->ItemData.ItemType == EPlayerPart::Backpack || ContainedItem->ItemData.ItemType == EPlayerPart::ChestRigs)
+		{
+			ContainerPrice += CalculatePriceRecursively(ContainedItem);
+		}	
+	}
+
+	return ContainerPrice;
+}
