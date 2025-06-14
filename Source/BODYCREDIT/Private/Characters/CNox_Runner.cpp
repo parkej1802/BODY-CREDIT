@@ -117,6 +117,20 @@ void ACNox_Runner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (bShouldRotateToTarget)
+	{
+		AController* controller = GetController<AController>();
+		FRotator Current = controller->GetControlRotation();
+		FRotator NewRot = FMath::RInterpTo(Current, TargetControlRotation, DeltaTime, RotationInterpSpeed);
+
+		controller->SetControlRotation(NewRot);
+
+		if (NewRot.Equals(TargetControlRotation, 0.5f))
+		{
+			bShouldRotateToTarget = false;
+		}
+	}
+
 //#if WITH_EDITOR
 //	const FVector Location = GetActorLocation();
 //
@@ -286,7 +300,6 @@ void ACNox_Runner::Dead()
 void ACNox_Runner::ShowPlayerMainUI()
 {
 	// 위젯 클래스가 유효한지 확인
-
 	if (RunnerUIClass)
 	{
 		// 위젯 생성

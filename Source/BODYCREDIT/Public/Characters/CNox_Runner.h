@@ -203,5 +203,9 @@ public: // Card Key Check
 private:
 	bool bHasCardKey = false;
 
+public:
+	FRotator TargetControlRotation;
+	bool bShouldRotateToTarget = false;
+	float RotationInterpSpeed = 8.f;
 	
 };
