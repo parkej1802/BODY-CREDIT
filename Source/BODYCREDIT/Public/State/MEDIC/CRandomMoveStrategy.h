@@ -14,7 +14,8 @@ private:
 	float AcceptanceThreshold = 10.f;
 	bool bMoving = false;
 	FVector RanLocation;
-	
+
+	void HearingMove(ACNox_EBase* Owner);
 	void RandomMove(ACNox_EBase* Owner);
 	FVector GetRandomLocation(const ACNox_EBase* Owner) const;
 	

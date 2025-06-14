@@ -24,6 +24,7 @@ private:
 
 	void SplineMove(ACNox_EBase* Owner);
 	void RandomMove(ACNox_EBase* Owner);
+	void HearingMove(ACNox_EBase* Owner);
 	FVector GetRandomLocation(const ACNox_EBase* Owner) const;
 
 public:

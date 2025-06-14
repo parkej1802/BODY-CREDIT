@@ -51,6 +51,17 @@ void ACEnemyController::InitPerception()
 
 void ACEnemyController::OnAITargetPerceptionInfoUpdate(const FActorPerceptionUpdateInfo& UpdateInfo)
 {
+	// Sencing 타입에 따라 분기처리
+	auto StimulusType = UpdateInfo.Stimulus.Tag;
+	if (StimulusType.ToString().Equals("Hearing"))
+	{
+		// 청각
+		EnemyBase->bHearingMovement = true;
+		EnemyBase->HearingLoc = UpdateInfo.Stimulus.StimulusLocation;
+		return;
+	}
+
+	// 시각
 	if (UpdateInfo.Stimulus.WasSuccessfullySensed())
 	{
 		if (TargetPlayer) return;

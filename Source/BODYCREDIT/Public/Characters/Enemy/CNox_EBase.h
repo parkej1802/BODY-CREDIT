@@ -24,12 +24,14 @@ protected: // Virtual Function
 	virtual void Tick(float DeltaTime) override;
 	virtual void PossessedBy(AController* NewController) override;
 
+public:
+	UPROPERTY(EditAnywhere, Category=Debug)
+	bool bDebug = true;
+	
 protected:
 	UPROPERTY()
 	class ACEnemyController* EnemyController;
-	UPROPERTY(EditAnywhere, Category=Debug)
-	bool bDebug = true;
-
+	
 	void InitComp();
 #pragma endregion
 
@@ -68,6 +70,12 @@ protected: // Set Sensing Function
 	virtual void SetPerceptionInfo()
 	{
 	}
+#pragma endregion
+
+#pragma region Hearing Movement
+public:
+	bool bHearingMovement = false;
+	FVector HearingLoc = FVector::ZeroVector;
 #pragma endregion
 
 #pragma region EnemyType
