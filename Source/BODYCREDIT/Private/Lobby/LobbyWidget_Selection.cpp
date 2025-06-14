@@ -18,16 +18,14 @@
 #include "Components/CNoxHPComponent.h"
 #include "Components/SceneCaptureComponent2D.h"
 #include "Games/CMainGM.h"
+#include "Lobby/LobbyWidget_RollDice.h"
+#include "Lobby/LobbyWidget_Payment.h"
+#include "Lobby/LobbyWidget_DayLeft.h"
 
 
 void ULobbyWidget_Selection::NativeConstruct()
 {
     Super::NativeConstruct();
-
-    PC = GetOwningPlayer();
-    FInputModeGameAndUI InputMode;
-    PC->SetInputMode(InputMode);
-    PC->bShowMouseCursor = true;
 
     if (Button_Play)
     {
@@ -50,35 +48,87 @@ void ULobbyWidget_Selection::NativeConstruct()
         Button_WorkShop->OnUnhovered.AddDynamic(this, &ThisClass::OnWorkShopUnhovered);
     }
 
-    APawn* Pawn = PC->GetPawn();
-
-    PlayerCharacter = Cast<ACNox_Runner>(Pawn);
-    // UGameplayStatics::SetGamePaused(GetWorld(), true);
-
-    GI = Cast<UNetGameInstance>(GetGameInstance());
-    FString DayString = FString::Printf(TEXT("%d"), GI->Day);
-    Text_DayCount->SetText(FText::FromString(DayString));
-
-    GI->SetActorInitLocation();
-
-    PlayerStatChange();
-
-    Cast<ACMainGM>(GetWorld()->GetAuthGameMode())->IsStart = false;
-
-    PlayerCharacter->RemovePlayerMainUI();
+   Refresh();
 }
 
 void ULobbyWidget_Selection::OnPlayClicked()
 {
-    if (LobbyPlayWidgetClass)
-    {     
-        LobbyWidget_Play = CreateWidget<UCLobbyWidget_Play>(GetWorld(), LobbyPlayWidgetClass);
-        if (LobbyWidget_Play)
-        {
-            LobbyWidget_Play->AddToViewport();
+    
+	/*if (LobbyPlayWidgetClass)
+	{
+		LobbyWidget_Play = CreateWidget<UCLobbyWidget_Play>(GetWorld(), LobbyPlayWidgetClass);
+		if (LobbyWidget_Play)
+		{
+			LobbyWidget_Play->AddToViewport();
 
-            this->RemoveFromParent();
+			RemoveFromParent();
+		}
+	}*/
+
+    if (GI) {
+        
+        if (GI->DayLeft == -1)
+        {
+            if (LobbyRollDiceWidgetClass)
+            {
+                LobbyWidget_RollDice = CreateWidget<ULobbyWidget_RollDice>(GetWorld(), LobbyRollDiceWidgetClass);
+                if (LobbyWidget_RollDice)
+                {
+                    LobbyWidget_RollDice->AddToViewport();
+
+                    RemoveFromParent();
+                }
+            }
+            GI->BeforePlayerGold = PlayerCharacter->EquipComp->CalculatePriceOfEquippedItem();
+            GI->Day = GI->Day + 1;
+            return;
         }
+
+        GI->BeforePlayerGold = PlayerCharacter->EquipComp->CalculatePriceOfEquippedItem();
+        GI->Day = GI->Day + 1;
+        GI->DayLeft = GI->DayLeft - 1;
+
+        if (GI->DayLeft && GI->SelectedPart != EPlayerPart::Basic)
+        {
+            if (LobbyDayLeftWidgetClass)
+            {
+                LobbyWidget_DayLeft = CreateWidget<ULobbyWidget_DayLeft>(GetWorld(), LobbyDayLeftWidgetClass);
+                if (LobbyWidget_DayLeft)
+				{
+                    LobbyWidget_DayLeft->AddToViewport();
+
+                    RemoveFromParent();
+                }
+            }
+        }
+        
+        else if (GI->SelectedPart != EPlayerPart::Basic)
+        {
+            if (LobbyPaymentWidgetClass)
+            {
+                LobbyWidget_Payment = CreateWidget<ULobbyWidget_Payment>(GetWorld(), LobbyPaymentWidgetClass);
+                if (LobbyWidget_Payment)
+                {
+                    LobbyWidget_Payment->AddToViewport();
+
+                    RemoveFromParent();
+                }
+            }
+        }
+        else
+        {
+            if (LobbyRollDiceWidgetClass)
+            {
+                LobbyWidget_RollDice = CreateWidget<ULobbyWidget_RollDice>(GetWorld(), LobbyRollDiceWidgetClass);
+                if (LobbyWidget_RollDice)
+                {
+                    LobbyWidget_RollDice->AddToViewport();
+
+                    RemoveFromParent();
+                }
+            }
+        }
+       
     }
 
     UWorld* World = GetWorld();
@@ -95,11 +145,6 @@ void ULobbyWidget_Selection::OnPlayClicked()
 
     FVector StartLocation(285.0f, 15.0f, -408.0f);
     PlayerCharacter->SetActorLocation(StartLocation);
- 
-    if (GI) {
-        GI->BeforePlayerGold = PlayerCharacter->EquipComp->CalculatePriceOfEquippedItem();
-        GI->Day = GI->Day + 1;
-    }
 
     //// OpenLevel
     //UGameplayStatics::OpenLevel(this, FName(TEXT("/Game/Levels/Lab")));
@@ -108,6 +153,7 @@ void ULobbyWidget_Selection::OnPlayClicked()
     //PC->SetInputMode(FInputModeGameOnly());
     //PC->bShowMouseCursor = false;
 
+    
 }
 
 void ULobbyWidget_Selection::OnMarketClicked()
@@ -204,4 +250,29 @@ void ULobbyWidget_Selection::PlayerStatChange()
     Text_Energy->SetText(FText::AsNumber(Stamina));
     Text_Humanity->SetText(FText::AsNumber(Humanity));
     Text_Debt->SetText(FText::AsNumber(Debt));
+}
+
+void ULobbyWidget_Selection::Refresh()
+{
+    PC = GetOwningPlayer();
+    FInputModeGameAndUI InputMode;
+    PC->SetInputMode(InputMode);
+    PC->bShowMouseCursor = true;
+
+    APawn* Pawn = PC->GetPawn();
+
+    PlayerCharacter = Cast<ACNox_Runner>(Pawn);
+    // UGameplayStatics::SetGamePaused(GetWorld(), true);
+
+    GI = Cast<UNetGameInstance>(GetGameInstance());
+    FString DayString = FString::Printf(TEXT("%d"), GI->Day);
+    Text_DayCount->SetText(FText::FromString(DayString));
+
+    GI->SetActorInitLocation();
+
+    PlayerStatChange();
+
+    Cast<ACMainGM>(GetWorld()->GetAuthGameMode())->IsStart = false;
+
+    PlayerCharacter->RemovePlayerMainUI();
 }

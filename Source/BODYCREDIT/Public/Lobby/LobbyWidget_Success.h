@@ -47,4 +47,12 @@ public:
 	
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
 	class UWidgetAnimation* Anim_BackGround;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
+	TSubclassOf<UUserWidget> LobbySelectionWidgetClass;
+
+	UPROPERTY()
+	class ULobbyWidget_Selection* LobbyWidget_Selection;
+
+	void Refresh();
 };

@@ -22,6 +22,7 @@
 #include "Components/CNoxHPComponent.h"
 #include "Components/TextBlock.h"
 #include "AC_LootingInventoryComponent.h"
+#include "Components/Image.h"
 
 void ULobbyWidget_WorkShop::NativeConstruct()
 {
@@ -34,7 +35,9 @@ void ULobbyWidget_WorkShop::NativeConstruct()
 
     if (Button_Back)
     {
-        Button_Back->OnClicked.AddDynamic(this, &ULobbyWidget_WorkShop::OnBackClicked);
+        Button_Back->OnClicked.AddDynamic(this, &ThisClass::OnBackClicked);
+        Button_Back->OnHovered.AddDynamic(this, &ThisClass::OnBackHovered);
+        Button_Back->OnUnhovered.AddDynamic(this, &ThisClass::OnBackUnhovered);
     }
 
     APawn* Pawn = PC->GetPawn();
@@ -114,6 +117,22 @@ void ULobbyWidget_WorkShop::OnBackClicked()
 			}
 		}*/
 	}
+}
+
+void ULobbyWidget_WorkShop::OnBackHovered()
+{
+    if (Image_Button_Back_Hovered)
+    {
+        Image_Button_Back_Hovered->SetVisibility(ESlateVisibility::Visible);
+    }
+}
+
+void ULobbyWidget_WorkShop::OnBackUnhovered()
+{
+    if (Image_Button_Back_Hovered)
+    {
+        Image_Button_Back_Hovered->SetVisibility(ESlateVisibility::Hidden);
+    }
 }
 
 void ULobbyWidget_WorkShop::SetItemInventory()

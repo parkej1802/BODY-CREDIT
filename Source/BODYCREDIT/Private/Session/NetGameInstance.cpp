@@ -10,6 +10,7 @@ void UNetGameInstance::Init()
 	Super::Init();
 
 	ItemDataTable = LoadObject<UDataTable>(nullptr, TEXT("/Game/Item/DT_ItemData.DT_ItemData"));
+	StageDataTable = LoadObject<UDataTable>(nullptr, TEXT("/Game/GameState/StageDT.StageDT'"));
 
 	if (auto subsys = IOnlineSubsystem::Get())
 	{

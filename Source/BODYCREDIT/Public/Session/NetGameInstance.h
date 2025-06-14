@@ -23,6 +23,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UDataTable* ItemDataTable;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UDataTable* StageDataTable;
+
 public:
 	IOnlineSessionPtr sessionInterface;
 
@@ -82,4 +85,14 @@ public:
 
 	UPROPERTY()
 	class UImage* SaveImageLeg;
+
+	UPROPERTY()
+
+	int32 RemainingLife = 4;
+
+	UPROPERTY()
+	int32 DayLeft = -1;
+
+	UPROPERTY()
+	int32 AmountToPay = 0;
 };

@@ -92,5 +92,5 @@ public:
 	UPROPERTY()
 	class ULobbyWidget_GameOver* LobbyWidget_LobbyGameOver;
 
-	int32 RemainingLife = 3;
+	void Refresh();
 };

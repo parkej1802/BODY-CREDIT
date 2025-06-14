@@ -53,11 +53,24 @@ public:
 	UFUNCTION()
 	void OnWorkShopUnhovered();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
-	TSubclassOf<UUserWidget> LobbyPlayWidgetClass;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	//TSubclassOf<UUserWidget> LobbyPlayWidgetClass;
+
+	//UPROPERTY()
+	//class UCLobbyWidget_Play* LobbyWidget_Play;
+
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
+	TSubclassOf<UUserWidget> LobbyRollDiceWidgetClass;
 
 	UPROPERTY()
-	class UCLobbyWidget_Play* LobbyWidget_Play;
+	class ULobbyWidget_RollDice* LobbyWidget_RollDice;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
+	TSubclassOf<UUserWidget> LobbyPaymentWidgetClass;
+
+	UPROPERTY()
+	class ULobbyWidget_Payment* LobbyWidget_Payment;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
 	TSubclassOf<UUserWidget> LobbyMarketWidgetClass;
@@ -120,5 +133,13 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UImage* Image_Button_WorkShop_Hovered;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UUserWidget> LobbyDayLeftWidgetClass;
+
+	UPROPERTY()
+	class ULobbyWidget_DayLeft* LobbyWidget_DayLeft;
+
 	void PlayerStatChange();
+
+	void Refresh();
 };

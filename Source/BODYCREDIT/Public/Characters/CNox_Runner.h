@@ -144,6 +144,7 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UCNoxHPComponent* HPComp;
 
+	bool IsEscape = false;
 // Inventory
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -202,6 +203,5 @@ public: // Card Key Check
 	void SetDropCardKey(bool bDrop) { bHasCardKey = bDrop; }
 private:
 	bool bHasCardKey = false;
-
 	
 };

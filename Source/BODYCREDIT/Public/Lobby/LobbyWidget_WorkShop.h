@@ -24,6 +24,15 @@ public:
 	UFUNCTION()
 	void OnBackClicked();
 
+	UFUNCTION()
+	void OnBackHovered();
+
+	UFUNCTION()
+	void OnBackUnhovered();
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UImage* Image_Button_Back_Hovered;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
 	TSubclassOf<UUserWidget> LobbySelectionWidgetClass;
 

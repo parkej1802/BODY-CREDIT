@@ -14,11 +14,6 @@ void ULobbyWidget_Failed::NativeConstruct()
 {
      Super::NativeConstruct();
 
-     PC = Cast<ACNox_Controller>(GetOwningPlayer());
-     FInputModeGameAndUI InputMode;
-     PC->SetInputMode(InputMode);
-     PC->bShowMouseCursor = true;
-
     if (Button_Continue)
     {
         Button_Continue->OnClicked.AddDynamic(this, &ULobbyWidget_Failed::OnContinueClicked);
@@ -38,41 +33,12 @@ void ULobbyWidget_Failed::NativeConstruct()
         PlayAnimation(Anim_BackGround, 0.0f, 9999, EUMGSequencePlayMode::Forward);
     }
 
-    GI = Cast<UNetGameInstance>(GetGameInstance());
-
-    switch (GI->SelectedPart)
-    {
-    case EPlayerPart::Head:
-        if (GI->SaveImageHead)
-            Image_LostPart->SetBrush(GI->SaveImageHead->GetBrush());
-        break;
-    case EPlayerPart::Body:
-        if (GI->SaveImageBody)
-            Image_LostPart->SetBrush(GI->SaveImageBody->GetBrush());
-        break;
-    case EPlayerPart::Arm:
-        if (GI->SaveImageArm)
-            Image_LostPart->SetBrush(GI->SaveImageArm->GetBrush());
-        break;
-    case EPlayerPart::Leg:
-        if (GI->SaveImageLeg)
-            Image_LostPart->SetBrush(GI->SaveImageLeg->GetBrush());
-        break;
-    default:
-        break;
-    }
-
-    if (GI->AlivePart.Contains(GI->SelectedPart))
-    {
-        GI->AlivePart[GI->SelectedPart] = false;
-        GI->SelectedPart = EPlayerPart::Basic;
-        --RemainingLife;
-    }
+    Refresh();
 }
 
 void ULobbyWidget_Failed::OnContinueClicked()
 {
-    if (RemainingLife == 0) 
+    if (GI->RemainingLife == 0)
     {
         if (LobbyGameOverWidgetClass)
         {
@@ -86,8 +52,6 @@ void ULobbyWidget_Failed::OnContinueClicked()
         }
         return;
     }
-
-    GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, FString::Printf(TEXT("Part Left %d"), RemainingLife));
 
     if (LobbySelectionWidgetClass)
     {
@@ -184,5 +148,45 @@ void ULobbyWidget_Failed::OnExitUnhovered()
     if (Image_Button_Exit_Hovered)
     {
         Image_Button_Exit_Hovered->SetVisibility(ESlateVisibility::Hidden);
+    }
+}
+
+void ULobbyWidget_Failed::Refresh()
+{
+    PC = Cast<ACNox_Controller>(GetOwningPlayer());
+    FInputModeGameAndUI InputMode;
+    PC->SetInputMode(InputMode);
+    PC->bShowMouseCursor = true;
+
+    GI = Cast<UNetGameInstance>(GetGameInstance());
+
+    switch (GI->SelectedPart)
+    {
+    case EPlayerPart::Head:
+        if (GI->SaveImageHead)
+            Image_LostPart->SetBrush(GI->SaveImageHead->GetBrush());
+        break;
+    case EPlayerPart::Body:
+        if (GI->SaveImageBody)
+            Image_LostPart->SetBrush(GI->SaveImageBody->GetBrush());
+        break;
+    case EPlayerPart::Arm:
+        if (GI->SaveImageArm)
+            Image_LostPart->SetBrush(GI->SaveImageArm->GetBrush());
+        break;
+    case EPlayerPart::Leg:
+        if (GI->SaveImageLeg)
+            Image_LostPart->SetBrush(GI->SaveImageLeg->GetBrush());
+        break;
+    default:
+        break;
+    }
+
+    if (GI->AlivePart.Contains(GI->SelectedPart))
+    {
+        GI->AlivePart[GI->SelectedPart] = false;
+        GI->SelectedPart = EPlayerPart::Basic;
+        --GI->RemainingLife;
+        //GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, FString::Printf(TEXT("Part Left %d"), RemainingLife));
     }
 }

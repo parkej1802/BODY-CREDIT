@@ -69,6 +69,7 @@ FReply UInventory_ItemWidget::NativeOnMouseButtonDown(const FGeometry& InGeometr
 	{
 		if (ItemMenuUI) {
 			ItemMenuUI->RemoveFromParent();
+			ItemMenuUI = nullptr;
 		}
 		return UWidgetBlueprintLibrary::DetectDragIfPressed(InMouseEvent, this, EKeys::LeftMouseButton).NativeReply;
 	}
@@ -79,6 +80,7 @@ FReply UInventory_ItemWidget::NativeOnMouseButtonDown(const FGeometry& InGeometr
 			ItemObject->bIsMenu = !ItemObject->bIsMenu;
 			if (ItemMenuUI) {
 				ItemMenuUI->RemoveFromParent();
+				ItemMenuUI = nullptr;
 			}
 			
 			return FReply::Handled();
@@ -140,6 +142,7 @@ void UInventory_ItemWidget::NativeOnDragDetected(const FGeometry& InGeometry, co
 {
 	if (ItemMenuUI) {
 		ItemMenuUI->RemoveFromParent();
+		ItemMenuUI = nullptr;
 	}
 	if (IsMoving || ItemObject->bIsUseFunction) return;
 	IsMoving = true;

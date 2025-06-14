@@ -26,6 +26,16 @@ void ULobbyWidget_BuyItem::NativeConstruct()
         Button_Cancel->OnUnhovered.AddDynamic(this, &ThisClass::OnCancelUnhovered);
     }
 
+    APlayerController* PC = GetOwningPlayer();
+    if (PC)
+    {
+        FInputModeUIOnly InputMode;
+        InputMode.SetWidgetToFocus(this->TakeWidget());
+        InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+        PC->SetInputMode(InputMode);
+        PC->bShowMouseCursor = true;
+    }
+
     SetUIGold();
 }
 

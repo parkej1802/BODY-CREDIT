@@ -90,6 +90,7 @@ void UCLobbyWidget_Play::OnContinueClicked()
 		UGameplayStatics::SetGamePaused(GetWorld(), false);
 		RemoveFromParent();
 
+
 		APawn* Pawn = pc->GetPawn();
 
 		ACNox_Runner* PlayerCharacter = Cast<ACNox_Runner>(Pawn);
