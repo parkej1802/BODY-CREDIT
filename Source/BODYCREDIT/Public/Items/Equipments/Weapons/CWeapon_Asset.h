@@ -30,6 +30,12 @@ private:
 	TArray<FWeaponHitData> WeaponHitDatas;
 
 	UPROPERTY(EditAnywhere)
+	TArray<FWeaponDoActionData> WeaponSprintDoActionDatas;
+
+	UPROPERTY(EditAnywhere)
+	TArray<FWeaponHitData> WeaponSprintHitDatas;
+
+	UPROPERTY(EditAnywhere)
 	TSubclassOf<class UCWeapon_SubAction> WeaponSubActionClass;
 
 public:

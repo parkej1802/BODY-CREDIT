@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GenericTeamAgentInterface.h"
 #include "Characters/CNox.h"
+#include "Components/CMovementComponent.h"
 #include "Components/CStateComponent.h"
 #include "CNox_Runner.generated.h"
 
@@ -51,13 +52,7 @@ protected:
 	UPROPERTY(BlueprintReadWrite, Category = "Camera")
 	class UCameraComponent* TPSCamera;
 
-	//UPROPERTY(VisibleAnywhere, Category = "Camera")
-	//class UCameraComponent* FPSCamera;
-
 private:
-	//UPROPERTY(VisibleAnywhere, Category = "Components")
-	//class UCharacterTrajectoryComponent* Trajectory;
-
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UCStateComponent* State;
 
@@ -123,6 +118,11 @@ public:
 	TMap<EPlayerPart, USkeletalMesh*> DefaultMeshes;
 
 	void CacheDefaultSkeletalMeshes();
+
+	UFUNCTION(blueprintCallable)
+	void OnMovement() { Movement->Move(); };
+	UFUNCTION(blueprintCallable)
+	void OffMovement() {Movement->Stop(); };
 	
 private:
 	void Init();

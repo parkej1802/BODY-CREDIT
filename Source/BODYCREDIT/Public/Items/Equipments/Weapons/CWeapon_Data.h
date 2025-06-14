@@ -16,6 +16,7 @@ public:
 	FORCEINLINE class ACWeapon_Attachment* GetAttachment() { return WeaponAttachment; }
 	FORCEINLINE class UCWeapon_Equipment* GetEquipment() { return WeaponEquipment; }
 	FORCEINLINE class UCWeapon_DoAction* GetDoAction() { return WeaponDoAction; }
+	FORCEINLINE class UCWeapon_DoAction* GetSprintDoAction() { return WeaponSprintDoAction; }
 	FORCEINLINE class UCWeapon_SubAction* GetSubAction() { return WeaponSubAction; }
 
 private:
@@ -27,6 +28,9 @@ private:
 
 	UPROPERTY()
 	class UCWeapon_DoAction* WeaponDoAction;
+
+	UPROPERTY()
+	class UCWeapon_DoAction* WeaponSprintDoAction;
 
 	UPROPERTY()
 	class UCWeapon_SubAction* WeaponSubAction;

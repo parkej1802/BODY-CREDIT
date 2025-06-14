@@ -31,10 +31,13 @@ public:
 	class USceneComponent* Root;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UStaticMeshComponent* StaticMeshComp;
+	class UCapsuleComponent* CapsuleComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class USphereComponent* SphereComp;
+	class USkeletalMeshComponent* SkeletalMeshComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UStaticMeshComponent* StaticMeshComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 Width = 1.f;

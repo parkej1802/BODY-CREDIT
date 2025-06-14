@@ -107,4 +107,8 @@ public:
 	void SpawnEnemy();
 	UFUNCTION(BlueprintCallable)
 	void DestroyEnemy();
+
+public:
+	void ChangePlayerStartLocation();
+	
 }; 

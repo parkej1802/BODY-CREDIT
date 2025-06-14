@@ -11,6 +11,20 @@ enum class EStateType : uint8
 };
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FStateTypeChanged, EStateType, InPrevType, EStateType, InNewType);
 
+UENUM(BlueprintType)
+enum class EAvoidDirection8Way : uint8
+{
+	Forward,
+	ForwardRight,
+	Right,
+	BackwardRight,
+	Backward,
+	BackwardLeft,
+	Left,
+	ForwardLeft,
+	MAX
+};
+
 UCLASS()
 class BODYCREDIT_API UCStateComponent : public UCBaseComponent
 {
@@ -57,5 +71,14 @@ private:
 
 private:
 	bool bInSubActionMode;
+
+public:
+	EAvoidDirection8Way GetAvoidDirection(const FVector2D& InputVector, const FRotator& ControlRotation) const;
+
+	void SetLastAvoidDirection(EAvoidDirection8Way InDirection);
+	EAvoidDirection8Way GetLastAvoidDirection() const;
+
+private:
+	EAvoidDirection8Way LastAvoidDirection;
 
 };

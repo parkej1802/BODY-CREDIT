@@ -18,7 +18,16 @@ class BODYCREDIT_API UCDoAction_Bow : public UCWeapon_DoAction
 public:
 	UCDoAction_Bow();
 
-	virtual void BeginPlay(class ACWeapon_Attachment* InAttachment, class UCWeapon_Equipment* InEquipment, class ACNox* InOwner, const TArray<FWeaponDoActionData>& InDoActionData, const TArray<FWeaponHitData>& InHitData) override;
+	virtual void BeginPlay
+	(
+		class ACWeapon_Attachment* InAttachment,
+		class UCWeapon_Equipment* InEquipment,
+		class ACNox* InOwner,
+		const TArray<FWeaponDoActionData>& InDoActionDatas,
+		const TArray<FWeaponHitData>& InHitDatas,
+		const TArray<FWeaponDoActionData>& InSprintDoActionDatas,
+		const TArray<FWeaponHitData>& InSprintHitDatas
+	) override;
 	virtual void Tick(float InDeltaTime) override;
 
 	virtual void Pressed() override;

@@ -114,6 +114,25 @@ public:
 
 };
 
+USTRUCT(BlueprintType)
+struct FAvoidData
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimMontage* Montage = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UCurveFloat* MovementCurve = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float PlayRate = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float StartTime = 0.0f;
+};
+
 UCLASS()
 class BODYCREDIT_API UCWeapon_Structures : public UObject
 {
