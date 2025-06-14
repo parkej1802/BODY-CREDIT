@@ -24,12 +24,14 @@ protected: // Virtual Function
 	virtual void Tick(float DeltaTime) override;
 	virtual void PossessedBy(AController* NewController) override;
 
+public:
+	UPROPERTY(EditAnywhere, Category=Debug)
+	bool bDebug = true;
+	
 protected:
 	UPROPERTY()
 	class ACEnemyController* EnemyController;
-	UPROPERTY(EditAnywhere, Category=Debug)
-	bool bDebug = true;
-
+	
 	void InitComp();
 #pragma endregion
 
@@ -68,6 +70,12 @@ protected: // Set Sensing Function
 	virtual void SetPerceptionInfo()
 	{
 	}
+#pragma endregion
+
+#pragma region Hearing Movement
+public:
+	bool bHearingMovement = false;
+	FVector HearingLoc = FVector::ZeroVector;
 #pragma endregion
 
 #pragma region EnemyType
@@ -173,15 +181,17 @@ public:
 public:
 	bool RotateToTarget(const float DeltaTime, const FTransform& CurTrans, const FVector& TargetLoc,
 	                    float InteropSpeed = 5.f);
+	void SetRotateToTarget();
 #pragma endregion
 
 #pragma region Extract Call Function
 public:
 	UFUNCTION(BlueprintCallable)
 	void ExtractCallFunction(ACNox* InTarget);
+	void DayStart() { bExtractSucceed = false; }
 	UFUNCTION(BlueprintCallable)
 	void ExtractSucceed() { bExtractSucceed = true; }
 private:
-	bool bExtractSucceed = false;
+	bool bExtractSucceed = true;
 #pragma endregion
 };

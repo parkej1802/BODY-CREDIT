@@ -10,6 +10,7 @@ class ACNox_EBase;
 class BODYCREDIT_API CConditionalMoveStrategy_MEDIC : public ICMoveStrategy
 {
 private:
+	bool bIsMove = false;
     const float MeleeAttackRange = 200.f;
     const float GrenadeRange = 1500.f;
 

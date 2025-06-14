@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GenericTeamAgentInterface.h"
 #include "Characters/CNox.h"
+#include "Components/CMovementComponent.h"
 #include "Components/CStateComponent.h"
 #include "CNox_Runner.generated.h"
 
@@ -51,13 +52,7 @@ protected:
 	UPROPERTY(BlueprintReadWrite, Category = "Camera")
 	class UCameraComponent* TPSCamera;
 
-	//UPROPERTY(VisibleAnywhere, Category = "Camera")
-	//class UCameraComponent* FPSCamera;
-
 private:
-	//UPROPERTY(VisibleAnywhere, Category = "Components")
-	//class UCharacterTrajectoryComponent* Trajectory;
-
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UCStateComponent* State;
 
@@ -124,6 +119,11 @@ public:
 
 	void CacheDefaultSkeletalMeshes();
 
+	UFUNCTION(blueprintCallable)
+	void OnMovement() { Movement->Move(); };
+	UFUNCTION(blueprintCallable)
+	void OffMovement() {Movement->Stop(); };
+	
 private:
 	void Init();
 
@@ -203,5 +203,10 @@ public: // Card Key Check
 	void SetDropCardKey(bool bDrop) { bHasCardKey = bDrop; }
 private:
 	bool bHasCardKey = false;
-	
+
+public:
+	FRotator TargetControlRotation;
+	bool bShouldRotateToTarget = false;
+	float RotationInterpSpeed = 8.f;
+
 };

@@ -2,6 +2,8 @@
 
 
 #include "Lobby/LobbyWidget_Main.h"
+
+#include "EngineUtils.h"
 #include "Components/Button.h"
 #include "Lobby/LobbyWidget_Selection.h"
 #include "Components/Image.h"
@@ -11,6 +13,9 @@
 #include "Characters/CNox_Runner.h"
 #include "Inventory/AC_InventoryComponent.h"
 #include "Inventory/AC_EquipComponent.h"
+#include "Utilities/CLog.h"
+#include "GameFramework/PlayerStart.h"
+#include "Games/CMainGM.h"
 
 void ULobbyWidget_Main::NativeConstruct()
 {
@@ -21,6 +26,9 @@ void ULobbyWidget_Main::NativeConstruct()
     PC->SetInputMode(InputMode);
     PC->bShowMouseCursor = true;
     // UGameplayStatics::SetGamePaused(GetWorld(), true);
+
+    if (ACNox_Runner* runner = Cast<ACNox_Runner>(GetOwningPlayer()))
+        runner->OffMovement();
 
     if (Button_NewGame)
     {
@@ -67,6 +75,10 @@ void ULobbyWidget_Main::OnNewGameClicked()
             this->RemoveFromParent();
         }
     }
+    
+    if (ACMainGM* GM = Cast<ACMainGM>(GetWorld()->GetAuthGameMode()))
+        GM->ChangePlayerStartLocation();
+    
 }
 
 void ULobbyWidget_Main::OnNewGameHovered()

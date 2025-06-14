@@ -1,11 +1,15 @@
 ﻿#include "Lobby/CLobbyWidget_Play.h"
+
+#include "EngineUtils.h"
 #include "Global.h"
 #include "Components/Button.h"
 #include "Characters/CNox_Controller.h"
 #include "Characters/CNox_Runner.h"
+#include "Characters/Enemy/CNox_EBase.h"
 #include "Session/NetGameInstance.h"
 #include "Components/Image.h"
 #include "Games/CMainGM.h"
+#include "GameFramework/PlayerStart.h"
 
 void UCLobbyWidget_Play::NativeConstruct()
 {
@@ -18,8 +22,7 @@ void UCLobbyWidget_Play::NativeConstruct()
 	GI->SaveImageBody = ImageBody;
 	GI->SaveImageArm = ImageArm;
 	GI->SaveImageLeg = ImageLeg;
-
-
+	
 	if (Button_Continue) 
 	{
 		Button_Continue->OnClicked.AddDynamic(this, &ThisClass::OnContinueClicked);
@@ -82,20 +85,24 @@ void UCLobbyWidget_Play::OnContinueClicked()
 		GameMode->GameTimer = GameMode->SetGameTimer;
 		GameMode->bIsFailed = false;
 		GameMode->IsStart = true;
-		GameMode->PlayGameStart();
+		GameMode->ExtractTimerTriggerStart = true;
 		
 		pc->SetInputMode(FInputModeGameOnly());
 		pc->bShowMouseCursor = false;
-
+		
 		UGameplayStatics::SetGamePaused(GetWorld(), false);
 		RemoveFromParent();
 
 
 		APawn* Pawn = pc->GetPawn();
-
 		ACNox_Runner* PlayerCharacter = Cast<ACNox_Runner>(Pawn);
-
 		PlayerCharacter->ShowPlayerMainUI();
+		PlayerCharacter->OnMovement();
+
+		for (TActorIterator<ACNox_EBase> It(GetWorld()); It; ++It)
+		{
+			(*It)->DayStart();
+		}
 	}
 }
 

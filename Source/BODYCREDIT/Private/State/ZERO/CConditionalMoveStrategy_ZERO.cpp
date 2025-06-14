@@ -13,16 +13,15 @@ void CConditionalMoveStrategy_ZERO::Move(ACNox_EBase* Owner, float DeltaTime)
 	EPathFollowingRequestResult::Type result = AICon->MoveToActor(Owner->GetTarget(), AcceptanceThreshold, true);
 	switch (result)
 	{
-	case EPathFollowingRequestResult::Failed:
-		break;
 	case EPathFollowingRequestResult::AlreadyAtGoal:
-		CovertToCombatState(Owner); // 공격 쿨타임이 지났으면 공격 상태로 전환
 		break;
 	default:
+		bIsMove = true;
 		break;
 	}
 
 	Owner->UpdateSkillCoolDowns(ESkillCoolDown::Melee, DeltaTime);
+	CovertToCombatState(Owner); // 공격 쿨타임이 지났으면 공격 상태로 전환
 }
 
 void CConditionalMoveStrategy_ZERO::ResetVal(ACNox_EBase* Owner)
@@ -34,9 +33,18 @@ void CConditionalMoveStrategy_ZERO::ResetVal(ACNox_EBase* Owner)
 
 void CConditionalMoveStrategy_ZERO::CovertToCombatState(ACNox_EBase* Owner)
 {
-	if (Owner->IsSkillReady(ESkillCoolDown::Melee))
+	if (!bIsMove && !Owner->IsPlayerInForwardDegree(MeleeAttackRange))
 	{
-		Owner->SetCombatState(ECombatState::Default);
-		Owner->SetEnemyState(EEnemyState::Combat);
+		// 이동하지 않았고, 공격 범위 안에 플레이어가 없다면 플레이어를 향해 회전
+		Owner->SetRotateToTarget();
 	}
+	else
+	{
+		if (Owner->IsSkillReady(ESkillCoolDown::Melee))
+		{
+			Owner->SetCombatState(ECombatState::Default);
+			Owner->SetEnemyState(EEnemyState::Combat);
+		}
+		bIsMove = false;
+	}	
 }

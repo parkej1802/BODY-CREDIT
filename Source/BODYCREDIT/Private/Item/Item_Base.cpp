@@ -4,7 +4,7 @@
 #include "Item/Item_Base.h"
 #include "Global.h"
 #include "Item/ItemObject.h"
-#include "Components/SphereComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Engine/StaticMesh.h"
 #include "Characters/CNox_Runner.h"
 #include "Inventory/AC_InventoryComponent.h"
@@ -21,13 +21,13 @@ AItem_Base::AItem_Base()
 	
 	CHelpers::CreateComponent<USceneComponent>(this, &Root, "Root");
 
-	SphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
-	SphereComp->SetupAttachment(RootComponent);
+	CHelpers::CreateComponent<UCapsuleComponent>(this, &CapsuleComp, "CapsuleComp", Root);
+	CapsuleComp->SetGenerateOverlapEvents(true);
 
+	CHelpers::CreateComponent<USkeletalMeshComponent>(this, &SkeletalMeshComp, "SkeletalMeshComp", CapsuleComp);
+	
 	StaticMeshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StaticMeshComp"));
-	StaticMeshComp->SetupAttachment(RootComponent);
-
-	SphereComp->SetGenerateOverlapEvents(true);
+	StaticMeshComp->SetupAttachment(CapsuleComp);
 
 	ItemObject = CreateDefaultSubobject<UItemObject>(TEXT("ItemObject"));
 
@@ -43,7 +43,7 @@ void AItem_Base::OnConstruction(const FTransform& Transform)
 	if (ItemDataTable)
 	{
 		FItemData* TempData = ItemDataTable->FindRow<FItemData>(ItemName, ContextString);
-		if (TempData && TempData->Mesh)
+		if (ItemObject && TempData && TempData->Mesh)
 		{
 			ItemObject->ItemData = *TempData;
 			// ItemData = *TempData;
@@ -61,7 +61,7 @@ void AItem_Base::BeginPlay()
 	if (ItemDataTable)
 	{
 		FItemData* TempData = ItemDataTable->FindRow<FItemData>(ItemName, ContextString);
-		if (TempData && TempData->Mesh)
+		if (ItemObject && TempData && TempData->Mesh)
 		{
 			ItemObject->ItemData = *TempData;
 			// ItemData = *TempData;
@@ -78,7 +78,7 @@ void AItem_Base::BeginPlay()
 	}
 	ItemObject->ItemActorOwner = this;
 
-	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &AItem_Base::OnSphereBeginOverlap);
+	// SphereComp->OnComponentBeginOverlap.AddDynamic(this, &AItem_Base::OnSphereBeginOverlap);
 
 	GameMode = Cast<ACMainGM>(GetWorld()->GetAuthGameMode());
 	

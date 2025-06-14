@@ -41,8 +41,7 @@ ACNox_Runner::ACNox_Runner()
 
 	SceneCapture2D = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SceneCapture"));
 	SceneCapture2D->SetupAttachment(CaptureRoot);
-
-
+	
 }
 
 void ACNox_Runner::BeginPlay()
@@ -54,6 +53,7 @@ void ACNox_Runner::BeginPlay()
 	SceneCapture2D->ShowOnlyActorComponents(this);
 
 	Movement->EnableControlRotation();
+	Movement->Stop();
 
 	UNetGameInstance* GI = Cast<UNetGameInstance>(GetGameInstance());
 	if (GI && EquipComp)
@@ -117,6 +117,20 @@ void ACNox_Runner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (bShouldRotateToTarget)
+	{
+		AController* controller = GetController<AController>();
+		FRotator Current = controller->GetControlRotation();
+		FRotator NewRot = FMath::RInterpTo(Current, TargetControlRotation, DeltaTime, RotationInterpSpeed);
+
+		controller->SetControlRotation(NewRot);
+
+		if (NewRot.Equals(TargetControlRotation, 0.5f))
+		{
+			bShouldRotateToTarget = false;
+		}
+	}
+
 //#if WITH_EDITOR
 //	const FVector Location = GetActorLocation();
 //
@@ -158,7 +172,7 @@ void ACNox_Runner::NotifyControllerChanged()
 			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(IMC_Movement, 10);
-			Subsystem->AddMappingContext(IMC_Weapon, 9);
+			Subsystem->AddMappingContext(IMC_Weapon, 11);
 			Subsystem->AddMappingContext(IMC_Invectory, 11);
 		}
 	}
@@ -243,10 +257,6 @@ void ACNox_Runner::Init()
 	CHelpers::CreateComponent<UCameraComponent>(this, &TPSCamera, "TPSCamera", SpringArm);
 	TPSCamera->SetRelativeLocation(FVector(~79, 60, 100));
 	TPSCamera->bUsePawnControlRotation = false;
-	
-	//// FPSCamera
-	//CHelpers::CreateComponent<UCameraComponent>(this, &FPSCamera, "FPSCamera", GetMesh(), FName("FPSCamera"));
-	//FPSCamera->bUsePawnControlRotation = false;
 
 	// MappingContext
 	CHelpers::GetAsset<UInputMappingContext>(&IMC_Movement,
@@ -260,9 +270,6 @@ void ACNox_Runner::Init()
 	CHelpers::GetAsset<UInputMappingContext>(&IMC_Invectory,
 										 TEXT(
 											 "/Script/EnhancedInput.InputMappingContext'/Game/Inputs/IMC_Runner.IMC_Runner'"));
-
-	// Trajectory
-	//CHelpers::CreateActorComponent<UCharacterTrajectoryComponent>(this, &Trajectory, "Trajectory");
 
 	// State
 	CHelpers::CreateActorComponent<UCStateComponent>(this, &State, "State");
@@ -293,7 +300,6 @@ void ACNox_Runner::Dead()
 void ACNox_Runner::ShowPlayerMainUI()
 {
 	// 위젯 클래스가 유효한지 확인
-
 	if (RunnerUIClass)
 	{
 		// 위젯 생성
@@ -352,4 +358,3 @@ void ACNox_Runner::CacheDefaultSkeletalMeshes()
 	DefaultMeshes.Add(EPlayerPart::Weapon1, Weapon1->GetSkeletalMeshAsset());
 	DefaultMeshes.Add(EPlayerPart::Weapon2, Weapon2->GetSkeletalMeshAsset());
 }
-

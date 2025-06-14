@@ -1,6 +1,7 @@
 ﻿#include "Items/Equipments/Weapons/DoActions/CWeapon_DoAction_Combo.h"
 #include "Global.h"
 #include "Characters/CNox.h"
+#include "Characters/CNox_Runner.h"
 #include "Components/CStateComponent.h"
 
 void UCWeapon_DoAction_Combo::DoAction()
@@ -84,14 +85,20 @@ void UCWeapon_DoAction_Combo::OnWeaponAttachmentEndCollision()
 		}
 	}
 
-	// if (!!candidate)
-	// {
-	// 	FRotator rotator = UKismetMathLibrary::FindLookAtRotation(OwnerCharacter->GetActorLocation(), candidate->GetActorLocation());
-	// 	FRotator target = FRotator(0, rotator.Yaw, 0);
-	//
-	// 	AController* controller = OwnerCharacter->GetController<AController>();
-	// 	controller->SetControlRotation(target);
-	// }
+	if (!!candidate)
+	{
+		FRotator rotator = UKismetMathLibrary::FindLookAtRotation(OwnerCharacter->GetActorLocation(), candidate->GetActorLocation());
+		FRotator target = FRotator(0, rotator.Yaw, 0);
+
+		if (ACNox_Runner* runner = Cast<ACNox_Runner>(OwnerCharacter))
+		{
+			runner->TargetControlRotation = FRotator(0.f, rotator.Yaw, 0.f);
+			runner->bShouldRotateToTarget = true;
+		}
+		
+		// AController* controller = OwnerCharacter->GetController<AController>();
+		// controller->SetControlRotation(target);
+	}
 
 	Hitted.Empty();
 

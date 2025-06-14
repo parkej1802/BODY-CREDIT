@@ -86,6 +86,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class APlayerController* PC;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class ACMainGM* GM;
 
 public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))

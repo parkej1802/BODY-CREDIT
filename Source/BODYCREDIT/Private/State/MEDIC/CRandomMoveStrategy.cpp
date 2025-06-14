@@ -8,7 +8,24 @@
 void CRandomMoveStrategy::Move(ACNox_EBase* Owner, float DeltaTime)
 {
 	if (!Owner) return;
-	RandomMove(Owner);
+	if (Owner->bHearingMovement)
+	{
+		HearingMove(Owner);
+	}
+	else
+		RandomMove(Owner);
+}
+
+void CRandomMoveStrategy::HearingMove(ACNox_EBase* Owner)
+{
+	AAIController* AICon = Cast<AAIController>(Owner->GetController());
+	if (!AICon) return;
+	
+	// 이동속도 변경
+	Owner->SetMovementSpeed(EEnemyMovementSpeed::Walking);
+	EPathFollowingRequestResult::Type result = AICon->MoveToLocation(Owner->HearingLoc, AcceptanceThreshold, true);
+	if (result == EPathFollowingRequestResult::AlreadyAtGoal)
+		Owner->bHearingMovement = false;
 }
 
 void CRandomMoveStrategy::RandomMove(ACNox_EBase* Owner)

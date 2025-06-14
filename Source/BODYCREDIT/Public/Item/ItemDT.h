@@ -57,10 +57,18 @@ enum class EPlayerPart : uint8
 UENUM(BlueprintType)
 enum class EItemRarity : uint8
 {
+    Blank UMETA(DisplayName = "Blank"),
     Common UMETA(DisplayName = "Common"),
     Rare UMETA(DisplayName = "Rare"),
-    Epic UMETA(DisplayName = "Epic")
+    Epic UMETA(DisplayName = "Epic"),
+    Legendary UMETA(DisplayName = "Lengendary")
 };
+
+// UENUM(BlueprintType)
+// enum class EImage : uint8
+// {
+// 	
+// };
 
 USTRUCT(BlueprintType)
 struct FItemData : public FTableRowBase

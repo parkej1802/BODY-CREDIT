@@ -94,6 +94,12 @@ void ULobbyWidget_Selection::OnPlayClicked()
             SetPlayerStartLocation();
             return;
         }
+    GM = Cast<ACMainGM>(GetWorld()->GetAuthGameMode());
+    GM->IsStart = false;
+    GM->SpawnEnemy();
+    
+    PlayerCharacter->RemovePlayerMainUI();    
+}
 
         else if (GI->DayLeft && GI->SelectedPart != EPlayerPart::Basic)
         {
@@ -137,6 +143,21 @@ void ULobbyWidget_Selection::OnPlayClicked()
             }
         }
        
+    for (TActorIterator<ALootable_Box> It(World); It; ++It)
+    {
+        ALootable_Box* LootableActor = *It;
+        if (LootableActor && LootableActor->LootInventoryComp)
+        {
+            LootableActor->LootInventoryComp->RefreshInventory();
+        }
+    }
+
+    if (GM)
+        GM->ChangePlayerStartLocation();
+ 
+    if (GI) {
+        GI->BeforePlayerGold = PlayerCharacter->EquipComp->CalculatePriceOfEquippedItem();
+        GI->Day = GI->Day + 1;
     }
 
     SetInventoryItems();

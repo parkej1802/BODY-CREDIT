@@ -42,7 +42,7 @@ void UCWeapon_Asset::BeginPlay(ACNox* InOwner, UCWeapon_Data** OutWeaponData)
 	if (!!WeaponDoActionClass)
 	{
 		doAction = NewObject<UCWeapon_DoAction>(this, WeaponDoActionClass);
-		doAction->BeginPlay(attachment, equipment, InOwner, WeaponDoActionDatas, WeaponHitDatas);
+		doAction->BeginPlay(attachment, equipment, InOwner, WeaponDoActionDatas, WeaponHitDatas, WeaponSprintDoActionDatas, WeaponSprintHitDatas);
 
 		if (!!attachment)
 		{

@@ -26,9 +26,13 @@ void CSplineMoveStrategy::Move(ACNox_EBase* Owner, float DeltaTime)
 	{
 		SplineMove(Owner);
 	}
+	else if (Owner->bHearingMovement)
+	{
+		HearingMove(Owner);
+	}
 	else
 	{
-		RandomMove(Owner);
+		RandomMove(Owner);		
 	}
 }
 
@@ -76,7 +80,8 @@ void CSplineMoveStrategy::RandomMove(ACNox_EBase* Owner)
 	if (!bMoving)
 	{
 		RanLocation = GetRandomLocation(Owner); // 랜덤 위치 구하기
-		DrawDebugSphere(Owner->GetWorld(), RanLocation, 10, 10, FColor::Green, true, 5);
+		if (Owner->bDebug)
+			DrawDebugSphere(Owner->GetWorld(), RanLocation, 10, 10, FColor::Green, true, 5);
 		bMoving = true;
 	}
 	else
@@ -105,4 +110,16 @@ FVector CSplineMoveStrategy::GetRandomLocation(const ACNox_EBase* Owner) const
 	while (true)
 		if (navSystem->GetRandomPointInNavigableRadius(location, RandomRadius, point)) break;
 	return point.Location;
+}
+
+void CSplineMoveStrategy::HearingMove(ACNox_EBase* Owner)
+{
+	AAIController* AICon = Cast<AAIController>(Owner->GetController());
+	if (!AICon) return;
+	
+	// 이동속도 변경
+	Owner->SetMovementSpeed(EEnemyMovementSpeed::Walking);
+	EPathFollowingRequestResult::Type result = AICon->MoveToLocation(Owner->HearingLoc, AcceptanceThreshold, true);
+	if (result == EPathFollowingRequestResult::AlreadyAtGoal)
+		Owner->bHearingMovement = false;
 }
