@@ -12,9 +12,18 @@ UCDoAction_Bow::UCDoAction_Bow()
 {
 }
 
-void UCDoAction_Bow::BeginPlay(ACWeapon_Attachment* InWeaponAttachment, UCWeapon_Equipment* InEquipment, ACNox* InOwner, const TArray<FWeaponDoActionData>& InDoActionData, const TArray<FWeaponHitData>& InHitData)
+void UCDoAction_Bow::BeginPlay
+(
+	ACWeapon_Attachment* InWeaponAttachment,
+	UCWeapon_Equipment* InEquipment,
+	ACNox* InOwner,
+	const TArray<FWeaponDoActionData>& InDoActionDatas,
+	const TArray<FWeaponHitData>& InHitDatas,
+	const TArray<FWeaponDoActionData>& InSprintDoActionDatas,
+	const TArray<FWeaponHitData>& InSprintHitDatas
+	)
 {
-	Super::BeginPlay(InWeaponAttachment, InEquipment, InOwner, InDoActionData, InHitData);
+	Super::BeginPlay(InWeaponAttachment, InEquipment, InOwner, InDoActionDatas, InHitDatas, InSprintDoActionDatas, InSprintHitDatas);
 
 	SkeletalMesh = CHelpers::GetComponent<USkeletalMeshComponent>(InWeaponAttachment);
 	PoseableMesh = CHelpers::GetComponent<UPoseableMeshComponent>(InWeaponAttachment);

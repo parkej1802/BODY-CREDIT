@@ -153,6 +153,9 @@ void UCWeaponComponent::DoAction()
 	switch (Type)
 	{
 	case EWeaponType::KATANA:
+		if (CHelpers::GetComponent<UCMovementComponent>(OwnerCharacter)->IsSprint() == false)
+			GetDoAction()->DoAction();
+		else GetDoAction()->SprintDoAction();
 		break;
 	case EWeaponType::BOW:
 	case EWeaponType::RIFLE:
@@ -272,7 +275,7 @@ void UCWeaponComponent::BindInput(UEnhancedInputComponent* InEnhancedInputCompon
 	// InEnhancedInputComponent->BindAction(IA_Katana, ETriggerEvent::Started, this, &UCWeaponComponent::SetKatanaMode);
 
 	InEnhancedInputComponent->BindAction(IA_WeaponSlot1, ETriggerEvent::Started, this, &UCWeaponComponent::SetBowMode);
-	InEnhancedInputComponent->BindAction(IA_WeaponSlot2, ETriggerEvent::Started, this, &UCWeaponComponent::SetWeaponSlot2);
+	InEnhancedInputComponent->BindAction(IA_WeaponSlot2, ETriggerEvent::Started, this, &UCWeaponComponent::SetKatanaMode);
 
 	InEnhancedInputComponent->BindAction(IA_Action, ETriggerEvent::Started, this, &UCWeaponComponent::DoAction);
 	InEnhancedInputComponent->BindAction(IA_Action, ETriggerEvent::Completed, this, &UCWeaponComponent::EndDoAction);

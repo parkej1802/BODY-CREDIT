@@ -9,7 +9,7 @@ UCWeapon_DoAction::UCWeapon_DoAction()
 
 }
 
-void UCWeapon_DoAction::BeginPlay(ACWeapon_Attachment* InAttachment, UCWeapon_Equipment* InEquipment, ACNox* InOwner, const TArray<FWeaponDoActionData>& InDoActionDatas, const TArray<FWeaponHitData>& InHitDatas)
+void UCWeapon_DoAction::BeginPlay(ACWeapon_Attachment* InAttachment, UCWeapon_Equipment* InEquipment, ACNox* InOwner, const TArray<FWeaponDoActionData>& InDoActionDatas, const TArray<FWeaponHitData>& InHitDatas, const TArray<FWeaponDoActionData>& InSprintDoActionDatas, const TArray<FWeaponHitData>& InSprintHitDatas)
 {
 	OwnerCharacter = InOwner;
 	World = OwnerCharacter->GetWorld();
@@ -19,7 +19,9 @@ void UCWeapon_DoAction::BeginPlay(ACWeapon_Attachment* InAttachment, UCWeapon_Eq
 
 	DoActionDatas = InDoActionDatas;
 	HitDatas = InHitDatas;
-
+	SprintDoActionDatas = InSprintDoActionDatas;
+	SprintHitDatas = InSprintHitDatas;
+	
 }
 
 void UCWeapon_DoAction::DoAction()
@@ -46,4 +48,11 @@ void UCWeapon_DoAction::End_DoAction()
 	Movement->Move();
 	Movement->DisableFixedCamera();
 
+}
+
+void UCWeapon_DoAction::SprintDoAction()
+{
+	if (!SprintDoActionDatas.IsEmpty())
+		SprintDoActionDatas[0].DoAction(OwnerCharacter);
+	
 }

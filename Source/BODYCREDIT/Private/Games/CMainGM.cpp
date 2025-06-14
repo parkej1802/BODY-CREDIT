@@ -217,6 +217,23 @@ void ACMainGM::DestroyEnemy()
 	}
 }
 
+void ACMainGM::ChangePlayerStartLocation()
+{
+	APlayerStart* Start = nullptr;
+	for (TActorIterator<APlayerStart> It(GetWorld()); It; ++It)
+	{
+		if (It->PlayerStartTag == "Start")
+		{
+			Start = *It;
+
+			break;
+		}
+	}
+		
+	PlayerCharacter->SetActorLocation(Start->GetActorLocation());
+	PlayerCharacter->GetController()->SetControlRotation(Start->GetActorRotation());
+}
+
 // bool ACMainGM::IsInVIPZone(ACNox_Runner* Player)
 // {
 // 	if (!Player) return false;

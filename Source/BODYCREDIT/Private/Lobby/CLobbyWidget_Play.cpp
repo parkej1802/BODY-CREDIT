@@ -22,8 +22,7 @@ void UCLobbyWidget_Play::NativeConstruct()
 	GI->SaveImageBody = ImageBody;
 	GI->SaveImageArm = ImageArm;
 	GI->SaveImageLeg = ImageLeg;
-
-
+	
 	if (Button_Continue) 
 	{
 		Button_Continue->OnClicked.AddDynamic(this, &ThisClass::OnContinueClicked);
@@ -97,6 +96,7 @@ void UCLobbyWidget_Play::OnContinueClicked()
 		APawn* Pawn = pc->GetPawn();
 		ACNox_Runner* PlayerCharacter = Cast<ACNox_Runner>(Pawn);
 		PlayerCharacter->ShowPlayerMainUI();
+		PlayerCharacter->OnMovement();
 
 		for (TActorIterator<ACNox_EBase> It(GetWorld()); It; ++It)
 		{

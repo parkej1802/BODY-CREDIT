@@ -76,3 +76,37 @@ void UCStateComponent::OffSubActionMode()
 	bInSubActionMode = false;
 
 }
+
+EAvoidDirection8Way UCStateComponent::GetAvoidDirection(const FVector2D& InputVector, const FRotator& ControlRotation) const
+{
+	if (InputVector.SizeSquared() < KINDA_SMALL_NUMBER)
+	{
+		return EAvoidDirection8Way::Forward;
+	}
+
+	FVector WorldDir = FRotationMatrix(ControlRotation).TransformVector(FVector(InputVector.Y, InputVector.X, 0.f));
+	WorldDir.Z = 0;
+	WorldDir.Normalize();
+
+	float Angle = FMath::Atan2(WorldDir.Y, WorldDir.X);
+	float Degree = FMath::Fmod(FMath::RadiansToDegrees(Angle) + 360.f, 360.f);
+
+	if (Degree < 22.5f || Degree >= 337.5f) return EAvoidDirection8Way::Forward;
+	if (Degree < 67.5f) return EAvoidDirection8Way::ForwardRight;
+	if (Degree < 112.5f) return EAvoidDirection8Way::Right;
+	if (Degree < 157.5f) return EAvoidDirection8Way::BackwardRight;
+	if (Degree < 202.5f) return EAvoidDirection8Way::Backward;
+	if (Degree < 247.5f) return EAvoidDirection8Way::BackwardLeft;
+	if (Degree < 292.5f) return EAvoidDirection8Way::Left;
+	return EAvoidDirection8Way::ForwardLeft;
+}
+
+void UCStateComponent::SetLastAvoidDirection(EAvoidDirection8Way InDirection)
+{
+	LastAvoidDirection = InDirection;
+}
+
+EAvoidDirection8Way UCStateComponent::GetLastAvoidDirection() const
+{
+	return LastAvoidDirection;
+}

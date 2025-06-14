@@ -15,6 +15,7 @@
 #include "Inventory/AC_EquipComponent.h"
 #include "Utilities/CLog.h"
 #include "GameFramework/PlayerStart.h"
+#include "Games/CMainGM.h"
 
 void ULobbyWidget_Main::NativeConstruct()
 {
@@ -25,6 +26,9 @@ void ULobbyWidget_Main::NativeConstruct()
     PC->SetInputMode(InputMode);
     PC->bShowMouseCursor = true;
     // UGameplayStatics::SetGamePaused(GetWorld(), true);
+
+    if (ACNox_Runner* runner = Cast<ACNox_Runner>(GetOwningPlayer()))
+        runner->OffMovement();
 
     if (Button_NewGame)
     {
@@ -71,19 +75,8 @@ void ULobbyWidget_Main::OnNewGameClicked()
         }
     }
     
-    APlayerStart* Start = nullptr;
-    for (TActorIterator<APlayerStart> It(GetWorld()); It; ++It)
-    {
-        if (It->PlayerStartTag == "Start")
-        {
-            Start = *It;
-
-            break;
-        }
-    }
-		
-    PlayerCharacter->SetActorLocation(Start->GetActorLocation());
-    PlayerCharacter->GetController()->SetControlRotation(Start->GetActorRotation());
+    if (ACMainGM* GM = Cast<ACMainGM>(GetWorld()->GetAuthGameMode()))
+        GM->ChangePlayerStartLocation();
     
 }
 

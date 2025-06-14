@@ -41,8 +41,7 @@ ACNox_Runner::ACNox_Runner()
 
 	SceneCapture2D = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SceneCapture"));
 	SceneCapture2D->SetupAttachment(CaptureRoot);
-
-
+	
 }
 
 void ACNox_Runner::BeginPlay()
@@ -54,6 +53,7 @@ void ACNox_Runner::BeginPlay()
 	SceneCapture2D->ShowOnlyActorComponents(this);
 
 	Movement->EnableControlRotation();
+	Movement->Stop();
 
 	UNetGameInstance* GI = Cast<UNetGameInstance>(GetGameInstance());
 	if (GI && EquipComp)
@@ -243,10 +243,6 @@ void ACNox_Runner::Init()
 	CHelpers::CreateComponent<UCameraComponent>(this, &TPSCamera, "TPSCamera", SpringArm);
 	TPSCamera->SetRelativeLocation(FVector(~79, 60, 100));
 	TPSCamera->bUsePawnControlRotation = false;
-	
-	//// FPSCamera
-	//CHelpers::CreateComponent<UCameraComponent>(this, &FPSCamera, "FPSCamera", GetMesh(), FName("FPSCamera"));
-	//FPSCamera->bUsePawnControlRotation = false;
 
 	// MappingContext
 	CHelpers::GetAsset<UInputMappingContext>(&IMC_Movement,
@@ -260,9 +256,6 @@ void ACNox_Runner::Init()
 	CHelpers::GetAsset<UInputMappingContext>(&IMC_Invectory,
 										 TEXT(
 											 "/Script/EnhancedInput.InputMappingContext'/Game/Inputs/IMC_Runner.IMC_Runner'"));
-
-	// Trajectory
-	//CHelpers::CreateActorComponent<UCharacterTrajectoryComponent>(this, &Trajectory, "Trajectory");
 
 	// State
 	CHelpers::CreateActorComponent<UCStateComponent>(this, &State, "State");
