@@ -7,6 +7,7 @@
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "Session/NetGameInstance.h"
+#include "Lobby/LobbyWidget_Failed.h"
 
 void ULobbyWidget_Payment::NativeConstruct()
 {
@@ -34,19 +35,26 @@ void ULobbyWidget_Payment::OnPaymentClicked()
 {
     if (GI)
     {
+        GI->SelectedPart = EPlayerPart::Basic;
+
         if (GI->AmountToPay > GI->PlayerGold)
         {
             return;
         }
-    }
-    if (LobbyRollDiceWidgetClass)
-    {
-        LobbyWidget_RollDice = CreateWidget<ULobbyWidget_RollDice>(GetWorld(), LobbyRollDiceWidgetClass);
-        if (LobbyWidget_RollDice)
+        else
         {
-            LobbyWidget_RollDice->AddToViewport();
+            GI->Debt = GI->Debt - GI->AmountToPay;
+            GI->PlayerGold = GI->PlayerGold - GI->AmountToPay;
+            if (LobbyRollDiceWidgetClass)
+            {
+                LobbyWidget_RollDice = CreateWidget<ULobbyWidget_RollDice>(GetWorld(), LobbyRollDiceWidgetClass);
+                if (LobbyWidget_RollDice)
+                {
+                    LobbyWidget_RollDice->AddToViewport();
 
-            RemoveFromParent();
+                    RemoveFromParent();
+                }
+            }
         }
     }
 }
@@ -64,6 +72,17 @@ void ULobbyWidget_Payment::OnSkipClicked()
 			RemoveFromParent();
 		}
 	}
+
+    if (FailedWidgetClass)
+    {
+        FailedUI = CreateWidget<ULobbyWidget_Failed>(GetWorld(), FailedWidgetClass);
+        if (FailedUI)
+        {
+            GI->Failed = true;
+            FailedUI->AddToViewport();
+        }
+    }
+
 }
 
 void ULobbyWidget_Payment::OnPaymentHovered()

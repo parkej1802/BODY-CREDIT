@@ -98,4 +98,7 @@ public:
 
 	UPROPERTY()
 	bool PayTime = false;
+
+	UPROPERTY()
+	bool Failed = false;
 };

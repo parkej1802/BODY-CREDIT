@@ -54,6 +54,11 @@ public:
 	UPROPERTY()
 	class ULobbyWidget_RollDice* LobbyWidget_RollDice;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
+	TSubclassOf<UUserWidget> FailedWidgetClass;
+
+	UPROPERTY()
+	class ULobbyWidget_Failed* FailedUI;
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UTextBlock* Text_PayAmount;

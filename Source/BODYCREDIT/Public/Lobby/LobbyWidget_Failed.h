@@ -22,11 +22,11 @@ public:
 	UFUNCTION()
 	void OnContinueClicked();
 
-	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UButton* Button_Exit;
+	//UPROPERTY(EditAnywhere, meta = (BindWidget))
+	//class UButton* Button_Exit;
 
-	UFUNCTION()
-	void OnExitClicked();
+	//UFUNCTION()
+	//void OnExitClicked();
 
 	UFUNCTION()
 	void OnContinueHovered();
@@ -34,11 +34,11 @@ public:
 	UFUNCTION()
 	void OnContinueUnhovered();
 
-	UFUNCTION()
-	void OnExitHovered();
+	//UFUNCTION()
+	//void OnExitHovered();
 
-	UFUNCTION()
-	void OnExitUnhovered();
+	//UFUNCTION()
+	//void OnExitUnhovered();
 
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
 	class UWidgetAnimation* Anim_Hovered_Continue;
@@ -46,23 +46,23 @@ public:
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
 	class UWidgetAnimation* Anim_Unhovered_Continue;
 
-	UPROPERTY(meta = (BindWidgetAnim), Transient)
-	class UWidgetAnimation* Anim_Hovered_Exit;
+	//UPROPERTY(meta = (BindWidgetAnim), Transient)
+	//class UWidgetAnimation* Anim_Hovered_Exit;
 
-	UPROPERTY(meta = (BindWidgetAnim), Transient)
-	class UWidgetAnimation* Anim_Unhovered_Exit;
+	//UPROPERTY(meta = (BindWidgetAnim), Transient)
+	//class UWidgetAnimation* Anim_Unhovered_Exit;
 	
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
 	class UWidgetAnimation* Anim_Hovered_Continue_Loop;
 
-	UPROPERTY(meta = (BindWidgetAnim), Transient)
-	class UWidgetAnimation* Anim_Hovered_Exit_Loop;
+	//UPROPERTY(meta = (BindWidgetAnim), Transient)
+	//class UWidgetAnimation* Anim_Hovered_Exit_Loop;
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UImage* Image_Button_Continue_Hovered;
 
-	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UImage* Image_Button_Exit_Hovered;
+	//UPROPERTY(EditAnywhere, meta = (BindWidget))
+	//class UImage* Image_Button_Exit_Hovered;
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UImage* Image_Background;

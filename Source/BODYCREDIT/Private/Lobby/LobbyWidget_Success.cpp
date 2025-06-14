@@ -9,6 +9,10 @@
 #include "Characters/CNox_Controller.h"
 #include "Session/NetGameInstance.h"
 #include "Item/ItemDT.h"
+#include "Characters/CNox_Runner.h"
+#include "Inventory/AC_EquipComponent.h"
+#include "Components/TextBlock.h"
+#include "Games/CMainGM.h"
 
 void ULobbyWidget_Success::NativeConstruct()
 {
@@ -94,11 +98,18 @@ void ULobbyWidget_Success::Refresh()
     PC->bShowMouseCursor = true;
 
     UNetGameInstance* GI = Cast<UNetGameInstance>(GetGameInstance());
-    GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, FString::Printf(TEXT("DayLeft %d"), GI->DayLeft));
+    // GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, FString::Printf(TEXT("DayLeft %d"), GI->DayLeft));
     if (GI->DayLeft == 1)
     {
-        GI->SelectedPart = EPlayerPart::Basic;
         GI->PayTime = true;
     }
 
+    if (GI)
+    {
+        GI->AfterPlayerGold = GI->PlayerCharacter->EquipComp->CalculatePriceOfEquippedItem();
+        int32 TotalProfit = GI->AfterPlayerGold - GI->BeforePlayerGold;
+        Text_Profit->SetText(FText::FromString(FString::FromInt(TotalProfit)));
+    }
+    
+    Cast<ACMainGM>(GetWorld()->GetAuthGameMode())->IsStart = false;
 }

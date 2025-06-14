@@ -220,8 +220,9 @@ int32 UAC_EquipComponent::CalculatePriceOfEquippedItem()
 		{
 			TotalPrice += Item->ItemData.Price;
 
-			if (Item->ItemType == EPlayerPart::Backpack || Item->ItemType == EPlayerPart::ChestRigs)
+			if (Item->ItemData.ItemType == EPlayerPart::Backpack || Item->ItemData.ItemType == EPlayerPart::ChestRigs)
 			{
+				
 				TotalPrice += CalculatePriceRecursively(Item);
 			}
 		}
@@ -250,7 +251,7 @@ int32 UAC_EquipComponent::CalculatePriceRecursively(UItemObject* ItemObject)
 
 		ContainerPrice += ContainedItem->ItemData.Price;
 
-		if (ContainedItem->ItemType == EPlayerPart::Backpack || ContainedItem->ItemType == EPlayerPart::ChestRigs)
+		if (ContainedItem->ItemData.ItemType == EPlayerPart::Backpack || ContainedItem->ItemData.ItemType == EPlayerPart::ChestRigs)
 		{
 			ContainerPrice += CalculatePriceRecursively(ContainedItem);
 		}	

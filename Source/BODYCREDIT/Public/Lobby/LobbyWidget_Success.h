@@ -55,4 +55,8 @@ public:
 	class ULobbyWidget_Selection* LobbyWidget_Selection;
 
 	void Refresh();
+	
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* Text_Profit;
+
 };

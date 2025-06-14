@@ -21,6 +21,7 @@
 #include "Lobby/LobbyWidget_RollDice.h"
 #include "Lobby/LobbyWidget_Payment.h"
 #include "Lobby/LobbyWidget_DayLeft.h"
+#include "Item/Item_Base.h"
 
 
 void ULobbyWidget_Selection::NativeConstruct()
@@ -307,4 +308,16 @@ void ULobbyWidget_Selection::Refresh()
     Cast<ACMainGM>(GetWorld()->GetAuthGameMode())->IsStart = false;
 
     PlayerCharacter->RemovePlayerMainUI();
+
+    UWorld* World = GetWorld();
+    if (!World) return;
+
+    for (TActorIterator<AItem_Base> It(World); It; ++It)
+    {
+        AItem_Base* Item = *It;
+        if (!Item->IsHidden())
+        {
+            Item->Destroy();
+        }
+    }
 }

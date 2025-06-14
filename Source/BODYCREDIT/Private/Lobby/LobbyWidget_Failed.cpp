@@ -21,12 +21,12 @@ void ULobbyWidget_Failed::NativeConstruct()
         Button_Continue->OnUnhovered.AddDynamic(this, &ULobbyWidget_Failed::OnContinueUnhovered);
     }
 
-    if (Button_Exit)
-    {
-        Button_Exit->OnClicked.AddDynamic(this, &ULobbyWidget_Failed::OnExitClicked);
-        Button_Exit->OnHovered.AddDynamic(this, &ULobbyWidget_Failed::OnExitHovered);
-        Button_Exit->OnUnhovered.AddDynamic(this, &ULobbyWidget_Failed::OnExitUnhovered);
-    }
+	/*if (Button_Exit)
+	{
+		Button_Exit->OnClicked.AddDynamic(this, &ULobbyWidget_Failed::OnExitClicked);
+		Button_Exit->OnHovered.AddDynamic(this, &ULobbyWidget_Failed::OnExitHovered);
+		Button_Exit->OnUnhovered.AddDynamic(this, &ULobbyWidget_Failed::OnExitUnhovered);
+	}*/
 
     if (Anim_BackGround)
     {
@@ -38,6 +38,16 @@ void ULobbyWidget_Failed::NativeConstruct()
 
 void ULobbyWidget_Failed::OnContinueClicked()
 {
+    GI->SelectedPart = EPlayerPart::Basic;
+
+    if (GI->Failed)
+    {
+        GI->Failed = false;
+        RemoveFromParent();
+
+        return;
+    }
+
     if (GI->RemainingLife == 0)
     {
         if (LobbyGameOverWidgetClass)
@@ -65,19 +75,19 @@ void ULobbyWidget_Failed::OnContinueClicked()
     }
 }
 
-void ULobbyWidget_Failed::OnExitClicked()
-{
-    if (LobbySelectionWidgetClass)
-    {
-        LobbyWidget_Selection = CreateWidget<ULobbyWidget_Selection>(GetWorld(), LobbySelectionWidgetClass);
-        if (LobbyWidget_Selection)
-        {
-            LobbyWidget_Selection->AddToViewport();
-
-            this->RemoveFromParent();
-        }
-    }
-}
+//void ULobbyWidget_Failed::OnExitClicked()
+//{
+//    if (LobbySelectionWidgetClass)
+//    {
+//        LobbyWidget_Selection = CreateWidget<ULobbyWidget_Selection>(GetWorld(), LobbySelectionWidgetClass);
+//        if (LobbyWidget_Selection)
+//        {
+//            LobbyWidget_Selection->AddToViewport();
+//
+//            this->RemoveFromParent();
+//        }
+//    } 
+//}
 
 void ULobbyWidget_Failed::OnContinueHovered()
 {
@@ -115,41 +125,41 @@ void ULobbyWidget_Failed::OnContinueUnhovered()
     }
 }
 
-void ULobbyWidget_Failed::OnExitHovered()
-{
-    if (Anim_Hovered_Exit)
-    {
-        PlayAnimation(Anim_Hovered_Exit);
-    }
-
-    if (Anim_Hovered_Exit_Loop)
-    {
-        PlayAnimation(Anim_Hovered_Exit_Loop, 0.0f, 9999, EUMGSequencePlayMode::Forward);
-    }
-
-    if (Image_Button_Exit_Hovered)
-    {
-        Image_Button_Exit_Hovered->SetVisibility(ESlateVisibility::Visible);
-    }
-}
-
-void ULobbyWidget_Failed::OnExitUnhovered()
-{
-    if (Anim_Unhovered_Exit)
-    {
-        PlayAnimation(Anim_Unhovered_Exit);
-    }
-
-    if (Anim_Hovered_Exit_Loop)
-    {
-        StopAnimation(Anim_Hovered_Exit_Loop);
-    }
-
-    if (Image_Button_Exit_Hovered)
-    {
-        Image_Button_Exit_Hovered->SetVisibility(ESlateVisibility::Hidden);
-    }
-}
+//void ULobbyWidget_Failed::OnExitHovered()
+//{
+//    if (Anim_Hovered_Exit)
+//    {
+//        PlayAnimation(Anim_Hovered_Exit);
+//    }
+//
+//    if (Anim_Hovered_Exit_Loop)
+//    {
+//        PlayAnimation(Anim_Hovered_Exit_Loop, 0.0f, 9999, EUMGSequencePlayMode::Forward);
+//    }
+//
+//    if (Image_Button_Exit_Hovered)
+//    {
+//        Image_Button_Exit_Hovered->SetVisibility(ESlateVisibility::Visible);
+//    }
+//}
+//
+//void ULobbyWidget_Failed::OnExitUnhovered()
+//{
+//    if (Anim_Unhovered_Exit)
+//    {
+//        PlayAnimation(Anim_Unhovered_Exit);
+//    }
+//
+//    if (Anim_Hovered_Exit_Loop)
+//    {
+//        StopAnimation(Anim_Hovered_Exit_Loop);
+//    }
+//
+//    if (Image_Button_Exit_Hovered)
+//    {
+//        Image_Button_Exit_Hovered->SetVisibility(ESlateVisibility::Hidden);
+//    }
+//}
 
 void ULobbyWidget_Failed::Refresh()
 {
