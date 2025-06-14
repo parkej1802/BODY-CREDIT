@@ -263,6 +263,14 @@ void UAC_InventoryBaseComponent::ResetInventoryItem()
 {
 	for (auto& Item : Items)
 	{
+		if (Item)
+		{
+			if (Item->ItemActorOwner.IsValid())
+			{
+				Item->ItemActorOwner->Destroy();
+			}
+			Item->ItemActorOwner = nullptr;
+		}
 		Item = nullptr;
 	}
 }

@@ -50,6 +50,26 @@ void ULobbyWidget_Selection::NativeConstruct()
     }
 
    Refresh();
+
+    APawn* Pawn = PC->GetPawn();
+
+    PlayerCharacter = Cast<ACNox_Runner>(Pawn);
+    // UGameplayStatics::SetGamePaused(GetWorld(), true);
+
+    GI = Cast<UNetGameInstance>(GetGameInstance());
+    FString DayString = FString::Printf(TEXT("%d"), GI->Day);
+    Text_DayCount->SetText(FText::FromString(DayString));
+
+    GI->SetActorInitLocation();
+
+    PlayerStatChange();
+
+    GM = Cast<ACMainGM>(GetWorld()->GetAuthGameMode());
+    GM->IsStart = false;
+    GM->SpawnEnemy();
+    
+    PlayerCharacter->RemovePlayerMainUI();    
+
 }
 
 void ULobbyWidget_Selection::OnPlayClicked()
@@ -71,6 +91,10 @@ void ULobbyWidget_Selection::OnPlayClicked()
         LobbyWidget_DayLeft = nullptr;
     }
 
+
+	if (GM) GM->ChangePlayerStartLocation();
+    SetInventoryItems();
+
     if (GI) {
 
         GI->BeforePlayerGold = PlayerCharacter->EquipComp->CalculatePriceOfEquippedItem();
@@ -91,15 +115,9 @@ void ULobbyWidget_Selection::OnPlayClicked()
             }
             GI->BeforePlayerGold = PlayerCharacter->EquipComp->CalculatePriceOfEquippedItem();
             GI->Day = GI->Day + 1;
-            SetPlayerStartLocation();
+            // SetPlayerStartLocation();
             return;
         }
-    GM = Cast<ACMainGM>(GetWorld()->GetAuthGameMode());
-    GM->IsStart = false;
-    GM->SpawnEnemy();
-    
-    PlayerCharacter->RemovePlayerMainUI();    
-}
 
         else if (GI->DayLeft && GI->SelectedPart != EPlayerPart::Basic)
         {
@@ -143,25 +161,9 @@ void ULobbyWidget_Selection::OnPlayClicked()
             }
         }
        
-    for (TActorIterator<ALootable_Box> It(World); It; ++It)
-    {
-        ALootable_Box* LootableActor = *It;
-        if (LootableActor && LootableActor->LootInventoryComp)
-        {
-            LootableActor->LootInventoryComp->RefreshInventory();
-        }
     }
 
-    if (GM)
-        GM->ChangePlayerStartLocation();
- 
-    if (GI) {
-        GI->BeforePlayerGold = PlayerCharacter->EquipComp->CalculatePriceOfEquippedItem();
-        GI->Day = GI->Day + 1;
-    }
-
-    SetInventoryItems();
-    SetPlayerStartLocation();
+    // SetPlayerStartLocation();
 
     //// OpenLevel
     //UGameplayStatics::OpenLevel(this, FName(TEXT("/Game/Levels/Lab")));
@@ -338,6 +340,7 @@ void ULobbyWidget_Selection::Refresh()
         AItem_Base* Item = *It;
         if (!Item->IsHidden())
         {
+            Item->ItemObject = nullptr;
             Item->Destroy();
         }
     }

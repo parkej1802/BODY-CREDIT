@@ -39,7 +39,7 @@ void ULobbyWidget_DayLeft::OnConfirmClicked()
             GameMode->GameTimer = GameMode->SetGameTimer;
             GameMode->bIsFailed = false;
             GameMode->IsStart = true;
-            GameMode->PlayGameStart();
+            // GameMode->PlayGameStart();
 
             pc->SetInputMode(FInputModeGameOnly());
             pc->bShowMouseCursor = false;

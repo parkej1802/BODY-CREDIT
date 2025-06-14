@@ -27,8 +27,6 @@ void UAC_LootingInventoryComponent::BeginPlay()
 	}
 
 	RefreshInventory();
-
-	// PreAddItem();
 }
 
 
@@ -119,7 +117,7 @@ void UAC_LootingInventoryComponent::AddRandomItem()
 
 void UAC_LootingInventoryComponent::RefreshInventory()
 {
-	Items.Empty();
+	ResetInventoryItem();
 	AddRandomItem();
 }
 
