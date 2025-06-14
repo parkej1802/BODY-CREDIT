@@ -95,4 +95,7 @@ public:
 
 	UPROPERTY()
 	int32 AmountToPay = 0;
+
+	UPROPERTY()
+	bool PayTime = false;
 };

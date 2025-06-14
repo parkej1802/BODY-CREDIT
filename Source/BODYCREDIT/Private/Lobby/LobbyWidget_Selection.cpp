@@ -65,9 +65,18 @@ void ULobbyWidget_Selection::OnPlayClicked()
 		}
 	}*/
 
+    if (LobbyWidget_DayLeft)
+    {
+        LobbyWidget_DayLeft = nullptr;
+    }
+
     if (GI) {
-        
-        if (GI->DayLeft == -1)
+
+        GI->BeforePlayerGold = PlayerCharacter->EquipComp->CalculatePriceOfEquippedItem();
+        GI->Day = GI->Day + 1;
+        GI->DayLeft = GI->DayLeft - 1;
+
+        if (GI->DayLeft < 0)
         {
             if (LobbyRollDiceWidgetClass)
             {
@@ -81,14 +90,11 @@ void ULobbyWidget_Selection::OnPlayClicked()
             }
             GI->BeforePlayerGold = PlayerCharacter->EquipComp->CalculatePriceOfEquippedItem();
             GI->Day = GI->Day + 1;
+            SetPlayerStartLocation();
             return;
         }
 
-        GI->BeforePlayerGold = PlayerCharacter->EquipComp->CalculatePriceOfEquippedItem();
-        GI->Day = GI->Day + 1;
-        GI->DayLeft = GI->DayLeft - 1;
-
-        if (GI->DayLeft && GI->SelectedPart != EPlayerPart::Basic)
+        else if (GI->DayLeft && GI->SelectedPart != EPlayerPart::Basic)
         {
             if (LobbyDayLeftWidgetClass)
             {
@@ -101,9 +107,10 @@ void ULobbyWidget_Selection::OnPlayClicked()
                 }
             }
         }
-        
-        else if (GI->SelectedPart != EPlayerPart::Basic)
+        else if (GI->PayTime)
         {
+            GI->PayTime = false;
+
             if (LobbyPaymentWidgetClass)
             {
                 LobbyWidget_Payment = CreateWidget<ULobbyWidget_Payment>(GetWorld(), LobbyPaymentWidgetClass);
@@ -131,20 +138,8 @@ void ULobbyWidget_Selection::OnPlayClicked()
        
     }
 
-    UWorld* World = GetWorld();
-    if (!World) return;
-
-    for (TActorIterator<ALootable_Box> It(World); It; ++It)
-    {
-        ALootable_Box* LootableActor = *It;
-        if (LootableActor && LootableActor->LootInventoryComp)
-        {
-            LootableActor->LootInventoryComp->RefreshInventory();
-        }
-    }
-
-    FVector StartLocation(285.0f, 15.0f, -408.0f);
-    PlayerCharacter->SetActorLocation(StartLocation);
+    SetInventoryItems();
+    SetPlayerStartLocation();
 
     //// OpenLevel
     //UGameplayStatics::OpenLevel(this, FName(TEXT("/Game/Levels/Lab")));
@@ -158,6 +153,14 @@ void ULobbyWidget_Selection::OnPlayClicked()
 
 void ULobbyWidget_Selection::OnMarketClicked()
 {
+    if (LobbyWidget_Market)
+    {
+        LobbyWidget_Market->Refresh();
+        LobbyWidget_Market->AddToViewport();
+        RemoveFromParent();
+        return;
+    }
+
     if (LobbyMarketWidgetClass)
     {
         LobbyWidget_Market = CreateWidget<ULobbyWidget_Market>(GetWorld(), LobbyMarketWidgetClass);
@@ -172,6 +175,13 @@ void ULobbyWidget_Selection::OnMarketClicked()
 
 void ULobbyWidget_Selection::OnWorkShopClicked()
 {
+    if (LobbyWidget_WorkShop)
+    {
+        LobbyWidget_WorkShop->Refresh();
+        LobbyWidget_WorkShop->AddToViewport();
+        RemoveFromParent();
+        return;
+    }
     if (LobbyWorkShopWidgetClass)
     {
         LobbyWidget_WorkShop = CreateWidget<ULobbyWidget_WorkShop>(GetWorld(), LobbyWorkShopWidgetClass);
@@ -250,6 +260,28 @@ void ULobbyWidget_Selection::PlayerStatChange()
     Text_Energy->SetText(FText::AsNumber(Stamina));
     Text_Humanity->SetText(FText::AsNumber(Humanity));
     Text_Debt->SetText(FText::AsNumber(Debt));
+}
+
+void ULobbyWidget_Selection::SetPlayerStartLocation()
+{
+
+    FVector StartLocation(285.0f, 15.0f, -408.0f);
+    PlayerCharacter->SetActorLocation(StartLocation);
+}
+
+void ULobbyWidget_Selection::SetInventoryItems()
+{
+    UWorld* World = GetWorld();
+    if (!World) return;
+
+    for (TActorIterator<ALootable_Box> It(World); It; ++It)
+    {
+        ALootable_Box* LootableActor = *It;
+        if (LootableActor && LootableActor->LootInventoryComp)
+        {
+            LootableActor->LootInventoryComp->RefreshInventory();
+        }
+    }
 }
 
 void ULobbyWidget_Selection::Refresh()

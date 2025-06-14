@@ -140,6 +140,7 @@ public:
 	class ULobbyWidget_DayLeft* LobbyWidget_DayLeft;
 
 	void PlayerStatChange();
-
+	void SetPlayerStartLocation();
+	void SetInventoryItems();
 	void Refresh();
 };

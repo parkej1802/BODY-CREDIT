@@ -28,7 +28,7 @@ AEscapeSuccessTriggerBox::AEscapeSuccessTriggerBox()
 void AEscapeSuccessTriggerBox::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 }
 
 // Called every frame
@@ -39,15 +39,103 @@ void AEscapeSuccessTriggerBox::Tick(float DeltaTime)
 }
 
 
+//void AEscapeSuccessTriggerBox::HandleEscape()
+//{
+//	if (bIsPlayerInside && CachedPlayer)
+//	{
+//		CachedPlayer->IsEscape = true;
+//		if (SuccessUI)
+//		{
+//			SuccessUI->Refresh();
+//			SuccessUI->AddToViewport();
+//			return;
+//		}
+//
+//		if (LobbySuccessWidgetClass)
+//		{
+//			SuccessUI = CreateWidget<ULobbyWidget_Success>(GetWorld(), LobbySuccessWidgetClass);
+//			if (SuccessUI)
+//			{
+//				SuccessUI->AddToViewport();
+//				CachedPlayer->IsEscape = false;
+//			}
+//		}
+//	}
+//}
+//
+//void AEscapeSuccessTriggerBox::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+//{
+//	ACNox_Runner* PlayerCharacter = Cast<ACNox_Runner>(OtherActor);
+//	if (PlayerCharacter)
+//	{
+//		bIsPlayerInside = true;
+//		CachedPlayer = PlayerCharacter;
+//		GetWorldTimerManager().SetTimer(EscapeTimerHandle, this, &AEscapeSuccessTriggerBox::HandleEscape, EscapeTime, false);
+//		
+//		if (EscapeTimerUI)
+//		{
+//			EscapeTimerUI->AddToViewport();
+//			EscapeTimerUI->EscapeTimer = EscapeTime;
+//			EscapeTimerUI->IsVisible = true;
+//
+//			return;
+//		}
+//
+//		if (EscapeTimerWidgetClass)
+//		{
+//			EscapeTimerUI = CreateWidget<ULobbyWidget_EscapeTimer>(GetWorld(), EscapeTimerWidgetClass);
+//			if (EscapeTimerUI)
+//			{
+//				EscapeTimerUI->AddToViewport();
+//				EscapeTimerUI->EscapeTimer = EscapeTime;
+//				EscapeTimerUI->IsVisible = true;
+//			}
+//		}
+//	}
+//}
+//
+//void AEscapeSuccessTriggerBox::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+//{
+//	ACNox_Runner* PlayerCharacter = Cast<ACNox_Runner>(OtherActor);
+//	if (PlayerCharacter)
+//	{
+//		bIsPlayerInside = false;
+//		CachedPlayer = nullptr;
+//		GetWorldTimerManager().ClearTimer(EscapeTimerHandle);
+//
+//		if (EscapeTimerUI)
+//		{
+//			EscapeTimerUI->RemoveFromParent();
+//			EscapeTimerUI->IsVisible = false;
+//
+//			return;
+//		}
+//	}
+//}
+
+
 void AEscapeSuccessTriggerBox::HandleEscape()
 {
+	if (SuccessUI)
+	{
+		if (SuccessUI->IsInViewport())
+		{
+			SuccessUI->RemoveFromParent();
+		}
+		SuccessUI = nullptr;
+	}
+
 	if (bIsPlayerInside && CachedPlayer)
 	{
 		CachedPlayer->IsEscape = true;
+
 		if (SuccessUI)
 		{
-			SuccessUI->AddToViewport();
-			SuccessUI->Refresh();
+			if (!SuccessUI->IsInViewport())
+			{
+				SuccessUI->Refresh();
+				SuccessUI->AddToViewport();
+			}
 			return;
 		}
 
@@ -66,18 +154,24 @@ void AEscapeSuccessTriggerBox::HandleEscape()
 void AEscapeSuccessTriggerBox::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	ACNox_Runner* PlayerCharacter = Cast<ACNox_Runner>(OtherActor);
-	if (PlayerCharacter)
+	if (PlayerCharacter && !bIsPlayerInside)
 	{
 		bIsPlayerInside = true;
 		CachedPlayer = PlayerCharacter;
-		GetWorldTimerManager().SetTimer(EscapeTimerHandle, this, &AEscapeSuccessTriggerBox::HandleEscape, EscapeTime, false);
-		
+
+		if (!GetWorldTimerManager().IsTimerActive(EscapeTimerHandle))
+		{
+			GetWorldTimerManager().SetTimer(EscapeTimerHandle, this, &AEscapeSuccessTriggerBox::HandleEscape, EscapeTime, false);
+		}
+
 		if (EscapeTimerUI)
 		{
-			EscapeTimerUI->AddToViewport();
-			EscapeTimerUI->EscapeTimer = EscapeTime;
-			EscapeTimerUI->IsVisible = true;
-
+			if (!EscapeTimerUI->IsInViewport())
+			{
+				EscapeTimerUI->EscapeTimer = EscapeTime;
+				EscapeTimerUI->IsVisible = true;
+				EscapeTimerUI->AddToViewport();
+			}
 			return;
 		}
 
@@ -86,9 +180,9 @@ void AEscapeSuccessTriggerBox::OnOverlapBegin(UPrimitiveComponent* OverlappedCom
 			EscapeTimerUI = CreateWidget<ULobbyWidget_EscapeTimer>(GetWorld(), EscapeTimerWidgetClass);
 			if (EscapeTimerUI)
 			{
-				EscapeTimerUI->AddToViewport();
 				EscapeTimerUI->EscapeTimer = EscapeTime;
 				EscapeTimerUI->IsVisible = true;
+				EscapeTimerUI->AddToViewport();
 			}
 		}
 	}
@@ -97,18 +191,17 @@ void AEscapeSuccessTriggerBox::OnOverlapBegin(UPrimitiveComponent* OverlappedCom
 void AEscapeSuccessTriggerBox::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	ACNox_Runner* PlayerCharacter = Cast<ACNox_Runner>(OtherActor);
-	if (PlayerCharacter)
+	if (PlayerCharacter && bIsPlayerInside)
 	{
 		bIsPlayerInside = false;
 		CachedPlayer = nullptr;
+
 		GetWorldTimerManager().ClearTimer(EscapeTimerHandle);
 
-		if (EscapeTimerUI)
+		if (EscapeTimerUI && EscapeTimerUI->IsInViewport())
 		{
 			EscapeTimerUI->RemoveFromParent();
 			EscapeTimerUI->IsVisible = false;
-
-			return;
 		}
 	}
 }

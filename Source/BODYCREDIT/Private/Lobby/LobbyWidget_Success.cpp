@@ -7,6 +7,8 @@
 #include "Animation/WidgetAnimation.h"
 #include "Lobby/LobbyWidget_Selection.h"
 #include "Characters/CNox_Controller.h"
+#include "Session/NetGameInstance.h"
+#include "Item/ItemDT.h"
 
 void ULobbyWidget_Success::NativeConstruct()
 {
@@ -90,5 +92,13 @@ void ULobbyWidget_Success::Refresh()
     FInputModeGameAndUI InputMode;
     PC->SetInputMode(InputMode);
     PC->bShowMouseCursor = true;
+
+    UNetGameInstance* GI = Cast<UNetGameInstance>(GetGameInstance());
+    GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, FString::Printf(TEXT("DayLeft %d"), GI->DayLeft));
+    if (GI->DayLeft == 1)
+    {
+        GI->SelectedPart = EPlayerPart::Basic;
+        GI->PayTime = true;
+    }
 
 }

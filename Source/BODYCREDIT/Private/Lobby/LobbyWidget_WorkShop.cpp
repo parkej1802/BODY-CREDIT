@@ -28,11 +28,6 @@ void ULobbyWidget_WorkShop::NativeConstruct()
 {
     Super::NativeConstruct();
 
-    PC = Cast<ACNox_Controller>(GetOwningPlayer());
-    FInputModeGameAndUI InputMode;
-    PC->SetInputMode(InputMode);
-    PC->bShowMouseCursor = true;
-
     if (Button_Back)
     {
         Button_Back->OnClicked.AddDynamic(this, &ThisClass::OnBackClicked);
@@ -40,47 +35,7 @@ void ULobbyWidget_WorkShop::NativeConstruct()
         Button_Back->OnUnhovered.AddDynamic(this, &ThisClass::OnBackUnhovered);
     }
 
-    APawn* Pawn = PC->GetPawn();
-
-    PlayerCharacter = Cast<ACNox_Runner>(Pawn);
-    InventoryComp = PlayerCharacter->InventoryComp;
-    EquipComp = PlayerCharacter->EquipComp;
-
-    InventoryGridWidget->InitInventory(InventoryComp, InventoryComp->InventoryTileSize);
-    InventoryGridWidget->GridID = 4;
-    InventoryGridWidget->PlayerController = PC;
-
-    if (Equip_Head)
-    {
-        Equip_Head->PlayerCharacter = PlayerCharacter;
-        Equip_Head->InitEquipment();
-    }
-
-    Equip_Arm->PlayerCharacter = PlayerCharacter;
-    Equip_Arm->InitEquipment();
-
-    Equip_Body->PlayerCharacter = PlayerCharacter;
-    Equip_Body->InitEquipment();
-
-    Equip_Leg->PlayerCharacter = PlayerCharacter;
-    Equip_Leg->InitEquipment();
-
-    Equip_Weapon_1->PlayerCharacter = PlayerCharacter;
-    Equip_Weapon_1->InitEquipment();
-
-    Equip_Weapon_2->PlayerCharacter = PlayerCharacter;
-    Equip_Weapon_2->InitEquipment();
-
-    if (Equip_ChestRigs_1) {
-        Equip_ChestRigs_1->PlayerCharacter = PlayerCharacter;
-        Equip_ChestRigs_1->InitEquipment();
-    }
-
-    Equip_Backpack_1->PlayerCharacter = PlayerCharacter;
-    Equip_Backpack_1->InitEquipment();
-
-    PlayerStatChange();
-    SetItemInventory();
+    Refresh();
 
     EquipComp->EquipmentChanged.AddDynamic(this, &ULobbyWidget_WorkShop::SetItemInventory);
 }
@@ -238,6 +193,57 @@ void ULobbyWidget_WorkShop::NativeTick(const FGeometry& MyGeometry, float InDelt
         PlayerCharacter->EquipComp->IsStatChanged = false;
         PlayerStatChange();
     }
+}
+
+void ULobbyWidget_WorkShop::Refresh()
+{
+    PC = Cast<ACNox_Controller>(GetOwningPlayer());
+    FInputModeGameAndUI InputMode;
+    PC->SetInputMode(InputMode);
+    PC->bShowMouseCursor = true;
+
+    APawn* Pawn = PC->GetPawn();
+
+    PlayerCharacter = Cast<ACNox_Runner>(Pawn);
+
+    InventoryComp = PlayerCharacter->InventoryComp;
+    EquipComp = PlayerCharacter->EquipComp;
+
+    InventoryGridWidget->InitInventory(InventoryComp, InventoryComp->InventoryTileSize);
+    InventoryGridWidget->GridID = 4;
+    InventoryGridWidget->PlayerController = PC;
+
+    if (Equip_Head)
+    {
+        Equip_Head->PlayerCharacter = PlayerCharacter;
+        Equip_Head->InitEquipment();
+    }
+
+    Equip_Arm->PlayerCharacter = PlayerCharacter;
+    Equip_Arm->InitEquipment();
+
+    Equip_Body->PlayerCharacter = PlayerCharacter;
+    Equip_Body->InitEquipment();
+
+    Equip_Leg->PlayerCharacter = PlayerCharacter;
+    Equip_Leg->InitEquipment();
+
+    Equip_Weapon_1->PlayerCharacter = PlayerCharacter;
+    Equip_Weapon_1->InitEquipment();
+
+    Equip_Weapon_2->PlayerCharacter = PlayerCharacter;
+    Equip_Weapon_2->InitEquipment();
+
+    if (Equip_ChestRigs_1) {
+        Equip_ChestRigs_1->PlayerCharacter = PlayerCharacter;
+        Equip_ChestRigs_1->InitEquipment();
+    }
+
+    Equip_Backpack_1->PlayerCharacter = PlayerCharacter;
+    Equip_Backpack_1->InitEquipment();
+
+    PlayerStatChange();
+    SetItemInventory();
 }
 
 void ULobbyWidget_WorkShop::PlayerStatChange()

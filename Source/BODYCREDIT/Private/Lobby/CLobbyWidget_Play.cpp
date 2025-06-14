@@ -96,8 +96,6 @@ void UCLobbyWidget_Play::OnContinueClicked()
 		ACNox_Runner* PlayerCharacter = Cast<ACNox_Runner>(Pawn);
 
 		PlayerCharacter->ShowPlayerMainUI();
-
-
 	}
 }
 

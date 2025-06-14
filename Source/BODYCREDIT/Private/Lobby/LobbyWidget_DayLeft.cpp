@@ -65,10 +65,9 @@ void ULobbyWidget_DayLeft::OnConfirmClicked()
         if (LobbyWidget_Play)
         {
             LobbyWidget_Play->AddToViewport();
-
-            RemoveFromParent();
         }
     }
+    RemoveFromParent();
 }
 
 void ULobbyWidget_DayLeft::OnConfirmHovered()
