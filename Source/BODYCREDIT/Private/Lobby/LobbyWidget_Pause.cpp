@@ -53,6 +53,14 @@ void ULobbyWidget_Pause::OnContinueClicked()
 
 void ULobbyWidget_Pause::OnExitClicked()
 {
+    if (LobbyWidget_Selection)
+    {
+        LobbyWidget_Selection->AddToViewport();
+        RemoveFromParent();
+        return;
+    }
+
+
     if (LobbySelectionWidgetClass)
     {
         LobbyWidget_Selection = CreateWidget<ULobbyWidget_Selection>(GetWorld(), LobbySelectionWidgetClass);
@@ -61,8 +69,6 @@ void ULobbyWidget_Pause::OnExitClicked()
             LobbyWidget_Selection->AddToViewport();
         }
     }
-    UNetGameInstance* GI = Cast<UNetGameInstance>(GetGameInstance());
-    GI->SetActorInitLocation();
 
     UGameplayStatics::SetGamePaused(GetWorld(), false);
     RemoveFromParent();

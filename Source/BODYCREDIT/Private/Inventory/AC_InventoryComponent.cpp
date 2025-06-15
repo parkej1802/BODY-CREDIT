@@ -132,6 +132,7 @@ void UAC_InventoryComponent::ShowInventory()
 		if (InventoryMainUI)
 		{
 			InventoryMainUI->RemoveFromParent();
+			InventoryMainUI = nullptr;
 		}
 		FInputModeGameOnly GameInputMode;
 		pc->SetInputMode(GameInputMode);
@@ -190,6 +191,7 @@ void UAC_InventoryComponent::ShowLootableInventory()
 		{
 			InventoryMainUI->bIsLootable = bIsLootableMode;
 			InventoryMainUI->RemoveFromParent();
+			InventoryMainUI = nullptr;
 		}
 		FInputModeGameOnly GameInputMode;
 		pc->SetInputMode(GameInputMode);
@@ -289,6 +291,7 @@ void UAC_InventoryComponent::PauseGame()
 		if (PauseGameUI)
 		{
 			PauseGameUI->RemoveFromParent();
+			PauseGameUI = nullptr;
 		}
 
 		FInputModeGameOnly GameInputMode;

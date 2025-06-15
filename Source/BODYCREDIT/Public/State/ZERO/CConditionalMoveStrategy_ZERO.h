@@ -10,8 +10,10 @@ class ACNox_EBase;
 class BODYCREDIT_API CConditionalMoveStrategy_ZERO : public ICMoveStrategy
 {
 private:
+	bool bIsMove = false;
 	float AcceptanceRadius = 10.f;
 	float AcceptanceThreshold = 40.f;
+	const float MeleeAttackRange = 100.f;
 
 	void CovertToCombatState(ACNox_EBase* Owner);
 

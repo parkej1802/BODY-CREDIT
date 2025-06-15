@@ -54,8 +54,12 @@ void ULobbyWidget_Main::NativeConstruct()
     PlayAnimation(Anim_Start_NewGame);
     PlayAnimation(Anim_Start_Setting);
     PlayAnimation(Anim_Start_Exit);
-    // UNetGameInstance* GI = Cast<UNetGameInstance>(GetGameInstance());
-    // GI->SetActorInitLocation();
+
+    UNetGameInstance* GI = Cast<UNetGameInstance>(GetGameInstance());
+    //GI->SetActorInitLocation();
+    GI->DayLeft = -1;
+
+
 }
 
 void ULobbyWidget_Main::OnNewGameClicked()

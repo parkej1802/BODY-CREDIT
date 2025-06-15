@@ -212,13 +212,13 @@ void UCNoxEnemy_Animinstance::AnimNotify_RangeAttack()
 	UAnimMontage* curMontage = OwnerEnemy->GetCurrentMontage();
 	if (curMontage == Attack1Montage || curMontage == Attack3Montage)
 	{
-		// 왼손
-		Cast<ACNox_MemoryCollectorAI>(OwnerEnemy)->StartRangeAttack(false);
+		// 오른손
+		Cast<ACNox_MemoryCollectorAI>(OwnerEnemy)->StartRangeAttack(true);
 	}
 	else if (curMontage == Attack2Montage || curMontage == Attack4Montage)
 	{
-		// 오른손
-		Cast<ACNox_MemoryCollectorAI>(OwnerEnemy)->StartRangeAttack(true);
+		// 왼손
+		Cast<ACNox_MemoryCollectorAI>(OwnerEnemy)->StartRangeAttack(false);
 	}
 }
 #pragma endregion

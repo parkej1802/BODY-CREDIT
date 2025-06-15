@@ -34,7 +34,14 @@ private:
 	TArray<FEnemySkill> Skills;
 
 	void CovertToCombatState(ACNox_EBase* Owner);
+	void TryCombatStateTransition(ACNox_EBase* Owner);
+	bool TrySpecialSkillTransition(ACNox_EBase* Owner, ECombatState& OutChosenSkill);
+	bool TryDefaultAttackTransition(ACNox_EBase* Owner);
+	
+	
 	bool ChooseRandomSkill(ACNox_EBase* Owner, ECombatState& OutChooseSkill);
+	int32 CalculateTotalWeight(const TArray<int32>& SkillIndices) const;    
+	ECombatState ConvertSkillToCombatState(ESkillCoolDown Skill) const;
 
 public:
 	virtual void Move(ACNox_EBase* Owner, float DeltaTime) override;

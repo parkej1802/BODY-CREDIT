@@ -44,61 +44,106 @@ void CConditionalMoveStrategy_MEMORY::CovertToCombatState(ACNox_EBase* Owner)
 {
 	if (!bIsMove && !Owner->IsPlayerInForwardDegree(RangeAttackRange))
 	{
-		// 이동하지 않았고, 공격 범위 내 플레이어가 없다면 플레이어를 향해 회전
-		//Owner->RotateToTarget(Owner->GetWorld()->GetDeltaSeconds(), Owner->GetTransform(), Owner->GetTarget()->GetActorLocation());
-		FRotator CurRot = Owner->GetActorRotation();
-		float TargetYaw = (Owner->GetTarget()->GetActorLocation() - Owner->GetActorLocation()).Rotation().Yaw;
-		FRotator TargetRot(CurRot.Pitch, TargetYaw, CurRot.Roll);
-		Owner->SetActorRotation(TargetRot);
+		// 이동하지 않았고, 공격 범위 안에 플레이어가 없다면 플레이어를 향해 회전
+		Owner->SetRotateToTarget();
 	}
 	else
 	{
-		// Beam, PulseWave 중 스킬을 선택하고
-		ECombatState ChooseSkill;
-		if (ChooseRandomSkill(Owner, ChooseSkill))
-		{
-			Owner->SetCombatState(ChooseSkill);
-			Owner->SetEnemyState(EEnemyState::Combat);
-		}
-		// 만약, 둘 중 하나도 선택되지 않았다면 기본 공격 조건을 체크한다.
-		else if (Owner->IsSkillReady(ESkillCoolDown::Ranged))
-		{
-			// 기본 공격이 사용가능하면 기본 공격으로 상태 전환
-			Owner->SetCombatState(ECombatState::Default);
-			Owner->SetEnemyState(EEnemyState::Combat);
-		}
+		TryCombatStateTransition(Owner);
 		
 		bIsMove = false;
 	}	
 }
 
+void CConditionalMoveStrategy_MEMORY::TryCombatStateTransition(ACNox_EBase* Owner)
+{
+	ECombatState chosenSkill;
+	if (TrySpecialSkillTransition(Owner, chosenSkill))
+	{
+		return;
+	}
+		
+	// 기본 공격으로 전환 시도
+	if (TryDefaultAttackTransition(Owner))
+	{
+		return;
+	}
+}
+
+bool CConditionalMoveStrategy_MEMORY::TrySpecialSkillTransition(ACNox_EBase* Owner, ECombatState& OutChosenSkill)
+{
+	if (!ChooseRandomSkill(Owner, OutChosenSkill))
+	{
+		return false;
+	}
+		
+	Owner->SetCombatState(OutChosenSkill);
+	Owner->SetEnemyState(EEnemyState::Combat);
+	return true;
+}
+
+bool CConditionalMoveStrategy_MEMORY::TryDefaultAttackTransition(ACNox_EBase* Owner)
+{
+	if (!Owner->IsSkillReady(ESkillCoolDown::Ranged))
+	{
+		return false;
+	}
+		
+	Owner->SetCombatState(ECombatState::Default);
+	Owner->SetEnemyState(EEnemyState::Combat);
+	return true;
+}
+
 bool CConditionalMoveStrategy_MEMORY::ChooseRandomSkill(ACNox_EBase* Owner, ECombatState& OutChooseSkill)
 {
-	// 1. 준비된 스킬 인덱스 수집
-	TArray<int32> Ready;
+	// 1. 준비된 스킬 수집
+	TArray<int32> ReadySkillIndices;
+	ReadySkillIndices.Reserve(Skills.Num()); // 메모리 최적화
+    
 	for (int32 i = 0; i < Skills.Num(); ++i)
 	{
 		if (Owner->IsSkillReady(Skills[i].GetSkill()))
 		{
-			Ready.Add(i);
+			ReadySkillIndices.Add(i);
 		}
 	}
-	if (Ready.Num() == 0) return false; // 전부 쿨타임 중이면 아무것도 하지 않음
-
-	// 2. 가중치 랜덤
-	int32 SkillWeightSum = 0;
-	const int32 rnd = FMath::RandRange(1, 100);
-	for (const int32& idx : Ready)
+    
+	// 2. 사용 가능한 스킬이 없으면 종료
+	if (ReadySkillIndices.IsEmpty())
 	{
-		SkillWeightSum += Skills[idx].GetWeight();
-		if (rnd <= SkillWeightSum)
+		return false;
+	}
+    
+	// 3. 가중치 기반 랜덤 선택
+	const int32 TotalWeight = CalculateTotalWeight(ReadySkillIndices);
+	const int32 RandomValue = FMath::RandRange(1, TotalWeight);
+    
+	// 4. 가중치에 따른 스킬 선택
+	int32 CurrentWeight = 0;
+	for (const int32 SkillIndex : ReadySkillIndices)
+	{
+		CurrentWeight += Skills[SkillIndex].GetWeight();
+		if (RandomValue <= CurrentWeight)
 		{
-			OutChooseSkill = Skills[idx].GetSkill() == ESkillCoolDown::Beam
-				                 ? ECombatState::Beam
-				                 : ECombatState::WavePulse;
+			OutChooseSkill = ConvertSkillToCombatState(Skills[SkillIndex].GetSkill());
 			return true;
 		}
 	}
 
 	return false;
+}
+
+int32 CConditionalMoveStrategy_MEMORY::CalculateTotalWeight(const TArray<int32>& SkillIndices) const
+{
+	int32 TotalWeight = 0;
+	for (const int32 Index : SkillIndices)
+	{
+		TotalWeight += Skills[Index].GetWeight();
+	}
+	return TotalWeight;
+}
+
+ECombatState CConditionalMoveStrategy_MEMORY::ConvertSkillToCombatState(ESkillCoolDown Skill) const
+{
+	return Skill == ESkillCoolDown::Beam ? ECombatState::Beam : ECombatState::WavePulse;
 }

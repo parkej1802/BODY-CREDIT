@@ -14,11 +14,6 @@ void ULobbyWidget_Failed::NativeConstruct()
 {
      Super::NativeConstruct();
 
-     PC = Cast<ACNox_Controller>(GetOwningPlayer());
-     FInputModeGameAndUI InputMode;
-     PC->SetInputMode(InputMode);
-     PC->bShowMouseCursor = true;
-
     if (Button_Continue)
     {
         Button_Continue->OnClicked.AddDynamic(this, &ULobbyWidget_Failed::OnContinueClicked);
@@ -26,53 +21,34 @@ void ULobbyWidget_Failed::NativeConstruct()
         Button_Continue->OnUnhovered.AddDynamic(this, &ULobbyWidget_Failed::OnContinueUnhovered);
     }
 
-    if (Button_Exit)
-    {
-        Button_Exit->OnClicked.AddDynamic(this, &ULobbyWidget_Failed::OnExitClicked);
-        Button_Exit->OnHovered.AddDynamic(this, &ULobbyWidget_Failed::OnExitHovered);
-        Button_Exit->OnUnhovered.AddDynamic(this, &ULobbyWidget_Failed::OnExitUnhovered);
-    }
+	/*if (Button_Exit)
+	{
+		Button_Exit->OnClicked.AddDynamic(this, &ULobbyWidget_Failed::OnExitClicked);
+		Button_Exit->OnHovered.AddDynamic(this, &ULobbyWidget_Failed::OnExitHovered);
+		Button_Exit->OnUnhovered.AddDynamic(this, &ULobbyWidget_Failed::OnExitUnhovered);
+	}*/
 
     if (Anim_BackGround)
     {
         PlayAnimation(Anim_BackGround, 0.0f, 9999, EUMGSequencePlayMode::Forward);
     }
 
-    GI = Cast<UNetGameInstance>(GetGameInstance());
-
-    switch (GI->SelectedPart)
-    {
-    case EPlayerPart::Head:
-        if (GI->SaveImageHead)
-            Image_LostPart->SetBrush(GI->SaveImageHead->GetBrush());
-        break;
-    case EPlayerPart::Body:
-        if (GI->SaveImageBody)
-            Image_LostPart->SetBrush(GI->SaveImageBody->GetBrush());
-        break;
-    case EPlayerPart::Arm:
-        if (GI->SaveImageArm)
-            Image_LostPart->SetBrush(GI->SaveImageArm->GetBrush());
-        break;
-    case EPlayerPart::Leg:
-        if (GI->SaveImageLeg)
-            Image_LostPart->SetBrush(GI->SaveImageLeg->GetBrush());
-        break;
-    default:
-        break;
-    }
-
-    if (GI->AlivePart.Contains(GI->SelectedPart))
-    {
-        GI->AlivePart[GI->SelectedPart] = false;
-        GI->SelectedPart = EPlayerPart::Basic;
-        --RemainingLife;
-    }
+    Refresh();
 }
 
 void ULobbyWidget_Failed::OnContinueClicked()
 {
-    if (RemainingLife == 0) 
+    GI->SelectedPart = EPlayerPart::Basic;
+
+    if (GI->Failed)
+    {
+        GI->Failed = false;
+        RemoveFromParent();
+
+        return;
+    }
+
+    if (GI->RemainingLife == 0)
     {
         if (LobbyGameOverWidgetClass)
         {
@@ -87,8 +63,6 @@ void ULobbyWidget_Failed::OnContinueClicked()
         return;
     }
 
-    GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, FString::Printf(TEXT("Part Left %d"), RemainingLife));
-
     if (LobbySelectionWidgetClass)
     {
         LobbyWidget_Selection = CreateWidget<ULobbyWidget_Selection>(GetWorld(), LobbySelectionWidgetClass);
@@ -101,19 +75,19 @@ void ULobbyWidget_Failed::OnContinueClicked()
     }
 }
 
-void ULobbyWidget_Failed::OnExitClicked()
-{
-    if (LobbySelectionWidgetClass)
-    {
-        LobbyWidget_Selection = CreateWidget<ULobbyWidget_Selection>(GetWorld(), LobbySelectionWidgetClass);
-        if (LobbyWidget_Selection)
-        {
-            LobbyWidget_Selection->AddToViewport();
-
-            this->RemoveFromParent();
-        }
-    }
-}
+//void ULobbyWidget_Failed::OnExitClicked()
+//{
+//    if (LobbySelectionWidgetClass)
+//    {
+//        LobbyWidget_Selection = CreateWidget<ULobbyWidget_Selection>(GetWorld(), LobbySelectionWidgetClass);
+//        if (LobbyWidget_Selection)
+//        {
+//            LobbyWidget_Selection->AddToViewport();
+//
+//            this->RemoveFromParent();
+//        }
+//    } 
+//}
 
 void ULobbyWidget_Failed::OnContinueHovered()
 {
@@ -151,38 +125,78 @@ void ULobbyWidget_Failed::OnContinueUnhovered()
     }
 }
 
-void ULobbyWidget_Failed::OnExitHovered()
+//void ULobbyWidget_Failed::OnExitHovered()
+//{
+//    if (Anim_Hovered_Exit)
+//    {
+//        PlayAnimation(Anim_Hovered_Exit);
+//    }
+//
+//    if (Anim_Hovered_Exit_Loop)
+//    {
+//        PlayAnimation(Anim_Hovered_Exit_Loop, 0.0f, 9999, EUMGSequencePlayMode::Forward);
+//    }
+//
+//    if (Image_Button_Exit_Hovered)
+//    {
+//        Image_Button_Exit_Hovered->SetVisibility(ESlateVisibility::Visible);
+//    }
+//}
+//
+//void ULobbyWidget_Failed::OnExitUnhovered()
+//{
+//    if (Anim_Unhovered_Exit)
+//    {
+//        PlayAnimation(Anim_Unhovered_Exit);
+//    }
+//
+//    if (Anim_Hovered_Exit_Loop)
+//    {
+//        StopAnimation(Anim_Hovered_Exit_Loop);
+//    }
+//
+//    if (Image_Button_Exit_Hovered)
+//    {
+//        Image_Button_Exit_Hovered->SetVisibility(ESlateVisibility::Hidden);
+//    }
+//}
+
+void ULobbyWidget_Failed::Refresh()
 {
-    if (Anim_Hovered_Exit)
+    PC = Cast<ACNox_Controller>(GetOwningPlayer());
+    FInputModeGameAndUI InputMode;
+    PC->SetInputMode(InputMode);
+    PC->bShowMouseCursor = true;
+
+    GI = Cast<UNetGameInstance>(GetGameInstance());
+
+    switch (GI->SelectedPart)
     {
-        PlayAnimation(Anim_Hovered_Exit);
+    case EPlayerPart::Head:
+        if (GI->SaveImageHead)
+            Image_LostPart->SetBrush(GI->SaveImageHead->GetBrush());
+        break;
+    case EPlayerPart::Body:
+        if (GI->SaveImageBody)
+            Image_LostPart->SetBrush(GI->SaveImageBody->GetBrush());
+        break;
+    case EPlayerPart::Arm:
+        if (GI->SaveImageArm)
+            Image_LostPart->SetBrush(GI->SaveImageArm->GetBrush());
+        break;
+    case EPlayerPart::Leg:
+        if (GI->SaveImageLeg)
+            Image_LostPart->SetBrush(GI->SaveImageLeg->GetBrush());
+        break;
+    default:
+        break;
     }
 
-    if (Anim_Hovered_Exit_Loop)
+    if (GI->AlivePart.Contains(GI->SelectedPart))
     {
-        PlayAnimation(Anim_Hovered_Exit_Loop, 0.0f, 9999, EUMGSequencePlayMode::Forward);
-    }
-
-    if (Image_Button_Exit_Hovered)
-    {
-        Image_Button_Exit_Hovered->SetVisibility(ESlateVisibility::Visible);
-    }
-}
-
-void ULobbyWidget_Failed::OnExitUnhovered()
-{
-    if (Anim_Unhovered_Exit)
-    {
-        PlayAnimation(Anim_Unhovered_Exit);
-    }
-
-    if (Anim_Hovered_Exit_Loop)
-    {
-        StopAnimation(Anim_Hovered_Exit_Loop);
-    }
-
-    if (Image_Button_Exit_Hovered)
-    {
-        Image_Button_Exit_Hovered->SetVisibility(ESlateVisibility::Hidden);
+        GI->AlivePart[GI->SelectedPart] = false;
+        GI->SelectedPart = EPlayerPart::Basic;
+        --GI->RemainingLife;
+        //GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, FString::Printf(TEXT("Part Left %d"), RemainingLife));
     }
 }
