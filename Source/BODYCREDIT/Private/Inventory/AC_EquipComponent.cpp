@@ -218,7 +218,7 @@ int32 UAC_EquipComponent::CalculatePriceOfEquippedItem()
 	{
 		if (UItemObject* Item = Pair.Value)
 		{
-			TotalPrice += Item->ItemData.Price;
+			TotalPrice += Item->GetSellPrice();
 
 			if (Item->ItemData.ItemType == EPlayerPart::Backpack || Item->ItemData.ItemType == EPlayerPart::ChestRigs)
 			{
@@ -249,7 +249,7 @@ int32 UAC_EquipComponent::CalculatePriceRecursively(UItemObject* ItemObject)
 		UItemObject* ContainedItem = Pair.Key;
 		if (!ContainedItem) continue;
 
-		ContainerPrice += ContainedItem->ItemData.Price;
+		ContainerPrice += ContainedItem->GetSellPrice();
 
 		if (ContainedItem->ItemData.ItemType == EPlayerPart::Backpack || ContainedItem->ItemData.ItemType == EPlayerPart::ChestRigs)
 		{

@@ -815,7 +815,7 @@ bool ULobbyWidget_Market::NativeOnDrop(const FGeometry& InGeometry, const FDragD
 	}
 
 	ShowSellUI(ItemObject);
-	
+
 	return true;
 }
 
@@ -830,10 +830,10 @@ void ULobbyWidget_Market::UpdatePlayerGoldText(int32 NewGold)
 
 void ULobbyWidget_Market::ShowSellUI(UItemObject* ItemObject)
 {
-	//if (SellItemUI) {
-	//	SellItemUI->RemoveFromParent();
-	//	return;
-	//}
+	if (SellItemUI)
+	{
+		SellItemUI = nullptr;
+	}
 
 	if (SellItemWidget)
 	{
@@ -845,6 +845,8 @@ void ULobbyWidget_Market::ShowSellUI(UItemObject* ItemObject)
 		SellItemUI->MarketUI = this;
 		SellItemUI->SetItemToSell(ItemObject);
 		SellItemUI->AddToViewport();
+		SellItemUI->OnConfirmSell.Clear();
+		SellItemUI->OnCancelSell.Clear();
 		SellItemUI->OnConfirmSell.AddDynamic(this, &ULobbyWidget_Market::HandleSellConfirm);
 		SellItemUI->OnCancelSell.AddDynamic(this, &ULobbyWidget_Market::HandleSellCancel);
 
@@ -853,13 +855,13 @@ void ULobbyWidget_Market::ShowSellUI(UItemObject* ItemObject)
 
 void ULobbyWidget_Market::HandleSellConfirm(UItemObject* ItemObject)
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Blue, TEXT("HandleSellConfirm"));
-	if (ItemObject)
-	{
-		int32 NewGold = GI->PlayerGold + (ItemObject->ItemData.Price * 0.7);
-		GI->SetPlayerGold(NewGold);
-		InventoryComp->RemoveItem(ItemObject);
-	}
+	if (!ItemObject) return;
+
+	int32 SellPrice = ItemObject->GetSellPrice();
+	int32 NewGold = GI->PlayerGold + SellPrice;
+	GI->SetPlayerGold(NewGold);
+
+	ItemObject->OwnerInventoryComp->RemoveItem(ItemObject);
 }
 
 void ULobbyWidget_Market::HandleSellCancel(class UItemObject* ItemObject)
@@ -867,7 +869,7 @@ void ULobbyWidget_Market::HandleSellCancel(class UItemObject* ItemObject)
 	//GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Blue, TEXT("CancelSell"));
 	if (ItemObject)
 	{
-		InventoryComp->TryAddItem(ItemObject);
+		ItemObject->OwnerInventoryComp->TryAddItem(ItemObject);
 	}
 }
 
@@ -887,8 +889,13 @@ void ULobbyWidget_Market::TurnOnPreviousImage()
 	}
 }
 
-void ULobbyWidget_Market::ShowBuyUI(class UItemObject* ItemObject)
+void ULobbyWidget_Market::ShowBuyUI(UItemObject* ItemObject)
 {
+	if (BuyItemUI)
+	{
+		BuyItemUI = nullptr;
+	}
+
 	if (BuyItemWidget)
 	{
 		BuyItemUI = CreateWidget<ULobbyWidget_BuyItem>(this, BuyItemWidget);
@@ -899,6 +906,8 @@ void ULobbyWidget_Market::ShowBuyUI(class UItemObject* ItemObject)
 		BuyItemUI->MarketUI = this;
 		BuyItemUI->SetItemToBuy(ItemObject);
 		BuyItemUI->AddToViewport();
+		BuyItemUI->OnConfirmBuy.Clear();
+		BuyItemUI->OnCancelBuy.Clear();
 		BuyItemUI->OnConfirmBuy.AddDynamic(this, &ULobbyWidget_Market::HandleBuyConfirm);
 		BuyItemUI->OnCancelBuy.AddDynamic(this, &ULobbyWidget_Market::HandleBuyCancel);
 
@@ -907,8 +916,17 @@ void ULobbyWidget_Market::ShowBuyUI(class UItemObject* ItemObject)
 
 void ULobbyWidget_Market::HandleBuyConfirm(class UItemObject* ItemObject)
 {
+	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("ConfirmBuy"));
+
 	if (GameState)
 	{
+		if (ItemObject->ItemData.ItemType != EPlayerPart::ChestRigs && ItemObject->ItemData.ItemType != EPlayerPart::Backpack)
+		{
+			ItemObject->ItemData.Rarity = GI->GetRandomRarity();
+			ItemObject->SetIconImages();
+			ItemObject->SetItemStat();
+		}
+
 		if (GameState->SpawnItemPlayerInventory(ItemObject, GetOwningPlayerPawn(), false))
 		{
 			int32 NewGold = GI->PlayerGold - ItemObject->ItemData.Price;
@@ -919,13 +937,15 @@ void ULobbyWidget_Market::HandleBuyConfirm(class UItemObject* ItemObject)
 		else
 		{
 			ShowNoSpaceUI();
+			ItemObject = nullptr;
 		}
 	}
 }
 
 void ULobbyWidget_Market::HandleBuyCancel(class UItemObject* ItemObject)
 {
-
+	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("CancelBuy"));
+	ItemObject = nullptr;
 }
 
 void ULobbyWidget_Market::ShowNoSpaceUI()

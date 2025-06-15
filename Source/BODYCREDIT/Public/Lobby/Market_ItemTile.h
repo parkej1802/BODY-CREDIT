@@ -81,4 +81,6 @@ public:
 	class UVerticalBox* VerticalBox_ItemNamePrice;
 
 	void SetItemDescription();
+
+	void Refresh();
 };

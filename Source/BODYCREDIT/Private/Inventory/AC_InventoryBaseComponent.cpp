@@ -99,6 +99,8 @@ int32 UAC_InventoryBaseComponent::TileToIndex(FInventoryTile& Tile)
 
 void UAC_InventoryBaseComponent::AddItemAt(class UItemObject* ItemObject, int32 TopLeftIndex)
 {
+	ItemObject->OwnerInventoryComp = this;
+
 	FInventoryTile ResultTile;
 
 	FInventoryTile TempTile = IndexToTile(TopLeftIndex);

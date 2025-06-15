@@ -230,6 +230,7 @@ public:
         , Thumbnail(nullptr)
         , Index(-1)
         , Rarity(EItemRarity::Common)
+        , RarityImages()
         , Price(0)
         , Description(TEXT(""))
         , Icon(nullptr)

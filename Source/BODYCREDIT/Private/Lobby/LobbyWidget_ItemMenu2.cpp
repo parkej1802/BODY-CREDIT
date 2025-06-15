@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Lobby/LobbyWidget_ItemMenu.h"
+#include "Lobby/LobbyWidget_ItemMenu2.h"
 #include "Components/Image.h"
 #include "Components/Button.h"
 #include "Item/ItemObject.h"
@@ -9,24 +9,17 @@
 #include "Session/NetGameInstance.h"
 #include "Lobby/LobbyWidget_Market.h"
 #include "Lobby/LobbyWidget_ItemDescription.h"
-#include "Games/CMainGM.h"
+#include "Components/TextBlock.h"
 
-void ULobbyWidget_ItemMenu::NativeConstruct()
+void ULobbyWidget_ItemMenu2::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-    if (Button_Use)
+    if (Button_Function)
     {
-        Button_Use->OnClicked.AddDynamic(this, &ThisClass::OnUseClicked);
-        Button_Use->OnHovered.AddDynamic(this, &ThisClass::OnUseHovered);
-        Button_Use->OnUnhovered.AddDynamic(this, &ThisClass::OnUseUnhovered);
-    }
-
-    if (Button_Sell)
-    {
-        Button_Sell->OnClicked.AddDynamic(this, &ThisClass::OnSellClicked);
-        Button_Sell->OnHovered.AddDynamic(this, &ThisClass::OnSellHovered);
-        Button_Sell->OnUnhovered.AddDynamic(this, &ThisClass::OnSellUnhovered);
+        Button_Function->OnClicked.AddDynamic(this, &ThisClass::OnFunctionClicked);
+        Button_Function->OnHovered.AddDynamic(this, &ThisClass::OnFunctionHovered);
+        Button_Function->OnUnhovered.AddDynamic(this, &ThisClass::OnFunctionUnhovered);
     }
 
     if (Button_Description)
@@ -35,33 +28,22 @@ void ULobbyWidget_ItemMenu::NativeConstruct()
         Button_Description->OnHovered.AddDynamic(this, &ThisClass::OnDescriptionHovered);
         Button_Description->OnUnhovered.AddDynamic(this, &ThisClass::OnDescriptionUnhovered);
     }
+
     GI = Cast<UNetGameInstance>(GetGameInstance());
 }
 
-void ULobbyWidget_ItemMenu::OnUseClicked()
+void ULobbyWidget_ItemMenu2::OnFunctionClicked()
 {
     if (ItemObject)
     {
         ItemObject->ItemActorOwner->UseItem();
     }
+
     RemoveFromParent();
     ResetInputMode();
 }
 
-void ULobbyWidget_ItemMenu::OnSellClicked()
-{
-    ACMainGM* GM = Cast<ACMainGM>(GetWorld()->GetAuthGameMode());
-    if (GM && GM->IsStart) return;
-
-    if (GI->MarketUI)
-    {
-        GI->MarketUI->ShowSellUI(ItemObject);
-    }
-    RemoveFromParent();
-    ResetInputMode();
-}
-
-void ULobbyWidget_ItemMenu::OnDescriptionClicked()
+void ULobbyWidget_ItemMenu2::OnDescriptionClicked()
 {
     if (ItemDescriptionUI)
     {
@@ -87,39 +69,23 @@ void ULobbyWidget_ItemMenu::OnDescriptionClicked()
     ResetInputMode();
 }
 
-void ULobbyWidget_ItemMenu::OnUseHovered()
+void ULobbyWidget_ItemMenu2::OnFunctionHovered()
 {
-    if (Image_Button_Use_Hovered)
+    if (Image_Button_Function_Hovered)
     {
-        Image_Button_Use_Hovered->SetVisibility(ESlateVisibility::Visible);
+        Image_Button_Function_Hovered->SetVisibility(ESlateVisibility::Visible);
     }
 }
 
-void ULobbyWidget_ItemMenu::OnUseUnhovered()
+void ULobbyWidget_ItemMenu2::OnFunctionUnhovered()
 {
-    if (Image_Button_Use_Hovered)
+    if (Image_Button_Function_Hovered)
     {
-        Image_Button_Use_Hovered->SetVisibility(ESlateVisibility::Hidden);
+        Image_Button_Function_Hovered->SetVisibility(ESlateVisibility::Hidden);
     }
 }
 
-void ULobbyWidget_ItemMenu::OnSellHovered()
-{
-    if (Image_Button_Sell_Hovered)
-    {
-        Image_Button_Sell_Hovered->SetVisibility(ESlateVisibility::Visible);
-    }
-}
-
-void ULobbyWidget_ItemMenu::OnSellUnhovered()
-{
-    if (Image_Button_Sell_Hovered)
-    {
-        Image_Button_Sell_Hovered->SetVisibility(ESlateVisibility::Hidden);
-    }
-}
-
-void ULobbyWidget_ItemMenu::OnDescriptionHovered()
+void ULobbyWidget_ItemMenu2::OnDescriptionHovered()
 {
     if (Image_Button_Description_Hovered)
     {
@@ -127,7 +93,7 @@ void ULobbyWidget_ItemMenu::OnDescriptionHovered()
     }
 }
 
-void ULobbyWidget_ItemMenu::OnDescriptionUnhovered()
+void ULobbyWidget_ItemMenu2::OnDescriptionUnhovered()
 {
     if (Image_Button_Description_Hovered)
     {
@@ -135,7 +101,7 @@ void ULobbyWidget_ItemMenu::OnDescriptionUnhovered()
     }
 }
 
-void ULobbyWidget_ItemMenu::ResetInputMode()
+void ULobbyWidget_ItemMenu2::ResetInputMode()
 {
     if (APlayerController* PC = GetWorld()->GetFirstPlayerController())
     {
@@ -147,3 +113,9 @@ void ULobbyWidget_ItemMenu::ResetInputMode()
         PC->bShowMouseCursor = true;
     }
 }
+
+void ULobbyWidget_ItemMenu2::Refresh()
+{
+    
+}
+

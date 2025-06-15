@@ -57,7 +57,6 @@ void ULobbyWidget_Main::NativeConstruct()
     PlayAnimation(Anim_Start_Setting);
     PlayAnimation(Anim_Start_Exit);
 
-    
     //GI->SetActorInitLocation();
     GI = Cast<UNetGameInstance>(GetGameInstance());
 

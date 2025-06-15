@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "LobbyWidget_ItemMenu.generated.h"
+#include "LobbyWidget_ItemMenu2.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class BODYCREDIT_API ULobbyWidget_ItemMenu : public UUserWidget
+class BODYCREDIT_API ULobbyWidget_ItemMenu2 : public UUserWidget
 {
 	GENERATED_BODY()
 	
@@ -18,16 +18,10 @@ public:
 	virtual void NativeConstruct() override;
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UButton* Button_Use;
+	class UButton* Button_Function;
 
 	UFUNCTION()
-	void OnUseClicked();
-
-	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UButton* Button_Sell;
-
-	UFUNCTION()
-	void OnSellClicked();
+	void OnFunctionClicked();
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UButton* Button_Description;
@@ -36,16 +30,10 @@ public:
 	void OnDescriptionClicked();
 
 	UFUNCTION()
-	void OnUseHovered();
+	void OnFunctionHovered();
 
 	UFUNCTION()
-	void OnUseUnhovered();
-
-	UFUNCTION()
-	void OnSellHovered();
-
-	UFUNCTION()
-	void OnSellUnhovered();
+	void OnFunctionUnhovered();
 
 	UFUNCTION()
 	void OnDescriptionHovered();
@@ -54,10 +42,7 @@ public:
 	void OnDescriptionUnhovered();
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UImage* Image_Button_Use_Hovered;
-
-	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UImage* Image_Button_Sell_Hovered;
+	class UImage* Image_Button_Function_Hovered;
 	
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UImage* Image_Button_Description_Hovered;
@@ -74,7 +59,10 @@ public:
 	TSubclassOf<UUserWidget> ItemDescriptionWidgetClass;
 
 	UPROPERTY()
-	class 	ULobbyWidget_ItemDescription* ItemDescriptionUI;
+	class ULobbyWidget_ItemDescription* ItemDescriptionUI;
 
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* Text_Function;
 
+	void Refresh();
 };

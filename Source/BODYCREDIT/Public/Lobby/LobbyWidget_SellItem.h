@@ -72,11 +72,16 @@ public:
 	void HandleCancelClicked();
 
 	UPROPERTY()
-	class UItemObject* ItemObjctSell;
+	class UItemObject* ItemObjectSell;
 
 	UFUNCTION(BlueprintCallable)
 	void SetItemToSell(class UItemObject* ItemObject);
 
 	UPROPERTY()
 	class ULobbyWidget_Market* MarketUI;
+
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
+	class UTextBlock* Text_ItemSellPrice;
+
+	void Refresh();
 };
