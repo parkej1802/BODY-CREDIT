@@ -94,14 +94,25 @@ private:
 	TSubclassOf<ACNox_EBase> MemoryFactory;
 
 	UPROPERTY()
-	TArray<ACSpawnBoundaryBox*> SpawnBoundaryArray;
+	TArray<ACSpawnBoundaryBox*> ZeroSpawnBoundaryArray;
+	UPROPERTY()
+	TArray<ACSpawnBoundaryBox*> MedicSpawnBoundaryArray;
+	UPROPERTY()
+	TArray<ACSpawnBoundaryBox*> MemorySpawnBoundaryArray;
+	int32 SpawnBoundaryCount = 0;
 
-	ACSpawnBoundaryBox* GetSpawnBoundaryBox(int32 SpawnMinFloor);	
+	int32 SpawnAbleZeroCount = 0;
+	int32 SpawnAbleMedicCount = 0;
+	int32 SpawnAbleMemoryCount = 0;
+
+	ACSpawnBoundaryBox* GetSpawnBoundaryBox(const TArray<ACSpawnBoundaryBox*>& SpawnBoundaryBox, int32 SpawnMinFloor);	
 	FVector GetSpawnRandomLoc(const ACSpawnBoundaryBox* SpawnBoundaryBox);
 	void SpawnEnemy(const TSubclassOf<ACNox_EBase>& SpawnCls, const FVector& SpawnLoc) const;
+	bool SpawnBoundaryBoxCheck(const TArray<ACSpawnBoundaryBox*>& SpawnBoundaryBox, const int32 Floor);
 public:
 	UPROPERTY(BlueprintReadWrite)
 	bool ExtractTimerTriggerStart = false;
+	bool bSpawnEnemy = false;
 	
 	UFUNCTION(BlueprintCallable)
 	void SpawnEnemy();

@@ -7,6 +7,7 @@
 #include "Animation/WidgetAnimation.h"
 #include "Session/NetGameInstance.h"
 #include "Characters/CNox_Controller.h"
+#include "Games/CMainGM.h"
 #include "Lobby/LobbyWidget_Selection.h"
 #include "Lobby/LobbyWidget_GameOver.h"
 
@@ -34,6 +35,11 @@ void ULobbyWidget_Failed::NativeConstruct()
     }
 
     Refresh();
+
+     {
+         ACMainGM* GM = Cast<ACMainGM>(GetWorld()->GetAuthGameMode());
+         GM->DestroyEnemy();
+     }
 }
 
 void ULobbyWidget_Failed::OnContinueClicked()

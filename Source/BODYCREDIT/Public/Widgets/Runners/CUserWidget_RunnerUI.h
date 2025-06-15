@@ -19,11 +19,11 @@ protected:
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	class UProgressBar* ProgressBar_Health;
 
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	class UTextBlock* Text_CurrentHealth;
-
-	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
-	class UTextBlock* Text_MaxHealth;
+	// UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	// class UTextBlock* Text_CurrentHealth;
+	//
+	// UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
+	// class UTextBlock* Text_MaxHealth;
 
 	UPROPERTY()
 	class ACMainGM* GameMode;

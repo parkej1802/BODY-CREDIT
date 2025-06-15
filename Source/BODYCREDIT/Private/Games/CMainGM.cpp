@@ -14,10 +14,17 @@ ACMainGM::ACMainGM()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+
 	/*ConstructorHelpers::FClassFinder<APawn> pawn(
 		TEXT("/Game/Characters/Runner/BP_CNox_Runner.BP_CNox_Runner_C"));
 	if (pawn.Succeeded())
 		DefaultPawnClass = pawn.Class;*/
+
+	// ConstructorHelpers::FClassFinder<APawn> pawn(
+	// 	TEXT("/Script/Engine.Blueprint'/Game/Characters/Runner/BP_CNox_Runner.BP_CNox_Runner_C'"));
+	// if (pawn.Succeeded())
+	// 	DefaultPawnClass = pawn.Class;
+
 
 
 }
@@ -143,50 +150,86 @@ float ACMainGM::GetGamePlayTime()
 
 void ACMainGM::SpawnEnemy()
 {
-	if (SpawnBoundaryArray.Num()==0)
+	if (bSpawnEnemy) return;
+	bSpawnEnemy = true;
+	
+	if (SpawnBoundaryCount==0)
 	{
 		for (TActorIterator<ACSpawnBoundaryBox> It(GetWorld()); It; ++It)
 		{
-			SpawnBoundaryArray.Emplace(*It);
-		}		
+			if ((*It)->GetSpawnAbleZeroCount() > 0) ZeroSpawnBoundaryArray.Emplace(*It);
+			if ((*It)->GetSpawnAbleMedicCount() > 0) MedicSpawnBoundaryArray.Emplace(*It);
+			if ((*It)->GetSpawnAbleMemoryCount() > 0) MemorySpawnBoundaryArray.Emplace(*It);
+			SpawnAbleZeroCount += (*It)->GetSpawnAbleZeroCount();
+			SpawnAbleMedicCount += (*It)->GetSpawnAbleMedicCount();
+			SpawnAbleMemoryCount += (*It)->GetSpawnAbleMemoryCount();
+			++SpawnBoundaryCount;
+		}
+
+		SpawnData.ZeroSpawnCount = FMath::Min(SpawnAbleZeroCount, SpawnData.ZeroSpawnCount);
+		SpawnData.MedicSpawnCount = FMath::Min(SpawnAbleMedicCount, SpawnData.MedicSpawnCount);
+		SpawnData.MemorySpawnCount = FMath::Min(SpawnAbleMemoryCount, SpawnData.MemorySpawnCount);
 	}
 
-	if (SpawnBoundaryArray.Num()==0) return;
+	if (SpawnBoundaryCount == 0) return;
 	
 	{ // Zero
 		int32 spawnCnt = 0;
-		while (spawnCnt++ < SpawnData.ZeroSpawnCount)
+		while (spawnCnt < SpawnData.ZeroSpawnCount)
 		{
-			SpawnEnemy(ZeroFactory, GetSpawnRandomLoc(GetSpawnBoundaryBox(1)));
+			auto* SpawnBox = GetSpawnBoundaryBox(ZeroSpawnBoundaryArray,1);
+			if (!SpawnBox) break;
+			if (SpawnBox->CanSpawnZero())
+			{
+				SpawnEnemy(ZeroFactory, GetSpawnRandomLoc(SpawnBox));
+				SpawnBox->AppendZeroCount();
+				++spawnCnt;
+			}
 		}
 	}
 
 	{ // medic
 		int32 spawnCnt = 0;
-		while (spawnCnt++ < SpawnData.MedicSpawnCount)
+		while (spawnCnt < SpawnData.MedicSpawnCount)
 		{
-			SpawnEnemy(MedicFactory, GetSpawnRandomLoc(GetSpawnBoundaryBox(2)));
+			auto* SpawnBox = GetSpawnBoundaryBox(MedicSpawnBoundaryArray,2);
+			if (!SpawnBox) break;
+			if (SpawnBox->CanSpawnMedic())
+			{
+				SpawnEnemy(MedicFactory, GetSpawnRandomLoc(SpawnBox));
+				SpawnBox->AppendMedicCount();
+				++spawnCnt;
+			}
+			else break;
 		}
 	}
 
 	{ // memory
 		int32 spawnCnt = 0;
-		while (spawnCnt++ < SpawnData.MemorySpawnCount)
+		while (spawnCnt < SpawnData.MemorySpawnCount)
 		{
-			SpawnEnemy(MemoryFactory, GetSpawnRandomLoc(GetSpawnBoundaryBox(2)));
+			auto* SpawnBox = GetSpawnBoundaryBox(MemorySpawnBoundaryArray,2);
+			if (!SpawnBox) break;
+			if (SpawnBox->CanSpawnMemory())
+			{
+				SpawnEnemy(MemoryFactory, GetSpawnRandomLoc(SpawnBox));
+				SpawnBox->AppendMemoryCount();
+				++spawnCnt;
+			}
 		}
 	}
 }
 
-ACSpawnBoundaryBox* ACMainGM::GetSpawnBoundaryBox(const int32 SpawnMinFloor)
+ACSpawnBoundaryBox* ACMainGM::GetSpawnBoundaryBox(const TArray<ACSpawnBoundaryBox*>& SpawnBoundaryBox, const int32 SpawnMinFloor)
 {
 	ACSpawnBoundaryBox* Boundary=nullptr;
+	if (!SpawnBoundaryBoxCheck(SpawnBoundaryBox, SpawnMinFloor)) return nullptr;
 	while (true)
 	{
 		if (Boundary && Boundary->GetFloor()>=SpawnMinFloor) return Boundary;
 
-		int32 RandomIndex = FMath::RandRange(0, SpawnBoundaryArray.Num() - 1);
-		Boundary = SpawnBoundaryArray[RandomIndex];
+		int32 RandomIndex = FMath::RandRange(0, SpawnBoundaryBox.Num() - 1);
+		Boundary = SpawnBoundaryBox[RandomIndex];
 	}
 }
 
@@ -204,13 +247,36 @@ void ACMainGM::SpawnEnemy(const TSubclassOf<ACNox_EBase>& SpawnCls, const FVecto
 	GetWorld()->SpawnActor<ACNox_EBase>(SpawnCls, SpawnPos,FRotator::ZeroRotator, params);
 }
 
+bool ACMainGM::SpawnBoundaryBoxCheck(const TArray<ACSpawnBoundaryBox*>& SpawnBoundaryBox, const int32 Floor)
+{
+	for (auto& Boundary : SpawnBoundaryBox)
+	{
+		if (Boundary->GetFloor() >= Floor) return true;
+	}
+	return false;
+}
+
 void ACMainGM::DestroyEnemy()
 {
 	ExtractTimerTriggerStart = false;
+	bSpawnEnemy = false;
 	
 	for (TActorIterator<ACNox_EBase> It(GetWorld()); It; ++It)
 	{
 		(*It)->Destroy();
+	}
+
+	for (auto& Boundary : ZeroSpawnBoundaryArray)
+	{
+		Boundary->ResetCount();
+	}
+	for (auto& Boundary : MedicSpawnBoundaryArray)
+	{
+		Boundary->ResetCount();
+	}
+	for (auto& Boundary : MemorySpawnBoundaryArray)
+	{
+		Boundary->ResetCount();
 	}
 }
 
@@ -230,18 +296,3 @@ void ACMainGM::ChangePlayerStartLocation()
 	PlayerCharacter->SetActorLocation(Start->GetActorLocation());
 	PlayerCharacter->GetController()->SetControlRotation(Start->GetActorRotation());
 }
-
-// bool ACMainGM::IsInVIPZone(ACNox_Runner* Player)
-// {
-// 	if (!Player) return false;
-//
-// 	// 예시: VIPZoneVolume은 레벨에 배치된 TriggerVolume이나 BoxComponent 기반의 Actor
-// 	for (const auto& Zone : ZoneVolumes)
-// 	{
-// 		if (Zone && Zone->ActorHasTag(FName("VIP")) && Zone->IsOverlappingActor(Player))
-// 		{
-// 			return true;
-// 		}
-// 	}
-// 	return false;
-// }

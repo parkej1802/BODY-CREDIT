@@ -57,7 +57,7 @@ void ULobbyWidget_Main::NativeConstruct()
 
     //GI->SetActorInitLocation();
 
-
+    GI->PlayBGM(0);
 }
 
 void ULobbyWidget_Main::OnNewGameClicked()

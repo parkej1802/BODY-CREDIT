@@ -61,6 +61,7 @@ void ULobbyWidget_Selection::NativeConstruct()
     Text_DayCount->SetText(FText::FromString(DayString));
 
     GI->SetActorInitLocation();
+    GI->PlayBGM(1);
 
     PlayerStatChange();
 

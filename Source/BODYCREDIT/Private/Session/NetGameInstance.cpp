@@ -1,9 +1,9 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
-
-#include "Session/NetGameInstance.h"
+﻿#include "Session/NetGameInstance.h"
 #include "BODYCREDIT.h"
 #include "Characters/CNox_Controller.h"
 #include "Characters/CNox_Runner.h"
+#include "Sound/SoundCue.h"
+#include "Components/AudioComponent.h"
 
 void UNetGameInstance::Init()
 {	
@@ -112,5 +112,35 @@ void UNetGameInstance::RefreshGame()
 	AfterPlayerGold = 0;
 	PlayerGold = 5000;
 	Debt = 10000000;
+}
+
+USoundCue* UNetGameInstance::GetBGM()
+{
+	return BGM_Cue;
+}
+
+void UNetGameInstance::PlayBGM(const int32 idx)
+{
+	if (ACNox_Controller* Controller = Cast<ACNox_Controller>(GetFirstLocalPlayerController()))
+	{
+		Controller->PlayBGM(idx);
+	}
+}
+
+void UNetGameInstance::StopBGM()
+{
+	if (ACNox_Controller* Controller = Cast<ACNox_Controller>(GetFirstLocalPlayerController()))
+	{
+		Controller->StopBGM();
+	}
+}
+
+void UNetGameInstance::PauseBGM(bool bIsPause)
+{
+	if (ACNox_Controller* Controller = Cast<ACNox_Controller>(GetFirstLocalPlayerController()))
+	{
+		Controller->PauseBGM(bIsPause);
+	}
+
 }
 
