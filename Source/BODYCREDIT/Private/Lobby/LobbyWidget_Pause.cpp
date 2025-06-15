@@ -55,6 +55,7 @@ void ULobbyWidget_Pause::OnContinueClicked()
     
     UGameplayStatics::SetGamePaused(GetWorld(), false);
     PlayerCharacter->InventoryComp->PauseGame();
+    PlayerCharacter->OnMovement();
 }
 
 void ULobbyWidget_Pause::OnExitClicked()

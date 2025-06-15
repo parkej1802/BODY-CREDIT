@@ -5,6 +5,7 @@
 #include "Components/ProgressBar.h"
 #include "Games/CMainGM.h"
 #include "Kismet/GameplayStatics.h"
+#include "Session/NetGameInstance.h"
 
 void UCUserWidget_RunnerUI::NativeConstruct()
 {
@@ -28,12 +29,12 @@ void UCUserWidget_RunnerUI::NativeTick(const FGeometry& MyGeometry, float InDelt
 	// 보간
 	DisplayedHealthValue = FMath::FInterpTo(DisplayedHealthValue, TargetHealth, InDeltaTime, HealthTextLerpSpeed);
 
-	// 텍스트로 표시
-	if (Text_CurrentHealth)
-	{
-		int32 RoundedHealth = FMath::RoundToInt(DisplayedHealthValue);
-		Text_CurrentHealth->SetText(FText::AsNumber(RoundedHealth));
-	}
+	// // 텍스트로 표시
+	// if (Text_CurrentHealth)
+	// {
+	// 	int32 RoundedHealth = FMath::RoundToInt(DisplayedHealthValue);
+	// 	Text_CurrentHealth->SetText(FText::AsNumber(RoundedHealth));
+	// }
 
 	// 목표값 계산
 	const float TargetHealthPercent = HP->Health / HP->MaxHealth;
@@ -66,6 +67,17 @@ void UCUserWidget_RunnerUI::NativeTick(const FGeometry& MyGeometry, float InDelt
 
 		Text_Timer->SetText(FText::FromString(TimeText));
 	}
+
+	if (GameInstance == nullptr)
+		GameInstance = UGameplayStatics::GetGameInstance(this);
+
+	if (UNetGameInstance* NetGameInstance = Cast<UNetGameInstance>(GameInstance))
+	{
+		if (Text_Day)
+		{
+			Text_Day->SetText(FText::FromString(FString::Printf(TEXT("%d"), NetGameInstance->GetDay())));
+		}
+	}
 }
 
 void UCUserWidget_RunnerUI::BindToHealthComponent(UCNoxHPComponent* InHealthComponent)
@@ -96,11 +108,11 @@ void UCUserWidget_RunnerUI::OnHealthChanged(float InCurrentHealth, float InMaxHe
 	if (ProgressBar_Health)
 		ProgressBar_Health->SetPercent(InCurrentHealth / InMaxHealth);
 
-	if (Text_CurrentHealth)
-		Text_CurrentHealth->SetText(FText::AsNumber(FMath::RoundToInt(InCurrentHealth)));
-
-	if (Text_MaxHealth)
-		Text_MaxHealth->SetText(FText::AsNumber(FMath::RoundToInt(InMaxHealth)));
+	// if (Text_CurrentHealth)
+	// 	Text_CurrentHealth->SetText(FText::AsNumber(FMath::RoundToInt(InCurrentHealth)));
+	//
+	// if (Text_MaxHealth)
+	// 	Text_MaxHealth->SetText(FText::AsNumber(FMath::RoundToInt(InMaxHealth)));
 
 }
 

@@ -111,4 +111,7 @@ public:
 
 	UPROPERTY()
 	bool Failed = false;
+
+	UFUNCTION(BlueprintCallable, Category="Day")
+	int32 GetDay() const { return Day; }
 };
