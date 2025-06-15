@@ -14,10 +14,10 @@ ACMainGM::ACMainGM()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	ConstructorHelpers::FClassFinder<APawn> pawn(
-		TEXT("/Script/Engine.Blueprint'/Game/Characters/Runner/BP_CNox_Runner.BP_CNox_Runner_C'"));
+	/*ConstructorHelpers::FClassFinder<APawn> pawn(
+		TEXT("/Game/Characters/Runner/BP_CNox_Runner.BP_CNox_Runner_C"));
 	if (pawn.Succeeded())
-		DefaultPawnClass = pawn.Class;
+		DefaultPawnClass = pawn.Class;*/
 
 
 }

@@ -114,7 +114,6 @@ void ULobbyWidget_Selection::OnPlayClicked()
                 }
             }
             GI->BeforePlayerGold = PlayerCharacter->EquipComp->CalculatePriceOfEquippedItem();
-            GI->Day = GI->Day + 1;
             // SetPlayerStartLocation();
             return;
         }

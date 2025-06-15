@@ -101,4 +101,6 @@ public:
 
 	UPROPERTY()
 	bool Failed = false;
+
+	void RefreshGame();
 };

@@ -55,15 +55,18 @@ void ULobbyWidget_Main::NativeConstruct()
     PlayAnimation(Anim_Start_Setting);
     PlayAnimation(Anim_Start_Exit);
 
-    UNetGameInstance* GI = Cast<UNetGameInstance>(GetGameInstance());
     //GI->SetActorInitLocation();
-    GI->DayLeft = -1;
 
 
 }
 
 void ULobbyWidget_Main::OnNewGameClicked()
 {
+    UNetGameInstance* GI = Cast<UNetGameInstance>(GetGameInstance());
+    GI->DayLeft = -1;
+    GI->Day = 1;
+    GI->RefreshGame();
+
     ACNox_Runner* PlayerCharacter = Cast<ACNox_Runner>(PC->GetPawn());
     PlayerCharacter->InventoryComp->ResetInventoryItem();
     PlayerCharacter->EquipComp->EquippedItems.Empty();

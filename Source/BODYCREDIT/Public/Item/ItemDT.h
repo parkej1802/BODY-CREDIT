@@ -8,6 +8,79 @@
 #include "ItemDT.generated.h"
 
 USTRUCT(BlueprintType)
+struct FItemRarityIcon
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rarity")
+    UMaterialInterface* BlankIcon = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rarity")
+    UMaterialInterface* CommonIcon = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rarity")
+    UMaterialInterface* RareIcon = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rarity")
+    UMaterialInterface* EpicIcon = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rarity")
+    UMaterialInterface* LegendaryIcon = nullptr;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rarity")
+    UMaterialInterface* BlankRotatedIcon = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rarity")
+    UMaterialInterface* CommonRotatedIcon = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rarity")
+    UMaterialInterface* RareRotatedIcon = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rarity")
+    UMaterialInterface* EpicRotatedIcon = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rarity")
+    UMaterialInterface* LegendaryRotatedIcon = nullptr;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rarity")
+    UMaterialInterface* BlankThumbnail = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rarity")
+    UMaterialInterface* CommonThumbnail = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rarity")
+    UMaterialInterface* RareThumbnail = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rarity")
+    UMaterialInterface* EpicThumbnail = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rarity")
+    UMaterialInterface* LegendaryThumbnail = nullptr;
+};
+
+
+USTRUCT(BlueprintType)
+struct FItemRarityImages
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rarity")
+	UTexture2D* BlankImage = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rarity")
+	UTexture2D* CommonImage = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rarity")
+	UTexture2D* RareImage = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rarity")
+	UTexture2D* EpicImage = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Rarity")
+	UTexture2D* LegendaryImage = nullptr;
+};
+
+USTRUCT(BlueprintType)
 struct FItemStatIncrease
 {
 	GENERATED_BODY()
@@ -101,10 +174,16 @@ public:
     EItemRarity Rarity;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+    FItemRarityImages RarityImages;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
     int32 Price;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
     FString Description;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+	FItemRarityIcon IconStruct;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
 	class UMaterialInterface* Icon;
