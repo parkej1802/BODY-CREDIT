@@ -110,8 +110,15 @@ void UNetGameInstance::RefreshGame()
 	AlivePart[EPlayerPart::Leg] = true;
 	BeforePlayerGold = 0;
 	AfterPlayerGold = 0;
-	PlayerGold = 5000;
+	// PlayerGold = InitialPlayerGold;
 	Debt = 10000000;
+}
+
+void UNetGameInstance::PostInitProperties()
+{
+	Super::PostInitProperties();
+
+	InitialPlayerGold = PlayerGold;
 }
 
 USoundCue* UNetGameInstance::GetBGM()

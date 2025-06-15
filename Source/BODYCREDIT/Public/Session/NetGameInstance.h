@@ -57,7 +57,7 @@ public:
 	int32 Debt = 10000000;
 
 	UPROPERTY()
-	int32 PlayerGold = 5000;
+	int32 PlayerGold = 50000;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnGoldChanged OnGoldChanged;
@@ -112,10 +112,13 @@ public:
 	UPROPERTY()
 	bool Failed = false;
 
+	UPROPERTY()
+	int32 InitialPlayerGold = 0;
 
 	void RefreshGame();
 
 	UFUNCTION(BlueprintCallable, Category="Day")
 	int32 GetDay() const { return Day; }
 
+	virtual void PostInitProperties() override;
 };
