@@ -39,6 +39,8 @@ void CSplineMoveStrategy::Move(ACNox_EBase* Owner, float DeltaTime)
 void CSplineMoveStrategy::ResetVal(ACNox_EBase* Owner)
 {
 	bMoving = false;
+	LastPosition = FVector::ZeroVector;
+	StuckTime = 0.f;
 }
 
 void CSplineMoveStrategy::SplineMove(ACNox_EBase* Owner)
@@ -55,10 +57,49 @@ void CSplineMoveStrategy::SplineMove(ACNox_EBase* Owner)
 	OwnerLocation.Z = 0.f;
 	TargetLocation.Z = 0.f;
 	float DistToTarget = FVector::Dist(OwnerLocation, TargetLocation);
-	if (bMoving && DistToTarget < AcceptanceThreshold) // 일정 거리에 도달했으면 다음 인덱스 변경
+
+	// 현재 시간 가져오기
+	float CurrentTime = Owner->GetWorld()->GetTimeSeconds();
+
+	// 이동 중 한 자리에 머무르는지 체크
+	if (bMoving)
+	{
+		FVector CurrentPos = Owner->GetActorLocation();
+		CurrentPos.Z = 0.f;
+		
+		if (LastPosition.IsZero())
+		{
+			LastPosition = CurrentPos;
+			StuckTime = CurrentTime;
+		}
+		else
+		{
+			float DistMoved = FVector::Dist(CurrentPos, LastPosition);
+			if (DistMoved < 10.f) // 10 유닛 이내로 움직임이 없으면
+			{
+				if (CurrentTime - StuckTime >= 1.0f) // 1초 이상 머물러 있으면
+				{
+					CurrentIndex = (++CurrentIndex) % Distances.Num();
+					bMoving = false;
+					LastPosition = FVector::ZeroVector;
+					StuckTime = 0.f;
+					return;
+				}
+			}
+			else
+			{
+				LastPosition = CurrentPos;
+				StuckTime = CurrentTime;
+			}
+		}
+	}
+
+	if (bMoving && DistToTarget < AcceptanceThreshold) // 일정 거리에 도달했으면
 	{
 		CurrentIndex = (++CurrentIndex) % Distances.Num();
 		bMoving = false;
+		LastPosition = FVector::ZeroVector;
+		StuckTime = 0.f;
 		return;
 	}
 
@@ -69,6 +110,8 @@ void CSplineMoveStrategy::SplineMove(ACNox_EBase* Owner)
 		Owner->SetMovementSpeed(EEnemyMovementSpeed::Walking);
 		AICon->MoveToLocation(TargetLocation, AcceptanceRadius);
 		bMoving = true;
+		LastPosition = FVector::ZeroVector;
+		StuckTime = 0.f;
 	}
 }
 
@@ -83,9 +126,40 @@ void CSplineMoveStrategy::RandomMove(ACNox_EBase* Owner)
 		if (Owner->bDebug)
 			DrawDebugSphere(Owner->GetWorld(), RanLocation, 10, 10, FColor::Green, true, 5);
 		bMoving = true;
+		LastPosition = FVector::ZeroVector;
+		StuckTime = 0.f;
 	}
 	else
 	{
+		// 이동 중 한 자리에 머무르는지 체크
+		FVector CurrentPos = Owner->GetActorLocation();
+		CurrentPos.Z = 0.f;
+		
+		if (LastPosition.IsZero())
+		{
+			LastPosition = CurrentPos;
+			StuckTime = Owner->GetWorld()->GetTimeSeconds();
+		}
+		else
+		{
+			float DistMoved = FVector::Dist(CurrentPos, LastPosition);
+			if (DistMoved < 10.f) // 10 유닛 이내로 움직임이 없으면
+			{
+				if (Owner->GetWorld()->GetTimeSeconds() - StuckTime >= 1.0f) // 1초 이상 머물러 있으면
+				{
+					bMoving = false;
+					LastPosition = FVector::ZeroVector;
+					StuckTime = 0.f;
+					return;
+				}
+			}
+			else
+			{
+				LastPosition = CurrentPos;
+				StuckTime = Owner->GetWorld()->GetTimeSeconds();
+			}
+		}
+
 		// 이동속도 변경
 		Owner->SetMovementSpeed(EEnemyMovementSpeed::Walking);
 		EPathFollowingRequestResult::Type result = AICon->MoveToLocation(RanLocation, AcceptanceThreshold, true);
@@ -94,6 +168,8 @@ void CSplineMoveStrategy::RandomMove(ACNox_EBase* Owner)
 		case EPathFollowingRequestResult::Failed:
 		case EPathFollowingRequestResult::AlreadyAtGoal:
 			bMoving = false;
+			LastPosition = FVector::ZeroVector;
+			StuckTime = 0.f;
 			break;
 		default:
 			break;
