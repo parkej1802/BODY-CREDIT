@@ -56,8 +56,28 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UDataTable* StageDataTable;
 
+public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USoundCue* BGM_Cue;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USoundMix* BGM_Mix;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USoundClass* MasterBGMClass;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USoundClass* LobbySoundClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USoundClass* InGameSoundClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USoundClass* ExtractSoundClass;
+
+	void InitMix();
+	void SetLobbySound(float Volume = 1.f, float Pitch = 1.f);
+	void SetInGameSound(float Volume = 1.f, float Pitch = 1.f);
+	void SetExtractSound(float Volume = 1.f, float Pitch = 1.f);
 
 	UFUNCTION(BlueprintCallable)
 	USoundCue* GetBGM();

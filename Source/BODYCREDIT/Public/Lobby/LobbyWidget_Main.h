@@ -92,9 +92,15 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
 	TSubclassOf<UUserWidget> LobbySelectionWidgetClass;
-
+	
 	UPROPERTY()
 	class ULobbyWidget_Selection* LobbyWidget_Selection;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
+	TSubclassOf<UUserWidget> OptionWidgetClass;
+
+	UPROPERTY()
+	class UCLobbyWidget_Option* LobbyWidget_Option;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class APlayerController* PC;

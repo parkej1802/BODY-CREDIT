@@ -74,15 +74,13 @@ void ACMainGM::Tick(float DeltaSeconds)
 						PC->SetInputMode(InputMode);
 						PC->bShowMouseCursor = true;
 					}
-
-					for (TActorIterator<ACNox_EBase> It(GetWorld()); It; ++It)
-					{
-						(*It)->DayStart();
-					}
 				}
 			}
 		}
 	}
+
+	if (ExtractTimerTriggerStart) GameStartTime += DeltaSeconds;
+	else GameStartTime = 0.f;
 }
 
 AActor* ACMainGM::ChoosePlayerStart_Implementation(AController* Player)
@@ -142,9 +140,6 @@ bool ACMainGM::IsInVIPZone(const FName& ZoneID)
 
 float ACMainGM::GetGamePlayTime()
 {
-	if (ExtractTimerTriggerStart) GameStartTime+=GetWorld()->DeltaTimeSeconds;
-	else GameStartTime = 0.f;
-
 	return GameStartTime;
 }
 

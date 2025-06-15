@@ -16,6 +16,7 @@
 #include "Utilities/CLog.h"
 #include "GameFramework/PlayerStart.h"
 #include "Games/CMainGM.h"
+#include "Lobby/CLobbyWidget_Option.h"
 
 void ULobbyWidget_Main::NativeConstruct()
 {
@@ -115,7 +116,16 @@ void ULobbyWidget_Main::OnNewGameUnhovered()
 
 void ULobbyWidget_Main::OnSettingClicked()
 {
-    
+    if (OptionWidgetClass)
+    {
+        LobbyWidget_Option = CreateWidget<UCLobbyWidget_Option>(GetWorld(), OptionWidgetClass);
+        if (LobbyWidget_Option)
+        {
+            LobbyWidget_Option->AddToViewport();
+
+            this->RemoveFromParent();
+        }
+    }
 }
 
 void ULobbyWidget_Main::OnSettingHovered()
