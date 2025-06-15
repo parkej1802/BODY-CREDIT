@@ -4,6 +4,9 @@
 #include "Characters/CNox_Runner.h"
 #include "Sound/SoundCue.h"
 #include "Components/AudioComponent.h"
+#include "Sound/SoundMix.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundClass.h"
 
 void UNetGameInstance::Init()
 {	
@@ -31,6 +34,8 @@ void UNetGameInstance::Init()
 	AlivePart.Add(EPlayerPart::Body, true);
 	AlivePart.Add(EPlayerPart::Arm, true);
 	AlivePart.Add(EPlayerPart::Leg, true);
+
+	InitMix();
 }
 
 void UNetGameInstance::CreateMySession(FString roomName, int32 playerCount)
@@ -119,6 +124,57 @@ void UNetGameInstance::PostInitProperties()
 	Super::PostInitProperties();
 
 	InitialPlayerGold = PlayerGold;
+}
+
+void UNetGameInstance::InitMix()
+{
+	if (!BGM_Mix)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("BGM_Mix is not set in GameInstance"));
+		return;
+	}
+
+	// Sound Mix 활성화
+    UGameplayStatics::SetBaseSoundMix(GetWorld(), BGM_Mix);
+    UGameplayStatics::PushSoundMixModifier(GetWorld(), BGM_Mix);
+
+	// 초기 볼륨 설정
+	SetLobbySound(1.0f);
+	SetInGameSound(1.0f);
+	SetExtractSound(1.0f);
+}
+
+void UNetGameInstance::SetLobbySound(float Volume, float Pitch)
+{
+	if (!BGM_Mix || !LobbySoundClass)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("BGM_Mix or LobbySoundClass is not set in GameInstance"));
+		return;
+	}
+	// LobbySoundClass->Properties.Volume = Volume;
+	UGameplayStatics::SetSoundMixClassOverride(GetWorld(), BGM_Mix, LobbySoundClass, Volume, Pitch, 0.0f);
+}
+
+void UNetGameInstance::SetInGameSound(float Volume, float Pitch)
+{
+	if (!BGM_Mix || !InGameSoundClass)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("BGM_Mix or InGameSoundClass is not set in GameInstance"));
+		return;
+	}
+ 
+	UGameplayStatics::SetSoundMixClassOverride(GetWorld(), BGM_Mix, InGameSoundClass, Volume, Pitch, 0.0f);
+}
+
+void UNetGameInstance::SetExtractSound(float Volume, float Pitch)
+{
+	if (!BGM_Mix || !ExtractSoundClass)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("BGM_Mix or ExtractSoundClass is not set in GameInstance"));
+		return;
+	}
+
+	UGameplayStatics::SetSoundMixClassOverride(GetWorld(), BGM_Mix, ExtractSoundClass, Volume, Pitch, 0.0f);
 }
 
 USoundCue* UNetGameInstance::GetBGM()

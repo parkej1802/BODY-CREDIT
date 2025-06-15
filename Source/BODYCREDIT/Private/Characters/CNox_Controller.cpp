@@ -67,10 +67,10 @@ void ACNox_Controller::PlayBGM(const int32 idx)
 			BGMAudioComponent->SetSound(BGM);
 			
 			// idx 파라미터 설정
-			BGMAudioComponent->SetIntParameter(FName("idx"), idx);
+			BGMAudioComponent->SetIntParameter(FName("Idx"), idx);
 			
 			// 볼륨 설정
-			BGMAudioComponent->SetVolumeMultiplier(1.0f);
+			// BGMAudioComponent->SetVolumeMultiplier(1.0f);
 			
 			// 현재 재생 중인 BGM의 idx 저장
 			CurrentBGMIndex = idx;
