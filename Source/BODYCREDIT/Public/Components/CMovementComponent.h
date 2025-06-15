@@ -79,6 +79,9 @@ public:
 public:
 	virtual void BindInput(class UEnhancedInputComponent* InEnhancedInputComponent) override;
 
+public:
+	void OnReset(const struct FInputActionValue& InVal);
+	
 private:
 	// Inputs
 	void OnMovement(const struct FInputActionValue& InVal);
@@ -88,7 +91,6 @@ private:
 	void OnVerticalLook(const struct FInputActionValue& InVal);
 
 	void OnSprint(const struct FInputActionValue& InVal);
-	void OnReset(const struct FInputActionValue& InVal);
 	
 	void OnCrouch(const struct FInputActionValue& InVal);
 
@@ -194,5 +196,11 @@ public:
 	float StaminaRecoverAmount = 1.0f;
 
 	FTimerHandle StaminaRecoverDelayTimerHandle;
+
+	// Crouch 상태 보간용
+	bool bWantsToCrouch = false;
+	float DefaultHalfHeight = 88.f;
+	float CrouchHalfHeight = 44.f;
+	float CrouchInterpSpeed = 10.f;
 
 };

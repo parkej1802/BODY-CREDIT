@@ -14,7 +14,7 @@ enum class EWeaponSlot : uint8
 UENUM(BlueprintType)
 enum class EWeaponType : uint8
 {
-	KATANA, BOW, RIFLE, MAX,
+	UNARMED, KATANA, BOW, MAX,
 };
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWeaponTypeChanged, EWeaponType, InPrevType, EWeaponType, InNewType);
 
@@ -61,8 +61,8 @@ public:
 public:
 	FORCEINLINE bool IsKatanaMode() { return Type == EWeaponType::KATANA; }
 	FORCEINLINE bool IsBowMode() { return Type == EWeaponType::BOW; }
-	FORCEINLINE bool IsRifleMode() { return Type == EWeaponType::RIFLE; }
-	FORCEINLINE bool IsUnarmedMode() { return Type == EWeaponType::MAX;}
+	// FORCEINLINE bool IsRifleMode() { return Type == EWeaponType::RIFLE; }
+	FORCEINLINE bool IsUnarmedMode() { return Type == EWeaponType::UNARMED;}
 
 public:
 	UCWeaponComponent();
@@ -95,7 +95,7 @@ public:
 public:	
 	void SetKatanaMode();
 	void SetBowMode();
-	void SetRifleMode();
+	// void SetRifleMode();
 	void SetUnarmedMode();
 
 	void SetWeaponSlot1();
@@ -118,7 +118,7 @@ public:
 	FWeaponTypeChanged OnWeaponTypeChange;
 
 private:
-	EWeaponType Type = EWeaponType::MAX;
+	EWeaponType Type = EWeaponType::UNARMED;
 
 private:
 	UPROPERTY()

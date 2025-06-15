@@ -127,6 +127,8 @@ public:
 private:
 	void Init();
 
+	FVector2D GetLastMovementInputVector2D() const;
+
 	void Dead();
 
 /**

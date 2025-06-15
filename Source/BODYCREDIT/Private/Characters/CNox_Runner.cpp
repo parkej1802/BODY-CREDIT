@@ -194,13 +194,19 @@ void ACNox_Runner::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 void ACNox_Runner::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
 {
+	FVector2D InputDir = GetLastMovementInputVector2D();
+	
 	switch (InNewType)
 	{
 		case EStateType::Hitted:
+			Montage->PlayHittedMode(InputDir);
 			break;
-		case EStateType::Avoid:
+	case EStateType::Avoid:
+			Montage->PlayAvoidMode(Weapon->GetWeaponType(), InputDir);
 			break;
-		case EStateType::Dead: Dead(); break;
+		case EStateType::Dead:
+			Montage->PlayDeadMode(InputDir);
+			break;
 	}
 
 }
@@ -286,6 +292,12 @@ void ACNox_Runner::Init()
 	// Montage
 	CHelpers::CreateActorComponent<UCMontageComponent>(this, &Montage, "Montage");
 
+}
+
+FVector2D ACNox_Runner::GetLastMovementInputVector2D() const
+{
+	FVector Dir3D = GetLastMovementInputVector();
+	return FVector2D(Dir3D.X, Dir3D.Y);
 }
 
 void ACNox_Runner::Dead()

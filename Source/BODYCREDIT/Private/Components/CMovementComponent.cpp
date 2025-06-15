@@ -205,6 +205,7 @@ void UCMovementComponent::OffMovement(const FInputActionValue& InVal)
 {
 	TargetFOV = DefaultFOV;
 
+	OnReset(FInputActionValue());
 }
 
 void UCMovementComponent::OnHorizontalLook(const FInputActionValue& InVal)
@@ -231,6 +232,8 @@ void UCMovementComponent::OnVerticalLook(const FInputActionValue& InVal)
 
 void UCMovementComponent::OnSprint(const FInputActionValue& InVal)
 {
+	CheckTrue(OwnerCharacter->GetVelocity().Size2D() < 400);
+	
 	// 유효성 확인
 	CheckNull(CHelpers::GetComponent<UCNoxHPComponent>(OwnerCharacter));
 
