@@ -99,10 +99,10 @@ void UCLobbyWidget_Play::OnContinueClicked()
 		PlayerCharacter->ShowPlayerMainUI();
 		PlayerCharacter->OnMovement();
 
-		for (TActorIterator<ACNox_EBase> It(GetWorld()); It; ++It)
-		{
-			(*It)->DayStart();
-		}
+		// for (TActorIterator<ACNox_EBase> It(GetWorld()); It; ++It)
+		// {
+		// 	(*It)->DayStart();
+		// }
 	}
 }
 
