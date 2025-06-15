@@ -19,6 +19,9 @@ private:
 	float AcceptanceThreshold = 50.f;
 	bool bMoving = false;
 
+	FVector LastPosition = FVector::ZeroVector; // 마지막 위치
+	float StuckTime = 0.f; // 한 자리에 머무른 시간
+
 	float RandomRadius = 400;
 	FVector RanLocation;
 
