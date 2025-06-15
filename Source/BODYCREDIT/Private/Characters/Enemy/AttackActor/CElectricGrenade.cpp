@@ -35,9 +35,10 @@ void ACElectricGrenade::Tick(float DeltaTime)
 	// Z축 무시한 평면 거리
 	Delta.Z = 0;
 
-	if (Delta.Size() <= TriggerRadius)
+	if (!bExploded && Delta.Size() <= TriggerRadius)
 	{
 		Explode(); // 폭발 처리 함수
+		bExploded = true;
 	}
 }
 
@@ -101,7 +102,6 @@ void ACElectricGrenade::Explode()
 		UseFX(false);
 		Init(false);
 	}, 1.f, false);
-	
 }
 
 void ACElectricGrenade::Init(bool bInit)
@@ -112,6 +112,7 @@ void ACElectricGrenade::Init(bool bInit)
 		this->SetActorHiddenInGame(false);
 		ProjectileComp->Activate(true);
 		SetActorTickEnabled(true);
+		bExploded = false;
 	}
 	else
 	{

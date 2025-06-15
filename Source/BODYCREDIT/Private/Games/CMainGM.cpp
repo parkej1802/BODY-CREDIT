@@ -155,28 +155,25 @@ void ACMainGM::SpawnEnemy()
 	
 	{ // Zero
 		int32 spawnCnt = 0;
-		while (spawnCnt < SpawnData.ZeroSpawnCount)
+		while (spawnCnt++ < SpawnData.ZeroSpawnCount)
 		{
 			SpawnEnemy(ZeroFactory, GetSpawnRandomLoc(GetSpawnBoundaryBox(1)));
-			++spawnCnt;
 		}
 	}
 
 	{ // medic
 		int32 spawnCnt = 0;
-		while (spawnCnt < SpawnData.MedicSpawnCount)
+		while (spawnCnt++ < SpawnData.MedicSpawnCount)
 		{
-			SpawnEnemy(ZeroFactory, GetSpawnRandomLoc(GetSpawnBoundaryBox(2)));
-			++spawnCnt;
+			SpawnEnemy(MedicFactory, GetSpawnRandomLoc(GetSpawnBoundaryBox(2)));
 		}
 	}
 
 	{ // memory
 		int32 spawnCnt = 0;
-		while (spawnCnt < SpawnData.MemorySpawnCount)
+		while (spawnCnt++ < SpawnData.MemorySpawnCount)
 		{
-			SpawnEnemy(ZeroFactory, GetSpawnRandomLoc(GetSpawnBoundaryBox(2)));
-			++spawnCnt;
+			SpawnEnemy(MemoryFactory, GetSpawnRandomLoc(GetSpawnBoundaryBox(2)));
 		}
 	}
 }

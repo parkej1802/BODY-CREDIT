@@ -30,6 +30,7 @@ private:
 
 	FVector TargetLocation;
 	float TriggerRadius = 100.f;
+	bool bExploded = false;
 
 	void Init(bool bInit);
 	void UseFX(bool bUse);

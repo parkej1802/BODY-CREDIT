@@ -9,7 +9,6 @@ void CRandomMoveStrategy_Memory::Move(ACNox_EBase* Owner, float DeltaTime)
 {
 	if (!Owner) return;
 	
-	
 	RandomMove(Owner);
 }
 
@@ -21,7 +20,8 @@ void CRandomMoveStrategy_Memory::RandomMove(ACNox_EBase* Owner)
 	if (!bMoving)
 	{
 		RanLocation = GetRandomLocation(Owner); // 랜덤 위치 구하기
-		DrawDebugSphere(Owner->GetWorld(), RanLocation, 10, 10, FColor::Green, true, 5);
+		if (Owner->bDebug)
+			DrawDebugSphere(Owner->GetWorld(), RanLocation, 10, 10, FColor::Green, true, 5);
 		bMoving = true;
 	}
 	else
