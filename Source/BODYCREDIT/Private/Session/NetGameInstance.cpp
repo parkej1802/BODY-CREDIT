@@ -96,6 +96,31 @@ void UNetGameInstance::SetActorInitLocation()
 	PlayerCharacter->SetActorLocation(StartLocation);
 }
 
+void UNetGameInstance::RefreshGame()
+{
+	PayTime = false;
+	Failed = false;
+	AmountToPay = 0;
+	DayLeft = -1;
+	RemainingLife = 4;
+	SelectedPart = EPlayerPart::Basic;
+	AlivePart[EPlayerPart::Head] = true;
+	AlivePart[EPlayerPart::Body] = true;
+	AlivePart[EPlayerPart::Arm] = true;
+	AlivePart[EPlayerPart::Leg] = true;
+	BeforePlayerGold = 0;
+	AfterPlayerGold = 0;
+	// PlayerGold = InitialPlayerGold;
+	Debt = 10000000;
+}
+
+void UNetGameInstance::PostInitProperties()
+{
+	Super::PostInitProperties();
+
+	InitialPlayerGold = PlayerGold;
+}
+
 USoundCue* UNetGameInstance::GetBGM()
 {
 	return BGM_Cue;
@@ -123,5 +148,6 @@ void UNetGameInstance::PauseBGM(bool bIsPause)
 	{
 		Controller->PauseBGM(bIsPause);
 	}
+
 }
 

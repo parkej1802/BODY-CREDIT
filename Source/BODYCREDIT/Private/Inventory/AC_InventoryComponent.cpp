@@ -171,7 +171,6 @@ void UAC_InventoryComponent::ShowLootableInventory()
 
 	if (InventoryMainUI)
 	{
-
 		InventoryMainUI->RemoveFromParent();
 		InventoryMainUI = nullptr;
 		bIsLootableMode = false;

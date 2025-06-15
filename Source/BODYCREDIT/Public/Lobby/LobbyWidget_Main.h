@@ -98,7 +98,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class APlayerController* PC;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UNetGameInstance* GI;
 
-
+		
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class ACNox_Runner* PlayerCharacter;
 
 };

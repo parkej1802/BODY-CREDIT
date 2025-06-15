@@ -27,8 +27,9 @@ void ULobbyWidget_Main::NativeConstruct()
     PC->bShowMouseCursor = true;
     // UGameplayStatics::SetGamePaused(GetWorld(), true);
 
-    if (ACNox_Runner* runner = Cast<ACNox_Runner>(GetOwningPlayer()))
-        runner->OffMovement();
+    PlayerCharacter = Cast<ACNox_Runner>(PC->GetPawn());
+    
+    PlayerCharacter->OffMovement();
 
     if (Button_NewGame)
     {
@@ -55,16 +56,19 @@ void ULobbyWidget_Main::NativeConstruct()
     PlayAnimation(Anim_Start_Setting);
     PlayAnimation(Anim_Start_Exit);
 
-    UNetGameInstance* GI = Cast<UNetGameInstance>(GetGameInstance());
+    
     //GI->SetActorInitLocation();
-    GI->DayLeft = -1;
+    GI = Cast<UNetGameInstance>(GetGameInstance());
 
     GI->PlayBGM(0);
 }
 
 void ULobbyWidget_Main::OnNewGameClicked()
 {
-    ACNox_Runner* PlayerCharacter = Cast<ACNox_Runner>(PC->GetPawn());
+    GI->DayLeft = -1;
+    GI->Day = 1;
+    GI->RefreshGame();
+
     PlayerCharacter->InventoryComp->ResetInventoryItem();
     PlayerCharacter->EquipComp->EquippedItems.Empty();
 
