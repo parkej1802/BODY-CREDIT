@@ -57,12 +57,20 @@ void UCStateComponent::SetDeadMode()
 
 void UCStateComponent::ChangeType(EStateType InType)
 {
+	// [중복 상태 변화 방지]
+	// 이미 현재 상태(Type)와 바꾸려는 상태가 같으면 아무 동작도 하지 않음
+	CheckTrue(Type == InType);
+
+	// [상태 백업 및 변경]
+	// 이전 상태를 저장한 뒤, 새로운 상태로 변경
 	EStateType prevType = Type;
 	Type = InType;
 
+	// [델리게이트 호출]
+	// 바인딩된 함수가 있으면 상태 변화 이벤트 Broadcast
 	if (OnStateTypeChanged.IsBound())
-		OnStateTypeChanged.Broadcast(prevType, Type);
-
+		OnStateTypeChanged.Broadcast(prevType, InType);
+	
 }
 
 void UCStateComponent::OnSubActionMode()

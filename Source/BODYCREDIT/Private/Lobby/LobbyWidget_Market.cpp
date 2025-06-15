@@ -28,11 +28,6 @@ void ULobbyWidget_Market::NativeConstruct()
 {
     Super::NativeConstruct();
 
-    PC = Cast<ACNox_Controller>(GetOwningPlayer());
-    FInputModeGameAndUI InputMode;
-    PC->SetInputMode(InputMode);
-    PC->bShowMouseCursor = true;
-
     if (Button_Back)
     {
         Button_Back->OnClicked.AddDynamic(this, &ThisClass::OnBackClicked);
@@ -89,32 +84,8 @@ void ULobbyWidget_Market::NativeConstruct()
 		Button_SelectChestrig->OnUnhovered.AddDynamic(this, &ThisClass::OnSelectChestrigUnhovered);
 	}
 
-	GI = Cast<UNetGameInstance>(GetGameInstance());
-	if (GI) {
-		GI->MarketUI = this;
-		GI->OnGoldChanged.RemoveDynamic(this, &ULobbyWidget_Market::UpdatePlayerGoldText);
-		GI->OnGoldChanged.AddDynamic(this, &ULobbyWidget_Market::UpdatePlayerGoldText);
-		GI->SetPlayerGold(GI->PlayerGold);
-		// UpdatePlayerGoldText(GI->PlayerGold);
-	}
-
-    APawn* Pawn = PC->GetPawn();
-
-    PlayerCharacter = Cast<ACNox_Runner>(Pawn);
-
-    InventoryComp = PlayerCharacter->InventoryComp;
-
-    InventoryGridWidget->InitInventory(InventoryComp, InventoryComp->InventoryTileSize);
-    InventoryGridWidget->GridID = 0;
-    InventoryGridWidget->PlayerController = PC;
-
-    MarketComp = PlayerCharacter->MarketComp;
-
-	OnSelectWeaponClicked();
-	PreviousImage = Image_SelectWeapon_Hovered;
-	PreviousImage->SetVisibility(ESlateVisibility::Visible);
-
-	GameState = GetWorld()->GetGameState<AGameState_BodyCredit>();
+	
+	Refresh();
 }
 
 void ULobbyWidget_Market::OnBackClicked()
@@ -967,5 +938,40 @@ void ULobbyWidget_Market::ShowNoSpaceUI()
 	if (NoSpaceUI)
 	{
 		NoSpaceUI->AddToViewport();
+	}
+}
+
+void ULobbyWidget_Market::Refresh()
+{
+	PC = Cast<ACNox_Controller>(GetOwningPlayer());
+	FInputModeGameAndUI InputMode;
+	PC->SetInputMode(InputMode);
+	PC->bShowMouseCursor = true;
+
+	APawn* Pawn = PC->GetPawn();
+
+	PlayerCharacter = Cast<ACNox_Runner>(Pawn);
+
+	InventoryComp = PlayerCharacter->InventoryComp;
+
+	InventoryGridWidget->InitInventory(InventoryComp, InventoryComp->InventoryTileSize);
+	InventoryGridWidget->GridID = 0;
+	InventoryGridWidget->PlayerController = PC;
+
+	MarketComp = PlayerCharacter->MarketComp;
+
+	OnSelectWeaponClicked();
+	PreviousImage = Image_SelectWeapon_Hovered;
+	PreviousImage->SetVisibility(ESlateVisibility::Visible);
+
+	GameState = GetWorld()->GetGameState<AGameState_BodyCredit>();
+
+	GI = Cast<UNetGameInstance>(GetGameInstance());
+	if (GI) {
+		GI->MarketUI = this;
+		GI->OnGoldChanged.RemoveDynamic(this, &ULobbyWidget_Market::UpdatePlayerGoldText);
+		GI->OnGoldChanged.AddDynamic(this, &ULobbyWidget_Market::UpdatePlayerGoldText);
+		GI->SetPlayerGold(GI->PlayerGold);
+		// UpdatePlayerGoldText(GI->PlayerGold);
 	}
 }

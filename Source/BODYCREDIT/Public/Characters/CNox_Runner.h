@@ -127,6 +127,8 @@ public:
 private:
 	void Init();
 
+	FVector2D GetLastMovementInputVector2D() const;
+
 	void Dead();
 
 /**
@@ -144,6 +146,7 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UCNoxHPComponent* HPComp;
 
+	bool IsEscape = false;
 // Inventory
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -207,5 +210,5 @@ public:
 	FRotator TargetControlRotation;
 	bool bShouldRotateToTarget = false;
 	float RotationInterpSpeed = 8.f;
-	
+
 };

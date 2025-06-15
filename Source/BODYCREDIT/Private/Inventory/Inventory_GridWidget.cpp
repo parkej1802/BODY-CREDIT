@@ -16,6 +16,8 @@
 #include "Inventory/Inventory_Widget.h"
 #include "Inventory/Inventory_EquipmentTile.h"
 #include "Lobby/LobbyWidget_Market.h"
+#include "Games/CMainGM.h"
+#include "Characters/CNox_Runner.h"
 
 
 void UInventory_GridWidget::InitInventory(UAC_InventoryBaseComponent* InventoryComponent, float Inventoy_TileSize)
@@ -400,7 +402,18 @@ bool UInventory_GridWidget::NativeOnDrop(const FGeometry& InGeometry, const FDra
 		TempTile.X = ItemObject->ItemData.StartPosition.X;
 		TempTile.Y = ItemObject->ItemData.StartPosition.Y;
 
-		InventoryBaseComp->TryAddItem(ItemObject);
+		if (!InventoryBaseComp->TryAddItem(ItemObject))
+		{
+			if (Cast<ACMainGM>(GetWorld()->GetAuthGameMode())->IsStart)
+			{
+				Cast<AGameState_BodyCredit>(GetWorld()->GetGameState())->SpawnItemFromActor(ItemObject, PlayerController->GetPawn(), true);
+			}
+			else
+			{
+				ACNox_Runner* PlayerCharacter = Cast<ACNox_Runner>(PlayerController->GetPawn());
+				PlayerCharacter->InventoryComp->TryAddItem(ItemObject);
+			}
+		}
 	}
 
 	InventoryBaseComp->OnInventoryChanged();
