@@ -52,7 +52,7 @@ public:
 	virtual void OnWeaponAttachmentBeginCollision() {}
 				   
 	UFUNCTION()
-	virtual void OnWeaponAttachmentEndCollision() {}
+	virtual void OnWeaponAttachmentEndCollision() {};
 	
 	UFUNCTION()
 	virtual void OnWeaponAttachmentBeginOverlap(class ACNox* InAttacker, AActor* InAttackCauser, class ACNox* InOther) {}

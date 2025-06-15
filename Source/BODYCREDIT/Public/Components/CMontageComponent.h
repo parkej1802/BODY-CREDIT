@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/CBaseComponent.h"
+#include "Components/CWeaponComponent.h"
 #include "Components/CStateComponent.h"
 #include "Engine/DataTable.h"
 #include "CMontageComponent.generated.h"
@@ -14,7 +15,13 @@ struct FMontageData
 
 public:
 	UPROPERTY(EditAnywhere)
-	EStateType Type;
+	EWeaponType WeaponType;
+	
+	UPROPERTY(EditAnywhere)
+	EStateType StateType;
+
+	UPROPERTY(EditAnywhere)
+	FName Direction; 
 
 	UPROPERTY(EditAnywhere)
 	class UAnimMontage* Montage;
@@ -43,9 +50,23 @@ public:
 	void PlayDeadMode();
 
 private:
+	int32 GetDirectionIndexByTag(const FName& DirectionTag) const;
+
+	int32 GetDirectionIndex(const FVector2D& InputDir) const;
+
+public:
+	void PlayAvoidMode(EWeaponType InWeaponType, const FVector2D& InputDir);
+	void PlayHittedMode(const FVector2D& InputDir);
+	void PlayDeadMode(const FVector2D& InputDir);
+	
 	void PlayAnimMontage(EStateType InType);
 
-private:
+private:	
 	FMontageData* Datas[(int32)EStateType::MAX];
+
+	// 8방향 모션
+	FMontageData* AvoidDatas[(int32)EWeaponType::MAX][8] = { nullptr, };
+	FMontageData* Hitted[8] = { nullptr, };
+	FMontageData* Dead[8] = { nullptr, };
 
 };

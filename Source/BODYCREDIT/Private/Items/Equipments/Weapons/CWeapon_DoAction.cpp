@@ -1,5 +1,6 @@
 ﻿#include "Items/Equipments/Weapons/CWeapon_DoAction.h"
 #include "Global.h"
+#include "InputActionValue.h"
 #include "Characters/CNox.h"
 #include "Components/CStateComponent.h"
 #include "Components/CMovementComponent.h"
@@ -52,7 +53,12 @@ void UCWeapon_DoAction::End_DoAction()
 
 void UCWeapon_DoAction::SprintDoAction()
 {
+	bInAction = true;
+
+	State->SetActionMode();
+	
 	if (!SprintDoActionDatas.IsEmpty())
 		SprintDoActionDatas[0].DoAction(OwnerCharacter);
-	
+
+	CHelpers::GetComponent<UCMovementComponent>(OwnerCharacter)->OnReset(FInputActionValue());
 }

@@ -116,19 +116,19 @@ void UCWeaponComponent::SetBowMode()
 
 }
 
-void UCWeaponComponent::SetRifleMode()
-{
-	CheckFalse(IsIdleMode());
-
-	SetMode(EWeaponType::RIFLE);
-
-}
+// void UCWeaponComponent::SetRifleMode()
+// {
+// 	CheckFalse(IsIdleMode());
+//
+// 	SetMode(EWeaponType::RIFLE);
+//
+// }
 
 void UCWeaponComponent::SetUnarmedMode()
 {
 	GetEquipment()->Unequip();
 
-	ChangeType(EWeaponType::MAX);
+	ChangeType(EWeaponType::UNARMED);
 
 }
 
@@ -152,18 +152,17 @@ void UCWeaponComponent::DoAction()
 
 	switch (Type)
 	{
+	case EWeaponType::UNARMED:
+		break;
 	case EWeaponType::KATANA:
 		if (CHelpers::GetComponent<UCMovementComponent>(OwnerCharacter)->IsSprint() == false)
 			GetDoAction()->DoAction();
 		else GetDoAction()->SprintDoAction();
 		break;
 	case EWeaponType::BOW:
-	case EWeaponType::RIFLE:
+	// case EWeaponType::RIFLE:
 		// 눌렀을 때 → 내부에서 차징 시작 + Fire 조건 처리
 		GetDoAction()->Pressed(); 
-		break;
-	case EWeaponType::MAX:
-	default:
 		break;
 	}
 
@@ -183,14 +182,13 @@ void UCWeaponComponent::EndDoAction()
 
 	switch (Type)
 	{
+	case EWeaponType::UNARMED:
+		break;
 	case EWeaponType::KATANA:
 		break;
 	case EWeaponType::BOW:
-	case EWeaponType::RIFLE:
+	// case EWeaponType::RIFLE:
 		GetDoAction()->Released(); 
-		break;
-	case EWeaponType::MAX:
-	default:
 		break;
 	}
 }
