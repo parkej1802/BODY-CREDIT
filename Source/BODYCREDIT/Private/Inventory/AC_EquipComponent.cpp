@@ -88,7 +88,7 @@ void UAC_EquipComponent::EquipItem(EPlayerPart Part, UItemObject* Item)
 		switch (Part)
 		{
 		case EPlayerPart::Head:
-			PlayerCharacter->GetHead()->SetSkeletalMeshAsset(Item->ItemData.SkeletalMesh);
+			PlayerCharacter->GetHair()->SetSkeletalMeshAsset(Item->ItemData.SkeletalMesh);
 
 			break;
 		case EPlayerPart::Body:
@@ -134,7 +134,7 @@ void UAC_EquipComponent::UnequipItem(EPlayerPart Part)
 			switch (Part)
 			{
 				case EPlayerPart::Head:
-					PlayerCharacter->GetHead()->SetSkeletalMeshAsset(DefaultMesh);
+					PlayerCharacter->GetHair()->SetSkeletalMeshAsset(DefaultMesh);
 					break;
 				case EPlayerPart::Body:
 					PlayerCharacter->GetUpperBody()->SetSkeletalMeshAsset(DefaultMesh);
