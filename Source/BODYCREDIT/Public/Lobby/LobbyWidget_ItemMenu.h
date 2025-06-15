@@ -69,4 +69,12 @@ public:
 	class UNetGameInstance* GI;
 
 	void ResetInputMode();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
+	TSubclassOf<UUserWidget> ItemDescriptionWidgetClass;
+
+	UPROPERTY()
+	class 	ULobbyWidget_ItemDescription* ItemDescriptionUI;
+
+
 };

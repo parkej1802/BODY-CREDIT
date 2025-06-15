@@ -8,6 +8,8 @@
 #include "Item/Item_Base.h"
 #include "Session/NetGameInstance.h"
 #include "Lobby/LobbyWidget_Market.h"
+#include "Lobby/LobbyWidget_ItemDescription.h"
+#include "Games/CMainGM.h"
 
 void ULobbyWidget_ItemMenu::NativeConstruct()
 {
@@ -48,6 +50,9 @@ void ULobbyWidget_ItemMenu::OnUseClicked()
 
 void ULobbyWidget_ItemMenu::OnSellClicked()
 {
+    ACMainGM* GM = Cast<ACMainGM>(GetWorld()->GetAuthGameMode());
+    if (GM && GM->IsStart) return;
+
     if (GI->MarketUI)
     {
         GI->MarketUI->ShowSellUI(ItemObject);
@@ -58,6 +63,26 @@ void ULobbyWidget_ItemMenu::OnSellClicked()
 
 void ULobbyWidget_ItemMenu::OnDescriptionClicked()
 {
+    if (ItemDescriptionUI)
+    {
+        ItemDescriptionUI->ItemObject = ItemObject;
+        ItemDescriptionUI->Refresh();
+        ItemDescriptionUI->AddToViewport();
+        RemoveFromParent();
+        ResetInputMode();
+        return;
+    }
+
+    if (ItemDescriptionWidgetClass)
+    {
+        ItemDescriptionUI = CreateWidget<ULobbyWidget_ItemDescription>(this, ItemDescriptionWidgetClass);
+    }
+    if (ItemDescriptionUI)
+    {
+        ItemDescriptionUI->ItemObject = ItemObject;
+        ItemDescriptionUI->AddToViewport();
+    }
+
     RemoveFromParent();
     ResetInputMode();
 }

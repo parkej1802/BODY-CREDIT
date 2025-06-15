@@ -10,6 +10,8 @@
 #include "Games/CMainGM.h"
 #include "Lobby/LobbyWidget_Selection.h"
 #include "Lobby/LobbyWidget_GameOver.h"
+#include "Characters/CNox_Runner.h"
+#include "Inventory/AC_EquipComponent.h"
 
 void ULobbyWidget_Failed::NativeConstruct()
 {
@@ -205,4 +207,6 @@ void ULobbyWidget_Failed::Refresh()
         --GI->RemainingLife;
         //GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, FString::Printf(TEXT("Part Left %d"), RemainingLife));
     }
+
+    Cast<ACNox_Runner>(PC->GetPawn())->EquipComp->EquippedItems.Empty();
 }

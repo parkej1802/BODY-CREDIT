@@ -6,6 +6,7 @@
 #include "Components/Image.h"
 #include "Item/ItemObject.h"
 #include "Lobby/LobbyWidget_Market.h"
+#include "Components/TextBlock.h"
 
 void ULobbyWidget_SellItem::NativeConstruct()
 {
@@ -24,6 +25,8 @@ void ULobbyWidget_SellItem::NativeConstruct()
         Button_Cancel->OnHovered.AddDynamic(this, &ThisClass::OnCancelHovered);
         Button_Cancel->OnUnhovered.AddDynamic(this, &ThisClass::OnCancelUnhovered);
     }
+
+    Refresh();
 }
 
 void ULobbyWidget_SellItem::OnConfirmClicked()
@@ -70,20 +73,30 @@ void ULobbyWidget_SellItem::OnCancelUnhovered()
 
 void ULobbyWidget_SellItem::HandleConfirmClicked()
 {
-    OnConfirmSell.Broadcast(ItemObjctSell);
+    OnConfirmSell.Broadcast(ItemObjectSell);
     //MarketUI->HandleSellConfirm(ItemObjctSell);
     RemoveFromParent();
 }
 
 void ULobbyWidget_SellItem::HandleCancelClicked()
 {
-    OnCancelSell.Broadcast(ItemObjctSell);
+    OnCancelSell.Broadcast(ItemObjectSell);
    // MarketUI->HandleSellCancel(ItemObjctSell);
     RemoveFromParent();
 }
 
 void ULobbyWidget_SellItem::SetItemToSell(class UItemObject* ItemObject)
 {
-    ItemObjctSell = ItemObject;
+    ItemObjectSell = ItemObject;
+}
+
+void ULobbyWidget_SellItem::Refresh()
+{
+    if (ItemObjectSell && Text_ItemSellPrice)
+    {
+        int32 SellPrice = ItemObjectSell->GetSellPrice();
+        FString PriceString = FString::Printf(TEXT("%d"), SellPrice);
+        Text_ItemSellPrice->SetText(FText::FromString(PriceString));
+    }
 }
 

@@ -7,9 +7,40 @@
 #include "OnlineSessionSettings.h"
 #include "../../../../Plugins/Online/OnlineSubsystem/Source/Public/Interfaces/OnlineSessionInterface.h"
 #include "Item/ItemObject.h"
+#include "Item/ItemDT.h"
+#include "AC_LootingInventoryComponent.h"
 #include "NetGameInstance.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnGoldChanged, int32, NewGold);
+
+USTRUCT()
+struct FItemListByRarity
+{
+    GENERATED_BODY()
+
+    TArray<FItemData*> Common;
+    TArray<FItemData*> Rare;
+    TArray<FItemData*> Epic;
+    TArray<FItemData*> Legendary;
+};
+
+USTRUCT(BlueprintType)
+struct FRarityProbability
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Common = 0.6f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Rare = 0.25f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Epic = 0.1f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Legendary = 0.05f;
+};
 
 UCLASS()
 class BODYCREDIT_API UNetGameInstance : public UGameInstance
@@ -121,4 +152,19 @@ public:
 	int32 GetDay() const { return Day; }
 
 	virtual void PostInitProperties() override;
-};
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FRarityProbability RarityRate;
+
+	EItemRarity GetRandomRarity();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TMap<ELootBoxTier, FRarityProbability> LootBoxRarityMap;
+
+	EItemRarity GetRandomRarityByLootTier(ELootBoxTier Tier);
+
+	UPROPERTY()
+	FItemListByRarity CachedItemLists;
+
+	void InitItemCache(UDataTable* ItemDT);
+}; 

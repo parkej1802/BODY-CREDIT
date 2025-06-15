@@ -65,7 +65,6 @@ void ACNox_Runner::BeginPlay()
 			EquipComp->EquippedItems.Add(Pair.Key, CreateItemFromData(Pair.Value));
 
 			MyGameState->SpawnItemHiddenFromActor(EquipComp->EquippedItems[Pair.Key], this, true);
-
 		}
 
 
