@@ -17,14 +17,25 @@ class BODYCREDIT_API UNetGameInstance : public UGameInstance
 	GENERATED_BODY()
 	
 public:
-	
 	virtual void Init() override;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UDataTable* ItemDataTable;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UDataTable* StageDataTable;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USoundCue* BGM_Cue;
+
+	UFUNCTION(BlueprintCallable)
+	USoundCue* GetBGM();
+
+	UFUNCTION(BlueprintCallable)
+	void PlayBGM(const int32 idx);
+	UFUNCTION(BlueprintCallable)
+	void StopBGM();
+	void PauseBGM(bool bIsPause);
 
 public:
 	IOnlineSessionPtr sessionInterface;
@@ -87,7 +98,6 @@ public:
 	class UImage* SaveImageLeg;
 
 	UPROPERTY()
-
 	int32 RemainingLife = 4;
 
 	UPROPERTY()

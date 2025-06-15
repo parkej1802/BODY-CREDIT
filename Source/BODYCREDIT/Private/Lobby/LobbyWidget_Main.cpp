@@ -59,7 +59,7 @@ void ULobbyWidget_Main::NativeConstruct()
     //GI->SetActorInitLocation();
     GI->DayLeft = -1;
 
-
+    GI->PlayBGM(0);
 }
 
 void ULobbyWidget_Main::OnNewGameClicked()

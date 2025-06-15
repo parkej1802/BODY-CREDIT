@@ -43,10 +43,16 @@ void ULobbyWidget_Pause::NativeConstruct()
     {
         PlayAnimation(Anim_BackGround, 0.0f, 9999, EUMGSequencePlayMode::Forward);
     }
+
+    UNetGameInstance* GI = Cast<UNetGameInstance>(GetGameInstance());
+    GI->PauseBGM(true);
 }
 
 void ULobbyWidget_Pause::OnContinueClicked()
 {
+    UNetGameInstance* GI = Cast<UNetGameInstance>(GetGameInstance());
+    GI->PauseBGM(false);
+    
     UGameplayStatics::SetGamePaused(GetWorld(), false);
     PlayerCharacter->InventoryComp->PauseGame();
 }

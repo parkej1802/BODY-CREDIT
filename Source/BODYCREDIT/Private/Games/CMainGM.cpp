@@ -143,6 +143,9 @@ float ACMainGM::GetGamePlayTime()
 
 void ACMainGM::SpawnEnemy()
 {
+	if (bSpawnEnemy) return;
+	bSpawnEnemy = true;
+	
 	if (SpawnBoundaryCount==0)
 	{
 		for (TActorIterator<ACSpawnBoundaryBox> It(GetWorld()); It; ++It)
@@ -249,6 +252,7 @@ bool ACMainGM::SpawnBoundaryBoxCheck(const TArray<ACSpawnBoundaryBox*>& SpawnBou
 void ACMainGM::DestroyEnemy()
 {
 	ExtractTimerTriggerStart = false;
+	bSpawnEnemy = false;
 	
 	for (TActorIterator<ACNox_EBase> It(GetWorld()); It; ++It)
 	{

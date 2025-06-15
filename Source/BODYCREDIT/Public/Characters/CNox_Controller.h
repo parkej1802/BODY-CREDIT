@@ -19,8 +19,22 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = Input)
 	class UInputAction* IA_RotateItem;
-
+	
 	void SetupInputComponent();
 
 	void RotateDraggedItem();
+	
+	UPROPERTY()
+	class UAudioComponent* BGMAudioComponent;
+
+	int32 CurrentBGMIndex = -1;
+
+	UFUNCTION(BlueprintCallable)
+	void PlayBGM(const int32 idx);
+
+	UFUNCTION(BlueprintCallable)
+	void PauseBGM(bool bIsPause);
+
+	UFUNCTION(BlueprintCallable)
+	void StopBGM();
 };

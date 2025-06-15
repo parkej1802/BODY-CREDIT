@@ -112,6 +112,7 @@ private:
 public:
 	UPROPERTY(BlueprintReadWrite)
 	bool ExtractTimerTriggerStart = false;
+	bool bSpawnEnemy = false;
 	
 	UFUNCTION(BlueprintCallable)
 	void SpawnEnemy();

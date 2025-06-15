@@ -64,8 +64,8 @@ public:
 	//UPROPERTY(EditAnywhere, meta = (BindWidget))
 	//class UImage* Image_Button_Exit_Hovered;
 
-	UPROPERTY(EditAnywhere, meta = (BindWidget))
-	class UImage* Image_Background;
+	// UPROPERTY(EditAnywhere, meta = (BindWidget))
+	// class UImage* Image_Background;
 
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
 	class UWidgetAnimation* Anim_BackGround;
