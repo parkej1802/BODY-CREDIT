@@ -361,7 +361,7 @@ void ACNox_Runner::RegisterLooting()
 
 void ACNox_Runner::CacheDefaultSkeletalMeshes()
 {
-	DefaultMeshes.Add(EPlayerPart::Head, GetMesh()->GetSkeletalMeshAsset());
+	DefaultMeshes.Add(EPlayerPart::Head, Hair->GetSkeletalMeshAsset());
 	DefaultMeshes.Add(EPlayerPart::Body, UpperBody->GetSkeletalMeshAsset());
 	DefaultMeshes.Add(EPlayerPart::ChestRigs, ChestRig->GetSkeletalMeshAsset());
 	DefaultMeshes.Add(EPlayerPart::Arm, Arms->GetSkeletalMeshAsset());

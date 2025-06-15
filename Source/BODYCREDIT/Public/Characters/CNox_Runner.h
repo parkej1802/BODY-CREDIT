@@ -105,7 +105,7 @@ private:
 	void OnStateTypeChanged(EStateType InPrevType, EStateType InNewType);
 
 public:
-	FORCEINLINE USkeletalMeshComponent* GetHead() { return GetMesh(); }
+	FORCEINLINE USkeletalMeshComponent* GetHair() { return Hair; }
 	FORCEINLINE USkeletalMeshComponent* GetUpperBody() { return UpperBody; }
 	FORCEINLINE USkeletalMeshComponent* GetChestRig() { return ChestRig; }
 	FORCEINLINE USkeletalMeshComponent* GetArms() { return Arms; }
