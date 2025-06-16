@@ -33,7 +33,7 @@ void UCMontageComponent::BeginPlay()
 					int32 DirIndex = GetDirectionIndexByTag(data->Direction);
 					if (WeaponIndex >= 0 && WeaponIndex < (int32)EWeaponType::MAX
 						&& DirIndex >= 0 && DirIndex < 8)
-						AvoidDatas[WeaponIndex][DirIndex] = data;
+						Avoid[WeaponIndex][DirIndex] = data;
 				}
 				break;
 			
@@ -138,53 +138,94 @@ int32 UCMontageComponent::GetDirectionIndexByTag(const FName& InDirection) const
 	return 0;
 }
 
-int32 UCMontageComponent::GetDirectionIndex(const FVector2D& InputDir) const
+int32 UCMontageComponent::GetDirectionIndex(const FVector2D& InputDir, const FRotator& ControlRotation) const
 {
 	FVector2D Dir = InputDir.GetSafeNormal();
 	if (Dir.IsNearlyZero())
-		return 0; // Default Forward
-
-	// atan2(Y, X) 기준, 언리얼은 Forward가 X+, Right가 Y+
-	float AngleRad = FMath::Atan2(Dir.Y, Dir.X);
-	float AngleDeg = FMath::RadiansToDegrees(AngleRad);
-
-	// 언리얼 Forward 기준이 0도(오른쪽이 90도)로 맞춰주기 위해 +90
-	AngleDeg = FMath::Fmod(AngleDeg + 360.f + 90.f, 360.f);
-
-	// 45도 단위로 8분할, 각 방향의 중앙값 기준
-	if (AngleDeg >= 337.5f || AngleDeg < 22.5f)
 		return 0; // Forward
-	if (AngleDeg >= 22.5f && AngleDeg < 67.5f)
-		return 1; // ForwardRight
-	if (AngleDeg >= 67.5f && AngleDeg < 112.5f)
-		return 2; // Right
-	if (AngleDeg >= 112.5f && AngleDeg < 157.5f)
-		return 3; // BackwardRight
-	if (AngleDeg >= 157.5f && AngleDeg < 202.5f)
-		return 4; // Backward
-	if (AngleDeg >= 202.5f && AngleDeg < 247.5f)
-		return 5; // BackwardLeft
-	if (AngleDeg >= 247.5f && AngleDeg < 292.5f)
-		return 6; // Left
-	if (AngleDeg >= 292.5f && AngleDeg < 337.5f)
-		return 7; // ForwardLeft
+
+	// 입력 벡터의 각도(라디안)
+	float InputAngle = FMath::Atan2(Dir.Y, Dir.X);
+	float InputAngleDeg = FMath::RadiansToDegrees(InputAngle);
+
+	// 컨트롤러의 Yaw 기준으로 입력을 "내가 바라보는 방향"에 맞춰서 보정
+	float Yaw = ControlRotation.Yaw;
+	float RelativeAngleDeg = InputAngleDeg - Yaw;
+
+	// 0~360도로 정규화, +90도(언리얼 Forward) 보정
+	RelativeAngleDeg = FMath::Fmod(RelativeAngleDeg + 360.f + 90.f, 360.f);
+
+	if (RelativeAngleDeg >= 337.5f || RelativeAngleDeg < 22.5f)   return 0; // Forward
+	if (RelativeAngleDeg >= 22.5f && RelativeAngleDeg < 67.5f)    return 1; // ForwardRight
+	if (RelativeAngleDeg >= 67.5f && RelativeAngleDeg < 112.5f)   return 2; // Right
+	if (RelativeAngleDeg >= 112.5f && RelativeAngleDeg < 157.5f)  return 3; // BackwardRight
+	if (RelativeAngleDeg >= 157.5f && RelativeAngleDeg < 202.5f)  return 4; // Backward
+	if (RelativeAngleDeg >= 202.5f && RelativeAngleDeg < 247.5f)  return 5; // BackwardLeft
+	if (RelativeAngleDeg >= 247.5f && RelativeAngleDeg < 292.5f)  return 6; // Left
+	if (RelativeAngleDeg >= 292.5f && RelativeAngleDeg < 337.5f)  return 7; // ForwardLeft
 
 	return 4; // Fallback (Backward)
 }
 
-void UCMontageComponent::PlayAvoidMode(EWeaponType InWeaponType, const FVector2D& InputDir)
+int32 UCMontageComponent::Get4DirectionIndex(const FVector2D& InputDir, const FRotator& ControlRotation) const
 {
+	FVector2D Dir = InputDir.GetSafeNormal();
+	if (Dir.IsNearlyZero())
+		return 0; // Forward
+
+	float InputAngle = FMath::Atan2(Dir.Y, Dir.X);
+	float InputAngleDeg = FMath::RadiansToDegrees(InputAngle);
+	float Yaw = ControlRotation.Yaw;
+	float RelativeAngleDeg = InputAngleDeg - Yaw;
+	RelativeAngleDeg = FMath::Fmod(RelativeAngleDeg + 360.f + 90.f, 360.f);
+
+	// 4방향 분기 (0: Forward, 2: Right, 4: Backward, 6: Left)
+	if (RelativeAngleDeg >= 315.f || RelativeAngleDeg < 45.f)   return 0; // Forward
+	if (RelativeAngleDeg >= 45.f && RelativeAngleDeg < 135.f)   return 2; // Right
+	if (RelativeAngleDeg >= 135.f && RelativeAngleDeg < 225.f)  return 4; // Backward
+	return 6; // Left
+}
+
+void UCMontageComponent::PlayAvoidMode(EWeaponType InWeaponType, const FVector2D& InputDir, const FRotator& ControlRotation)
+{
+	CheckNull(OwnerCharacter);
+
 	int32 WeaponIndex = (int32)InWeaponType;
-	int32 DirIndex = GetDirectionIndex(InputDir);
+	int32 DirIndex = 0;
 
-	FMontageData* data = AvoidDatas[WeaponIndex][DirIndex];
+	if (InWeaponType == EWeaponType::BOW)
+	{
+		DirIndex = Get4DirectionIndex(InputDir, ControlRotation);
+	}
+	else
+	{
+		DirIndex = GetDirectionIndex(InputDir, ControlRotation);
+	}
+	FMontageData* data = Avoid[WeaponIndex][DirIndex];
 
+	// 8방향 데이터 없으면 4방향 fallback
 	if (data == nullptr || data->Montage == nullptr)
 	{
-		GLog->Log(ELogVerbosity::Error, "None montage data for Avoid");
-		return;
+		int32 FallbackIndex = FallbackDirectionIndex[DirIndex];
+		data = Avoid[WeaponIndex][FallbackIndex];
+		if (data == nullptr || data->Montage == nullptr)
+		{
+			GLog->Log(ELogVerbosity::Error, "No Avoid Montage for direction or fallback");
+			return;
+		}
 	}
+
 	OwnerCharacter->PlayAnimMontage(data->Montage, data->PlayRate);
+	
+	// if (FMontageData* data = AvoidDatas[WeaponIndex][DirIndex])
+	// {
+	// 	if (data == nullptr || data->Montage == nullptr)
+	// 	{
+	// 		GLog->Log(ELogVerbosity::Error, "None montage data for Avoid");
+	// 		return;
+	// 	}
+	// 	OwnerCharacter->PlayAnimMontage(data->Montage, data->PlayRate);
+	// }
 	
 	// int32 Index = GetDirectionIndex(InputDir);
 	// FMontageData* data = Avoid[Index];
@@ -196,28 +237,61 @@ void UCMontageComponent::PlayAvoidMode(EWeaponType InWeaponType, const FVector2D
 	// OwnerCharacter->PlayAnimMontage(data->Montage, data->PlayRate);
 }
 
-void UCMontageComponent::PlayHittedMode(const FVector2D& InputDir)
+void UCMontageComponent::PlayHittedMode(const FVector2D& InputDir, const FRotator& ControlRotation)
 {
-	int32 Index = GetDirectionIndex(InputDir);
+	int32 Index = GetDirectionIndex(InputDir, ControlRotation);
+
 	FMontageData* data = Hitted[Index];
 	if (data == nullptr || data->Montage == nullptr)
 	{
-		GLog->Log(ELogVerbosity::Error, "None Hitted montage data");
-		return;
+		int32 FallbackIndex = FallbackDirectionIndex[Index];
+		data = Hitted[FallbackIndex];
+		if (data == nullptr || data->Montage == nullptr)
+		{
+			GLog->Log(ELogVerbosity::Error, "No Hitted Montage for direction or fallback");
+			return;
+		}
 	}
 	OwnerCharacter->PlayAnimMontage(data->Montage, data->PlayRate);
+	
+	// if (FMontageData* data = Hitted[Index])
+	// {
+	// 	if (data == nullptr || data->Montage == nullptr)
+	// 	{
+	// 		GLog->Log(ELogVerbosity::Error, "None Hitted montage data");
+	// 		return;
+	// 	}
+	// 	
+	// 	OwnerCharacter->PlayAnimMontage(data->Montage, data->PlayRate);
+	// }
 }
 
-void UCMontageComponent::PlayDeadMode(const FVector2D& InputDir)
+void UCMontageComponent::PlayDeadMode(const FVector2D& InputDir, const FRotator& ControlRotation)
 {
-	int32 Index = GetDirectionIndex(InputDir);
+	int32 Index = GetDirectionIndex(InputDir, ControlRotation);
+
 	FMontageData* data = Dead[Index];
 	if (data == nullptr || data->Montage == nullptr)
 	{
-		GLog->Log(ELogVerbosity::Error, "None Dead montage data");
-		return;
+		int32 FallbackIndex = FallbackDirectionIndex[Index];
+		data = Dead[FallbackIndex];
+		if (data == nullptr || data->Montage == nullptr)
+		{
+			GLog->Log(ELogVerbosity::Error, "No Dead Montage for direction or fallback");
+			return;
+		}
 	}
 	OwnerCharacter->PlayAnimMontage(data->Montage, data->PlayRate);
+	
+	// if (FMontageData* data = Dead[Index])
+	// {
+	// 	if (data == nullptr || data->Montage == nullptr)
+	// 	{
+	// 		GLog->Log(ELogVerbosity::Error, "None Dead montage data");
+	// 		return;
+	// 	}
+	// 	OwnerCharacter->PlayAnimMontage(data->Montage, data->PlayRate);
+	// }
 }
 
 void UCMontageComponent::PlayAnimMontage(EStateType InType)

@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "CNoxHPComponent.h"
 #include "Components/CBaseComponent.h"
 #include "Interfaces/IBindInput.h"
 #include "CMovementComponent.generated.h"
@@ -42,8 +43,8 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	class UInputAction* IA_Slide;
 
-	UPROPERTY(VisibleAnywhere)
-	class UInputAction* IA_Jump;
+	// UPROPERTY(VisibleAnywhere)
+	// class UInputAction* IA_Jump;
 
 public:
 	FORCEINLINE bool CanMove() { return bCanMove; }
@@ -96,7 +97,8 @@ private:
 
 	void OnSlide(const struct FInputActionValue& InVal);
 	void OffSlide(const struct FInputActionValue& InVal);
-	
+
+public:
 	void OnJump(const struct FInputActionValue& InVal);
 
 public:
@@ -125,6 +127,9 @@ public:
 
 private:
 	void Init();
+
+public:
+	FVector2D GetCachedInputDir2D() const;
 
 private:
 	UPROPERTY(EditAnywhere, Category = "Speed")
@@ -185,7 +190,10 @@ public:
 	float StaminaDrainInterval = 0.1f;
 
 	UPROPERTY(EditAnywhere, Category = "Stamina")
-	float StaminaDrainAmount = 2.0f;
+	float StaminaDrainAmount = 10.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Stamina")
+	float SlideStaminaDrainAmount = 30.0f;
 
 	FTimerHandle StaminaRecoverTimerHandle;
 
@@ -202,5 +210,8 @@ public:
 	float DefaultHalfHeight = 88.f;
 	float CrouchHalfHeight = 44.f;
 	float CrouchInterpSpeed = 10.f;
+	
+private:
+	FVector2D LastInput = FVector2D::ZeroVector;
 
 };

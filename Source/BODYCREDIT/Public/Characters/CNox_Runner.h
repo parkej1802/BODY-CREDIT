@@ -78,6 +78,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "EnhancedInput")
 	class UInputMappingContext* IMC_Invectory;
 
+	UPROPERTY(VisibleAnywhere, Category = "EnhancedInput")
+	class UInputAction* IA_Jump;
+
 private: // UI
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class UCUserWidget_RunnerUI> RunnerUIClass;
@@ -211,4 +214,33 @@ public:
 	bool bShouldRotateToTarget = false;
 	float RotationInterpSpeed = 8.f;
 
+private:
+	FTimerHandle JumpDelayHandle;
+	float LastJumpInputTime = -1.0f;
+	float DoubleTapThreshold = 0.18f;
+	bool bPendingJump = false;
+
+public:
+	// Space(점프/회피) 입력 처리 함수
+	void OnJumpOrDodgeInput();
+	void DoJumpIfNoDoubleTap();
+	bool IsDoubleTap();
+
+	float CachedMoveForward = 0.f;
+	float CachedMoveRight = 0.f;
+
+	UPROPERTY(EditAnywhere, Category="Footstep")
+	TArray<USoundBase*> FootstepSounds;
+
+	UPROPERTY(EditAnywhere, Category="Footstep")
+	FName LeftFootSocketName = "foot_l";
+	UPROPERTY(EditAnywhere, Category="Footstep")
+	FName RightFootSocketName = "foot_r";
+
+	bool bLeftFootOnGround = false;
+	bool bRightFootOnGround = false;
+
+	void CheckFootstep(FName FootSocketName, bool& bWasOnGround);
+	void PlayFootstepSound(const FVector& Location);
+	
 };

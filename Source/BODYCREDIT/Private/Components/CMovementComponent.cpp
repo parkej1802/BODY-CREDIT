@@ -70,7 +70,7 @@ void UCMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 		float SlopeFactor = 1.0f;
 
 		if (HeightDelta > 0) SlopeFactor = 10.0f; // 오르막
-		else if (HeightDelta < 0) SlopeFactor = 0.5f; // 내리막
+		else if (HeightDelta < 0) SlopeFactor = 0.1f; // 내리막
 		else SlopeFactor = 2.0f; // 평지
 
 		// 감속 적용
@@ -112,7 +112,7 @@ void UCMovementComponent::BindInput(UEnhancedInputComponent* InEnhancedInputComp
 	InEnhancedInputComponent->BindAction(IA_Slide, ETriggerEvent::Completed, this, &UCMovementComponent::OffSlide);
 
 	// Jump
-	InEnhancedInputComponent->BindAction(IA_Jump, ETriggerEvent::Started, this, &UCMovementComponent::OnJump);
+	// InEnhancedInputComponent->BindAction(IA_Jump, ETriggerEvent::Started, this, &UCMovementComponent::OnJump);
 
 }
 
@@ -198,6 +198,9 @@ void UCMovementComponent::OnMovement(const FInputActionValue& InVal)
 	//	// Left
 	//	OwnerCharacter->AddMovementInput(FQuat(rot).GetRightVector(), input.Y);
 	//}
+	
+	FVector2D SwizzledInput = InVal.Get<FVector2D>();
+	LastInput = FVector2D(SwizzledInput.Y, -SwizzledInput.X); 
 
 }
 
@@ -243,7 +246,7 @@ void UCMovementComponent::OnSprint(const FInputActionValue& InVal)
 		{
 			UCNoxHPComponent* component = CHelpers::GetComponent<UCNoxHPComponent>(OwnerCharacter);
 
-			float NewStamina = component->Stamina - StaminaDrainAmount;
+			float NewStamina = component->Stamina - GetWorld()->DeltaTimeSeconds * StaminaDrainAmount;
 			NewStamina = FMath::Max(0.0f, NewStamina);
 
 			component->SetStamina(NewStamina);
@@ -348,8 +351,8 @@ void UCMovementComponent::OnSlide(const FInputActionValue& InVal)
 	CheckTrue(OwnerCharacter->GetVelocity().Size2D() < 510);
 	if (UCNoxHPComponent* comp = CHelpers::GetComponent<UCNoxHPComponent>(OwnerCharacter))
 	{
-		CheckTrue(comp->Stamina < 20);
-		comp->Stamina -= 20;
+		CheckTrue(comp->Stamina < GetWorld()->DeltaTimeSeconds * SlideStaminaDrainAmount);
+		comp->Stamina -= GetWorld()->DeltaTimeSeconds * SlideStaminaDrainAmount;
 		comp->SetStamina(FMath::Clamp(comp->Stamina, 0, comp->MaxStamina));
 
 		//if (bSprint)
@@ -561,6 +564,18 @@ void UCMovementComponent::Init()
 	CHelpers::GetAsset<UInputAction>(&IA_Slide , TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Slide.IA_Slide'"));
 
 	// Jump
-	CHelpers::GetAsset<UInputAction>(&IA_Jump, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Jump.IA_Jump'"));
+	// CHelpers::GetAsset<UInputAction>(&IA_Jump, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Jump.IA_Jump'"));
 
+}
+
+FVector2D UCMovementComponent::GetCachedInputDir2D() const
+{
+	FRotator ControlRot = OwnerCharacter->GetControlRotation();
+	FQuat RotQuat = FQuat(FRotator(0, ControlRot.Yaw, 0));
+
+	// LastInput.X = 전후진, LastInput.Y = 좌우
+	FVector MoveDir = RotQuat.GetForwardVector() * LastInput.X
+					+ RotQuat.GetRightVector()  * LastInput.Y;
+
+	return FVector2D(MoveDir.X, MoveDir.Y).GetSafeNormal();
 }
