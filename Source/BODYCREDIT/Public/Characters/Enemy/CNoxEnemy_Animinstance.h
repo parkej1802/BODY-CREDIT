@@ -170,5 +170,9 @@ public:
 #pragma region Sound
 	UFUNCTION()
 	void AnimNotify_PlayAttackSound();
+	UFUNCTION()
+	void AnimNotify_PlayGrenadeSound();
+	UFUNCTION()
+	void AnimNotify_PlayHealSound();
 #pragma endregion
 };

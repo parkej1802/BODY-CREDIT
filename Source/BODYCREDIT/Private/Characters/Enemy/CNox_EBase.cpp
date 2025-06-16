@@ -281,52 +281,65 @@ void ACNox_EBase::ExtractCallFunction(ACNox* InTarget)
 #pragma endregion
 
 #pragma region Sound
-void ACNox_EBase::PlayIdleSound(const int32 sectionIdx)
+void ACNox_EBase::PlayIdleSound()
 {
-	if (IdleSoundCue && !SoundComponent->IsPlaying())
+	if (IdleSoundCue && SoundComponent->Sound != IdleSoundCue)
 	{
 		SoundComponent->SetSound(IdleSoundCue);
-		SoundComponent->SetIntParameter(FName("Idx"), sectionIdx);
 		SoundComponent->Play();
 	}
 }
 
-void ACNox_EBase::PlaySenseSound(const int32 sectionIdx)
+void ACNox_EBase::PlaySenseSound()
 {
-	if (SenseSoundCue && !SoundComponent->IsPlaying())
+	if (SenseSoundCue && SoundComponent->Sound != SenseSoundCue)
 	{
 		SoundComponent->SetSound(SenseSoundCue);
-		SoundComponent->SetIntParameter(FName("Idx"), sectionIdx);
 		SoundComponent->Play();
 	}
 }
 
-void ACNox_EBase::PlayAttackSound(const int32 sectionIdx)
+void ACNox_EBase::PlayAttackSound()
 {
-	if (AttackSoundCue && !SoundComponent->IsPlaying())
+	if (AttackSoundCue && SoundComponent->Sound != AttackSoundCue)
 	{
 		SoundComponent->SetSound(AttackSoundCue);
-		SoundComponent->SetIntParameter(FName("Idx"), sectionIdx);
 		SoundComponent->Play();
 	}
 }
 
-void ACNox_EBase::PlayHitSound(const int32 sectionIdx)
+void ACNox_EBase::PlayGrenadeSound()
 {
-	if (HitSoundCue && !SoundComponent->IsPlaying())
+	if (GrenadeSoundCue && SoundComponent->Sound != GrenadeSoundCue)
+	{
+		SoundComponent->SetSound(GrenadeSoundCue);
+		SoundComponent->Play();
+	}
+}
+
+void ACNox_EBase::PlayHealSound()
+{
+	if (HealSoundCue && SoundComponent->Sound != HealSoundCue)
+	{
+		SoundComponent->SetSound(HealSoundCue);
+		SoundComponent->Play();
+	}
+}
+
+void ACNox_EBase::PlayHitSound()
+{
+	if (HitSoundCue && SoundComponent->Sound != HitSoundCue)
 	{
 		SoundComponent->SetSound(HitSoundCue);
-		SoundComponent->SetIntParameter(FName("Idx"), sectionIdx);
 		SoundComponent->Play();
 	}
 }
 
-void ACNox_EBase::PlayDieSound(const int32 sectionIdx)
+void ACNox_EBase::PlayDieSound()
 {
-	if (DieSoundCue && !SoundComponent->IsPlaying())
+	if (DieSoundCue && SoundComponent->Sound != DieSoundCue)
 	{
 		SoundComponent->SetSound(DieSoundCue);
-		SoundComponent->SetIntParameter(FName("Idx"), sectionIdx);
 		SoundComponent->Play();
 	}
 }

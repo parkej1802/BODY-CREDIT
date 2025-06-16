@@ -9,7 +9,7 @@ CIdleState_ZERO::CIdleState_ZERO(TUniquePtr<class CSplineMoveStrategy> InMoveStr
 
 void CIdleState_ZERO::Execute(ACNox_EBase* Owner, class UCFSMComponent* FSMComp)
 {
-	Owner->PlayIdleSound(FMath::RandRange(0, 1));
+	Owner->PlayIdleSound();
 	
 	if (MoveStrategy) MoveStrategy->Move(Owner, Owner->GetWorld()->GetDeltaSeconds());
 }

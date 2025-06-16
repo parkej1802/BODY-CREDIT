@@ -6,7 +6,8 @@ void CDieState_MEDIC::Execute(class ACNox_EBase* Owner, class UCFSMComponent* FS
 {
 	if (!bFired)
 	{
-		Owner->HandleDie();
+		Owner->HandleDie(FMath::RandRange(1, 4));
+		Owner->PlayDieSound();
 		bFired = true;
 	}
 }

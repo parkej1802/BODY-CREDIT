@@ -10,7 +10,7 @@ CSenseState_ZERO::CSenseState_ZERO(TUniquePtr<CConditionalMoveStrategy_ZERO> InM
 
 void CSenseState_ZERO::Execute(ACNox_EBase* Owner, UCFSMComponent* FSMComp)
 {
-	Owner->PlaySenseSound(FMath::RandRange(0, 1));
+	Owner->PlaySenseSound();
 	if (MoveStrategy) MoveStrategy->Move(Owner, Owner->GetWorld()->GetDeltaSeconds());
 }
 

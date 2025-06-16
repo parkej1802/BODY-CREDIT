@@ -10,5 +10,7 @@ CIdleState_MEDIC::CIdleState_MEDIC(TUniquePtr<CRandomMoveStrategy> InMoveStrateg
 
 void CIdleState_MEDIC::Execute(ACNox_EBase* Owner, UCFSMComponent* FSMComp)
 {
+	Owner->PlayIdleSound();
+	
 	if (MoveStrategy) MoveStrategy->Move(Owner, Owner->GetWorld()->GetDeltaSeconds());
 }
