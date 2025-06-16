@@ -240,4 +240,10 @@ void UCNoxEnemy_Animinstance::PlayDieMontage(const int32 sectionIdx)
 {
 	if (DieMontage) OwnerEnemy->PlayAnimMontage(DieMontage, 1.0f);
 }
+
+void UCNoxEnemy_Animinstance::AnimNotify_PlayAttackSound()
+{
+	if (OwnerEnemy->IsA(ACNox_Zero::StaticClass()))
+		OwnerEnemy->PlayAttackSound(FMath::RandRange(0, 4));
+}
 #pragma endregion
