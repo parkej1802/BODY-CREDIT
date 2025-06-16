@@ -126,7 +126,10 @@ void UCWeaponComponent::SetBowMode()
 
 void UCWeaponComponent::SetUnarmedMode()
 {
-	GetEquipment()->Unequip();
+	CheckTrue(IsUnarmedMode());
+	
+	if (!CHelpers::GetComponent<UCStateComponent>(OwnerCharacter)->IsDeadMode())
+		GetEquipment()->Unequip();
 
 	ChangeType(EWeaponType::UNARMED);
 

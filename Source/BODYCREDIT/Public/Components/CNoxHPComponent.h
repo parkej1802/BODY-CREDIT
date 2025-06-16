@@ -94,7 +94,7 @@ public:
 	float GetCurrentStamina() const { return Stamina; }
 	float GetMaxStamina() const { return MaxStamina; }
 
-protected:
+public:
 	virtual void InitStatus();
 
 public:
