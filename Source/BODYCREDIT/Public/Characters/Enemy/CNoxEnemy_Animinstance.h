@@ -174,5 +174,9 @@ public:
 	void AnimNotify_PlayGrenadeSound();
 	UFUNCTION()
 	void AnimNotify_PlayHealSound();
+	UFUNCTION()
+	void AnimNotify_PlayBeamSound();
+	UFUNCTION()
+	void AnimNotify_PlayWavePulseSound();
 #pragma endregion
 };

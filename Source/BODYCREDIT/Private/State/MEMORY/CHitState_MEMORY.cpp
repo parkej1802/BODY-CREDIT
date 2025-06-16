@@ -5,8 +5,8 @@ void CHitState_MEMORY::Execute(ACNox_EBase* Owner, UCFSMComponent* FSMComp)
 {
 	if (!bFired)
 	{
-		int32 rnd = FMath::RandRange(1, 4);
-		Owner->HandleHit(rnd);
+		Owner->HandleHit(FMath::RandRange(1, 4));
+		Owner->PlayHitSound();
 		bFired = true;
 	}
 	else

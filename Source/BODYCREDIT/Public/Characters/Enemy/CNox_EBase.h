@@ -215,6 +215,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Sound")
 	class USoundCue* HealSoundCue;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	class USoundCue* BeamSoundCue;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	class USoundCue* WavePulseSoundCue;
+
     UPROPERTY(EditDefaultsOnly, Category = "Sound")
     class USoundCue* HitSoundCue;
 
@@ -227,6 +233,8 @@ public:
 	void PlayAttackSound();
 	void PlayGrenadeSound();
 	void PlayHealSound();
+	void PlayBeamSound();
+	void PlayWavePulseSound();
 	void PlayHitSound();
 	void PlayDieSound();
 #pragma endregion

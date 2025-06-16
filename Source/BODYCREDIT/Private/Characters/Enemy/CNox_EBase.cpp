@@ -326,6 +326,24 @@ void ACNox_EBase::PlayHealSound()
 	}
 }
 
+void ACNox_EBase::PlayBeamSound()
+{
+	if (BeamSoundCue && SoundComponent->Sound != BeamSoundCue)
+	{
+		SoundComponent->SetSound(BeamSoundCue);
+		SoundComponent->Play();
+	}
+}
+
+void ACNox_EBase::PlayWavePulseSound()
+{
+	if (WavePulseSoundCue && SoundComponent->Sound != WavePulseSoundCue)
+	{
+		SoundComponent->SetSound(WavePulseSoundCue);
+		SoundComponent->Play();
+	}
+}
+
 void ACNox_EBase::PlayHitSound()
 {
 	if (HitSoundCue && SoundComponent->Sound != HitSoundCue)

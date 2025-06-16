@@ -257,4 +257,14 @@ void UCNoxEnemy_Animinstance::AnimNotify_PlayHealSound()
 {
 	OwnerEnemy->PlayHealSound();
 }
+
+void UCNoxEnemy_Animinstance::AnimNotify_PlayBeamSound()
+{
+	OwnerEnemy->PlayBeamSound();
+}
+
+void UCNoxEnemy_Animinstance::AnimNotify_PlayWavePulseSound()
+{
+	OwnerEnemy->PlayWavePulseSound();
+}
 #pragma endregion

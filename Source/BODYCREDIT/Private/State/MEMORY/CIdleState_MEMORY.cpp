@@ -11,6 +11,8 @@ CIdleState_MEMORY::CIdleState_MEMORY(TUniquePtr<CRandomMoveStrategy_Memory> InMo
 
 void CIdleState_MEMORY::Execute(ACNox_EBase* Owner, UCFSMComponent* FSMComp)
 {
+	Owner->PlayIdleSound();
+	
 	// 1. 기억평가 수행 (기억조각을 가지고 있는지 + 유효한 조각이 있는지)
 	if (HavingMemory(Owner) && MemoryCheck(Owner))
 	{
