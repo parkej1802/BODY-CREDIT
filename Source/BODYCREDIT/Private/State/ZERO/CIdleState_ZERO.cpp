@@ -9,10 +9,14 @@ CIdleState_ZERO::CIdleState_ZERO(TUniquePtr<class CSplineMoveStrategy> InMoveStr
 
 void CIdleState_ZERO::Execute(ACNox_EBase* Owner, class UCFSMComponent* FSMComp)
 {
+	Owner->PlayIdleSound();
+	
 	if (MoveStrategy) MoveStrategy->Move(Owner, Owner->GetWorld()->GetDeltaSeconds());
 }
 
 void CIdleState_ZERO::ResetVal(ACNox_EBase* Owner)
 {
+	Owner->StopIdleSound();
+	
 	if (MoveStrategy) MoveStrategy->ResetVal(Owner);
 }
