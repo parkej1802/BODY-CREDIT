@@ -80,8 +80,6 @@ void UAC_EquipComponent::EquipItem(EPlayerPart Part, UItemObject* Item)
 
 	SetPlayerStat(Item, 1);
 	EquippedItems.Add(Part, Item);
-	
-	UCWeaponComponent* weapon = CHelpers::GetComponent<UCWeaponComponent>(PlayerCharacter);
 
 	if (Item->ItemData.SkeletalMesh)
 	{		
@@ -129,7 +127,7 @@ void UAC_EquipComponent::UnequipItem(EPlayerPart Part)
 		EquippedItems.Remove(Part);
 		
 		if (PlayerCharacter && PlayerCharacter->DefaultMeshes.Contains(Part))
-		{
+		{			
 			USkeletalMesh* DefaultMesh = PlayerCharacter->DefaultMeshes[Part];
 			switch (Part)
 			{
@@ -147,9 +145,13 @@ void UAC_EquipComponent::UnequipItem(EPlayerPart Part)
 					break;
 				case EPlayerPart::Weapon1:
 					PlayerCharacter->GetWeapon1()->SetSkeletalMeshAsset(DefaultMesh);
+					if (UCWeaponComponent* weapon = CHelpers::GetComponent<UCWeaponComponent>(PlayerCharacter))
+						weapon->SetUnarmedMode();
 					break;
 				case EPlayerPart::Weapon2:
 					PlayerCharacter->GetWeapon2()->SetSkeletalMeshAsset(DefaultMesh);
+					if (UCWeaponComponent* weapon = CHelpers::GetComponent<UCWeaponComponent>(PlayerCharacter))
+						weapon->SetUnarmedMode();
 					break;
 				case EPlayerPart::Backpack:
 					PlayerCharacter->GetBackpack()->SetSkeletalMeshAsset(DefaultMesh);

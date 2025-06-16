@@ -136,6 +136,17 @@ void UCWeaponComponent::SetWeaponSlot1()
 {
 	CheckFalse(IsIdleMode());
 
+	if (UAC_EquipComponent* equip = CHelpers::GetComponent<UAC_EquipComponent>(OwnerCharacter))
+	{
+		CheckNull(equip->EquippedItems.Find(EPlayerPart::Weapon1));
+		
+		if (equip->EquippedItems[EPlayerPart::Weapon1]->ItemData.ItemName == "Bow")
+			SetBowMode();
+		else if (equip->EquippedItems[EPlayerPart::Weapon1]->ItemData.ItemName == "Katana")
+			SetKatanaMode();
+		else SetUnarmedMode();
+	}
+
 	// SetMode(EquippedWeaponType[EWeaponSlot::Weapon1]);
 }
 
@@ -143,7 +154,16 @@ void UCWeaponComponent::SetWeaponSlot2()
 {
 	CheckFalse(IsIdleMode());
 
-	// SetMode(EquippedWeaponType[EWeaponSlot::Weapon1]);
+	if (UAC_EquipComponent* equip = CHelpers::GetComponent<UAC_EquipComponent>(OwnerCharacter))
+	{
+		CheckNull(equip->EquippedItems.Find(EPlayerPart::Weapon2));
+		
+		if (equip->EquippedItems[EPlayerPart::Weapon2]->ItemData.ItemName == "Bow")
+			SetBowMode();
+		else if (equip->EquippedItems[EPlayerPart::Weapon2]->ItemData.ItemName == "Katana")
+			SetKatanaMode();
+		else SetUnarmedMode();
+	}
 }
 
 void UCWeaponComponent::DoAction()
@@ -272,8 +292,8 @@ void UCWeaponComponent::BindInput(UEnhancedInputComponent* InEnhancedInputCompon
 	// InEnhancedInputComponent->BindAction(IA_Rifle, ETriggerEvent::Started, this, &UCWeaponComponent::SetRifleMode);
 	// InEnhancedInputComponent->BindAction(IA_Katana, ETriggerEvent::Started, this, &UCWeaponComponent::SetKatanaMode);
 
-	InEnhancedInputComponent->BindAction(IA_WeaponSlot1, ETriggerEvent::Started, this, &UCWeaponComponent::SetBowMode);
-	InEnhancedInputComponent->BindAction(IA_WeaponSlot2, ETriggerEvent::Started, this, &UCWeaponComponent::SetKatanaMode);
+	InEnhancedInputComponent->BindAction(IA_WeaponSlot1, ETriggerEvent::Started, this, &UCWeaponComponent::SetWeaponSlot1);
+	InEnhancedInputComponent->BindAction(IA_WeaponSlot2, ETriggerEvent::Started, this, &UCWeaponComponent::SetWeaponSlot2);
 
 	InEnhancedInputComponent->BindAction(IA_Action, ETriggerEvent::Started, this, &UCWeaponComponent::DoAction);
 	InEnhancedInputComponent->BindAction(IA_Action, ETriggerEvent::Completed, this, &UCWeaponComponent::EndDoAction);

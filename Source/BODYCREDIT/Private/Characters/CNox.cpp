@@ -3,6 +3,7 @@
 #include "AIController.h"
 #include "Global.h"
 #include "Games/CMainGM.h"
+#include "Items/Equipments/Weapons/CWeapon_Structures.h"
 
 ACNox::ACNox()
 {
@@ -20,6 +21,7 @@ void ACNox::BeginPlay()
 void ACNox::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
 }
 
 void ACNox::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

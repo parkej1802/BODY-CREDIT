@@ -35,7 +35,7 @@ public:
 	FORCEINLINE bool IsEquipMode() { return Type == EStateType::Equip; }
 	FORCEINLINE bool IsActionMode() { return Type == EStateType::Action; }
 	FORCEINLINE bool IsHittedMode() { return Type == EStateType::Hitted; }
-	FORCEINLINE bool IsBackstepMode() { return Type == EStateType::Avoid; }
+	FORCEINLINE bool IsAvoidMode() { return Type == EStateType::Avoid; }
 	FORCEINLINE bool IsDeadMode() { return Type == EStateType::Dead; }
 
 	FORCEINLINE bool IsSubActionMode() { return bInSubActionMode; }

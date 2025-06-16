@@ -109,6 +109,7 @@ float ACNox_Runner::TakeDamage(float DamageAmount, struct FDamageEvent const& Da
                                class AController* EventInstigator, AActor* DamageCauser)
 {
 	HPComp->TakeDamage(DamageAmount);
+	State->SetHittedMode();
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
 
@@ -208,9 +209,27 @@ void ACNox_Runner::OnStateTypeChanged(EStateType InPrevType, EStateType InNewTyp
 	
 	switch (InNewType)
 	{
-		case EStateType::Hitted:
+	case EStateType::Hitted:
+		{
 			Montage->PlayHittedMode(InputDir2D, ControlRot);
+			// 1. 플레이어 컨트롤러 가져오기
+			APlayerController* PlayerController = Cast<APlayerController>(GetController());
+			if (PlayerController == nullptr)
+			{
+				return;
+			}
+			
+			// 2. CameraShake 클래스 지정 (BP로 만든 CameraShake 사용 가능)
+			TSubclassOf<UCameraShakeBase> ShakeClass = LoadClass<UCameraShakeBase>(nullptr, TEXT("/Script/Engine.Blueprint'/Game/Characters/Runner/Animations/CameraShakes/BP_NormalAttackShake.BP_NormalAttackShake_C'"));
+			if (ShakeClass == nullptr)
+			{
+				return;
+			}
+			
+			// 3. 카메라 쉐이크 실행
+			PlayerController->ClientStartCameraShake(ShakeClass);
 			break;
+		}
 	case EStateType::Avoid:
 			Montage->PlayAvoidMode(Weapon->GetWeaponType(), InputDir2D, ControlRot);
 			break;
@@ -291,8 +310,8 @@ void ACNox_Runner::Init()
 	CHelpers::GetAsset<UInputAction>(&IA_Jump, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Jump.IA_Jump'"));
 
 	
-	// State
-	CHelpers::CreateActorComponent<UCStateComponent>(this, &State, "State");
+	// // State
+	// CHelpers::CreateActorComponent<UCStateComponent>(this, &State, "State");
 
 	// Movement
 	CHelpers::CreateActorComponent<UCMovementComponent>(this, &Movement, "Movement");
@@ -321,6 +340,21 @@ void ACNox_Runner::Dead()
 
 	Montage->PlayDeadMode();
 
+}
+
+void ACNox_Runner::End_Avoid()
+{
+	State->SetIdleMode();
+}
+
+void ACNox_Runner::End_Hitted()
+{
+	State->SetIdleMode();
+}
+
+void ACNox_Runner::End_Dead()
+{
+	// Destroy();
 }
 
 void ACNox_Runner::ShowPlayerMainUI()

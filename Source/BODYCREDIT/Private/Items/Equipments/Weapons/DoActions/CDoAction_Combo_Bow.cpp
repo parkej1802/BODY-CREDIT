@@ -34,7 +34,11 @@ void UCDoAction_Combo_Bow::BeginPlay(class ACWeapon_Attachment* InAttachment, cl
 
 void UCDoAction_Combo_Bow::DoAction()
 {
+	CheckTrue(bInAction);
+	
 	Super::DoAction();
+	
+	bInAction = true;
 	
 	// CheckTrue(DoActionDatas.Num() < 1);
 	// CheckFalse(State->IsIdleMode());
@@ -58,20 +62,24 @@ void UCDoAction_Combo_Bow::Begin_DoAction()
 	
 	CheckNull(ArrowClass);
 
-	ACAddOn_Arrow* arrow = GetAttachedArrow();
-	arrow->DetachFromActor(FDetachmentTransformRules(EDetachmentRule::KeepWorld, true));
+	if (ACAddOn_Arrow* arrow = GetAttachedArrow())
+	{
+		arrow->DetachFromActor(FDetachmentTransformRules(EDetachmentRule::KeepWorld, true));
 
-	arrow->OnHit.AddDynamic(this, &UCDoAction_Combo_Bow::OnArrowHit);
-	arrow->OnEndPlay.AddDynamic(this, &UCDoAction_Combo_Bow::OnArrowEndPlay);
+		arrow->OnHit.AddDynamic(this, &UCDoAction_Combo_Bow::OnArrowHit);
+		arrow->OnEndPlay.AddDynamic(this, &UCDoAction_Combo_Bow::OnArrowEndPlay);
 	
-	FVector forward = FQuat(OwnerCharacter->GetControlRotation()).GetForwardVector();
-	arrow->Shoot(forward);
+		FVector forward = FQuat(OwnerCharacter->GetControlRotation()).GetForwardVector();
+		arrow->Shoot(forward);
+	}
 	
 }
 
 void UCDoAction_Combo_Bow::End_DoAction()
 {
 	Super::End_DoAction();
+
+	bInAction = false;
 
 	CreateArrow();
 }

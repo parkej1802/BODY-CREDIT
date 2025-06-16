@@ -26,6 +26,4 @@ void ACItem::OnPickUpItem(ACNox* InNewOwnerCharacter)
 	SetOwner(InNewOwnerCharacter);
 	OwnerCharacter = Cast<ACNox>(InNewOwnerCharacter);
 
-	// TODO : 이후 로직 필요 (인벤토리 추가, 월드에서 비활성화 등)
-
 }

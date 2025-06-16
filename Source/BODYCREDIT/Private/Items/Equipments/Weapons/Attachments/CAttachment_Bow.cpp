@@ -8,39 +8,44 @@
 
 float* ACAttachment_Bow::GetBend()
 {
-	return Cast<UCAnimInstance_Bow>(SkeletalMesh->GetAnimInstance())->GetBend();
+	return Cast<UCAnimInstance_Bow>(SkeletalMeshComp->GetAnimInstance())->GetBend();
 
 }
 
 ACAttachment_Bow::ACAttachment_Bow()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	
+	CapsuleComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	CHelpers::CreateComponent<USkeletalMeshComponent>(this, &SkeletalMesh, "SkeletalMesh", Root);
-	CHelpers::CreateComponent<UPoseableMeshComponent>(this, &PoseableMesh, "PoseableMesh", Root);
+	// CHelpers::CreateComponent<USkeletalMeshComponent>(this, &SkeletalMesh, "SkeletalMesh", Root);
+	SkeletalMeshComp->SetupAttachment(Root);
+	CHelpers::CreateComponent<UPoseableMeshComponent>(this, &PoseableMesh, "PoseableMesh", RootComponent);
 
 	USkeletalMesh* mesh;
 	CHelpers::GetAsset<USkeletalMesh>(&mesh, "/Script/Engine.SkeletalMesh'/Game/Scifi_Arsenal_Vol3_1/Skeletal_Meshes/Sci-fi_Bow/SK_Sci-fi_Bow.SK_Sci-fi_Bow'");
-	SkeletalMesh->SetSkeletalMesh(mesh);
-	SkeletalMesh->SetCollisionProfileName("NoCollision");
+	SkeletalMeshComp->SetSkeletalMesh(mesh);
+	SkeletalMeshComp->SetCollisionProfileName("NoCollision");
 
 	TSubclassOf<UCAnimInstance_Bow> animInstance;
 	CHelpers::GetClass<UCAnimInstance_Bow>(&animInstance, "/Script/Engine.AnimBlueprint'/Game/Items/Equipments/Weapons/Bow/BP_CAnimInstance_Bow.BP_CAnimInstance_Bow_C'");
-	SkeletalMesh->SetAnimInstanceClass(animInstance);
+	SkeletalMeshComp->SetAnimInstanceClass(animInstance);
 
 }
 
 void ACAttachment_Bow::BeginPlay()
 {
-	Super::BeginPlay();
 
 	// AttachTo("Holster_Bow");
+	SkeletalMeshComp->SetupAttachment(RootComponent);
+	// SkeletalMeshComp->SetVisibility(false);
+	// PoseableMesh->SetVisibility(true);
 
-	SkeletalMesh->SetVisibility(false);
-	PoseableMesh->SetVisibility(false);
-
-	PoseableMesh->SetSkeletalMesh(SkeletalMesh->GetSkeletalMeshAsset());
-	PoseableMesh->CopyPoseFromSkeletalComponent(SkeletalMesh);
+	PoseableMesh->SetSkinnedAsset(SkeletalMeshComp->GetSkeletalMeshAsset());
+	// PoseableMesh->SetSkeletalMesh(SkeletalMeshComp->GetSkeletalMeshAsset());
+	PoseableMesh->CopyPoseFromSkeletalComponent(SkeletalMeshComp);
+	
+	Super::BeginPlay();
 }
 
 void ACAttachment_Bow::Tick(float DeltaTime)
