@@ -106,6 +106,8 @@ void ACNox_EBase::SetApplyDamage(AActor* DamagedPlayer, const float DamageAmout)
 #pragma region Set Target
 void ACNox_EBase::SetTarget(ACNox* InTarget)
 {
+	if (HPComp->GetHealthPercent() <= FLT_MIN) return;
+	
 	Target = InTarget;
 	Target ? FSMComp->SetEnemyState(EEnemyState::Sense) : FSMComp->SetEnemyState(EEnemyState::IDLE);
 }
