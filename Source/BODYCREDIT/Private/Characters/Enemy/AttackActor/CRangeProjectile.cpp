@@ -57,5 +57,7 @@ void ACRangeProjectile::OnOverlap(UPrimitiveComponent* OverlappedComp, AActor* O
                                   UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
                                   const FHitResult& SweepResult)
 {
+	if (OtherActor->IsA(ACNox::StaticClass()))
+		OwnerAI->SetApplyDamage(OtherActor, 10.f);
 	OwnerAI->ReturnToPool(this);
 }
