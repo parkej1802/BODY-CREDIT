@@ -8,8 +8,9 @@ CSenseState_ZERO::CSenseState_ZERO(TUniquePtr<CConditionalMoveStrategy_ZERO> InM
 {
 }
 
-void CSenseState_ZERO::Execute(class ACNox_EBase* Owner, class UCFSMComponent* FSMComp)
+void CSenseState_ZERO::Execute(ACNox_EBase* Owner, UCFSMComponent* FSMComp)
 {
+	Owner->PlaySenseSound();
 	if (MoveStrategy) MoveStrategy->Move(Owner, Owner->GetWorld()->GetDeltaSeconds());
 }
 

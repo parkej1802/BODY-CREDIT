@@ -83,14 +83,14 @@ void ACNox_EBase::Tick(float DeltaTime)
 			myState = UEnum::GetValueOrBitfieldAsString(FSMComp->GetCombatState());
 			DrawDebugString(
 				GetWorld(), FVector(GetActorLocation().X, GetActorLocation().Y,
-									GetActorLocation().Z - 50), myState, nullptr, FColor::Yellow, 0);
+				                    GetActorLocation().Z - 50), myState, nullptr, FColor::Yellow, 0);
 		}
 		if (HPComp)
 		{
 			FString myHP = FString::Printf(TEXT("%.2f"), HPComp->GetHealthPercent());
 			DrawDebugString(
 				GetWorld(), FVector(GetActorLocation().X, GetActorLocation().Y,
-									GetActorLocation().Z - 100), myHP, nullptr, FColor::Red, 0);
+				                    GetActorLocation().Z - 100), myHP, nullptr, FColor::Red, 0);
 		}
 	}
 }
@@ -107,7 +107,7 @@ void ACNox_EBase::SetApplyDamage(AActor* DamagedPlayer, const float DamageAmout)
 void ACNox_EBase::SetTarget(ACNox* InTarget)
 {
 	if (HPComp->GetHealthPercent() <= FLT_MIN) return;
-	
+
 	Target = InTarget;
 	Target ? FSMComp->SetEnemyState(EEnemyState::Sense) : FSMComp->SetEnemyState(EEnemyState::IDLE);
 }
@@ -183,7 +183,7 @@ bool ACNox_EBase::IsPlayerInForwardDegree(const float InForwardRange, const floa
 	const FVector MyLocation = GetActorLocation();
 	FVector TargetLocation = Target->GetActorLocation();
 	const float DistanceSquared = FVector::DistSquared(MyLocation, TargetLocation);
-	
+
 	// 거리 제곱으로 비교하여 제곱근 연산 방지
 	if (DistanceSquared > FMath::Square(InForwardRange))
 	{
@@ -232,40 +232,40 @@ void ACNox_EBase::UsingSkill(ESkillCoolDown Skill)
 bool ACNox_EBase::RotateToTarget(const float DeltaTime, const FTransform& CurTrans, const FVector& TargetLoc,
                                  float InteropSpeed)
 {
-    // 1. 현재 위치와 목표 위치를 2D로 변환
-    const FVector CurrentLocation = CurTrans.GetLocation();
-    const FVector DirectionToTarget = (TargetLoc - CurrentLocation).GetSafeNormal2D();
-    
-    // 2. 목표 회전값 계산
-    const FRotator TargetRotation = DirectionToTarget.Rotation();
-    
-    // 3. 현재 회전값 가져오기
-    const FRotator CurrentRotation = CurTrans.GetRotation().Rotator();
-    
-    // 4. Yaw만 보간
-    const float NewYaw = FMath::FInterpTo(
-        CurrentRotation.Yaw,
-        TargetRotation.Yaw,
-        DeltaTime,
-        InteropSpeed
-    );
-    
-    // 5. 새로운 회전값 설정 (Pitch와 Roll은 유지)
-    const FRotator NewRotation(CurrentRotation.Pitch, NewYaw, CurrentRotation.Roll);
-    SetActorRotation(NewRotation);
-    
-    return true;
+	// 1. 현재 위치와 목표 위치를 2D로 변환
+	const FVector CurrentLocation = CurTrans.GetLocation();
+	const FVector DirectionToTarget = (TargetLoc - CurrentLocation).GetSafeNormal2D();
+
+	// 2. 목표 회전값 계산
+	const FRotator TargetRotation = DirectionToTarget.Rotation();
+
+	// 3. 현재 회전값 가져오기
+	const FRotator CurrentRotation = CurTrans.GetRotation().Rotator();
+
+	// 4. Yaw만 보간
+	const float NewYaw = FMath::FInterpTo(
+		CurrentRotation.Yaw,
+		TargetRotation.Yaw,
+		DeltaTime,
+		InteropSpeed
+	);
+
+	// 5. 새로운 회전값 설정 (Pitch와 Roll은 유지)
+	const FRotator NewRotation(CurrentRotation.Pitch, NewYaw, CurrentRotation.Roll);
+	SetActorRotation(NewRotation);
+
+	return true;
 }
 
 void ACNox_EBase::SetRotateToTarget()
 {
 	// 1. 현재 회전값 가져오기
 	const FRotator CurrentRotation = GetActorRotation();
-		
+
 	// 2. 목표 방향 계산
 	const FVector DirectionToTarget = (GetTarget()->GetActorLocation() - GetActorLocation()).GetSafeNormal2D();
 	const float TargetYaw = DirectionToTarget.Rotation().Yaw;
-		
+
 	// 3. 새로운 회전값 설정 (Pitch와 Roll은 유지)
 	const FRotator NewRotation(CurrentRotation.Pitch, TargetYaw, CurrentRotation.Roll);
 	SetActorRotation(NewRotation);
@@ -283,16 +283,64 @@ void ACNox_EBase::ExtractCallFunction(ACNox* InTarget)
 #pragma region Sound
 void ACNox_EBase::PlayIdleSound()
 {
-	if (!SoundComponent->IsPlaying())
+	if (IdleSoundCue && SoundComponent->Sound != IdleSoundCue)
 	{
-		SoundComponent->SetIntParameter(FName("Idx"), FMath::RandRange(0, 1));
+		SoundComponent->SetSound(IdleSoundCue);
 		SoundComponent->Play();
 	}
 }
 
-void ACNox_EBase::StopIdleSound()
+void ACNox_EBase::PlaySenseSound()
 {
-	if (SoundComponent->IsPlaying())
-		SoundComponent->Stop();
+	if (SenseSoundCue && SoundComponent->Sound != SenseSoundCue)
+	{
+		SoundComponent->SetSound(SenseSoundCue);
+		SoundComponent->Play();
+	}
+}
+
+void ACNox_EBase::PlayAttackSound()
+{
+	if (AttackSoundCue && SoundComponent->Sound != AttackSoundCue)
+	{
+		SoundComponent->SetSound(AttackSoundCue);
+		SoundComponent->Play();
+	}
+}
+
+void ACNox_EBase::PlayGrenadeSound()
+{
+	if (GrenadeSoundCue && SoundComponent->Sound != GrenadeSoundCue)
+	{
+		SoundComponent->SetSound(GrenadeSoundCue);
+		SoundComponent->Play();
+	}
+}
+
+void ACNox_EBase::PlayHealSound()
+{
+	if (HealSoundCue && SoundComponent->Sound != HealSoundCue)
+	{
+		SoundComponent->SetSound(HealSoundCue);
+		SoundComponent->Play();
+	}
+}
+
+void ACNox_EBase::PlayHitSound()
+{
+	if (HitSoundCue && SoundComponent->Sound != HitSoundCue)
+	{
+		SoundComponent->SetSound(HitSoundCue);
+		SoundComponent->Play();
+	}
+}
+
+void ACNox_EBase::PlayDieSound()
+{
+	if (DieSoundCue && SoundComponent->Sound != DieSoundCue)
+	{
+		SoundComponent->SetSound(DieSoundCue);
+		SoundComponent->Play();
+	}
 }
 #pragma endregion

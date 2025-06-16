@@ -75,7 +75,7 @@ void UCUserWidget_RunnerUI::NativeTick(const FGeometry& MyGeometry, float InDelt
 	{
 		if (Text_Day)
 		{
-			Text_Day->SetText(FText::FromString(FString::Printf(TEXT("%d"), NetGameInstance->GetDay())));
+			Text_Day->SetText(FText::FromString(FString::Printf(TEXT("%d"), NetGameInstance->GetDay() - 1)));
 		}
 	}
 }

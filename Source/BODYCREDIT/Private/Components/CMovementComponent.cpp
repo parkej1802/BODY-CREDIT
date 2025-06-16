@@ -213,6 +213,7 @@ void UCMovementComponent::OffMovement(const FInputActionValue& InVal)
 
 void UCMovementComponent::OnHorizontalLook(const FInputActionValue& InVal)
 {
+	CheckFalse(CHelpers::GetComponent<UCStateComponent>(OwnerCharacter)->IsIdleMode());
 	CheckTrue(bFixedCamera);
 
 	const FVector2D input = InVal.Get<FVector2D>();
@@ -224,6 +225,7 @@ void UCMovementComponent::OnHorizontalLook(const FInputActionValue& InVal)
 
 void UCMovementComponent::OnVerticalLook(const FInputActionValue& InVal)
 {
+	CheckFalse(CHelpers::GetComponent<UCStateComponent>(OwnerCharacter)->IsIdleMode());
 	CheckTrue(bFixedCamera);
 
 	const FVector2D input = InVal.Get<FVector2D>();
@@ -436,6 +438,8 @@ void UCMovementComponent::OffSlide(const FInputActionValue& InVal)
 
 void UCMovementComponent::OnJump(const FInputActionValue& InVal)
 {
+	CheckFalse(CHelpers::GetComponent<UCStateComponent>(OwnerCharacter)->IsIdleMode());
+	
 	if (bSlide)
 		OffSlide(FInputActionValue());
 
@@ -541,9 +545,16 @@ void UCMovementComponent::Stop()
 
 void UCMovementComponent::Dead()
 {
-	IA_Movement = nullptr;
-	IA_Look = nullptr;
+	bCanMove = false;
+	bFixedCamera = true;
 
+}
+
+void UCMovementComponent::Revive()
+{
+	bCanMove = true;
+	bFixedCamera = false;
+	
 }
 
 void UCMovementComponent::Init()

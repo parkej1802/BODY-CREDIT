@@ -10,6 +10,8 @@ CSenseState_MEDIC::CSenseState_MEDIC(TUniquePtr<CConditionalMoveStrategy_MEDIC> 
 
 void CSenseState_MEDIC::Execute(ACNox_EBase* Owner, UCFSMComponent* FSMComp)
 {
+	Owner->PlaySenseSound();
+	
 	if (MoveStrategy) MoveStrategy->Move(Owner, Owner->GetWorld()->GetDeltaSeconds());
 	
 	Owner->UpdateSkillCoolDowns(ESkillCoolDown::Melee, Owner->GetWorld()->GetDeltaSeconds());

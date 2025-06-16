@@ -166,4 +166,13 @@ public:
 public:
 	void PlayDieMontage(const int32 sectionIdx = 1);
 #pragma endregion
+	
+#pragma region Sound
+	UFUNCTION()
+	void AnimNotify_PlayAttackSound();
+	UFUNCTION()
+	void AnimNotify_PlayGrenadeSound();
+	UFUNCTION()
+	void AnimNotify_PlayHealSound();
+#pragma endregion
 };
