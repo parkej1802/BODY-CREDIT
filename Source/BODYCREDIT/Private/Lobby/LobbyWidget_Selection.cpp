@@ -102,6 +102,11 @@ void ULobbyWidget_Selection::OnPlayClicked()
         GI->Day = GI->Day + 1;
         GI->DayLeft = GI->DayLeft - 1;
 
+        if (LobbyWidget_RollDice)
+        {
+            LobbyWidget_RollDice = nullptr;
+        }
+
         if (GI->DayLeft < 0)
         {
             if (LobbyRollDiceWidgetClass)
@@ -121,6 +126,11 @@ void ULobbyWidget_Selection::OnPlayClicked()
 
         else if (GI->DayLeft && GI->SelectedPart != EPlayerPart::Basic)
         {
+            if (LobbyWidget_DayLeft)
+            {
+                LobbyWidget_DayLeft = nullptr;
+            }
+
             if (LobbyDayLeftWidgetClass)
             {
                 LobbyWidget_DayLeft = CreateWidget<ULobbyWidget_DayLeft>(GetWorld(), LobbyDayLeftWidgetClass);
@@ -136,6 +146,11 @@ void ULobbyWidget_Selection::OnPlayClicked()
         {
             GI->PayTime = false;
 
+            if (LobbyWidget_Payment)
+            {
+                LobbyWidget_Payment = nullptr;
+            }
+
             if (LobbyPaymentWidgetClass)
             {
                 LobbyWidget_Payment = CreateWidget<ULobbyWidget_Payment>(GetWorld(), LobbyPaymentWidgetClass);
@@ -149,6 +164,11 @@ void ULobbyWidget_Selection::OnPlayClicked()
         }
         else
         {
+            if (LobbyWidget_RollDice)
+            {
+                LobbyWidget_RollDice = nullptr;
+            }
+
             if (LobbyRollDiceWidgetClass)
             {
                 LobbyWidget_RollDice = CreateWidget<ULobbyWidget_RollDice>(GetWorld(), LobbyRollDiceWidgetClass);
