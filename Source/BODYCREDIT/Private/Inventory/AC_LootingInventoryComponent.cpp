@@ -72,6 +72,11 @@ void UAC_LootingInventoryComponent::AddRandomItem()
         FItemData* Chosen = (*Pool)[FMath::RandRange(0, Pool->Num() - 1)];
         if (!Chosen || !Chosen->ItemClass) continue;
 
+        if (Chosen->ItemName.ToString().Contains(TEXT("AccessCard")))
+        {
+            if (GI->NumKeySpawned >= GI->MaxNumKey) continue;
+        }
+
         AItem_Base* Spawned = GetWorld()->SpawnActor<AItem_Base>(Chosen->ItemClass);
         if (!IsValid(Spawned) || !IsValid(Spawned->ItemObject)) continue;
 
