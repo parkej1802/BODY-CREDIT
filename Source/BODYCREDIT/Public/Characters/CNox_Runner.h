@@ -5,6 +5,7 @@
 #include "Characters/CNox.h"
 #include "Components/CMovementComponent.h"
 #include "Components/CStateComponent.h"
+#include "Interfaces/ICharacter.h"
 #include "CNox_Runner.generated.h"
 
 struct FItemSaveData;
@@ -13,7 +14,7 @@ enum class EPlayerPart : uint8;
 enum class EMemoryTriggerType : uint8;
 
 UCLASS()
-class BODYCREDIT_API ACNox_Runner : public ACNox, public IGenericTeamAgentInterface
+class BODYCREDIT_API ACNox_Runner : public ACNox, public IGenericTeamAgentInterface, public IICharacter
 {
 	GENERATED_BODY()
 
@@ -55,7 +56,7 @@ protected:
 private:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UCStateComponent* State;
-
+	
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UCMovementComponent* Movement;
 
@@ -77,6 +78,9 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = "EnhancedInput")
 	class UInputMappingContext* IMC_Invectory;
+
+	UPROPERTY(VisibleAnywhere, Category = "EnhancedInput")
+	class UInputAction* IA_Jump;
 
 private: // UI
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
@@ -130,6 +134,11 @@ private:
 	FVector2D GetLastMovementInputVector2D() const;
 
 	void Dead();
+
+public:
+	virtual void End_Avoid() override;
+	virtual void End_Hitted() override;
+	virtual void End_Dead() override;
 
 /**
  *	Team ID Setting - LHJ (2025.05.02)
@@ -211,4 +220,33 @@ public:
 	bool bShouldRotateToTarget = false;
 	float RotationInterpSpeed = 8.f;
 
+private:
+	FTimerHandle JumpDelayHandle;
+	float LastJumpInputTime = -1.0f;
+	float DoubleTapThreshold = 0.2f;
+	bool bPendingJump = false;
+
+public:
+	// Space(점프/회피) 입력 처리 함수
+	void OnJumpOrDodgeInput();
+	void DoJumpIfNoDoubleTap();
+	bool IsDoubleTap();
+
+	float CachedMoveForward = 0.f;
+	float CachedMoveRight = 0.f;
+
+	UPROPERTY(EditAnywhere, Category="Footstep")
+	TArray<USoundBase*> FootstepSounds;
+
+	UPROPERTY(EditAnywhere, Category="Footstep")
+	FName LeftFootSocketName = "foot_l";
+	UPROPERTY(EditAnywhere, Category="Footstep")
+	FName RightFootSocketName = "foot_r";
+
+	bool bLeftFootOnGround = false;
+	bool bRightFootOnGround = false;
+
+	void CheckFootstep(FName FootSocketName, bool& bWasOnGround);
+	void PlayFootstepSound(const FVector& Location);
+	
 };

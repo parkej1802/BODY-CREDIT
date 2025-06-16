@@ -5,8 +5,10 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Components/Enemy/CFSMComponent.h"
 #include "Characters/Enemy/AI/CEnemyController.h"
+#include "Components/AudioComponent.h"
 #include "Components/Enemy/CNoxEnemyHPComponent.h"
 #include "Navigation/PathFollowingComponent.h"
+#include "Sound/SoundCue.h"
 
 #pragma region Init
 ACNox_EBase::ACNox_EBase()
@@ -18,6 +20,8 @@ ACNox_EBase::ACNox_EBase()
 void ACNox_EBase::InitComp()
 {
 	TeamID = 2;
+	CHelpers::CreateComponent<UAudioComponent>(this, &SoundComponent, "SoundComponent", RootComponent);
+
 	GetCapsuleComponent()->SetCollisionProfileName(FName("Enemy"));
 	{
 		CHelpers::GetClass(&AIControllerClass, TEXT("/Game/Characters/Enemy/AI/BP_NoxController.BP_NoxController_C"));
@@ -53,6 +57,8 @@ void ACNox_EBase::BeginPlay()
 	if (HPComp) HPComp->SetEnemy(this);
 
 	if (FSMComp) FSMComp->InitializeFSM(this);
+
+	SoundComponent->SetSound(IdleSoundCue);
 }
 #pragma endregion
 
@@ -100,6 +106,8 @@ void ACNox_EBase::SetApplyDamage(AActor* DamagedPlayer, const float DamageAmout)
 #pragma region Set Target
 void ACNox_EBase::SetTarget(ACNox* InTarget)
 {
+	if (HPComp->GetHealthPercent() <= FLT_MIN) return;
+	
 	Target = InTarget;
 	Target ? FSMComp->SetEnemyState(EEnemyState::Sense) : FSMComp->SetEnemyState(EEnemyState::IDLE);
 }
@@ -269,5 +277,22 @@ void ACNox_EBase::ExtractCallFunction(ACNox* InTarget)
 {
 	RetentionTime = 0.f; // 타겟 잃어버림 방지용, 컨트롤러에서 RetentionTime으로 잊게 해놈
 	SetTarget(InTarget);
+}
+#pragma endregion
+
+#pragma region Sound
+void ACNox_EBase::PlayIdleSound()
+{
+	if (!SoundComponent->IsPlaying())
+	{
+		SoundComponent->SetIntParameter(FName("Idx"), FMath::RandRange(0, 1));
+		SoundComponent->Play();
+	}
+}
+
+void ACNox_EBase::StopIdleSound()
+{
+	if (SoundComponent->IsPlaying())
+		SoundComponent->Stop();
 }
 #pragma endregion

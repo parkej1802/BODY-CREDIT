@@ -11,6 +11,13 @@ UCLASS()
 class BODYCREDIT_API ACAddOn_Arrow : public ACAddOn
 {
 	GENERATED_BODY()
+
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "FX")
+	class UNiagaraSystem* ArrowVanishFX;
+
+	UPROPERTY(EditDefaultsOnly, Category = "FX")
+	class USoundBase* ArrowVanishSFX;
 	
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "LifeSpan")

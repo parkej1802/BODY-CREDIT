@@ -113,7 +113,8 @@ void ACNox_CCTV::BroadCastDetectPlayer(ACNox* DetectPlayer)
 		QueryParams
 	);
 	// (선택) 디버그 표시
-	DrawDebugSphere(GetWorld(), Origin, 3000.f, 8, FColor::Red, false, 1.0f);
+	if (bDebug)
+		DrawDebugSphere(GetWorld(), Origin, 3000.f, 8, FColor::Red, false, 1.0f);
 	if (bHit)
 	{
 		for (auto& Result : OverlapResults)

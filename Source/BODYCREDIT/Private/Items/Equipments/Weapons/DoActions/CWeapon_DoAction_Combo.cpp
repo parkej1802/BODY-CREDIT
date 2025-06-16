@@ -3,6 +3,7 @@
 #include "Characters/CNox.h"
 #include "Characters/CNox_Runner.h"
 #include "Components/CStateComponent.h"
+#include "Components/CWeaponComponent.h"
 
 void UCWeapon_DoAction_Combo::DoAction()
 {
@@ -18,9 +19,24 @@ void UCWeapon_DoAction_Combo::DoAction()
 
 	CheckFalse(State->IsIdleMode());
 
-	Super::DoAction();
-	DoActionDatas[Index].DoAction(OwnerCharacter);
+	// Super::DoAction();
+	// DoActionDatas[Index].DoAction(OwnerCharacter);
 
+	if (CHelpers::GetComponent<UCWeaponComponent>(OwnerCharacter)->GetWeaponType() == EWeaponType::BOW)
+	{
+		if (CHelpers::GetComponent<UCWeaponComponent>(OwnerCharacter)->IsBowSubActionActive())
+		{
+			Super::DoAction();
+			DoActionDatas[Index].DoAction(OwnerCharacter);
+		}
+		else DoActionDatas[0].DoAction(OwnerCharacter);
+	}
+	else if (CHelpers::GetComponent<UCWeaponComponent>(OwnerCharacter)->GetWeaponType() == EWeaponType::KATANA)
+	{
+		Super::DoAction();
+		DoActionDatas[Index].DoAction(OwnerCharacter);
+	}
+	
 }
 
 void UCWeapon_DoAction_Combo::Begin_DoAction()
@@ -57,6 +73,8 @@ void UCWeapon_DoAction_Combo::OnWeaponAttachmentBeginOverlap(ACNox* InAttacker, 
 		CheckTrue(hitted == InOther);
 
 	Hitted.AddUnique(InOther);
+	if (HitVFX)
+		UGameplayStatics::SpawnEmitterAtLocation(World, HitVFX, InOther->GetActorLocation());
 
 	CheckTrue(HitDatas.Num() - 1 < Index);
 	HitDatas[Index].SendDamage(InAttacker, InAttackCauser, InOther);

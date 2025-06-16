@@ -75,6 +75,8 @@ public:
 
 public:
 	virtual void BindInput(UEnhancedInputComponent* InEnhancedInputComponent) override;
+	
+	bool IsBowSubActionActive() const;
 
 private:
 	bool IsIdleMode();
