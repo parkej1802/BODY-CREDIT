@@ -920,7 +920,8 @@ void ULobbyWidget_Market::HandleBuyConfirm(class UItemObject* ItemObject)
 
 	if (GameState)
 	{
-		if (ItemObject->ItemData.ItemType != EPlayerPart::ChestRigs && ItemObject->ItemData.ItemType != EPlayerPart::Backpack)
+		if (ItemObject->ItemData.ItemType != EPlayerPart::ChestRigs && ItemObject->ItemData.ItemType != EPlayerPart::Backpack
+			&& ItemObject->ItemData.ItemType != EPlayerPart::Basic)
 		{
 			ItemObject->ItemData.Rarity = GI->GetRandomRarity();
 			ItemObject->SetIconImages();

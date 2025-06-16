@@ -154,7 +154,12 @@ void UItemObject::SetIconImages()
 }
 
 int32 UItemObject::GetSellPrice()
-{
+{	
+	if (ItemData.ItemType == EPlayerPart::Basic)
+	{
+		return ItemData.Price;
+	}
+
 	float Multiplier = 0.0f;
 
 	switch (ItemData.Rarity)

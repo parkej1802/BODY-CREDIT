@@ -54,10 +54,10 @@ void UAC_LootingInventoryComponent::AddRandomItem()
 
     const int32 NumToAdd = FMath::RandRange(1, 5);
 
+    EItemRarity Rarity = GI->GetRandomRarityByLootTier(LootBoxTier);
+
     for (int i = 0; i < NumToAdd; ++i) 
     {
-        EItemRarity Rarity = GI->GetRandomRarityByLootTier(LootBoxTier);
-
         const TArray<FItemData*>* Pool = nullptr;
         switch (Rarity)
         {
