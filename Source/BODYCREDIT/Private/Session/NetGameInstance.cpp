@@ -222,6 +222,7 @@ void UNetGameInstance::InitItemCache(UDataTable* ItemDT)
 	{
 		FItemData* Row = ItemDT->FindRow<FItemData>(RowName, TEXT("Cache"));
 		if (!Row || !Row->ItemClass) continue;
+		if (Row->ItemType != EPlayerPart::Basic) continue;
 
 		switch (Row->Rarity)
 		{

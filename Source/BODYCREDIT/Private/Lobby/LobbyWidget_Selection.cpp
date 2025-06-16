@@ -340,8 +340,11 @@ void ULobbyWidget_Selection::Refresh()
         AItem_Base* Item = *It;
         if (!Item->IsHidden())
         {
-            Item->ItemObject = nullptr;
-            Item->Destroy();
+            if (!Item->GetOwner())
+            {
+                Item->ItemObject = nullptr;
+                Item->Destroy();
+            }
         }
     }
 }

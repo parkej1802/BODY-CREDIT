@@ -67,5 +67,7 @@ private:
 
 private:
 	TArray<class ACAddOn_Arrow*> Arrows;
+
+	bool bInAction = false;
 	
 };

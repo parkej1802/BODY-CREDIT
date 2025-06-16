@@ -39,6 +39,9 @@ void UCStateComponent::SetActionMode()
 
 void UCStateComponent::SetHittedMode()
 {
+	CheckTrue(IsAvoidMode());
+	CheckTrue(IsActionMode());
+	
 	ChangeType(EStateType::Hitted);
 
 }
