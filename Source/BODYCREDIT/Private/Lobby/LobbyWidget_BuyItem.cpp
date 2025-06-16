@@ -102,7 +102,7 @@ void ULobbyWidget_BuyItem::Refresh()
 {
     if (PC)
     {
-        FInputModeUIOnly InputMode;
+        FInputModeGameAndUI InputMode;
         InputMode.SetWidgetToFocus(this->TakeWidget());
         InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
         PC->SetInputMode(InputMode);

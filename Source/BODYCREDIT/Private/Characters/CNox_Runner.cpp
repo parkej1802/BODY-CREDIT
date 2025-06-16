@@ -352,9 +352,7 @@ void ACNox_Runner::End_Dead()
 {
 	if (FailedWidget)
 	{
-		FailedWidget->AddToViewport();
-		FailedWidget->Refresh();
-		return;
+		FailedWidget = nullptr;
 	}
 	
 	if (FailedWidgetClass)
@@ -368,6 +366,12 @@ void ACNox_Runner::End_Dead()
 void ACNox_Runner::ShowPlayerMainUI()
 {
 	// 위젯 클래스가 유효한지 확인
+
+	if (RunnerUIWidget)
+	{
+		RunnerUIWidget = nullptr;
+	}
+
 	if (RunnerUIClass)
 	{
 		// 위젯 생성
