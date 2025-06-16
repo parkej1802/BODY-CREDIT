@@ -52,12 +52,13 @@ public:
 private:
 	int32 GetDirectionIndexByTag(const FName& DirectionTag) const;
 
-	int32 GetDirectionIndex(const FVector2D& InputDir) const;
+	int32 GetDirectionIndex(const FVector2D& InputDir, const FRotator& ControlRotation) const;
+	int32 Get4DirectionIndex(const FVector2D& InputDir, const FRotator& ControlRotation) const;
 
 public:
-	void PlayAvoidMode(EWeaponType InWeaponType, const FVector2D& InputDir);
-	void PlayHittedMode(const FVector2D& InputDir);
-	void PlayDeadMode(const FVector2D& InputDir);
+	void PlayAvoidMode(EWeaponType InWeaponType, const FVector2D& InputDir, const FRotator& ControlRotation);
+	void PlayHittedMode(const FVector2D& InputDir, const FRotator& ControlRotation);
+	void PlayDeadMode(const FVector2D& InputDir, const FRotator& ControlRotation);
 	
 	void PlayAnimMontage(EStateType InType);
 
@@ -65,8 +66,20 @@ private:
 	FMontageData* Datas[(int32)EStateType::MAX];
 
 	// 8방향 모션
-	FMontageData* AvoidDatas[(int32)EWeaponType::MAX][8] = { nullptr, };
+	FMontageData* Avoid[(int32)EWeaponType::MAX][8] = { nullptr, };
 	FMontageData* Hitted[8] = { nullptr, };
 	FMontageData* Dead[8] = { nullptr, };
+
+	// 8방향 -> 4방향 fallback 테이블
+	int32 FallbackDirectionIndex[8] = {
+		0, // Forward
+		0, // ForwardRight -> Forward
+		2, // Right
+		2, // BackwardRight -> Right
+		4, // Backward
+		4, // BackwardLeft -> Backward
+		6, // Left
+		0, // ForwardLeft -> Forward
+	};
 
 };

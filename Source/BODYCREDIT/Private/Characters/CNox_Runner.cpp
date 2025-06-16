@@ -131,6 +131,10 @@ void ACNox_Runner::Tick(float DeltaTime)
 		}
 	}
 
+	
+	CheckFootstep(LeftFootSocketName, bLeftFootOnGround);
+	CheckFootstep(RightFootSocketName, bRightFootOnGround);
+
 //#if WITH_EDITOR
 //	const FVector Location = GetActorLocation();
 //
@@ -189,23 +193,30 @@ void ACNox_Runner::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 
 		// Weapon
 		Weapon->BindInput(input);
+
+		input->BindAction(IA_Jump, ETriggerEvent::Started, this, &ACNox_Runner::OnJumpOrDodgeInput);
 	}
 }
 
 void ACNox_Runner::OnStateTypeChanged(EStateType InPrevType, EStateType InNewType)
 {
-	FVector2D InputDir = GetLastMovementInputVector2D();
+	// FVector2D InputDir = GetLastMovementInputVector2D();
+	// FRotator ControlRot = Controller ? Controller->GetControlRotation() : GetActorRotation();
+
+	// 예시: 캐릭터나 MovementComponent에서
+	FVector2D InputDir2D = Movement->GetCachedInputDir2D();
+	FRotator ControlRot = GetControlRotation();
 	
 	switch (InNewType)
 	{
 		case EStateType::Hitted:
-			Montage->PlayHittedMode(InputDir);
+			Montage->PlayHittedMode(InputDir2D, ControlRot);
 			break;
 	case EStateType::Avoid:
-			Montage->PlayAvoidMode(Weapon->GetWeaponType(), InputDir);
+			Montage->PlayAvoidMode(Weapon->GetWeaponType(), InputDir2D, ControlRot);
 			break;
 		case EStateType::Dead:
-			Montage->PlayDeadMode(InputDir);
+			Montage->PlayDeadMode(InputDir2D, ControlRot);
 			break;
 	}
 
@@ -277,6 +288,10 @@ void ACNox_Runner::Init()
 										 TEXT(
 											 "/Script/EnhancedInput.InputMappingContext'/Game/Inputs/IMC_Runner.IMC_Runner'"));
 
+	// Jump
+	CHelpers::GetAsset<UInputAction>(&IA_Jump, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Jump.IA_Jump'"));
+
+	
 	// State
 	CHelpers::CreateActorComponent<UCStateComponent>(this, &State, "State");
 
@@ -359,6 +374,70 @@ void ACNox_Runner::RegisterLooting()
 	ObserverComp->RegisterLooting();
 }
 
+void ACNox_Runner::OnJumpOrDodgeInput()
+{
+	CheckNull(Weapon);
+	CheckNull(State);
+	CheckNull(Movement);
+
+	EWeaponType WeaponType = Weapon->GetWeaponType();
+
+	// Bow: SubAction(줌/시위) 모드에서만 회피, 그 외엔 점프
+	if (WeaponType == EWeaponType::BOW && Weapon->IsBowSubActionActive())
+	{
+		State->SetAvoidMode();
+		return;
+	}
+
+	// Katana: 더블탭이면 회피, 아니면 (딜레이 후) 점프
+	if (WeaponType == EWeaponType::KATANA)
+	{
+		float Now = GetWorld()->GetTimeSeconds();
+
+		// 이미 대기 중인 첫 입력(딜레이 타이머) 있다면 = 더블탭 성공
+		if (bPendingJump && (Now - LastJumpInputTime) < DoubleTapThreshold)
+		{
+			bPendingJump = false;
+			GetWorld()->GetTimerManager().ClearTimer(JumpDelayHandle);
+			State->SetAvoidMode(); // 회피 실행
+			return;
+		}
+
+		// 첫 입력(딜레이 타이머 시작)
+		LastJumpInputTime = Now;
+		bPendingJump = true;
+		GetWorld()->GetTimerManager().SetTimer(
+			JumpDelayHandle, this, &ACNox_Runner::DoJumpIfNoDoubleTap, DoubleTapThreshold, false
+		);
+		return;
+	}
+
+	// 그 외 무기/비무장: 즉시 점프
+	Movement->OnJump(FInputActionValue());
+}
+
+// 딜레이 끝날 때 점프 실행(더블탭 없었을 때)
+void ACNox_Runner::DoJumpIfNoDoubleTap()
+{
+	if (bPendingJump)
+	{
+		bPendingJump = false;
+		Movement->OnJump(FInputActionValue());
+	}
+}
+
+bool ACNox_Runner::IsDoubleTap()
+{
+	float Now = GetWorld()->GetTimeSeconds();
+	if (LastJumpInputTime > 0 && (Now - LastJumpInputTime) < DoubleTapThreshold)
+	{
+		LastJumpInputTime = -1.0f; // 리셋
+		return true;
+	}
+	LastJumpInputTime = Now;
+	return false;
+}
+
 void ACNox_Runner::CacheDefaultSkeletalMeshes()
 {
 	DefaultMeshes.Add(EPlayerPart::Head, Hair->GetSkeletalMeshAsset());
@@ -369,4 +448,44 @@ void ACNox_Runner::CacheDefaultSkeletalMeshes()
 	DefaultMeshes.Add(EPlayerPart::Backpack, Backpack->GetSkeletalMeshAsset());
 	DefaultMeshes.Add(EPlayerPart::Weapon1, Weapon1->GetSkeletalMeshAsset());
 	DefaultMeshes.Add(EPlayerPart::Weapon2, Weapon2->GetSkeletalMeshAsset());
+}
+
+void ACNox_Runner::CheckFootstep(FName FootSocketName, bool& bWasOnGround)
+{
+	FVector FootLocation = GetMesh()->GetSocketLocation(FootSocketName);
+	FVector Start = FootLocation + FVector(0, 0, 5); // 약간 위에서 시작
+	FVector End = FootLocation - FVector(0, 0, 20); // 아래로 쏨
+
+	FHitResult Hit;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(this);
+
+	bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, Params);
+
+	bool bNowOnGround = bHit && Hit.bBlockingHit;
+
+	// 떨어져 있다가 이번 프레임에 바닥에 닿았으면 (= 발 디딤)
+	if (!bWasOnGround && bNowOnGround)
+	{
+		// 여기서 발소리 재생!
+		PlayFootstepSound(FootLocation);
+
+		// MakeNoise도 여기서 호출 가능
+		MakeNoise(1.0f, this, FootLocation);
+	}
+
+	bWasOnGround = bNowOnGround;
+}
+
+void ACNox_Runner::PlayFootstepSound(const FVector& Location)
+{
+	if (FootstepSounds.Num() > 0)
+	{
+		int32 Index = FMath::RandRange(0, FootstepSounds.Num() - 1);
+		USoundBase* SelectedSound = FootstepSounds[Index];
+		if (SelectedSound)
+		{
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), SelectedSound, Location);
+		}
+	}
 }
