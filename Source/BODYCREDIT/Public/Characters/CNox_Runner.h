@@ -18,6 +18,13 @@ class BODYCREDIT_API ACNox_Runner : public ACNox, public IGenericTeamAgentInterf
 {
 	GENERATED_BODY()
 
+private:
+	UPROPERTY(EditAnywhere, Category = "Failed")
+	TSubclassOf<class ULobbyWidget_Failed> FailedWidgetClass;
+
+	UPROPERTY(EditAnywhere, Category = "Failed")
+	class ULobbyWidget_Failed* FailedWidget;
+
 protected: // Modular Character Mesh
 	UPROPERTY(BlueprintReadWrite, VisibleAnywhere, Category = "Mesh")
 	class USkeletalMeshComponent* Hair;
@@ -248,5 +255,5 @@ public:
 
 	void CheckFootstep(FName FootSocketName, bool& bWasOnGround);
 	void PlayFootstepSound(const FVector& Location);
-	
+	void Reset();
 };

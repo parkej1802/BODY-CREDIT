@@ -53,6 +53,9 @@ void ULobbyWidget_Failed::OnContinueClicked()
         GI->Failed = false;
         RemoveFromParent();
 
+        if (ACNox_Runner* runner = Cast<ACNox_Runner>(GetOwningPlayer()))
+            runner->Reset();
+
         return;
     }
 
@@ -66,6 +69,9 @@ void ULobbyWidget_Failed::OnContinueClicked()
                 LobbyWidget_LobbyGameOver->AddToViewport();
 
                 RemoveFromParent();
+
+                if (ACNox_Runner* runner = Cast<ACNox_Runner>(GetOwningPlayer()))
+                    runner->Reset();
             }
         }
         return;
@@ -77,6 +83,9 @@ void ULobbyWidget_Failed::OnContinueClicked()
         if (LobbyWidget_Selection)
         {
             LobbyWidget_Selection->AddToViewport();
+
+            if (ACNox_Runner* runner = Cast<ACNox_Runner>(GetOwningPlayer()))
+                runner->Reset();
 
             this->RemoveFromParent();
         }
@@ -209,4 +218,5 @@ void ULobbyWidget_Failed::Refresh()
     }
 
     Cast<ACNox_Runner>(PC->GetPawn())->EquipComp->EquippedItems.Empty();
+    Cast<ACNox_Runner>(PC->GetPawn())->Reset();
 }
