@@ -59,6 +59,11 @@ void ULobbyWidget_DayLeft::OnConfirmClicked()
         return;
     }
 
+    if (LobbyWidget_Play)
+    {
+        LobbyWidget_Play = nullptr;
+    }
+
     if (LobbyPlayWidgetClass)
     {
         LobbyWidget_Play = CreateWidget<UCLobbyWidget_Play>(GetWorld(), LobbyPlayWidgetClass);

@@ -37,6 +37,11 @@ void ULobbyWidget_Payment::OnPaymentClicked()
     {
         GI->SelectedPart = EPlayerPart::Basic;
 
+        if (LobbyWidget_RollDice)
+        {
+            LobbyWidget_RollDice = nullptr;
+        }
+
         if (GI->AmountToPay > GI->PlayerGold)
         {
             return;
@@ -61,6 +66,10 @@ void ULobbyWidget_Payment::OnPaymentClicked()
 
 void ULobbyWidget_Payment::OnSkipClicked()
 {
+    if (LobbyWidget_RollDice)
+    {
+        LobbyWidget_RollDice = nullptr;
+    }
 
 	if (LobbyRollDiceWidgetClass)
 	{
@@ -72,6 +81,11 @@ void ULobbyWidget_Payment::OnSkipClicked()
 			RemoveFromParent();
 		}
 	}
+
+    if (FailedUI)
+    {
+        FailedUI = nullptr;
+    }
 
     if (FailedWidgetClass)
     {
