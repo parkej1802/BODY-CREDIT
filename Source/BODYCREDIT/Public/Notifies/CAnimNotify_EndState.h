@@ -11,7 +11,7 @@ class BODYCREDIT_API UCAnimNotify_EndState : public UAnimNotify
 	GENERATED_BODY()
 
 private:
-	UPROPERTY(VisibleAnywhere, Category = "Type")
+	UPROPERTY(EditAnywhere, Category = "Type")
 	EStateType StateType;
 	
 public:

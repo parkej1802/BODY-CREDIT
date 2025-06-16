@@ -23,6 +23,7 @@
 #include "Components/SceneCaptureComponent2D.h"
 #include "Characters/CNox_Controller.h"
 #include "Components/CNoxObserverComp.h"
+#include "Lobby/LobbyWidget_Failed.h"
 
 ACNox_Runner::ACNox_Runner()
 {
@@ -91,8 +92,6 @@ void ACNox_Runner::BeginPlay()
 		
 	}
 
-	
-
 	State->OnStateTypeChanged.AddDynamic(this, &ACNox_Runner::OnStateTypeChanged);
 
 	// 서버 관련 메시 숨김 처리 함수
@@ -130,7 +129,6 @@ void ACNox_Runner::Tick(float DeltaTime)
 			bShouldRotateToTarget = false;
 		}
 	}
-
 	
 	CheckFootstep(LeftFootSocketName, bLeftFootOnGround);
 	CheckFootstep(RightFootSocketName, bRightFootOnGround);
@@ -231,11 +229,11 @@ void ACNox_Runner::OnStateTypeChanged(EStateType InPrevType, EStateType InNewTyp
 			break;
 		}
 	case EStateType::Avoid:
-			Montage->PlayAvoidMode(Weapon->GetWeaponType(), InputDir2D, ControlRot);
-			break;
-		case EStateType::Dead:
-			Montage->PlayDeadMode(InputDir2D, ControlRot);
-			break;
+		Montage->PlayAvoidMode(Weapon->GetWeaponType(), InputDir2D, ControlRot);
+		break;
+	case EStateType::Dead:
+		Montage->PlayDeadMode(InputDir2D, ControlRot);
+		break;
 	}
 
 }
@@ -335,11 +333,9 @@ FVector2D ACNox_Runner::GetLastMovementInputVector2D() const
 
 void ACNox_Runner::Dead()
 {
-	//GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	Movement->Dead();
-
-	Montage->PlayDeadMode();
-
+	State->SetDeadMode();
 }
 
 void ACNox_Runner::End_Avoid()
@@ -354,7 +350,19 @@ void ACNox_Runner::End_Hitted()
 
 void ACNox_Runner::End_Dead()
 {
-	// Destroy();
+	if (FailedWidget)
+	{
+		FailedWidget->AddToViewport();
+		FailedWidget->Refresh();
+		return;
+	}
+	
+	if (FailedWidgetClass)
+	{
+		FailedWidget = CreateWidget<ULobbyWidget_Failed>(GetWorld(), FailedWidgetClass);
+		FailedWidget->AddToViewport();
+	}
+	
 }
 
 void ACNox_Runner::ShowPlayerMainUI()
@@ -521,4 +529,12 @@ void ACNox_Runner::PlayFootstepSound(const FVector& Location)
 			UGameplayStatics::PlaySoundAtLocation(GetWorld(), SelectedSound, Location);
 		}
 	}
+}
+
+void ACNox_Runner::Reset()
+{
+	HPComp->InitStatus();
+	State->SetIdleMode();
+	Movement->Revive();
+	Weapon->SetUnarmedMode();
 }

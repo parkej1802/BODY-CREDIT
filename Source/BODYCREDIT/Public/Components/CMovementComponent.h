@@ -124,6 +124,7 @@ public:
 	void Stop();
 
 	void Dead();
+	void Revive();
 
 private:
 	void Init();
