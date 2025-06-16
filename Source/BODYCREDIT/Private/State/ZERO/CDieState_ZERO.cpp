@@ -6,8 +6,7 @@ void CDieState_ZERO::Execute(class ACNox_EBase* Owner, class UCFSMComponent* FSM
 {
 	if (!bFired)
 	{
-		int32 rnd = FMath::RandRange(1, 4);
-		Owner->HandleDie(rnd);
+		Owner->HandleDie(FMath::RandRange(1, 4));
 		bFired = true;
 	}
 }

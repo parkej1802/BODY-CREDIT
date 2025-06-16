@@ -15,8 +15,6 @@ void CIdleState_ZERO::Execute(ACNox_EBase* Owner, class UCFSMComponent* FSMComp)
 }
 
 void CIdleState_ZERO::ResetVal(ACNox_EBase* Owner)
-{
-	Owner->StopIdleSound();
-	
+{	
 	if (MoveStrategy) MoveStrategy->ResetVal(Owner);
 }

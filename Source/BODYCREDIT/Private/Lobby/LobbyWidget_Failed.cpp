@@ -58,6 +58,11 @@ void ULobbyWidget_Failed::OnContinueClicked()
 
         return;
     }
+    
+    if (LobbyWidget_LobbyGameOver)
+    {
+        LobbyWidget_LobbyGameOver = nullptr;
+    }
 
     if (GI->RemainingLife == 0)
     {

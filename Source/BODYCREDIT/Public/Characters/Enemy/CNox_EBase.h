@@ -203,8 +203,31 @@ protected:
     UPROPERTY(EditDefaultsOnly, Category = "Sound")
     class USoundCue* IdleSoundCue;
 
+    UPROPERTY(EditDefaultsOnly, Category = "Sound")
+    class USoundCue* SenseSoundCue;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Sound")
+    class USoundCue* AttackSoundCue;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	class USoundCue* GrenadeSoundCue;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Sound")
+	class USoundCue* HealSoundCue;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Sound")
+    class USoundCue* HitSoundCue;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Sound")
+    class USoundCue* DieSoundCue;
+
 public:
 	void PlayIdleSound();
-	void StopIdleSound();
+	void PlaySenseSound();
+	void PlayAttackSound();
+	void PlayGrenadeSound();
+	void PlayHealSound();
+	void PlayHitSound();
+	void PlayDieSound();
 #pragma endregion
 };
