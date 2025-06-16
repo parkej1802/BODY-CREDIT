@@ -47,6 +47,7 @@ void UCSubAction_Bow::Tick_Implementation(float InDeltaTime)
 
 	if (bInAction)
 	{
+		CheckTrue(Bow->Arrows.IsEmpty());
 		CheckTrue(Bow->Arrows.Last()->IsHidden());
 		Bow->Arrows.Last()->SetActorHiddenInGame(false);
 	}

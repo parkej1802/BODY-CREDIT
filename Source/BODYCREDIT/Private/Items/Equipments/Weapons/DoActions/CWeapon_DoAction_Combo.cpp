@@ -73,6 +73,8 @@ void UCWeapon_DoAction_Combo::OnWeaponAttachmentBeginOverlap(ACNox* InAttacker, 
 		CheckTrue(hitted == InOther);
 
 	Hitted.AddUnique(InOther);
+	if (HitVFX)
+		UGameplayStatics::SpawnEmitterAtLocation(World, HitVFX, InOther->GetActorLocation());
 
 	CheckTrue(HitDatas.Num() - 1 < Index);
 	HitDatas[Index].SendDamage(InAttacker, InAttackCauser, InOther);

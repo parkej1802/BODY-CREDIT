@@ -1,14 +1,16 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "Components/CStateComponent.h"
 #include "GameFramework/Character.h"
+#include "Interfaces/ICharacter.h"
 #include "CNox.generated.h"
 
 UCLASS()
 class BODYCREDIT_API ACNox : public ACharacter
 {
 	GENERATED_BODY()
-
+	
 public:
 	ACNox();
 
@@ -23,4 +25,5 @@ protected:
 public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
 };

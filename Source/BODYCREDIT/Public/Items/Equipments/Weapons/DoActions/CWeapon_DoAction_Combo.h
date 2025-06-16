@@ -4,10 +4,14 @@
 #include "Items/Equipments/Weapons/CWeapon_DoAction.h"
 #include "CWeapon_DoAction_Combo.generated.h"
 
-UCLASS()
+UCLASS(blueprintable)
 class BODYCREDIT_API UCWeapon_DoAction_Combo : public UCWeapon_DoAction
 {
 	GENERATED_BODY()
+
+private:
+	UPROPERTY(EditAnywhere, Category = "Combo")
+	class UParticleSystem* HitVFX;
 	
 public:
 	FORCEINLINE void EnableCombo() { bEnable = true; }
