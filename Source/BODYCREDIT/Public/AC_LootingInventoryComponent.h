@@ -8,6 +8,15 @@
 #include "Inventory/AC_InventoryBaseComponent.h"
 #include "AC_LootingInventoryComponent.generated.h"
 
+UENUM(BlueprintType)
+enum class ELootBoxTier : uint8
+{
+	Blank    UMETA(DisplayName = "Blank"),
+	Common    UMETA(DisplayName = "Common"),
+	Rare  UMETA(DisplayName = "Rare"),
+	Epic      UMETA(DisplayName = "Epic"),
+	Legendary UMETA(DisplayName = "Legendary")
+};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class BODYCREDIT_API UAC_LootingInventoryComponent : public UAC_InventoryBaseComponent
@@ -33,4 +42,6 @@ public:
 
 	void RefreshInventory();
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ELootBoxTier LootBoxTier = ELootBoxTier::Common;
 };

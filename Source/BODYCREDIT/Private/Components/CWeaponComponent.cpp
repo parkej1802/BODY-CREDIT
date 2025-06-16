@@ -162,7 +162,7 @@ void UCWeaponComponent::DoAction()
 	case EWeaponType::BOW:
 	// case EWeaponType::RIFLE:
 		// 눌렀을 때 → 내부에서 차징 시작 + Fire 조건 처리
-		GetDoAction()->Pressed(); 
+		GetDoAction()->DoAction(); 
 		break;
 	}
 
@@ -281,4 +281,11 @@ void UCWeaponComponent::BindInput(UEnhancedInputComponent* InEnhancedInputCompon
 	InEnhancedInputComponent->BindAction(IA_SubAction, ETriggerEvent::Started, this, &UCWeaponComponent::SubAction_Pressed);
 	InEnhancedInputComponent->BindAction(IA_SubAction, ETriggerEvent::Completed, this, &UCWeaponComponent::SubAction_Released);
 
+}
+
+// Bow의 SubAction(줌/시위) 활성화 여부
+bool UCWeaponComponent::IsBowSubActionActive() const
+{
+	// 예시: 내부 상태 변수 활용
+	return (Type == EWeaponType::BOW) && bInSubAction;
 }

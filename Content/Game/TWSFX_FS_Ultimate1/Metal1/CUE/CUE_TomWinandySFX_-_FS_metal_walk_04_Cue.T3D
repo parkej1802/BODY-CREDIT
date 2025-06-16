@@ -1,0 +1,38 @@
+Begin Object Class=/Script/Engine.SoundCue Name="CUE_TomWinandySFX_-_FS_metal_walk_04_Cue"
+   Begin Object Class=/Script/AudioEditor.SoundCueGraph Name="SoundCueGraph_0"
+      Begin Object Class=/Script/AudioEditor.SoundCueGraphNode Name="SoundCueGraphNode_0"
+      End Object
+      Begin Object Class=/Script/AudioEditor.SoundCueGraphNode_Root Name="SoundCueGraphNode_Root_0"
+      End Object
+   End Object
+   Begin Object Class=/Script/Engine.SoundNodeWavePlayer Name="SoundNodeWavePlayer_0"
+   End Object
+   Begin Object Name="SoundCueGraph_0"
+      Begin Object Name="SoundCueGraphNode_0"
+         SoundNode=SoundNodeWavePlayer'"CUE_TomWinandySFX_-_FS_metal_walk_04_Cue:SoundNodeWavePlayer_0"'
+         NodePosX=-250
+         NodePosY=-35
+         NodeGuid=6EBD9E08481A62A51C509E8BD4E68FE9
+         CustomProperties Pin (PinId=566534FB475FB1428DDB31A14295A6C7,PinName="Output",Direction="EGPD_Output",PinType.PinCategory="SoundNode",PinType.PinSubCategory="",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,LinkedTo=(SoundCueGraphNode_Root_0 44A1C5F748EDC6FFF0BD13B7D1735730,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+      End Object
+      Begin Object Name="SoundCueGraphNode_Root_0"
+         NodePosY=-58
+         NodeGuid=383F5AE0440CE2627EB540881FD18B71
+         CustomProperties Pin (PinId=44A1C5F748EDC6FFF0BD13B7D1735730,PinType.PinCategory="SoundNode",PinType.PinSubCategory="Root",PinType.PinSubCategoryObject=None,PinType.PinSubCategoryMemberReference=(),PinType.PinValueType=(),PinType.ContainerType=None,PinType.bIsReference=False,PinType.bIsConst=False,PinType.bIsWeakPointer=False,PinType.bIsUObjectWrapper=False,LinkedTo=(SoundCueGraphNode_0 566534FB475FB1428DDB31A14295A6C7,),PersistentGuid=00000000000000000000000000000000,bHidden=False,bNotConnectable=False,bDefaultValueIsReadOnly=False,bDefaultValueIsIgnored=False,bAdvancedView=False,bOrphanedPin=False,)
+      End Object
+      Schema=Class'"/Script/AudioEditor.SoundCueGraphSchema"'
+      Nodes(0)=SoundCueGraphNode_Root'"SoundCueGraphNode_Root_0"'
+      Nodes(1)=SoundCueGraphNode'"SoundCueGraphNode_0"'
+      bAllowDeletion=False
+      GraphGuid=33E85A7744E41628F4CA93AB1DAAAE4A
+   End Object
+   Begin Object Name="SoundNodeWavePlayer_0"
+      SoundWaveAssetPtr=/Game/TWSFX_FS_Ultimate1/Metal1/WAV/WAV_TomWinandySFX_-_FS_metal_walk_04.WAV_TomWinandySFX_-_FS_metal_walk_04
+      GraphNode=SoundCueGraphNode'"CUE_TomWinandySFX_-_FS_metal_walk_04_Cue:SoundCueGraph_0.SoundCueGraphNode_0"'
+   End Object
+   FirstNode=SoundNodeWavePlayer'"SoundNodeWavePlayer_0"'
+   AllNodes(0)=SoundNodeWavePlayer'"SoundNodeWavePlayer_0"'
+   SoundCueGraph=SoundCueGraph'"SoundCueGraph_0"'
+   Duration=0.407551
+   MaxDistance=2097152.000000
+End Object

@@ -31,19 +31,10 @@ void UMarket_ItemTile::NativeConstruct()
 	}
 
 	PC = Cast<ACNox_Controller>(GetOwningPlayer());
-
-	APawn* Pawn = PC->GetPawn();
-
-	PlayerCharacter = Cast<ACNox_Runner>(Pawn);
-
+	PlayerCharacter = Cast<ACNox_Runner>(PC->GetPawn());
 	InventoryComp = PlayerCharacter->InventoryComp;
 
-	Text_Name->SetText(FText::FromName(ItemData.ItemName));
-	Text_Price->SetText(FText::AsNumber(ItemData.Price));
-
-	GI = Cast<UNetGameInstance>(GetGameInstance());
-
-	SetItemDescription();
+	Refresh();
 
 }
 
@@ -154,4 +145,15 @@ void UMarket_ItemTile::SetItemDescription()
 			TextBlock_P->SetFont(FSlateFontInfo(FCoreStyle::GetDefaultFont(), 32));
 		}
 	}
+}
+
+void UMarket_ItemTile::Refresh()
+{
+
+	Text_Name->SetText(FText::FromName(ItemData.ItemName));
+	Text_Price->SetText(FText::AsNumber(ItemData.Price));
+
+	GI = Cast<UNetGameInstance>(GetGameInstance());
+
+	SetItemDescription();
 }

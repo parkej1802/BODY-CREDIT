@@ -26,17 +26,8 @@ void ULobbyWidget_BuyItem::NativeConstruct()
         Button_Cancel->OnUnhovered.AddDynamic(this, &ThisClass::OnCancelUnhovered);
     }
 
-    APlayerController* PC = GetOwningPlayer();
-    if (PC)
-    {
-        FInputModeUIOnly InputMode;
-        InputMode.SetWidgetToFocus(this->TakeWidget());
-        InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
-        PC->SetInputMode(InputMode);
-        PC->bShowMouseCursor = true;
-    }
-
-    SetUIGold();
+    PC = GetOwningPlayer();
+    Refresh();
 }
 
 void ULobbyWidget_BuyItem::OnConfirmClicked()
@@ -83,26 +74,40 @@ void ULobbyWidget_BuyItem::OnCancelUnhovered()
 
 void ULobbyWidget_BuyItem::HandleConfirmClicked()
 {
-    OnConfirmBuy.Broadcast(ItemObjctBuy);
+    OnConfirmBuy.Broadcast(ItemObjectBuy);
     RemoveFromParent();
 }
 
 void ULobbyWidget_BuyItem::HandleCancelClicked()
 {
-    OnCancelBuy.Broadcast(ItemObjctBuy);
+    OnCancelBuy.Broadcast(ItemObjectBuy);
     RemoveFromParent();
 }
 
-void ULobbyWidget_BuyItem::SetItemToBuy(class UItemObject* ItemObject)
+void ULobbyWidget_BuyItem::SetItemToBuy(UItemObject* ItemObject)
 {
-    ItemObjctBuy = ItemObject;
+    ItemObjectBuy = ItemObject;
 }
 
 void ULobbyWidget_BuyItem::SetUIGold()
 {
-    float ItemPrice = ItemObjctBuy->ItemData.Price;
+    float ItemPrice = ItemObjectBuy->ItemData.Price;
     float RemaingGold = MarketUI->GI->PlayerGold - ItemPrice;
     
     Text_ItemPrice->SetText(FText::AsNumber(ItemPrice));
     Text_RemaingGold->SetText(FText::AsNumber(RemaingGold));
+}
+
+void ULobbyWidget_BuyItem::Refresh()
+{
+    if (PC)
+    {
+        FInputModeUIOnly InputMode;
+        InputMode.SetWidgetToFocus(this->TakeWidget());
+        InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+        PC->SetInputMode(InputMode);
+        PC->bShowMouseCursor = true;
+    }
+
+    SetUIGold();
 }

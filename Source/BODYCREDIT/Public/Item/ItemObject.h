@@ -134,6 +134,7 @@ public:
 	EPlayerPart ItemType = EPlayerPart::Basic;
 
 	FItemSaveData ExportData() const;
+
 	void ImportData(const FItemSaveData& Data);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -156,4 +157,14 @@ public:
 
 	UPROPERTY()
 	bool bIsMenu = false;
+
+	void SetIconImages();
+
+	int32 GetSellPrice();
+
+	void SetItemStat();
+
+	UPROPERTY()
+	class UAC_InventoryBaseComponent* OwnerInventoryComp;
+	
 };

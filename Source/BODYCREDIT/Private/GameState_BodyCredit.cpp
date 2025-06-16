@@ -59,6 +59,7 @@ void AGameState_BodyCredit::SpawnItemHiddenFromActor(class UItemObject* ItemObje
 	SpawnLocation = Actor->GetActorLocation() + (Actor->GetActorForwardVector() * 150.f);
 
 	AItem_Base* ItemActor = GetWorld()->SpawnActor<AItem_Base>(ItemObject->ItemData.ItemClass, SpawnLocation, FRotator::ZeroRotator);
+	ItemObject->SetIconImages();
 	ItemObject->ItemActorOwner = ItemActor;
 	ItemActor->ItemObject = ItemObject;
 

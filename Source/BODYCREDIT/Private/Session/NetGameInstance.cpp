@@ -7,6 +7,8 @@
 #include "Sound/SoundMix.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundClass.h"
+#include "Item/ItemDT.h"
+#include "Item/Item_Base.h"
 
 void UNetGameInstance::Init()
 {	
@@ -34,6 +36,8 @@ void UNetGameInstance::Init()
 	AlivePart.Add(EPlayerPart::Body, true);
 	AlivePart.Add(EPlayerPart::Arm, true);
 	AlivePart.Add(EPlayerPart::Leg, true);
+
+	InitItemCache(ItemDataTable);
 
 	InitMix();
 }
@@ -126,6 +130,35 @@ void UNetGameInstance::PostInitProperties()
 	InitialPlayerGold = PlayerGold;
 }
 
+EItemRarity UNetGameInstance::GetRandomRarity()
+{
+	float Rand = FMath::FRand();
+	float Accum = 0.f;
+
+	if (Rand < (Accum += RarityRate.Common)) return EItemRarity::Common;
+	if (Rand < (Accum += RarityRate.Rare)) return EItemRarity::Rare;
+	if (Rand < (Accum += RarityRate.Epic)) return EItemRarity::Epic;
+	if (Rand < (Accum += RarityRate.Legendary)) return EItemRarity::Legendary;
+
+	return EItemRarity::Blank;
+}
+
+EItemRarity UNetGameInstance::GetRandomRarityByLootTier(ELootBoxTier Tier)
+{
+	FRarityProbability* Prob = LootBoxRarityMap.Find(Tier);
+	if (!Prob) return EItemRarity::Common;
+
+	float Roll = FMath::FRand();
+	float Accum = 0.f;
+
+	if (Roll < (Accum += Prob->Common))     return EItemRarity::Common;
+	if (Roll < (Accum += Prob->Rare))       return EItemRarity::Rare;
+	if (Roll < (Accum += Prob->Epic))       return EItemRarity::Epic;
+	if (Roll < (Accum += Prob->Legendary))  return EItemRarity::Legendary;
+
+	return EItemRarity::Common;
+}
+
 void UNetGameInstance::InitMix()
 {
 	if (!BGM_Mix)
@@ -177,6 +210,30 @@ void UNetGameInstance::SetExtractSound(float Volume, float Pitch)
 	UGameplayStatics::SetSoundMixClassOverride(GetWorld(), BGM_Mix, ExtractSoundClass, Volume, Pitch, 0.0f);
 }
 
+void UNetGameInstance::InitItemCache(UDataTable* ItemDT)
+{
+	if (!ItemDT) return;
+
+	CachedItemLists = {};
+
+	TArray<FName> RowNames = ItemDT->GetRowNames();
+
+	for (const FName& RowName : RowNames)
+	{
+		FItemData* Row = ItemDT->FindRow<FItemData>(RowName, TEXT("Cache"));
+		if (!Row || !Row->ItemClass) continue;
+
+		switch (Row->Rarity)
+		{
+		case EItemRarity::Common:    CachedItemLists.Common.Add(Row); break;
+		case EItemRarity::Rare:      CachedItemLists.Rare.Add(Row); break;
+		case EItemRarity::Epic:      CachedItemLists.Epic.Add(Row); break;
+		case EItemRarity::Legendary: CachedItemLists.Legendary.Add(Row); break;
+		default: break;
+		}
+	}
+}
+
 USoundCue* UNetGameInstance::GetBGM()
 {
 	return BGM_Cue;
@@ -204,6 +261,5 @@ void UNetGameInstance::PauseBGM(bool bIsPause)
 	{
 		Controller->PauseBGM(bIsPause);
 	}
-
 }
 

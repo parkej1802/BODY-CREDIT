@@ -71,7 +71,7 @@ public:
 	void HandleCancelClicked();
 
 	UPROPERTY()
-	class UItemObject* ItemObjctBuy;
+	class UItemObject* ItemObjectBuy;
 
 	UFUNCTION(BlueprintCallable)
 	void SetItemToBuy(class UItemObject* ItemObject);
@@ -86,4 +86,9 @@ public:
 	class UTextBlock* Text_RemaingGold;
 
 	void SetUIGold();
+
+	void Refresh();
+
+	UPROPERTY()
+	class APlayerController* PC;
 };
