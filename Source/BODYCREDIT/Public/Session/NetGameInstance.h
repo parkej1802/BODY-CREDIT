@@ -187,4 +187,10 @@ public:
 	FItemListByRarity CachedItemLists;
 
 	void InitItemCache(UDataTable* ItemDT);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 MaxNumKey = 1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 NumKeySpawned = 0;
 }; 
