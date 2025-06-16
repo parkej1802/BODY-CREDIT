@@ -194,4 +194,17 @@ public:
 private:
 	bool bExtractSucceed = true;
 #pragma endregion
+
+#pragma region Sound
+protected:
+    UPROPERTY(VisibleAnywhere)
+    class UAudioComponent* SoundComponent;
+
+    UPROPERTY(EditDefaultsOnly, Category = "Sound")
+    class USoundCue* IdleSoundCue;
+
+public:
+	void PlayIdleSound();
+	void StopIdleSound();
+#pragma endregion
 };
