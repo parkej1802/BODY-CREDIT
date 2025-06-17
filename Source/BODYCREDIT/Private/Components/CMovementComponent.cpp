@@ -238,7 +238,6 @@ void UCMovementComponent::OnVerticalLook(const FInputActionValue& InVal)
 	const FVector2D input = InVal.Get<FVector2D>();
 	CheckTrue(input.Y == 0);
 
-	CLog::Print("11");
 	OwnerCharacter->AddControllerPitchInput(input.Y * VerticalLook * GetWorld()->GetDeltaSeconds());
 
 }
