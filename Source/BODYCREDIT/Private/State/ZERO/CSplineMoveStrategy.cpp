@@ -124,7 +124,7 @@ void CSplineMoveStrategy::RandomMove(ACNox_EBase* Owner)
 	{
 		RanLocation = GetRandomLocation(Owner); // 랜덤 위치 구하기
 		if (Owner->bDebug)
-			DrawDebugSphere(Owner->GetWorld(), RanLocation, 10, 10, FColor::Green, true, 5);
+			DrawDebugSphere(Owner->GetWorld(), RanLocation, 10, 10, FColor::Green, true, 1);
 		bMoving = true;
 		LastPosition = FVector::ZeroVector;
 		StuckTime = 0.f;

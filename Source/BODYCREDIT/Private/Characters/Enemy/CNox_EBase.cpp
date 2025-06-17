@@ -285,63 +285,144 @@ void ACNox_EBase::ExtractCallFunction(ACNox* InTarget)
 #pragma region Sound
 void ACNox_EBase::PlayIdleSound()
 {
-	if (IdleSoundCue && SoundComponent->Sound != IdleSoundCue)
+	if (!IdleSoundCue)
+		return;
+
+	if (SoundComponent->Sound != IdleSoundCue)
 	{
 		SoundComponent->SetSound(IdleSoundCue);
+		SoundComponent->Play();
+	}
+	else if (!SoundComponent->IsPlaying())
+	{
 		SoundComponent->Play();
 	}
 }
 
 void ACNox_EBase::PlaySenseSound()
 {
-	if (SenseSoundCue && SoundComponent->Sound != SenseSoundCue)
+	if (!SenseSoundCue)
+		return;
+
+	if (SoundComponent->Sound != SenseSoundCue)
 	{
 		SoundComponent->SetSound(SenseSoundCue);
+		SoundComponent->Play();
+	}
+	else if (!SoundComponent->IsPlaying())
+	{
 		SoundComponent->Play();
 	}
 }
 
 void ACNox_EBase::PlayAttackSound()
 {
-	if (AttackSoundCue && SoundComponent->Sound != AttackSoundCue)
+	if (!AttackSoundCue)
+		return;
+
+	if (SoundComponent->Sound != AttackSoundCue)
 	{
 		SoundComponent->SetSound(AttackSoundCue);
+		SoundComponent->Play();
+	}
+	else if (!SoundComponent->IsPlaying())
+	{
 		SoundComponent->Play();
 	}
 }
 
 void ACNox_EBase::PlayGrenadeSound()
 {
-	if (GrenadeSoundCue && SoundComponent->Sound != GrenadeSoundCue)
+	if (!GrenadeSoundCue)
+		return;
+
+	if (SoundComponent->Sound != GrenadeSoundCue)
 	{
 		SoundComponent->SetSound(GrenadeSoundCue);
+		SoundComponent->Play();
+	}
+	else if (!SoundComponent->IsPlaying())
+	{
 		SoundComponent->Play();
 	}
 }
 
 void ACNox_EBase::PlayHealSound()
 {
-	if (HealSoundCue && SoundComponent->Sound != HealSoundCue)
+	if (!HealSoundCue)
+		return;
+
+	if (SoundComponent->Sound != HealSoundCue)
 	{
 		SoundComponent->SetSound(HealSoundCue);
+		SoundComponent->Play();
+	}
+	else if (!SoundComponent->IsPlaying())
+	{
+		SoundComponent->Play();
+	}
+}
+
+void ACNox_EBase::PlayBeamSound()
+{
+	if (!BeamSoundCue)
+		return;
+
+	if (SoundComponent->Sound != BeamSoundCue)
+	{
+		SoundComponent->SetSound(BeamSoundCue);
+		SoundComponent->Play();
+	}
+	else if (!SoundComponent->IsPlaying())
+	{
+		SoundComponent->Play();
+	}
+}
+
+void ACNox_EBase::PlayWavePulseSound()
+{
+	if (!WavePulseSoundCue)
+		return;
+
+	if (SoundComponent->Sound != WavePulseSoundCue)
+	{
+		SoundComponent->SetSound(WavePulseSoundCue);
+		SoundComponent->Play();
+	}
+	else if (!SoundComponent->IsPlaying())
+	{
 		SoundComponent->Play();
 	}
 }
 
 void ACNox_EBase::PlayHitSound()
 {
-	if (HitSoundCue && SoundComponent->Sound != HitSoundCue)
+	if (!HitSoundCue)
+		return;
+
+	if (SoundComponent->Sound != HitSoundCue)
 	{
 		SoundComponent->SetSound(HitSoundCue);
+		SoundComponent->Play();
+	}
+	else if (!SoundComponent->IsPlaying())
+	{
 		SoundComponent->Play();
 	}
 }
 
 void ACNox_EBase::PlayDieSound()
 {
-	if (DieSoundCue && SoundComponent->Sound != DieSoundCue)
+	if (!DieSoundCue)
+		return;
+
+	if (SoundComponent->Sound != DieSoundCue)
 	{
 		SoundComponent->SetSound(DieSoundCue);
+		SoundComponent->Play();
+	}
+	else if (!SoundComponent->IsPlaying())
+	{
 		SoundComponent->Play();
 	}
 }

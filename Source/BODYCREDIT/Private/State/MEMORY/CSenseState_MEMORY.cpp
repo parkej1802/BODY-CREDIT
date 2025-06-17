@@ -8,8 +8,9 @@ CSenseState_MEMORY::CSenseState_MEMORY(TUniquePtr<CConditionalMoveStrategy_MEMOR
 {
 }
 
-void CSenseState_MEMORY::Execute(class ACNox_EBase* Owner, class UCFSMComponent* FSMComp)
+void CSenseState_MEMORY::Execute(ACNox_EBase* Owner, UCFSMComponent* FSMComp)
 {
+	Owner->PlaySenseSound();
 	if (MoveStrategy) MoveStrategy->Move(Owner, Owner->GetWorld()->GetDeltaSeconds());
 
 	Owner->UpdateSkillCoolDowns(ESkillCoolDown::Ranged, Owner->GetWorld()->GetDeltaSeconds());

@@ -2,179 +2,210 @@
 #include "Global.h"
 #include "NiagaraComponent.h"
 #include "Characters/Enemy/CNox_MemoryCollectorAI.h"
-#include "Global.h"
 #include "Characters/CNox_Runner.h"
 
 ACBeam::ACBeam()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	
+	// 컴포넌트 생성
+	CreateComponents();
+	
+	// VFX 에셋 설정
+	SetupVFXAssets();
+}
+
+void ACBeam::CreateComponents()
+{
 	CHelpers::CreateComponent<USceneComponent>(this, &rootScene, "rootScene");
 	CHelpers::CreateComponent<UNiagaraComponent>(this, &LaserBeamVFX, "LaserBeamVFX", RootComponent);
 	CHelpers::CreateComponent<UNiagaraComponent>(this, &FireBallVFX, "FireBallVFX", RootComponent);
 	CHelpers::CreateComponent<UNiagaraComponent>(this, &HitVFX, "HitVFX", RootComponent);
+}
 
-	UNiagaraSystem* LaserBeamVFXSys = nullptr;
-	// CHelpers::GetAsset<UNiagaraSystem>(&LaserBeamVFXSys,
-	//                                    TEXT(
-	// 	                                   "/Game/Assets/LaserBeam/Niagara/LaserBeam/NS_RibbonBeam1V3.NS_RibbonBeam1V3"));
-	// if (LaserBeamVFXSys)
-	// {
-	// 	LaserBeamVFX->SetAsset(LaserBeamVFXSys);
-	// 	LaserBeamVFX->SetAutoActivate(false);
-	// }
-	CHelpers::GetAsset<UNiagaraSystem>(&LaserBeamVFXSys,
-	                                   TEXT(
-		                                   "/Game/Assets/3D_Lasers/Effects/NS_Beam_3.NS_Beam_3"));
-	if (LaserBeamVFXSys)
+void ACBeam::SetupVFXAssets()
+{
+	// 레이저 빔 VFX 설정
+	UNiagaraSystem* NiagaraSys = nullptr;
+	CHelpers::GetAsset<UNiagaraSystem>(&NiagaraSys, TEXT("/Game/Assets/3D_Lasers/Effects/NS_Beam_3.NS_Beam_3"));
+	if (NiagaraSys)
 	{
-		LaserBeamVFX->SetAsset(LaserBeamVFXSys);
+		LaserBeamVFX->SetAsset(NiagaraSys);
 		LaserBeamVFX->SetAutoActivate(false);
 	}
 
-	CHelpers::GetAsset<UNiagaraSystem>(&LaserBeamVFXSys,
-	                                   TEXT("/Game/Assets/LaserBeam/Niagara/FireBall/NS_FireBall5.NS_FireBall5"));
-	if (LaserBeamVFXSys)
+	// 파이어볼 VFX 설정
+	CHelpers::GetAsset<UNiagaraSystem>(&NiagaraSys, TEXT("/Game/Assets/LaserBeam/Niagara/FireBall/NS_FireBall5.NS_FireBall5"));
+	if (NiagaraSys)
 	{
-		FireBallVFX->SetAsset(LaserBeamVFXSys);
+		FireBallVFX->SetAsset(NiagaraSys);
 		FireBallVFX->SetAutoActivate(false);
 	}
 
-	// CHelpers::GetAsset<UNiagaraSystem>(&LaserBeamVFXSys,
-	//                                    TEXT("/Game/Assets/LaserBeam/Niagara/HitPoint/NS_LiquidHit.NS_LiquidHit"));
-	// if (LaserBeamVFXSys)
-	// {
-	// 	HitVFX->SetAsset(LaserBeamVFXSys);
-	// 	HitVFX->SetAutoActivate(false);
-	// }
-	CHelpers::GetAsset<UNiagaraSystem>(&LaserBeamVFXSys,
-	                                   TEXT("/Game/Assets/3D_Lasers/Effects/NS_LaserHit_3.NS_LaserHit_3"));
-	if (LaserBeamVFXSys)
+	// 히트 VFX 설정
+	CHelpers::GetAsset<UNiagaraSystem>(&NiagaraSys, TEXT("/Game/Assets/3D_Lasers/Effects/NS_LaserHit_3.NS_LaserHit_3"));
+	if (NiagaraSys)
 	{
-		HitVFX->SetAsset(LaserBeamVFXSys);
+		HitVFX->SetAsset(NiagaraSys);
 		HitVFX->SetAutoActivate(false);
 	}
-
-	// TSubclassOf<UMaterialInstance> tmpDecal = nullptr;
-	// CHelpers::GetClass<UMaterialInstance>(&tmpDecal,
-	//                                       TEXT(
-	// 	                                      "/Game/Assets/LaserBeam/Materials/Instance/MI_Fire_DecalGoldern.MI_Fire_DecalGoldern"));
-	// if (tmpDecal)
-	// 	FireDecal = tmpDecal.GetDefaultObject();
-	// CHelpers::GetClass<UMaterialInstance>(&tmpDecal,
-	//                                       TEXT(
-	// 	                                      "/Game/Assets/LaserBeam/Materials/Decal/M_FireDecal.M_FireDecal"));
-	// if (tmpDecal)
-	// 	GlowDecal = tmpDecal.GetDefaultObject();
 }
 
 void ACBeam::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	// VFX 초기화
+	DeactivateAllVFX();
+	
+	// AI 컨트롤러 설정
+	OwnerAI = Cast<ACNox_MemoryCollectorAI>(GetOwner());
+}
+
+void ACBeam::DeactivateAllVFX()
+{
 	LaserBeamVFX->DeactivateImmediate();
 	FireBallVFX->Deactivate();
 	HitVFX->DeactivateImmediate();
-
-	OwnerAI = Cast<ACNox_MemoryCollectorAI>(GetOwner());
 }
 
 void ACBeam::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
+	UpdateDamageTimer(DeltaTime);
+	
 	if (TargetActor && AttackStart)
 	{
-		FVector start = rootScene->GetComponentLocation();
-		// LaserBeamVFX->SetVariableVec3(FName("User.Start"), start);
+		UpdateBeamPosition(DeltaTime);
+		UpdateAttackDelay(DeltaTime);
+	}
+}
 
-		float newPitch = FMath::Lerp(
-			CurPitch, (TargetActor->GetActorLocation() - GetActorLocation()).GetSafeNormal().Rotation().Pitch,
-			DeltaTime * 3);
-		CurPitch = newPitch;
-		
-		FRotator NewRotation = FRotator(newPitch, 0, 0);
-		FRotator aiRot = OwnerAI->GetActorRotation();
-		// CLog::Print(FString::Printf(TEXT("AI Yaw : %.2f"), aiRot.Yaw));
-		if (((180 > aiRot.Yaw && aiRot.Yaw > 90) || (-90 > aiRot.Yaw && aiRot.Yaw > -180))) NewRotation.Pitch *= -1;
-		
-		FVector Direction = NewRotation.RotateVector(OwnerAI->GetActorForwardVector() * AttackRange);
-		FVector end = start + Direction;
-
-		FHitResult HitResult;
-		FCollisionQueryParams params;
-		params.AddIgnoredActor(this);
-		params.AddIgnoredActor(OwnerAI);
-		if (GetWorld()->LineTraceSingleByChannel(HitResult, start, end, ECC_Visibility, params))
+void ACBeam::UpdateDamageTimer(float DeltaTime)
+{
+	if (bApplyDamage)
+	{
+		if (DamageTimer <= DamageInterval)
 		{
-			// CLog::Print(
-			// 	FString::Printf(TEXT("Hit OK, Distance : %.2f"), FVector::Distance(start, HitResult.Location)));
-			// LaserBeamVFX->SetVariableVec3(FName("User.End"), HitResult.Location);
-			LaserBeamVFX->SetVariableVec3(FName("User.LaserEnd"), HitResult.Location);
-			if (!HitVFX->IsActive()) HitVFX->Activate(true);
-			HitVFX->SetWorldLocation(HitResult.Location + 10);
-
-			// UGameplayStatics::SpawnDecalAtLocation(this->GetWorld(), this->FireDecal,
-			//                                        FVector(FMath::FRandRange(5.f, 20.f),
-			//                                                FMath::FRandRange(5.f, 20.f),
-			//                                                FMath::FRandRange(5.f, 20.f)),
-			//                                        HitResult.Location, FRotator(-90.f, 0.f, 0.f), 2.f);
-			// UGameplayStatics::SpawnDecalAtLocation(this->GetWorld(), this->GlowDecal,
-			//                                        FVector(FMath::FRandRange(10.f, 40.f),
-			//                                                FMath::FRandRange(10.f, 40.f),
-			//                                                FMath::FRandRange(10.f, 40.f)),
-			//                                        HitResult.Location, FRotator(-90.f, 0.f, 0.f), 4.f);
+			DamageTimer += DeltaTime;
 		}
 		else
 		{
-			// CLog::Print(FString::Printf(TEXT("Hit NO, Distance : %.2f"), FVector::Distance(start, end)));
-			// LaserBeamVFX->SetVariableVec3(FName("User.End"), end);
-			LaserBeamVFX->SetVariableVec3(FName("User.LaserEnd"), end);
-			HitVFX->DeactivateImmediate();
-		}
-
-		CurAttackDelay += DeltaTime;
-		if (CurAttackDelay >= AttackDelay)
-		{
-			if (HitResult.GetActor() && HitResult.GetActor()->IsA(ACNox_Runner::StaticClass()))
-			{
-				// CLog::Log(FString::Printf(TEXT("Hit")));
-			}
-			CurAttackDelay = 0.f;
+			bApplyDamage = false;
 		}
 	}
 }
 
-void ACBeam::SetActorHiddenInGame(bool bNewHidden)
+void ACBeam::UpdateBeamPosition(float DeltaTime)
 {
-	Super::SetActorHiddenInGame(bNewHidden);
+	FVector start = rootScene->GetComponentLocation();
+	FVector end = CalculateBeamEnd(DeltaTime);
+	
+	// 레이캐스트 수행
+	FHitResult HitResult;
+	if (PerformLineTrace(start, end, HitResult))
+	{
+		HandleBeamHit(HitResult);
+	}
+	else
+	{
+		HandleBeamMiss(end);
+	}
+}
+
+FVector ACBeam::CalculateBeamEnd(float DeltaTime)
+{
+	// 피치 각도 계산
+	float newPitch = FMath::Lerp(
+		CurPitch, 
+		(TargetActor->GetActorLocation() - GetActorLocation()).GetSafeNormal().Rotation().Pitch,
+		DeltaTime * 3
+	);
+	CurPitch = newPitch;
+
+	// 회전값 계산
+	FRotator NewRotation = FRotator(newPitch, 0, 0);
+	FRotator aiRot = OwnerAI->GetActorRotation();
+	if (((180 > aiRot.Yaw && aiRot.Yaw > 90) || (-90 > aiRot.Yaw && aiRot.Yaw > -180))) 
+		NewRotation.Pitch *= -1;
+
+	// 빔 방향 계산
+	FVector Direction = NewRotation.RotateVector(OwnerAI->GetActorForwardVector() * AttackRange);
+	return rootScene->GetComponentLocation() + Direction;
+}
+
+bool ACBeam::PerformLineTrace(const FVector& Start, const FVector& End, FHitResult& OutHitResult)
+{
+	FCollisionQueryParams params;
+	params.AddIgnoredActor(this);
+	params.AddIgnoredActor(OwnerAI);
+	
+	return GetWorld()->LineTraceSingleByChannel(OutHitResult, Start, End, ECC_Visibility, params);
+}
+
+void ACBeam::HandleBeamHit(const FHitResult& HitResult)
+{
+	LaserBeamVFX->SetVariableVec3(FName("User.LaserEnd"), HitResult.Location);
+	
+	if (!HitVFX->IsActive()) 
+		HitVFX->Activate(true);
+	HitVFX->SetWorldLocation(HitResult.Location + 10);
+
+	if (!bApplyDamage && HitResult.GetActor()->IsA(ACNox_Runner::StaticClass()))
+		OwnerAI->SetApplyDamage(HitResult.GetActor(), 10.f);
+}
+
+void ACBeam::HandleBeamMiss(const FVector& EndLocation)
+{
+	LaserBeamVFX->SetVariableVec3(FName("User.LaserEnd"), EndLocation);
+	HitVFX->DeactivateImmediate();
+}
+
+void ACBeam::UpdateAttackDelay(float DeltaTime)
+{
+	CurAttackDelay += DeltaTime;
+	if (CurAttackDelay >= AttackDelay)
+	{
+		CurAttackDelay = 0.f;
+	}
 }
 
 void ACBeam::SetBeamActive(bool bInActive, AActor* InTarget)
 {
 	SetActorHiddenInGame(!bInActive);
 	TargetActor = InTarget;
+	
 	if (bInActive)
 	{
-		CurPitch = (InTarget->GetActorLocation() - GetActorLocation()).GetSafeNormal().Rotation().Pitch;		
-		FireBallVFX->Activate(true);
-
-		GetWorldTimerManager().SetTimer(ActiveTimer, [this]()
-		{
-			AttackStart = true;			
-			LaserBeamVFX->Activate(true);			
-			HitVFX->Activate(true);
-		}, ActiveDelay, false);
+		InitializeBeam(InTarget);
 	}
 	else
 	{
-		AttackStart = false;
-		// FireBallVFX->ResetSystem();
-		FireBallVFX->Deactivate();
-		
-		// LaserBeamVFX->ResetSystem();
-		// LaserBeamVFX->Deactivate();
-		LaserBeamVFX->DeactivateImmediate();
-		
-		// HitVFX->ResetSystem();
-		// HitVFX->Deactivate();
-		HitVFX->DeactivateImmediate();
+		DeactivateBeam();
 	}
+}
+
+void ACBeam::InitializeBeam(AActor* InTarget)
+{
+	DamageTimer = 0.0f;
+	bApplyDamage = false;
+	
+	CurPitch = (InTarget->GetActorLocation() - GetActorLocation()).GetSafeNormal().Rotation().Pitch;
+	FireBallVFX->Activate(true);
+
+	GetWorldTimerManager().SetTimer(ActiveTimer, [this]()
+	{
+		AttackStart = true;
+		LaserBeamVFX->Activate(true);
+		HitVFX->Activate(true);
+	}, ActiveDelay, false);
+}
+
+void ACBeam::DeactivateBeam()
+{
+	AttackStart = false;
+	FireBallVFX->Deactivate();
+	LaserBeamVFX->DeactivateImmediate();
+	HitVFX->DeactivateImmediate();
 }

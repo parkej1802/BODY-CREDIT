@@ -255,5 +255,34 @@ public:
 
 	void CheckFootstep(FName FootSocketName, bool& bWasOnGround);
 	void PlayFootstepSound(const FVector& Location);
+
+	// 보행 상태별 노이즈 세기 (AI 인식 강도)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Footstep|Noise")
+	float WalkNoiseLoudness  = 0.5f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Footstep|Noise")
+	float SprintNoiseLoudness = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Footstep|Noise")
+	float CrouchNoiseLoudness = 0.2f;
+
+	// 상태별 발소리 배열
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Footstep|Sound")
+	TArray<USoundBase*> WalkFootstepSounds;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Footstep|Sound")
+	TArray<USoundBase*> SprintFootstepSounds;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Footstep|Sound")
+	TArray<USoundBase*> CrouchFootstepSounds;
+
+	// 스프린트 속도 임계값
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Footstep")
+	float SprintSpeedThreshold = 600.f;
+
+	// 노이즈 세기 계산
+	UFUNCTION()
+	float GetFootstepNoiseLoudness() const;
+	
 	void Reset();
 };

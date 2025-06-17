@@ -30,7 +30,7 @@ void ULobbyWidget_Main::NativeConstruct()
 
     PlayerCharacter = Cast<ACNox_Runner>(PC->GetPawn());
     
-    PlayerCharacter->OffMovement();
+    // PlayerCharacter->OffMovement();
 
     if (Button_NewGame)
     {

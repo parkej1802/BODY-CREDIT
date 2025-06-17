@@ -2,6 +2,7 @@
 #include "Global.h"
 #include "NiagaraComponent.h"
 #include "Characters/CNox_Runner.h"
+#include "Characters/Enemy/CNox_EBase.h"
 #include "Engine/OverlapResult.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 
@@ -24,6 +25,8 @@ void ACElectricGrenade::BeginPlay()
 	Super::BeginPlay();
 	UseFX(false);
 	Init(false);
+
+	OwnerAI = Cast<ACNox_EBase>(GetOwner());
 }
 
 void ACElectricGrenade::Tick(float DeltaTime)
@@ -61,7 +64,8 @@ void ACElectricGrenade::Explode()
 	Params.AddIgnoredActor(this); // 수류탄 자신 제외
 	Params.AddIgnoredActor(GetOwner());
 
-	DrawDebugSphere(GetWorld(), Origin, Radius, 10, FColor::Red, true, 1.0f);
+	if (OwnerAI->bDebug)
+		DrawDebugSphere(GetWorld(), Origin, Radius, 10, FColor::Red, true, 1.0f);
 	GetWorld()->OverlapMultiByChannel(
 		Overlaps,
 		Origin,

@@ -7,6 +7,7 @@ void CDieState_MEMORY::Execute(class ACNox_EBase* Owner, class UCFSMComponent* F
 	if (!bFired)
 	{
 		Owner->HandleDie();
+		Owner->PlayDieSound();
 		bFired = true;
 	}
 }
