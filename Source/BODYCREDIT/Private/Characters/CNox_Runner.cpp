@@ -23,6 +23,7 @@
 #include "Components/SceneCaptureComponent2D.h"
 #include "Characters/CNox_Controller.h"
 #include "Components/CNoxObserverComp.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Lobby/LobbyWidget_Failed.h"
 
 ACNox_Runner::ACNox_Runner()
@@ -494,41 +495,114 @@ void ACNox_Runner::CacheDefaultSkeletalMeshes()
 void ACNox_Runner::CheckFootstep(FName FootSocketName, bool& bWasOnGround)
 {
 	FVector FootLocation = GetMesh()->GetSocketLocation(FootSocketName);
-	FVector Start = FootLocation + FVector(0, 0, 5); // 약간 위에서 시작
-	FVector End = FootLocation - FVector(0, 0, 20); // 아래로 쏨
+	FVector Start        = FootLocation + FVector(0, 0, 5);
+	FVector End          = FootLocation - FVector(0, 0, 20);
 
 	FHitResult Hit;
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);
 
-	bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, Params);
-
+	bool bHit          = GetWorld()->LineTraceSingleByChannel(
+							 Hit, Start, End, ECC_Visibility, Params);
 	bool bNowOnGround = bHit && Hit.bBlockingHit;
 
-	// 떨어져 있다가 이번 프레임에 바닥에 닿았으면 (= 발 디딤)
 	if (!bWasOnGround && bNowOnGround)
 	{
-		// 여기서 발소리 재생!
+		// 발소리 재생
 		PlayFootstepSound(FootLocation);
 
-		// MakeNoise도 여기서 호출 가능
-		MakeNoise(1.0f, this, FootLocation);
+		// 상태별 노이즈 세기 적용
+		float Loudness = GetFootstepNoiseLoudness();
+		MakeNoise(Loudness, this, FootLocation);
 	}
 
 	bWasOnGround = bNowOnGround;
+	
+	// FVector FootLocation = GetMesh()->GetSocketLocation(FootSocketName);
+	// FVector Start = FootLocation + FVector(0, 0, 5); // 약간 위에서 시작
+	// FVector End = FootLocation - FVector(0, 0, 20); // 아래로 쏨
+	//
+	// FHitResult Hit;
+	// FCollisionQueryParams Params;
+	// Params.AddIgnoredActor(this);
+	//
+	// bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, Params);
+	//
+	// bool bNowOnGround = bHit && Hit.bBlockingHit;
+	//
+	// // 떨어져 있다가 이번 프레임에 바닥에 닿았으면 (= 발 디딤)
+	// if (!bWasOnGround && bNowOnGround)
+	// {
+	// 	// 여기서 발소리 재생!
+	// 	PlayFootstepSound(FootLocation);
+	//
+	// 	// MakeNoise도 여기서 호출 가능
+	// 	MakeNoise(1.0f, this, FootLocation);
+	// }
+	//
+	// bWasOnGround = bNowOnGround;
 }
 
 void ACNox_Runner::PlayFootstepSound(const FVector& Location)
 {
-	if (FootstepSounds.Num() > 0)
+	UCharacterMovementComponent* MoveComp = GetCharacterMovement();
+	bool bCrouched                     = MoveComp->IsCrouching();
+	float Speed                          = MoveComp->Velocity.Size();
+	bool bIsSprinting                    = (Speed > SprintSpeedThreshold);
+
+	TArray<USoundBase*>* SoundArray = nullptr;
+
+	if (bCrouched)
 	{
-		int32 Index = FMath::RandRange(0, FootstepSounds.Num() - 1);
-		USoundBase* SelectedSound = FootstepSounds[Index];
+		SoundArray = &CrouchFootstepSounds;
+	}
+	else if (bIsSprinting)
+	{
+		SoundArray = &SprintFootstepSounds;
+	}
+	else
+	{
+		SoundArray = &WalkFootstepSounds;
+	}
+
+	if (SoundArray && SoundArray->Num() > 0)
+	{
+		int32 Index = FMath::RandRange(0, SoundArray->Num() - 1);
+		USoundBase* SelectedSound = (*SoundArray)[Index];
 		if (SelectedSound)
 		{
-			UGameplayStatics::PlaySoundAtLocation(GetWorld(), SelectedSound, Location);
+			UGameplayStatics::PlaySoundAtLocation(
+				GetWorld(), SelectedSound, Location);
 		}
 	}
+	
+	// if (FootstepSounds.Num() > 0)
+	// {
+	// 	int32 Index = FMath::RandRange(0, FootstepSounds.Num() - 1);
+	// 	USoundBase* SelectedSound = FootstepSounds[Index];
+	// 	if (SelectedSound)
+	// 	{
+	// 		UGameplayStatics::PlaySoundAtLocation(GetWorld(), SelectedSound, Location);
+	// 	}
+	// }
+}
+
+float ACNox_Runner::GetFootstepNoiseLoudness() const
+{
+	UCharacterMovementComponent* MoveComp = GetCharacterMovement();
+	bool bCrouched  = MoveComp->IsCrouching();
+	float Speed = MoveComp->Velocity.Size();
+	bool bIsSprinting = (Speed > SprintSpeedThreshold);
+
+	if (bCrouched)
+	{
+		return CrouchNoiseLoudness;
+	}
+	else if (bIsSprinting)
+	{
+		return SprintNoiseLoudness;
+	}
+	return WalkNoiseLoudness;
 }
 
 void ACNox_Runner::Reset()

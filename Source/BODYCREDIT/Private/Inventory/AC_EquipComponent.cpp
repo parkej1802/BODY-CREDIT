@@ -15,6 +15,7 @@
 #include "Item/ItemObject.h"
 #include "Item/Item_Base.h"
 #include "AC_LootingInventoryComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values for this component's properties
 UAC_EquipComponent::UAC_EquipComponent()
@@ -203,13 +204,17 @@ UItemObject* UAC_EquipComponent::CreateItemFromData(const FItemSaveData& Data)
 
 void UAC_EquipComponent::SetPlayerStat(UItemObject* Item, int32 Direction)
 {
-	PlayerCharacter->HPComp->Health += Direction * Item->ItemData.StatIncrease.Health;
+	PlayerCharacter->HPComp->MaxHealth += Direction * Item->ItemData.StatIncrease.Health;
+	PlayerCharacter->HPComp->MaxStamina += Direction * Item->ItemData.StatIncrease.Stamina;
 	PlayerCharacter->HPComp->Strength += Direction * Item->ItemData.StatIncrease.Strength;
-	PlayerCharacter->HPComp->MovementSpeed += Direction * Item->ItemData.StatIncrease.MoveSpeed;
 	PlayerCharacter->HPComp->Defense += Direction * Item->ItemData.StatIncrease.Armor;
-	PlayerCharacter->HPComp->Stamina += Direction * Item->ItemData.StatIncrease.Stamina;
 	PlayerCharacter->HPComp->Weight += Direction * Item->ItemData.Weight;
+	PlayerCharacter->HPComp->MovementSpeed += Direction * Item->ItemData.StatIncrease.MoveSpeed - (PlayerCharacter->HPComp->Weight - 60);
 	PlayerCharacter->HPComp->Humanity += Direction * Item->ItemData.StatIncrease.Humanity;
+
+	PlayerCharacter->HPComp->InitStatus();
+	// PlayerCharacter->Movement->InitMovement(PlayerCharacter->HPComp->MovementSpeed);
+	// PlayerCharacter->Weapon->Init(); 
 }
 
 int32 UAC_EquipComponent::CalculatePriceOfEquippedItem()

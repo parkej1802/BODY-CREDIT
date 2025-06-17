@@ -88,6 +88,13 @@ void UCMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	if (UCameraComponent* camera = CHelpers::GetComponent<UCameraComponent>(OwnerCharacter))
 		camera->SetFieldOfView(FMath::FInterpTo(camera->FieldOfView, TargetFOV, DeltaTime, FOVInterpSpeed));
 
+	if (UCNoxHPComponent* hp = CHelpers::GetComponent<UCNoxHPComponent>(OwnerCharacter))
+	{
+		float f = hp->MovementSpeed - 500;
+
+		for (int32 i = 0; i < (int32)ESpeedType::MAX; ++i)
+			Speed[i] = BackupSpeed[i] + f;
+	}
 }
 
 void UCMovementComponent::BindInput(UEnhancedInputComponent* InEnhancedInputComponent)
@@ -214,7 +221,7 @@ void UCMovementComponent::OffMovement(const FInputActionValue& InVal)
 void UCMovementComponent::OnHorizontalLook(const FInputActionValue& InVal)
 {
 	CheckFalse(CHelpers::GetComponent<UCStateComponent>(OwnerCharacter)->IsIdleMode());
-	CheckTrue(bFixedCamera);
+	// CheckTrue(bFixedCamera);
 
 	const FVector2D input = InVal.Get<FVector2D>();
 	CheckTrue(input.X == 0);
@@ -226,7 +233,7 @@ void UCMovementComponent::OnHorizontalLook(const FInputActionValue& InVal)
 void UCMovementComponent::OnVerticalLook(const FInputActionValue& InVal)
 {
 	CheckFalse(CHelpers::GetComponent<UCStateComponent>(OwnerCharacter)->IsIdleMode());
-	CheckTrue(bFixedCamera);
+	// CheckTrue(bFixedCamera);
 
 	const FVector2D input = InVal.Get<FVector2D>();
 	CheckTrue(input.Y == 0);
