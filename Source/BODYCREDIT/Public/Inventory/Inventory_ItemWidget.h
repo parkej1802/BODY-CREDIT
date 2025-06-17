@@ -63,6 +63,9 @@ public:
 	UPROPERTY()
 	class ULobbyWidget_ItemMenu* ItemMenuUI;
 
+	UFUNCTION()
+	void RemoveWidget();
+
 public:
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual void NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;

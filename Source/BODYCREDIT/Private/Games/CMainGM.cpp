@@ -69,7 +69,7 @@ void ACMainGM::Tick(float DeltaSeconds)
 					{
 						FailedWidget->AddToViewport();
 
-						FInputModeUIOnly InputMode;
+						FInputModeGameAndUI InputMode;
 						InputMode.SetWidgetToFocus(FailedWidget->TakeWidget());
 						PC->SetInputMode(InputMode);
 						PC->bShowMouseCursor = true;

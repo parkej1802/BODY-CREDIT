@@ -30,11 +30,18 @@ void ULobbyWidget_Success::NativeConstruct()
         PlayAnimation(Anim_BackGround, 0.0f, 9999, EUMGSequencePlayMode::Forward);
     }
 
+
+    GI = Cast<UNetGameInstance>(GetGameInstance());
+
     Refresh();
 }
 
 void ULobbyWidget_Success::OnContinueClicked()
 {
+    Cast<ACNox_Runner>(GetWorld()->GetFirstPlayerController()->GetPawn())->IsEscape = false;
+
+    GI->PlayConfirmSound();
+
     if (LobbyWidget_Selection)
     {
         LobbyWidget_Selection->AddToViewport();
@@ -56,6 +63,8 @@ void ULobbyWidget_Success::OnContinueClicked()
 
 void ULobbyWidget_Success::OnContinueHovered()
 {
+    GI->PlayHoveredSound();
+
     if (Anim_Hovered_Continue)
     {
         PlayAnimation(Anim_Hovered_Continue);
@@ -97,7 +106,9 @@ void ULobbyWidget_Success::Refresh()
     PC->SetInputMode(InputMode);
     PC->bShowMouseCursor = true;
 
-    UNetGameInstance* GI = Cast<UNetGameInstance>(GetGameInstance());
+
+    GI = Cast<UNetGameInstance>(GetGameInstance());
+
     // GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, FString::Printf(TEXT("DayLeft %d"), GI->DayLeft));
     if (GI->DayLeft == 1)
     {

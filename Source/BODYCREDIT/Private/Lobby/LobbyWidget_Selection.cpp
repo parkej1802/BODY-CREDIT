@@ -70,7 +70,7 @@ void ULobbyWidget_Selection::NativeConstruct()
     GM->SpawnEnemy();
     
     PlayerCharacter->RemovePlayerMainUI();    
-
+    GI->IsPlayerDead = false;
 }
 
 void ULobbyWidget_Selection::OnPlayClicked()
@@ -86,6 +86,8 @@ void ULobbyWidget_Selection::OnPlayClicked()
 			RemoveFromParent();
 		}
 	}*/
+
+    GI->PlayConfirmSound();
 
     if (LobbyWidget_DayLeft)
     {
@@ -197,13 +199,15 @@ void ULobbyWidget_Selection::OnPlayClicked()
 
 void ULobbyWidget_Selection::OnMarketClicked()
 {
-    if (LobbyWidget_Market)
-    {
-        LobbyWidget_Market->Refresh();
-        LobbyWidget_Market->AddToViewport();
-        RemoveFromParent();
-        return;
-    }
+    GI->PlayConfirmSound();
+
+	if (LobbyWidget_Market)
+	{
+		LobbyWidget_Market->Refresh();
+		LobbyWidget_Market->AddToViewport();
+		RemoveFromParent();
+		return;
+	}
 
     if (LobbyMarketWidgetClass)
     {
@@ -219,6 +223,8 @@ void ULobbyWidget_Selection::OnMarketClicked()
 
 void ULobbyWidget_Selection::OnWorkShopClicked()
 {
+    GI->PlayConfirmSound();
+
     if (LobbyWidget_WorkShop)
     {
         LobbyWidget_WorkShop->Refresh();
@@ -240,6 +246,8 @@ void ULobbyWidget_Selection::OnWorkShopClicked()
 
 void ULobbyWidget_Selection::OnPlayHovered()
 {
+    GI->PlayHoveredSound();
+
 	if (Image_Button_Play_Hovered)
 	{
 		Image_Button_Play_Hovered->SetVisibility(ESlateVisibility::Visible);
@@ -256,6 +264,8 @@ void ULobbyWidget_Selection::OnPlayUnhovered()
 
 void ULobbyWidget_Selection::OnMarketHovered()
 {
+    GI->PlayHoveredSound();
+
     if (Image_Button_Market_Hovered)
     {
         Image_Button_Market_Hovered->SetVisibility(ESlateVisibility::Visible);
@@ -272,6 +282,8 @@ void ULobbyWidget_Selection::OnMarketUnhovered()
 
 void ULobbyWidget_Selection::OnWorkShopHovered()
 {
+    GI->PlayHoveredSound();
+
     if (Image_Button_WorkShop_Hovered)
     {
         Image_Button_WorkShop_Hovered->SetVisibility(ESlateVisibility::Visible);
@@ -367,4 +379,5 @@ void ULobbyWidget_Selection::Refresh()
             }
         }
     }
+    GI->IsPlayerDead = false;
 }

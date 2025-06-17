@@ -32,6 +32,9 @@ private:
 	float TriggerRadius = 100.f;
 	bool bExploded = false;
 
+	UPROPERTY()
+	class ACNox_EBase* OwnerAI;
+
 	void Init(bool bInit);
 	void UseFX(bool bUse);
 	void Explode();

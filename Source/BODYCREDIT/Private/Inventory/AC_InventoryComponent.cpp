@@ -14,6 +14,8 @@
 #include "Item/Item_Base.h"
 #include "Components/CMovementComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Characters/Enemy/CNox_EBase.h"
+#include "Components/Enemy/CNoxEnemyHPComponent.h"
 
 // Sets default values for this component's properties
 UAC_InventoryComponent::UAC_InventoryComponent()
@@ -256,6 +258,12 @@ void UAC_InventoryComponent::ShowLootableInventory()
 		
 		UAC_LootingInventoryComponent* LootComp = HitActor->FindComponentByClass<UAC_LootingInventoryComponent>();
 
+		ACNox_EBase* EnemyActor = Cast<ACNox_EBase>(HitActor);
+		if (EnemyActor && (!EnemyActor->GetHPComp() || !EnemyActor->GetHPComp()->bIsDead))
+		{
+			return;
+		}
+
 		if (!LootComp) return;
 
 		if (LootComp && !bIsLootableMode)
@@ -285,6 +293,7 @@ void UAC_InventoryComponent::ShowLootableInventory()
 
 void UAC_InventoryComponent::PauseGame()
 {
+	
 	if (bIsPauseMode) {
 		bIsPauseMode = false;
 		if (PauseGameUI)
@@ -300,6 +309,11 @@ void UAC_InventoryComponent::PauseGame()
 	}
 
 	if (!bIsPauseMode) {
+		if (PauseGameUI)
+		{
+			PauseGameUI->RemoveFromParent();
+			PauseGameUI = nullptr;
+		}
 		bIsPauseMode = true;
 		if (PauseGameWidget) {
 			PauseGameUI = CreateWidget<ULobbyWidget_Pause>(GetWorld(), PauseGameWidget);

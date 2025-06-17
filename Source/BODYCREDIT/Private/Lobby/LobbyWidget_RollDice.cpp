@@ -21,6 +21,8 @@ void ULobbyWidget_RollDice::NativeConstruct()
 		Button_RollDice->OnHovered.AddDynamic(this, &ThisClass::OnRollDiceHovered);
 		Button_RollDice->OnUnhovered.AddDynamic(this, &ThisClass::OnRollDiceUnhovered);
 	}
+	GI = Cast<UNetGameInstance>(GetGameInstance());
+
 }
 
 void ULobbyWidget_RollDice::OnRollDiceClicked()
@@ -28,6 +30,7 @@ void ULobbyWidget_RollDice::OnRollDiceClicked()
 	
 	RollDice();
 	
+	GI->PlayConfirmSound();
 
 	if (LobbyDayLeftWidgetClass)
 	{
@@ -45,6 +48,9 @@ void ULobbyWidget_RollDice::OnRollDiceClicked()
 
 void ULobbyWidget_RollDice::OnRollDiceHovered()
 {
+
+	GI->PlayHoveredSound();
+
 	if (Image_Button_RollDice_Hovered)
 	{
 		Image_Button_RollDice_Hovered->SetVisibility(ESlateVisibility::Visible);
@@ -62,11 +68,10 @@ void ULobbyWidget_RollDice::OnRollDiceUnhovered()
 void ULobbyWidget_RollDice::RollDice()
 {
 	int32 DiceResult = UKismetMathLibrary::RandomIntegerInRange(1, 3);
-	UNetGameInstance* GI = Cast<UNetGameInstance>(GetGameInstance());
 
 	GI->DayLeft = DiceResult;
 
-	FString RowKey = FString::FromInt(GI->Day);
+	FString RowKey = FString::FromInt(GI->Day); 
 
 	FStageData* StageData = GI->StageDataTable->FindRow<FStageData>(FName(*RowKey), TEXT("StageData"));
 	if (StageData)

@@ -107,10 +107,12 @@ void ACNox_MedicAndroid::GetNewMovementSpeed(const EEnemyMovementSpeed& InMoveme
 }
 #pragma endregion
 
+#pragma region Tick
 void ACNox_MedicAndroid::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
+#pragma endregion
 
 #pragma region Take Damage
 float ACNox_MedicAndroid::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent,

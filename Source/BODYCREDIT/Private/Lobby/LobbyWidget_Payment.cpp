@@ -35,6 +35,8 @@ void ULobbyWidget_Payment::OnPaymentClicked()
 {
     if (GI)
     {
+        GI->PlayConfirmSound();
+
         GI->SelectedPart = EPlayerPart::Basic;
 
         if (LobbyWidget_RollDice)
@@ -66,6 +68,8 @@ void ULobbyWidget_Payment::OnPaymentClicked()
 
 void ULobbyWidget_Payment::OnSkipClicked()
 {
+    GI->PlayConfirmSound();
+
     if (LobbyWidget_RollDice)
     {
         LobbyWidget_RollDice = nullptr;
@@ -101,6 +105,7 @@ void ULobbyWidget_Payment::OnSkipClicked()
 
 void ULobbyWidget_Payment::OnPaymentHovered()
 {
+    GI->PlayHoveredSound();
     if (Image_Button_Payment_Hovered)
     {
         Image_Button_Payment_Hovered->SetVisibility(ESlateVisibility::Visible);
@@ -118,6 +123,8 @@ void ULobbyWidget_Payment::OnPaymentUnhovered()
 
 void ULobbyWidget_Payment::OnSkipHovered()
 {
+    GI->PlayHoveredSound();
+
     if (Image_Button_Skip_Hovered)
     {
         Image_Button_Skip_Hovered->SetVisibility(ESlateVisibility::Visible);

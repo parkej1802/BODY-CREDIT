@@ -270,3 +270,14 @@ int32 UAC_EquipComponent::CalculatePriceRecursively(UItemObject* ItemObject)
 
 	return ContainerPrice;
 }
+
+void UAC_EquipComponent::RefreshEquip()
+{
+	TArray<EPlayerPart> EquippedParts;
+	EquippedItems.GetKeys(EquippedParts);
+
+	for (EPlayerPart Part : EquippedParts)
+	{
+		UnequipItem(Part);
+	}
+}

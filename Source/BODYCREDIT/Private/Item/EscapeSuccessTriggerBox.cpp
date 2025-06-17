@@ -7,6 +7,7 @@
 #include "Lobby/LobbyWidget_Success.h"
 #include "Characters/CNox_Controller.h"
 #include "Lobby/LobbyWidget_EscapeTimer.h"
+#include "Session/NetGameInstance.h"
 
 // Sets default values
 AEscapeSuccessTriggerBox::AEscapeSuccessTriggerBox()
@@ -28,7 +29,7 @@ AEscapeSuccessTriggerBox::AEscapeSuccessTriggerBox()
 void AEscapeSuccessTriggerBox::BeginPlay()
 {
 	Super::BeginPlay();
-
+	GI = Cast<UNetGameInstance>(GetGameInstance());
 }
 
 // Called every frame
@@ -125,7 +126,7 @@ void AEscapeSuccessTriggerBox::HandleEscape()
 		SuccessUI = nullptr;
 	}
 
-	if (bIsPlayerInside && CachedPlayer)
+	if (bIsPlayerInside && CachedPlayer && !CachedPlayer->State->IsDeadMode() && !GI->IsPlayerDead)
 	{
 		CachedPlayer->IsEscape = true;
 
@@ -145,7 +146,6 @@ void AEscapeSuccessTriggerBox::HandleEscape()
 			if (SuccessUI)
 			{
 				SuccessUI->AddToViewport();
-				CachedPlayer->IsEscape = false;
 			}
 		}
 	}
@@ -163,6 +163,7 @@ void AEscapeSuccessTriggerBox::OnOverlapBegin(UPrimitiveComponent* OverlappedCom
 		{
 			GetWorldTimerManager().SetTimer(EscapeTimerHandle, this, &AEscapeSuccessTriggerBox::HandleEscape, EscapeTime, false);
 		}
+
 
 		if (EscapeTimerUI)
 		{
