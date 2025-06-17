@@ -48,7 +48,7 @@ public:
 	float CurShieldRegenTime;
 
 	UPROPERTY(EditAnywhere, Category="Status")
-	float MovementSpeed = 600;
+	float MovementSpeed = 500;
 
 	UPROPERTY(EditAnywhere, Category="Status")
 	float Strength = 50.f;
