@@ -86,4 +86,7 @@ public:
 
 	UPROPERTY()
 	class ULobbyWidget_Main* LobbyMainUI;
+
+	UPROPERTY()
+	class UNetGameInstance* GI;
 };

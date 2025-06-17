@@ -83,4 +83,7 @@ public:
 	void SetItemDescription();
 
 	void Refresh();
+
+	UFUNCTION()
+	void RemoveWidget();
 };

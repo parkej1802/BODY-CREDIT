@@ -4,6 +4,8 @@
 #include "Lobby/LobbyWidget_NoSpace.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
+#include "Kismet/GameplayStatics.h"
+#include "Session/NetGameInstance.h"
 
 void ULobbyWidget_NoSpace::NativeConstruct()
 {
@@ -19,11 +21,15 @@ void ULobbyWidget_NoSpace::NativeConstruct()
 
 void ULobbyWidget_NoSpace::OnConfirmClicked()
 {
+    UGameplayStatics::PlaySound2D(this, Cast<UNetGameInstance>(GetGameInstance())->Sound_Confirm);
+
     RemoveFromParent();
 }
 
 void ULobbyWidget_NoSpace::OnConfirmHovered()
 {
+    UGameplayStatics::PlaySound2D(this, Cast<UNetGameInstance>(GetGameInstance())->Sound_Hovered);
+
     if (Image_Button_Confirm_Hovered)
     {
         Image_Button_Confirm_Hovered->SetVisibility(ESlateVisibility::Visible);

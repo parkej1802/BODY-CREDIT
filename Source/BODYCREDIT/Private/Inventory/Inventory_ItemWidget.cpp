@@ -15,12 +15,19 @@
 #include "Lobby/LobbyWidget_ItemMenu.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Engine/Engine.h"
+#include "Session/NetGameInstance.h"
 
 void UInventory_ItemWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
 	Refresh();
+
+	if (UNetGameInstance* GI = Cast<UNetGameInstance>(GetGameInstance()))
+	{
+		GI->OnBack.RemoveAll(this);
+		GI->OnBack.AddUObject(this, &UInventory_ItemWidget::RemoveWidget);
+	}
 	
 }
 
@@ -60,6 +67,15 @@ void UInventory_ItemWidget::Refresh()
 	{
 		FSlateBrush IconBrush = GetIconImage();
 		Image_Item->SetBrush(IconBrush);
+	}
+}
+
+void UInventory_ItemWidget::RemoveWidget()
+{
+	if (ItemMenuUI)
+	{
+		ItemMenuUI->RemoveFromParent();
+		ItemMenuUI = nullptr;
 	}
 }
 

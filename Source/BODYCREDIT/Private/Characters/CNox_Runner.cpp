@@ -108,6 +108,7 @@ void ACNox_Runner::BeginPlay()
 float ACNox_Runner::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
                                class AController* EventInstigator, AActor* DamageCauser)
 {
+	if (IsEscape) return 0.f;
 	HPComp->TakeDamage(DamageAmount);
 	State->SetHittedMode();
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
@@ -353,9 +354,7 @@ void ACNox_Runner::End_Dead()
 {
 	if (FailedWidget)
 	{
-		FailedWidget->AddToViewport();
-		FailedWidget->Refresh();
-		return;
+		FailedWidget = nullptr;
 	}
 	
 	if (FailedWidgetClass)
@@ -369,6 +368,12 @@ void ACNox_Runner::End_Dead()
 void ACNox_Runner::ShowPlayerMainUI()
 {
 	// 위젯 클래스가 유효한지 확인
+
+	if (RunnerUIWidget)
+	{
+		RunnerUIWidget = nullptr;
+	}
+
 	if (RunnerUIClass)
 	{
 		// 위젯 생성

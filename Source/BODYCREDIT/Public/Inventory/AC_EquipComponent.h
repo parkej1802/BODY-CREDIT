@@ -69,4 +69,6 @@ public:
 
 	int32 CalculatePriceOfEquippedItem();
 	int32 CalculatePriceRecursively(class UItemObject* ItemObject);
+
+	void RefreshEquip();
 };

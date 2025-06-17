@@ -79,6 +79,8 @@ void UCLobbyWidget_Play::OnContinueClicked()
 {
 	if (GI->SelectedPart == EPlayerPart::Basic) return;
 
+	GI->PlayConfirmSound();
+
 	if (ACNox_Controller* pc = Cast<ACNox_Controller>(GetWorld()->GetFirstPlayerController()))
 	{
 		GameMode = Cast<ACMainGM>(GetWorld()->GetAuthGameMode());
@@ -108,6 +110,8 @@ void UCLobbyWidget_Play::OnContinueClicked()
 
 void UCLobbyWidget_Play::OnContinueHovered()
 {
+	GI->PlayHoveredSound();
+
 	if (Image_Button_Continue_Hovered)
 	{
 		Image_Button_Continue_Hovered->SetVisibility(ESlateVisibility::Visible);
@@ -127,6 +131,7 @@ void UCLobbyWidget_Play::OnHeadClicked()
 	GI->SelectedPart = EPlayerPart::Head;
 
 	if (PreviousImage == Image_Button_Head_Hovered) return;
+	GI->PlayConfirmSound();
 
 	TurnOffPreviousImage();
 	PreviousImage = Image_Button_Head_Hovered;
@@ -141,6 +146,7 @@ void UCLobbyWidget_Play::OnHeadClicked()
 void UCLobbyWidget_Play::OnHeadHovered()
 {
 	if (PreviousImage == Image_Button_Head_Hovered) return;
+	GI->PlayHoveredSound();
 
 	if (Image_Button_Head_Hovered)
 	{
@@ -163,6 +169,7 @@ void UCLobbyWidget_Play::OnBodyClicked()
 	GI->SelectedPart = EPlayerPart::Body;
 
 	if (PreviousImage == Image_Button_Body_Hovered) return;
+	GI->PlayConfirmSound();
 
 	TurnOffPreviousImage();
 	PreviousImage = Image_Button_Body_Hovered;
@@ -177,6 +184,7 @@ void UCLobbyWidget_Play::OnBodyClicked()
 void UCLobbyWidget_Play::OnBodyHovered()
 {
 	if (PreviousImage == Image_Button_Body_Hovered) return;
+	GI->PlayHoveredSound();
 
 	if (Image_Button_Body_Hovered)
 	{
@@ -199,6 +207,7 @@ void UCLobbyWidget_Play::OnArmClicked()
 	GI->SelectedPart = EPlayerPart::Arm;
 
 	if (PreviousImage == Image_Button_Arm_Hovered) return;
+	GI->PlayConfirmSound();
 
 	TurnOffPreviousImage();
 	PreviousImage = Image_Button_Arm_Hovered;
@@ -214,6 +223,7 @@ void UCLobbyWidget_Play::OnArmClicked()
 void UCLobbyWidget_Play::OnArmHovered()
 {
 	if (PreviousImage == Image_Button_Arm_Hovered) return;
+	GI->PlayHoveredSound();
 
 	if (Image_Button_Arm_Hovered)
 	{
@@ -236,6 +246,7 @@ void UCLobbyWidget_Play::OnLegClicked()
 	GI->SelectedPart = EPlayerPart::Leg;
 
 	if (PreviousImage == Image_Button_Leg_Hovered) return;
+	GI->PlayConfirmSound();
 
 	TurnOffPreviousImage();
 	PreviousImage = Image_Button_Leg_Hovered;
@@ -250,6 +261,7 @@ void UCLobbyWidget_Play::OnLegClicked()
 void UCLobbyWidget_Play::OnLegHovered()
 {
 	if (PreviousImage == Image_Button_Leg_Hovered) return;
+	GI->PlayHoveredSound();
 
 	if (Image_Button_Leg_Hovered)
 	{

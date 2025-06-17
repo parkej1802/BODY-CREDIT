@@ -1,4 +1,4 @@
-#include "Characters/Enemy/CNox_EBase.h"
+﻿#include "Characters/Enemy/CNox_EBase.h"
 
 #include "global.h"
 #include "Characters/Enemy/CNoxEnemy_Animinstance.h"
@@ -9,6 +9,7 @@
 #include "Components/Enemy/CNoxEnemyHPComponent.h"
 #include "Navigation/PathFollowingComponent.h"
 #include "Sound/SoundCue.h"
+#include "AC_LootingInventoryComponent.h"
 
 #pragma region Init
 ACNox_EBase::ACNox_EBase()
@@ -35,6 +36,7 @@ void ACNox_EBase::InitComp()
 	{
 		CHelpers::CreateActorComponent<UCNoxEnemyHPComponent>(this, &HPComp, "HPComp");
 		CHelpers::CreateActorComponent<UCFSMComponent>(this, &FSMComp, "FSMComp");
+		CHelpers::CreateActorComponent<UAC_LootingInventoryComponent>(this, &LootInventoryComp, "LootInventoryComp");
 	}
 }
 
@@ -423,5 +425,10 @@ void ACNox_EBase::PlayDieSound()
 	{
 		SoundComponent->Play();
 	}
+}
+
+UCNoxEnemyHPComponent* ACNox_EBase::GetHPComp()
+{
+	return HPComp;
 }
 #pragma endregion

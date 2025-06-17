@@ -48,6 +48,7 @@ void ULobbyWidget_Failed::OnContinueClicked()
 {
     GI->SelectedPart = EPlayerPart::Basic;
 
+    GI->PlayConfirmSound();
     if (GI->Failed)
     {
         GI->Failed = false;
@@ -113,6 +114,8 @@ void ULobbyWidget_Failed::OnContinueClicked()
 
 void ULobbyWidget_Failed::OnContinueHovered()
 {
+    GI->PlayHoveredSound();
+
     if (Anim_Hovered_Continue)
     {
         PlayAnimation(Anim_Hovered_Continue);
@@ -222,6 +225,6 @@ void ULobbyWidget_Failed::Refresh()
         //GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Red, FString::Printf(TEXT("Part Left %d"), RemainingLife));
     }
 
-    Cast<ACNox_Runner>(PC->GetPawn())->EquipComp->EquippedItems.Empty();
+    Cast<ACNox_Runner>(PC->GetPawn())->EquipComp->RefreshEquip();
     Cast<ACNox_Runner>(PC->GetPawn())->Reset();
 }

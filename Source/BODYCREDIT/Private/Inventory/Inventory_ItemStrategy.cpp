@@ -8,6 +8,7 @@
 #include "Inventory/Inventory_ItemInventoryWidget.h"
 #include "Item/ItemObject.h"
 #include "Components/CanvasPanel.h"
+#include "Session/NetGameInstance.h"
 
 void UInventory_ItemStrategy::NativeConstruct()
 {
@@ -23,6 +24,13 @@ void UInventory_ItemStrategy::NativeConstruct()
 		Button_Drag->OnPressed.AddDynamic(this, &UInventory_ItemStrategy::OnDragPressed);
 		Button_Drag->OnReleased.AddDynamic(this, &UInventory_ItemStrategy::OnDragReleased);
 	}
+
+	if (UNetGameInstance* GI = Cast<UNetGameInstance>(GetWorld()->GetGameInstance()))
+	{
+		GI->OnBack.RemoveAll(this);
+		GI->OnBack.AddUObject(this, &UInventory_ItemStrategy::RemoveWidget);
+	}
+
 }
 
 void UInventory_ItemStrategy::OnExitClicked()
@@ -79,3 +87,10 @@ void UInventory_ItemStrategy::NativeTick(const FGeometry& MyGeometry, float InDe
 		}
 	}
 }
+
+void UInventory_ItemStrategy::RemoveWidget()
+{
+	ItemObject->bIsUseFunction = !ItemObject->bIsUseFunction;
+	RemoveFromParent();
+}
+

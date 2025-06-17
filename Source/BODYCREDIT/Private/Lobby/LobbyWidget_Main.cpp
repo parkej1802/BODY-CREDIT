@@ -65,12 +65,14 @@ void ULobbyWidget_Main::NativeConstruct()
 
 void ULobbyWidget_Main::OnNewGameClicked()
 {
+    GI->PlayConfirmSound();
+
     GI->DayLeft = -1;
     GI->Day = 1;
     GI->RefreshGame();
 
     PlayerCharacter->InventoryComp->ResetInventoryItem();
-    PlayerCharacter->EquipComp->EquippedItems.Empty();
+    PlayerCharacter->EquipComp->RefreshEquip();
 
     if (LobbySelectionWidgetClass)
     {
@@ -90,6 +92,8 @@ void ULobbyWidget_Main::OnNewGameClicked()
 
 void ULobbyWidget_Main::OnNewGameHovered()
 {
+    GI->PlayHoveredSound();
+
     if (Anim_Hovered_NewGame)
     {
         PlayAnimation(Anim_Hovered_NewGame);
@@ -116,6 +120,8 @@ void ULobbyWidget_Main::OnNewGameUnhovered()
 
 void ULobbyWidget_Main::OnSettingClicked()
 {
+    GI->PlayConfirmSound();
+
     if (OptionWidgetClass)
     {
         LobbyWidget_Option = CreateWidget<UCLobbyWidget_Option>(GetWorld(), OptionWidgetClass);
@@ -130,6 +136,8 @@ void ULobbyWidget_Main::OnSettingClicked()
 
 void ULobbyWidget_Main::OnSettingHovered()
 {
+    GI->PlayHoveredSound();
+
     if (Anim_Hovered_Setting)
     {
         PlayAnimation(Anim_Hovered_Setting);
@@ -156,12 +164,16 @@ void ULobbyWidget_Main::OnSettingUnhovered()
 
 void ULobbyWidget_Main::OnExitClicked()
 {
+    GI->PlayConfirmSound();
+
     PC = GetWorld()->GetFirstPlayerController();
     UKismetSystemLibrary::QuitGame(this, PC, EQuitPreference::Quit, false);
 }
 
 void ULobbyWidget_Main::OnExitHovered()
 {
+    GI->PlayHoveredSound();
+
     if (Anim_Hovered_Exit)
     {
         PlayAnimation(Anim_Hovered_Exit);

@@ -4,6 +4,7 @@
 #include "Lobby/LobbyWidget_InsufficientGold.h"
 #include "Components/Button.h"
 #include "Components/Image.h"
+#include "Session/NetGameInstance.h"
 
 void ULobbyWidget_InsufficientGold::NativeConstruct()
 {
@@ -15,10 +16,13 @@ void ULobbyWidget_InsufficientGold::NativeConstruct()
         Button_Confirm->OnHovered.AddDynamic(this, &ULobbyWidget_InsufficientGold::OnConfirmHovered);
         Button_Confirm->OnUnhovered.AddDynamic(this, &ULobbyWidget_InsufficientGold::OnConfirmUnhovered);
     }
+
+    GI = Cast<UNetGameInstance>(GetGameInstance());
 }
 
 void ULobbyWidget_InsufficientGold::OnConfirmClicked()
 {
+    GI->PlayConfirmSound();
     RemoveFromParent();
 }
 
@@ -28,6 +32,8 @@ void ULobbyWidget_InsufficientGold::OnConfirmHovered()
     //{
     //    PlayAnimation(Anim_Hovered_Confirm);
     //}
+
+    GI->PlayHoveredSound();
 
     if (Image_Button_Confirm_Hovered)
     {

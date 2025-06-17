@@ -58,4 +58,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float EscapeTime = 5.f;
+
+	UPROPERTY()
+	class UNetGameInstance* GI;
 };

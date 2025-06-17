@@ -59,4 +59,6 @@ public:
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UTextBlock* Text_Profit;
 
+	UPROPERTY()
+	class UNetGameInstance* GI;
 };
