@@ -9,7 +9,7 @@
 UENUM(BlueprintType)
 enum class ESpeedType : uint8
 {
-	STAND_WALK,			// Stand Walk
+	STAND_WALK = 0,		// Stand Walk
 	STAND_RUN_FWD,		// W
 	STAND_RUN_BWD,		// S
 	STAND_RUN_RLWD,		// D or A
@@ -132,9 +132,15 @@ private:
 public:
 	FVector2D GetCachedInputDir2D() const;
 
+	float AdditionalMovementSpeed = 0.0f;
+	float AdditionalWeight = 0.0f;
+
 private:
 	UPROPERTY(EditAnywhere, Category = "Speed")
 	float Speed[(int32)ESpeedType::MAX] = { 350, 500, 300, 350, 300, 300, 300, 700 };
+
+	UPROPERTY(EditAnywhere, Category = "Speed")
+	float BackupSpeed[(int32)ESpeedType::MAX] = { 350, 500, 300, 350, 300, 300, 300, 700 };
 
 private:
 	UPROPERTY(EditAnywhere, Category = "CameraSpeed")
@@ -191,7 +197,7 @@ public:
 	float StaminaDrainInterval = 0.1f;
 
 	UPROPERTY(EditAnywhere, Category = "Stamina")
-	float StaminaDrainAmount = 10.0f;
+	float StaminaDrainAmount = 100.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Stamina")
 	float SlideStaminaDrainAmount = 30.0f;

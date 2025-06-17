@@ -88,6 +88,13 @@ void UCMovementComponent::TickComponent(float DeltaTime, ELevelTick TickType, FA
 	if (UCameraComponent* camera = CHelpers::GetComponent<UCameraComponent>(OwnerCharacter))
 		camera->SetFieldOfView(FMath::FInterpTo(camera->FieldOfView, TargetFOV, DeltaTime, FOVInterpSpeed));
 
+	if (UCNoxHPComponent* hp = CHelpers::GetComponent<UCNoxHPComponent>(OwnerCharacter))
+	{
+		float f = hp->MovementSpeed - 500;
+
+		for (int32 i = 0; i < (int32)ESpeedType::MAX; ++i)
+			Speed[i] = BackupSpeed[i] + f;
+	}
 }
 
 void UCMovementComponent::BindInput(UEnhancedInputComponent* InEnhancedInputComponent)

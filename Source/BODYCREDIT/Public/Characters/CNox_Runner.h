@@ -60,7 +60,7 @@ protected:
 	UPROPERTY(BlueprintReadWrite, Category = "Camera")
 	class UCameraComponent* TPSCamera;
 
-private:
+public:
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UCStateComponent* State;
 	
