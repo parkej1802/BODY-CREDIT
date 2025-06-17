@@ -34,12 +34,20 @@ void UMarket_ItemTile::NativeConstruct()
 	PlayerCharacter = Cast<ACNox_Runner>(PC->GetPawn());
 	InventoryComp = PlayerCharacter->InventoryComp;
 
+	GI = Cast<UNetGameInstance>(GetGameInstance());
+	if (GI)
+	{
+		GI->OnBack.RemoveAll(this);
+		GI->OnBack.AddUObject(this, &UMarket_ItemTile::RemoveWidget);
+	}
+
 	Refresh();
 
 }
 
 void UMarket_ItemTile::OnBuyItemClicked()
 {
+	GI->PlayConfirmSound();
 	if (ItemData.Price > GI->PlayerGold)
 	{
 		if (InsufficientFundWidget)
@@ -64,6 +72,8 @@ void UMarket_ItemTile::OnBuyItemClicked()
 
 void UMarket_ItemTile::OnBuyItemHovered()
 {
+	GI->PlayHoveredSound();
+
 	if (Image_Hovered)
 	{
 		Image_Hovered->SetVisibility(ESlateVisibility::Visible);
@@ -156,4 +166,13 @@ void UMarket_ItemTile::Refresh()
 	GI = Cast<UNetGameInstance>(GetGameInstance());
 
 	SetItemDescription();
+}
+
+void UMarket_ItemTile::RemoveWidget()
+{
+	if (InsufficientFundUI)
+	{
+		InsufficientFundUI->RemoveFromParent();
+	}
+	RemoveFromParent();
 }

@@ -9,6 +9,7 @@
 #include "Item/ItemObject.h"
 #include "Components/TextBlock.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Session/NetGameInstance.h"
 
 void ULobbyWidget_ItemDescription::NativeConstruct()
 {
@@ -21,15 +22,21 @@ void ULobbyWidget_ItemDescription::NativeConstruct()
         Button_Confirm->OnUnhovered.AddDynamic(this, &ThisClass::OnConfirmUnhovered);
     }
 	Refresh();
+
+	GI = Cast<UNetGameInstance>(GetGameInstance());
 }
 
 void ULobbyWidget_ItemDescription::OnConfirmClicked()
 {
+	GI->PlayConfirmSound();
+
 	RemoveFromParent();
 }
 
 void ULobbyWidget_ItemDescription::OnConfirmHovered()
 {
+	GI->PlayHoveredSound();
+
     if (Image_Button_Confirm_Hovered)
     {
         Image_Button_Confirm_Hovered->SetVisibility(ESlateVisibility::Visible);

@@ -12,6 +12,7 @@
 #include "Inventory/Inventory_GridWidget.h"
 #include "Item/Item_Base.h"
 #include "Inventory/Inventory_ItemInventoryWidget.h"
+#include "Session/NetGameInstance.h"
 
 void UFunction_Backpack::Use(UItemObject* ItemObject)
 {
@@ -71,3 +72,4 @@ void UFunction_Backpack::Use(UItemObject* ItemObject)
 		ItemInventoryUI->AddToViewport();
 	}*/
 }
+

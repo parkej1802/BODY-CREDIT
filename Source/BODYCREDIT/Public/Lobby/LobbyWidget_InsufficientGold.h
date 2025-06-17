@@ -38,4 +38,8 @@ public:
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UImage* Image_Button_Confirm_Hovered;
+
+	
+	UPROPERTY()
+	class UNetGameInstance* GI;
 };

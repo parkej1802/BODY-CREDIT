@@ -156,4 +156,7 @@ public:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	void Refresh();
+
+	UPROPERTY()
+	class UNetGameInstance* GI;
 };

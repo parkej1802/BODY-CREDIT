@@ -31,6 +31,8 @@ void ULobbyWidget_DayLeft::OnConfirmClicked()
 {
     GI = Cast<UNetGameInstance>(GetGameInstance());
 
+    GI->PlayConfirmSound();
+
     if (DayLeft && GI->SelectedPart != EPlayerPart::Basic)
     {
         if (ACNox_Controller* pc = Cast<ACNox_Controller>(GetWorld()->GetFirstPlayerController()))
@@ -77,6 +79,8 @@ void ULobbyWidget_DayLeft::OnConfirmClicked()
 
 void ULobbyWidget_DayLeft::OnConfirmHovered()
 {
+    GI->PlayHoveredSound();
+
     if (Image_Button_Confirm_Hovered)
     {
         Image_Button_Confirm_Hovered->SetVisibility(ESlateVisibility::Visible);

@@ -28,20 +28,28 @@ void ULobbyWidget_BuyItem::NativeConstruct()
 
     PC = GetOwningPlayer();
     Refresh();
+
+    GI = Cast<UNetGameInstance>(GetGameInstance());
+
 }
 
 void ULobbyWidget_BuyItem::OnConfirmClicked()
 {
+    GI->PlayConfirmSound();
     HandleConfirmClicked();
 }
 
 void ULobbyWidget_BuyItem::OnCancelClicked()
 {
+    GI->PlayCancelSound();
+
     HandleCancelClicked();
 }
 
 void ULobbyWidget_BuyItem::OnConfirmHovered()
 {
+    GI->PlayHoveredSound();
+
     if (Image_Button_Confirm_Hovered)
     {
         Image_Button_Confirm_Hovered->SetVisibility(ESlateVisibility::Visible);
@@ -58,6 +66,8 @@ void ULobbyWidget_BuyItem::OnConfirmUnhovered()
 
 void ULobbyWidget_BuyItem::OnCancelHovered()
 {
+    GI->PlayHoveredSound();
+
     if (Image_Button_Cancel_Hovered)
     {
         Image_Button_Cancel_Hovered->SetVisibility(ESlateVisibility::Visible);
@@ -102,7 +112,7 @@ void ULobbyWidget_BuyItem::Refresh()
 {
     if (PC)
     {
-        FInputModeUIOnly InputMode;
+        FInputModeGameAndUI InputMode;
         InputMode.SetWidgetToFocus(this->TakeWidget());
         InputMode.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
         PC->SetInputMode(InputMode);

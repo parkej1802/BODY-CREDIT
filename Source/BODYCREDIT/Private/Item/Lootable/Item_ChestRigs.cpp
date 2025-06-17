@@ -17,4 +17,5 @@ void AItem_ChestRigs::BeginPlay()
 	ItemStrategy = NewObject<UFunction_Backpack>();
 
 	ItemObject->ItemActorOwner->LootInventoryComp = LootInventoryComp;
+
 }

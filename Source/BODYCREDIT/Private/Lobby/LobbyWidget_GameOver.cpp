@@ -8,6 +8,7 @@
 #include "Games/CMainGM.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Lobby/LobbyWidget_Main.h"
+#include "Session/NetGameInstance.h"
 
 void ULobbyWidget_GameOver::NativeConstruct()
 {
@@ -42,10 +43,14 @@ void ULobbyWidget_GameOver::NativeConstruct()
         PlayAnimation(Anim_GameOver, 0.0f, 9999, EUMGSequencePlayMode::Forward);
     }*/
 
+    GI = Cast<UNetGameInstance>(GetGameInstance());
+
 }
 
 void ULobbyWidget_GameOver::OnNewGameClicked()
 {
+    GI->PlayConfirmSound();
+
     Cast<ACMainGM>(GetWorld()->GetAuthGameMode())->DestroyEnemy();
     
     if (LobbyMainWidgetClass)
@@ -61,12 +66,17 @@ void ULobbyWidget_GameOver::OnNewGameClicked()
 
 void ULobbyWidget_GameOver::OnExitClicked()
 {
+    GI->PlayConfirmSound();
+
     Cast<ACMainGM>(GetWorld()->GetAuthGameMode())->ExtractTimerTriggerStart = false;
     UKismetSystemLibrary::QuitGame(this, PC, EQuitPreference::Quit, false);
 }
 
 void ULobbyWidget_GameOver::OnNewGameHovered()
 {
+
+    GI->PlayHoveredSound();
+
     if (Anim_Hovered_NewGame)
     {
         PlayAnimation(Anim_Hovered_NewGame);
@@ -103,6 +113,8 @@ void ULobbyWidget_GameOver::OnNewGameUnhovered()
 
 void ULobbyWidget_GameOver::OnExitHovered()
 {
+    GI->PlayHoveredSound();
+
     if (Anim_Hovered_Exit)
     {
         PlayAnimation(Anim_Hovered_Exit);

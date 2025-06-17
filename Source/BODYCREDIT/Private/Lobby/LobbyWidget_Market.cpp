@@ -23,10 +23,13 @@
 #include "Lobby/LobbyWidget_BuyItem.h"
 #include "GameState_BodyCredit.h"
 #include "Lobby/LobbyWidget_NoSpace.h"
+#include "Kismet/GameplayStatics.h"
 
 void ULobbyWidget_Market::NativeConstruct()
 {
     Super::NativeConstruct();
+
+	GI = Cast<UNetGameInstance>(GetGameInstance());
 
     if (Button_Back)
     {
@@ -90,6 +93,10 @@ void ULobbyWidget_Market::NativeConstruct()
 
 void ULobbyWidget_Market::OnBackClicked()
 {
+	GI->PlayConfirmSound();
+
+	GI->OnBack.Broadcast();
+
     if (LobbySelectionWidgetClass)
     {
         LobbyWidget_Selection = CreateWidget<ULobbyWidget_Selection>(GetWorld(), LobbySelectionWidgetClass);
@@ -104,6 +111,8 @@ void ULobbyWidget_Market::OnBackClicked()
 
 void ULobbyWidget_Market::OnBackHovered()
 {
+	GI->PlayHoveredSound();
+
 	if (Image_Button_Back_Hovered)
 	{
 		Image_Button_Back_Hovered->SetVisibility(ESlateVisibility::Visible);
@@ -120,6 +129,9 @@ void ULobbyWidget_Market::OnBackUnhovered()
 
 void ULobbyWidget_Market::OnSelectWeaponClicked()
 {
+
+	GI->PlayConfirmSound();
+
 	if (!MarketComp || !MarketItemWidget || !VerticalBox_MarketItem)
 	{
 		return;
@@ -192,6 +204,8 @@ void ULobbyWidget_Market::OnSelectWeaponClicked()
 
 void ULobbyWidget_Market::OnSelectWeaponHovered()
 {
+	GI->PlayHoveredSound();
+
 	if (PreviousImage == Image_SelectWeapon_Hovered)
 	{
 		return;
@@ -219,6 +233,8 @@ void ULobbyWidget_Market::OnSelectWeaponUnhovered()
 
 void ULobbyWidget_Market::OnSelectHeadClicked()
 {
+	GI->PlayConfirmSound();
+
 	if (!MarketComp || !MarketItemWidget || !VerticalBox_MarketItem)
 	{
 		return;
@@ -290,6 +306,8 @@ void ULobbyWidget_Market::OnSelectHeadClicked()
 
 void ULobbyWidget_Market::OnSelectHeadHovered()
 {
+	GI->PlayHoveredSound();
+
 	if (PreviousImage == Image_SelectHead_Hovered)
 	{
 		return;
@@ -314,6 +332,8 @@ void ULobbyWidget_Market::OnSelectHeadUnhovered()
 
 void ULobbyWidget_Market::OnSelectBodyClicked()
 {
+	GI->PlayConfirmSound();
+
 	if (!MarketComp || !MarketItemWidget || !VerticalBox_MarketItem)
 	{
 		return;
@@ -385,6 +405,8 @@ void ULobbyWidget_Market::OnSelectBodyClicked()
 
 void ULobbyWidget_Market::OnSelectBodyHovered()
 {
+	GI->PlayHoveredSound();
+
 	if (PreviousImage == Image_SelectBody_Hovered)
 	{
 		return;
@@ -409,6 +431,8 @@ void ULobbyWidget_Market::OnSelectBodyUnhovered()
 
 void ULobbyWidget_Market::OnSelectArmClicked()
 {
+	GI->PlayConfirmSound();
+
 	if (!MarketComp || !MarketItemWidget || !VerticalBox_MarketItem)
 	{
 		return;
@@ -480,6 +504,8 @@ void ULobbyWidget_Market::OnSelectArmClicked()
 
 void ULobbyWidget_Market::OnSelectArmHovered()
 {
+	GI->PlayHoveredSound();
+
 	if (PreviousImage == Image_SelectArm_Hovered)
 	{
 		return;
@@ -504,6 +530,8 @@ void ULobbyWidget_Market::OnSelectArmUnhovered()
 
 void ULobbyWidget_Market::OnSelectLegClicked()
 {
+	GI->PlayConfirmSound();
+
 	if (!MarketComp || !MarketItemWidget || !VerticalBox_MarketItem)
 	{
 		return;
@@ -576,6 +604,8 @@ void ULobbyWidget_Market::OnSelectLegClicked()
 
 void ULobbyWidget_Market::OnSelectLegHovered()
 {
+	GI->PlayHoveredSound();
+
 	if (PreviousImage == Image_SelectLeg_Hovered)
 	{
 		return;
@@ -602,6 +632,8 @@ void ULobbyWidget_Market::OnSelectLegUnhovered()
 
 void ULobbyWidget_Market::OnSelectBackpackClicked()
 {
+	GI->PlayConfirmSound();
+
 	if (!MarketComp || !MarketItemWidget || !VerticalBox_MarketItem)
 	{
 		return;
@@ -677,6 +709,8 @@ void ULobbyWidget_Market::OnSelectBackpackClicked()
 
 void ULobbyWidget_Market::OnSelectBackpackHovered()
 {
+	GI->PlayHoveredSound();
+
 	if (PreviousImage == Image_SelectBackpack_Hovered)
 	{
 		return;
@@ -703,6 +737,8 @@ void ULobbyWidget_Market::OnSelectBackpackUnhovered()
 
 void ULobbyWidget_Market::OnSelectChestrigClicked()
 {
+	GI->PlayConfirmSound();
+
 	if (!MarketComp || !MarketItemWidget || !VerticalBox_MarketItem)
 	{
 		return;
@@ -774,6 +810,8 @@ void ULobbyWidget_Market::OnSelectChestrigClicked()
 
 void ULobbyWidget_Market::OnSelectChestrigHovered()
 {
+	GI->PlayHoveredSound();
+
 	if (PreviousImage == Image_SelectChestrig_Hovered)
 	{
 		return;
@@ -916,7 +954,9 @@ void ULobbyWidget_Market::ShowBuyUI(UItemObject* ItemObject)
 
 void ULobbyWidget_Market::HandleBuyConfirm(class UItemObject* ItemObject)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("ConfirmBuy"));
+	GI->PlayConfirmSound();
+
+	// GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("ConfirmBuy"));
 
 	if (GameState)
 	{
@@ -945,7 +985,7 @@ void ULobbyWidget_Market::HandleBuyConfirm(class UItemObject* ItemObject)
 
 void ULobbyWidget_Market::HandleBuyCancel(class UItemObject* ItemObject)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("CancelBuy"));
+	// GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Yellow, TEXT("CancelBuy"));
 	ItemObject = nullptr;
 }
 
@@ -987,12 +1027,34 @@ void ULobbyWidget_Market::Refresh()
 
 	GameState = GetWorld()->GetGameState<AGameState_BodyCredit>();
 
-	GI = Cast<UNetGameInstance>(GetGameInstance());
 	if (GI) {
 		GI->MarketUI = this;
 		GI->OnGoldChanged.RemoveDynamic(this, &ULobbyWidget_Market::UpdatePlayerGoldText);
 		GI->OnGoldChanged.AddDynamic(this, &ULobbyWidget_Market::UpdatePlayerGoldText);
 		GI->SetPlayerGold(GI->PlayerGold);
 		// UpdatePlayerGoldText(GI->PlayerGold);
+		GI->OnBack.RemoveAll(this);
+		GI->OnBack.AddUObject(this, &ULobbyWidget_Market::RemoveWidget);
 	}
 }
+
+void ULobbyWidget_Market::RemoveWidget()
+{
+	if (BuyItemUI)
+	{
+		BuyItemUI->HandleCancelClicked();
+		BuyItemUI->RemoveFromParent();
+		BuyItemUI = nullptr;
+	}
+	if (NoSpaceUI)
+	{
+		NoSpaceUI->RemoveFromParent();
+		NoSpaceUI = nullptr;
+	}
+	if (SellItemUI)
+	{	
+		SellItemUI->HandleCancelClicked();
+		SellItemUI->RemoveFromParent();
+		SellItemUI = nullptr;
+	}
+}	

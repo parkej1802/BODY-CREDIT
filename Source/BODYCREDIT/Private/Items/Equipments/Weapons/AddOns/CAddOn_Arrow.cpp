@@ -69,11 +69,17 @@ void ACAddOn_Arrow::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* Ot
 	// 2. 파티클 스폰 (BP_ArrowVanishFX는 파티클 시스템)
 	if (ArrowVanishFX) // NiagaraSystem 사용 예시
 	{
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+		UGameplayStatics::SpawnEmitterAtLocation
+		(
 			GetWorld(),
 			ArrowVanishFX,
-			Hit.ImpactPoint // 충돌 위치에 이펙트 생성
+			Hit.ImpactPoint
 		);
+		// UNiagaraFunctionLibrary::SpawnSystemAtLocation(
+		// 	GetWorld(),
+		// 	ArrowVanishFX,
+		// 	Hit.ImpactPoint // 충돌 위치에 이펙트 생성
+		// );
 	}
 
 	// [3] 사운드 이펙트 재생

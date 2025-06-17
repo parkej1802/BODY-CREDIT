@@ -240,4 +240,6 @@ public:
 
 	void Refresh();
 
+	UFUNCTION()
+	void RemoveWidget();
 };

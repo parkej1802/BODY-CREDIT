@@ -53,12 +53,13 @@ void UCWeapon_DoAction::End_DoAction()
 
 void UCWeapon_DoAction::SprintDoAction()
 {
+	CheckTrue(SprintDoActionDatas.IsEmpty());
+	
 	bInAction = true;
 
 	State->SetActionMode();
 	
-	if (!SprintDoActionDatas.IsEmpty())
-		SprintDoActionDatas[0].DoAction(OwnerCharacter);
+	SprintDoActionDatas[0].DoAction(OwnerCharacter);
 
 	CHelpers::GetComponent<UCMovementComponent>(OwnerCharacter)->OnReset(FInputActionValue());
 }

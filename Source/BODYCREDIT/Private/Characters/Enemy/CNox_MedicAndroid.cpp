@@ -74,6 +74,8 @@ void ACNox_MedicAndroid::BeginPlay()
 	                                                          EAttachLocation::Type::KeepWorldPosition, false, false);
 
 	AttackCollision(false); // Attack Collision Off
+
+	HPComp->SetStatus(300, 0);
 }
 
 void ACNox_MedicAndroid::SetPerceptionInfo()

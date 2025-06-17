@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -43,6 +43,11 @@ protected:
 	class UCNoxEnemyHPComponent* HPComp;
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	class UCFSMComponent* FSMComp;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UAC_LootingInventoryComponent* LootInventoryComp;
+public:
+	UCNoxEnemyHPComponent* GetHPComp();
 #pragma endregion
 
 #pragma region Sensing

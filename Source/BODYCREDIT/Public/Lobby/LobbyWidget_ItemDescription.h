@@ -43,4 +43,7 @@ public:
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UImage* Image_Item;
+
+	UPROPERTY()
+	class UNetGameInstance* GI;
 };

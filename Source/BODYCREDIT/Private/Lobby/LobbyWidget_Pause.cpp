@@ -44,14 +44,15 @@ void ULobbyWidget_Pause::NativeConstruct()
         PlayAnimation(Anim_BackGround, 0.0f, 9999, EUMGSequencePlayMode::Forward);
     }
 
-    UNetGameInstance* GI = Cast<UNetGameInstance>(GetGameInstance());
+    GI = Cast<UNetGameInstance>(GetGameInstance());
     GI->PauseBGM(true);
 }
 
 void ULobbyWidget_Pause::OnContinueClicked()
 {
-    UNetGameInstance* GI = Cast<UNetGameInstance>(GetGameInstance());
     GI->PauseBGM(false);
+    
+    GI->PlayConfirmSound();
     
     UGameplayStatics::SetGamePaused(GetWorld(), false);
     PlayerCharacter->InventoryComp->PauseGame();
@@ -60,13 +61,12 @@ void ULobbyWidget_Pause::OnContinueClicked()
 
 void ULobbyWidget_Pause::OnExitClicked()
 {
+    GI->PlayConfirmSound();
+
     if (LobbyWidget_Selection)
     {
-        LobbyWidget_Selection->AddToViewport();
-        RemoveFromParent();
-        return;
+        LobbyWidget_Selection = nullptr;
     }
-
 
     if (LobbySelectionWidgetClass)
     {
@@ -85,6 +85,8 @@ void ULobbyWidget_Pause::OnExitClicked()
 
 void ULobbyWidget_Pause::OnContinueHovered()
 {
+    GI->PlayHoveredSound();
+
     if (Anim_Hovered_Continue)
     {
         PlayAnimation(Anim_Hovered_Continue);
@@ -121,6 +123,8 @@ void ULobbyWidget_Pause::OnContinueUnhovered()
 
 void ULobbyWidget_Pause::OnExitHovered()
 {
+    GI->PlayHoveredSound();
+
     if (Anim_Hovered_Exit)
     {
         PlayAnimation(Anim_Hovered_Exit);

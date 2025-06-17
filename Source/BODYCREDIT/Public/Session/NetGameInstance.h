@@ -193,4 +193,23 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 NumKeySpawned = 0;
+
+	 UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+    class USoundBase* Sound_Hovered;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+    class USoundBase* Sound_Confirm;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sound")
+    class USoundBase* Sound_Cancel;
+
+	void PlayHoveredSound();
+	void PlayConfirmSound();
+	void PlayCancelSound();
+
+	DECLARE_MULTICAST_DELEGATE(FOnBack);
+
+	FOnBack OnBack;
+
+	bool IsPlayerDead = false;
 }; 
