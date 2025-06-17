@@ -220,8 +220,8 @@ void UCMovementComponent::OffMovement(const FInputActionValue& InVal)
 
 void UCMovementComponent::OnHorizontalLook(const FInputActionValue& InVal)
 {
-	CheckFalse(CHelpers::GetComponent<UCStateComponent>(OwnerCharacter)->IsIdleMode());
-	// CheckTrue(bFixedCamera);
+	// CheckFalse(CHelpers::GetComponent<UCStateComponent>(OwnerCharacter)->IsIdleMode());
+	CheckTrue(bFixedCamera);
 
 	const FVector2D input = InVal.Get<FVector2D>();
 	CheckTrue(input.X == 0);
@@ -232,12 +232,13 @@ void UCMovementComponent::OnHorizontalLook(const FInputActionValue& InVal)
 
 void UCMovementComponent::OnVerticalLook(const FInputActionValue& InVal)
 {
-	CheckFalse(CHelpers::GetComponent<UCStateComponent>(OwnerCharacter)->IsIdleMode());
-	// CheckTrue(bFixedCamera);
+	// CheckFalse(CHelpers::GetComponent<UCStateComponent>(OwnerCharacter)->IsIdleMode());
+	CheckTrue(bFixedCamera);
 
 	const FVector2D input = InVal.Get<FVector2D>();
 	CheckTrue(input.Y == 0);
 
+	CLog::Print("11");
 	OwnerCharacter->AddControllerPitchInput(input.Y * VerticalLook * GetWorld()->GetDeltaSeconds());
 
 }
