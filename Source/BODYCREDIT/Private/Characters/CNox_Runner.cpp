@@ -107,6 +107,7 @@ void ACNox_Runner::BeginPlay()
 float ACNox_Runner::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
                                class AController* EventInstigator, AActor* DamageCauser)
 {
+	if (IsEscape) return 0.f;
 	HPComp->TakeDamage(DamageAmount);
 	State->SetHittedMode();
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);

@@ -9,6 +9,7 @@
 #include "Sound/SoundClass.h"
 #include "Item/ItemDT.h"
 #include "Item/Item_Base.h"
+#include "Sound/SoundBase.h"
 
 void UNetGameInstance::Init()
 {	
@@ -233,6 +234,21 @@ void UNetGameInstance::InitItemCache(UDataTable* ItemDT)
 		default: break;
 		}
 	}
+}
+
+void UNetGameInstance::PlayHoveredSound()
+{
+	UGameplayStatics::PlaySound2D(this, Sound_Hovered);
+}
+
+void UNetGameInstance::PlayConfirmSound()
+{
+	UGameplayStatics::PlaySound2D(this, Sound_Confirm);
+}
+
+void UNetGameInstance::PlayCancelSound()
+{
+	UGameplayStatics::PlaySound2D(this, Sound_Cancel);
 }
 
 USoundCue* UNetGameInstance::GetBGM()

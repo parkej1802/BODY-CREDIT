@@ -42,6 +42,9 @@ void ULobbyWidget_WorkShop::NativeConstruct()
 
 void ULobbyWidget_WorkShop::OnBackClicked()
 {
+	GI->OnBack.Broadcast();
+    GI->PlayConfirmSound();
+
     if (LobbySelectionWidgetClass)
     {
         LobbyWidget_Selection = CreateWidget<ULobbyWidget_Selection>(GetWorld(), LobbySelectionWidgetClass);
@@ -53,7 +56,6 @@ void ULobbyWidget_WorkShop::OnBackClicked()
         }
     }
 
-    UNetGameInstance* GI = Cast<UNetGameInstance>(GetGameInstance());
 	if (GI) {
         GI->SavedEquippedItems.Empty();
 		for (auto& Pair : EquipComp->EquippedItems)
@@ -76,6 +78,8 @@ void ULobbyWidget_WorkShop::OnBackClicked()
 
 void ULobbyWidget_WorkShop::OnBackHovered()
 {
+    GI->PlayHoveredSound();
+
     if (Image_Button_Back_Hovered)
     {
         Image_Button_Back_Hovered->SetVisibility(ESlateVisibility::Visible);
@@ -197,6 +201,9 @@ void ULobbyWidget_WorkShop::NativeTick(const FGeometry& MyGeometry, float InDelt
 
 void ULobbyWidget_WorkShop::Refresh()
 {
+
+    GI = Cast<UNetGameInstance>(GetGameInstance());
+
     PC = Cast<ACNox_Controller>(GetOwningPlayer());
     FInputModeGameAndUI InputMode;
     PC->SetInputMode(InputMode);

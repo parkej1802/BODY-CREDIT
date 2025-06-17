@@ -42,4 +42,7 @@ public:
 
 	UPROPERTY()
 	class ULobbyWidget_DayLeft* LobbyWidget_DayLeft;
+
+	UPROPERTY()
+	class UNetGameInstance* GI;
 };

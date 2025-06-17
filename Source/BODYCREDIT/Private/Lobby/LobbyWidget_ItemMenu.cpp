@@ -35,11 +35,14 @@ void ULobbyWidget_ItemMenu::NativeConstruct()
         Button_Description->OnHovered.AddDynamic(this, &ThisClass::OnDescriptionHovered);
         Button_Description->OnUnhovered.AddDynamic(this, &ThisClass::OnDescriptionUnhovered);
     }
+
     GI = Cast<UNetGameInstance>(GetGameInstance());
 }
 
 void ULobbyWidget_ItemMenu::OnUseClicked()
 {
+    GI->PlayConfirmSound();
+
     if (ItemObject)
     {
         ItemObject->ItemActorOwner->UseItem();
@@ -50,6 +53,8 @@ void ULobbyWidget_ItemMenu::OnUseClicked()
 
 void ULobbyWidget_ItemMenu::OnSellClicked()
 {
+    GI->PlayConfirmSound();
+
     ACMainGM* GM = Cast<ACMainGM>(GetWorld()->GetAuthGameMode());
     if (GM && GM->IsStart) return;
 
@@ -63,6 +68,8 @@ void ULobbyWidget_ItemMenu::OnSellClicked()
 
 void ULobbyWidget_ItemMenu::OnDescriptionClicked()
 {
+    GI->PlayConfirmSound();
+
     if (ItemDescriptionUI)
     {
         ItemDescriptionUI->ItemObject = ItemObject;
@@ -89,6 +96,7 @@ void ULobbyWidget_ItemMenu::OnDescriptionClicked()
 
 void ULobbyWidget_ItemMenu::OnUseHovered()
 {
+    GI->PlayHoveredSound();
     if (Image_Button_Use_Hovered)
     {
         Image_Button_Use_Hovered->SetVisibility(ESlateVisibility::Visible);
@@ -105,6 +113,8 @@ void ULobbyWidget_ItemMenu::OnUseUnhovered()
 
 void ULobbyWidget_ItemMenu::OnSellHovered()
 {
+    GI->PlayHoveredSound();
+
     if (Image_Button_Sell_Hovered)
     {
         Image_Button_Sell_Hovered->SetVisibility(ESlateVisibility::Visible);
@@ -121,6 +131,8 @@ void ULobbyWidget_ItemMenu::OnSellUnhovered()
 
 void ULobbyWidget_ItemMenu::OnDescriptionHovered()
 {
+    GI->PlayHoveredSound();
+
     if (Image_Button_Description_Hovered)
     {
         Image_Button_Description_Hovered->SetVisibility(ESlateVisibility::Visible);

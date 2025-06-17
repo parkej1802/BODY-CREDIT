@@ -26,4 +26,12 @@ public:
 	class UTextBlock* Text_Timer;
 
 	bool IsVisible = false; 
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class ACNox_Runner* PlayerCharacter;
+
+	bool IsDead = false;
+
+	UPROPERTY()
+	class UNetGameInstance* GI;
 };

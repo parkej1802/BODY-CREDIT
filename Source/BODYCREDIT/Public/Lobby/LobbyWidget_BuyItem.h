@@ -91,4 +91,7 @@ public:
 
 	UPROPERTY()
 	class APlayerController* PC;
+
+	UPROPERTY()
+	class UNetGameInstance* GI;
 };
