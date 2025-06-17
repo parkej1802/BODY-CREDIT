@@ -55,7 +55,7 @@ void ACNox_Runner::BeginPlay()
 	SceneCapture2D->ShowOnlyActorComponents(this);
 
 	Movement->EnableControlRotation();
-	Movement->Stop();
+	// Movement->Stop();
 
 	UNetGameInstance* GI = Cast<UNetGameInstance>(GetGameInstance());
 	if (GI && EquipComp)
