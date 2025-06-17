@@ -32,7 +32,7 @@ public:
 	*	Status Property - LHJ (2025.05.07)
 	*/
 	UPROPERTY(EditAnywhere, Category="Status")
-	float MaxHealth{100};
+	float MaxHealth{500};
 	UPROPERTY(VisibleAnywhere, Category="Status")
 	float Health;
 

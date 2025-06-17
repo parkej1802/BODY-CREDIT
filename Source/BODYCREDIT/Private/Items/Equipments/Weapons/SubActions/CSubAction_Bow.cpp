@@ -47,18 +47,32 @@ void UCSubAction_Bow::Tick_Implementation(float InDeltaTime)
 
 	if (bInAction)
 	{
+		CheckNull(Bow);
 		CheckTrue(Bow->Arrows.IsEmpty());
-		CheckTrue(Bow->Arrows.Last()->IsHidden());
 		Bow->Arrows.Last()->SetActorHiddenInGame(false);
 	}
 	else
 	{
-		// SubAction중이 아니거나 Arrows가 비어 있거나 마지막 화살의 활성화 상태일 경우
+		CheckNull(Bow);
 		CheckTrue(Bow->Arrows.IsEmpty());
 		CheckTrue(Bow->Arrows.Last()->GetProjectileMovement()->IsActive());
-		
 		Bow->Arrows.Last()->SetActorHiddenInGame(true);
 	}
+
+	// if (bInAction)
+	// {
+	// 	CheckTrue(Bow->Arrows.IsEmpty());
+	// 	CheckTrue(Bow->Arrows.Last()->IsHidden());
+	// 	Bow->Arrows.Last()->SetActorHiddenInGame(false);
+	// }
+	// else
+	// {
+	// 	// SubAction중이 아니거나 Arrows가 비어 있거나 마지막 화살의 활성화 상태일 경우
+	// 	CheckTrue(Bow->Arrows.IsEmpty());
+	// 	CheckTrue(Bow->Arrows.Last()->GetProjectileMovement()->IsActive());
+	// 	
+	// 	Bow->Arrows.Last()->SetActorHiddenInGame(true);
+	// }
 
 }
 

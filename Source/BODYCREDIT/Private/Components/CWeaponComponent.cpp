@@ -218,6 +218,8 @@ void UCWeaponComponent::EndDoAction()
 
 void UCWeaponComponent::SubAction_Pressed()
 {
+	CheckFalse(CHelpers::GetComponent<UCStateComponent>(OwnerCharacter)->IsIdleMode());
+	
 	if (IsBowMode())
 	{
 		if (UCMovementComponent* movement = CHelpers::GetComponent<UCMovementComponent>(OwnerCharacter))
@@ -254,7 +256,7 @@ void UCWeaponComponent::SubAction_Released()
 
 void UCWeaponComponent::SetMode(EWeaponType InType)
 {
-	CheckFalse(CHelpers::GetComponent<UCMovementComponent>(OwnerCharacter)->CanMove());
+	CheckFalse(CHelpers::GetComponent<UCStateComponent>(OwnerCharacter)->IsIdleMode());
 	CheckTrue(bInSubAction);
 
 	if (Type == InType)

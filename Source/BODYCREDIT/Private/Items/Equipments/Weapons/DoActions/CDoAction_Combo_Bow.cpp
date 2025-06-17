@@ -53,7 +53,7 @@ void UCDoAction_Combo_Bow::DoAction()
 }
 void UCDoAction_Combo_Bow::Begin_DoAction()
 {
-	Super::Begin_DoAction();
+	// Super::Begin_DoAction();
 	
 	bAttachedString = false;
 	

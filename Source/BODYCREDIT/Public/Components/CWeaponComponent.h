@@ -122,7 +122,7 @@ public:
 private:
 	EWeaponType Type = EWeaponType::UNARMED;
 
-private:
+public:
 	UPROPERTY()
 	class UCWeapon_Data* Datas[(int32)EWeaponType::MAX];
 	

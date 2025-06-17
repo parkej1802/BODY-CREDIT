@@ -110,6 +110,7 @@ float ACNox_Runner::TakeDamage(float DamageAmount, struct FDamageEvent const& Da
 {
 	if (IsEscape) return 0.f;
 	HPComp->TakeDamage(DamageAmount);
+	CheckTrueResult(State->IsAvoidMode(), 0);
 	State->SetHittedMode();
 	return Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 }
@@ -175,9 +176,9 @@ void ACNox_Runner::NotifyControllerChanged()
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
 			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
-			Subsystem->AddMappingContext(IMC_Movement, 10);
-			Subsystem->AddMappingContext(IMC_Weapon, 11);
-			Subsystem->AddMappingContext(IMC_Invectory, 11);
+			// Subsystem->AddMappingContext(IMC_Movement, 11);
+			// Subsystem->AddMappingContext(IMC_Weapon, 11);
+			Subsystem->AddMappingContext(IMC_Invectory, 0);
 		}
 	}
 }
@@ -425,6 +426,7 @@ void ACNox_Runner::OnJumpOrDodgeInput()
 {
 	CheckNull(Weapon);
 	CheckNull(State);
+	CheckTrue(State->IsDeadMode()); // 죽은 상태에서는 점프 불가
 	CheckNull(Movement);
 
 	EWeaponType WeaponType = Weapon->GetWeaponType();

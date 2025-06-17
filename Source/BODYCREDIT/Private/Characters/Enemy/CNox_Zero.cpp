@@ -52,6 +52,8 @@ void ACNox_Zero::BeginPlay()
 	CHelpers::GetAssetDynamic(&(EnemyAnim->DieMontage),
 	                          TEXT("/Game/Assets/Cyber_Zombie_Arm/Anim/Die/AM_Die.AM_Die"));
 	AttackCollision(false); // Attack Collision Off
+
+	HPComp->SetStatus(150, 0);
 }
 
 void ACNox_Zero::Tick(float DeltaTime)

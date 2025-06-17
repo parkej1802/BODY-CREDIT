@@ -14,7 +14,7 @@ class BODYCREDIT_API ACAddOn_Arrow : public ACAddOn
 
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "FX")
-	class UNiagaraSystem* ArrowVanishFX;
+	class UParticleSystem* ArrowVanishFX;
 
 	UPROPERTY(EditDefaultsOnly, Category = "FX")
 	class USoundBase* ArrowVanishSFX;

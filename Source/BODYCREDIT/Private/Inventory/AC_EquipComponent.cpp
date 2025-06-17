@@ -16,6 +16,8 @@
 #include "Item/Item_Base.h"
 #include "AC_LootingInventoryComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Items/Equipments/Weapons/CWeapon_Attachment.h"
+#include "Items/Equipments/Weapons/CWeapon_Data.h"
 
 // Sets default values for this component's properties
 UAC_EquipComponent::UAC_EquipComponent()
@@ -103,7 +105,9 @@ void UAC_EquipComponent::EquipItem(EPlayerPart Part, UItemObject* Item)
 
 			break;
 		case EPlayerPart::Weapon1:
-			PlayerCharacter->GetWeapon1()->SetSkeletalMeshAsset(Item->ItemData.SkeletalMesh);
+			{
+				PlayerCharacter->GetWeapon1()->SetSkeletalMeshAsset(Item->ItemData.SkeletalMesh);
+			}
 			break;
 		case EPlayerPart::Weapon2:
 			PlayerCharacter->GetWeapon2()->SetSkeletalMeshAsset(Item->ItemData.SkeletalMesh);
