@@ -212,4 +212,6 @@ public:
 	FOnBack OnBack;
 
 	bool IsPlayerDead = false;
+
+	bool IsDragging = false;
 }; 

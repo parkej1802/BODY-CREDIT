@@ -68,4 +68,10 @@ public:
 	void RotateItem();
 	void ShowLootableInventory();
 	void PauseGame();
+		
+	UPROPERTY()
+	class UNetGameInstance* GI;
+
+	UPROPERTY()
+	class ACMainGM* GM;
 };

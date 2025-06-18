@@ -21,10 +21,13 @@
 #include "Components/Image.h"
 #include "Components/Button.h"
 #include "AC_LootingInventoryComponent.h"
+#include "Session/NetGameInstance.h"
 
 void UInventory_Widget::NativeConstruct()
 {
     Super::NativeConstruct();
+
+    GI = GetWorld()->GetGameInstance<UNetGameInstance>();
 
     PC = Cast<ACNox_Controller>(GetOwningPlayer());
 
@@ -108,6 +111,7 @@ bool UInventory_Widget::NativeOnDragOver(const FGeometry& InGeometry, const FDra
 void UInventory_Widget::OnBackClicked()
 {
    InventoryComp->ShowLootableInventory();
+   GI->OnBack.Broadcast();
 }
 
 void UInventory_Widget::OnBackHovered()
@@ -233,6 +237,11 @@ FReply UInventory_Widget::NativeOnMouseButtonDown(const FGeometry& InGeometry, c
 bool UInventory_Widget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
     Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+
+    if (GI)
+    {
+        GI->IsDragging = false;
+    }
 
     UItemObject* ItemObject = Cast<UItemObject>(InOperation->Payload);
 

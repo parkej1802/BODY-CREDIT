@@ -111,6 +111,13 @@ public:
 	FGeometry GetGridContentGeometry();
 
 	void ClearInventory();
+
+	/*UFUNCTION()
+	void RemoveWidget();*/
+
+	UPROPERTY()
+	class UNetGameInstance* GI;
+
 public:
 
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;

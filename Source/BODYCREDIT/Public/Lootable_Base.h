@@ -29,13 +29,26 @@ public:
 	class UStaticMeshComponent* StaticMeshComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class UBoxComponent* SphereComp;
+	class UBoxComponent* BoxComp;
+
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class USphereComponent* SphereComponent;*/
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UAC_LootingInventoryComponent* LootInventoryComp;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UWidgetComponent* InteractWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UDataTable* ItemDataTable;
 
 	virtual class UAC_LootingInventoryComponent* GetLootInventoryComponent_Implementation() const override;
+
+	/*UFUNCTION()
+	void OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnSphereEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);*/
 };

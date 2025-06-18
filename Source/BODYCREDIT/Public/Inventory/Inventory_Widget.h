@@ -169,4 +169,7 @@ public:
 
 	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	class UImage* Image_Button_Back_Hovered;
+
+	UPROPERTY()
+	class UNetGameInstance* GI;
 };
