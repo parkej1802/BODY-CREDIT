@@ -20,6 +20,7 @@ public:
 
 public:
 	void InitializeProjectile(FVector InStartLocation, class ACNox* InTargetActor);
+	void SetCollisionEnabled(bool bEnabled);
 
 private:
 	UPROPERTY()
