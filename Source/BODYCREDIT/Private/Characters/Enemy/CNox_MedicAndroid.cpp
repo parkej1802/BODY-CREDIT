@@ -124,7 +124,12 @@ float ACNox_MedicAndroid::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 	if (IsShielding()) return 0.f;
 
 	HPComp->TakeDamage(DamageAmount);
-	if (HPComp->IsDead()) FSMComp->SetEnemyState(EEnemyState::Die);
+	if (HPComp->IsDead())
+	{
+		AttackComp_l->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		AttackComp_r->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		FSMComp->SetEnemyState(EEnemyState::Die);
+	}
 	else
 	{
 		if (FSMComp->GetEnemyState() == EEnemyState::Combat) return DamageAmount;

@@ -51,9 +51,17 @@ void UCNoxHPComponent::TakeDamage(float Amount, bool ActiveShield, bool& OutIsSh
 
 void UCNoxHPComponent::TakeDamage(float Amount)
 {
-	CheckNull(OwnerCharacter);
-	CheckTrue(CHelpers::GetComponent<UCStateComponent>(OwnerCharacter)->IsAvoidMode());
-	
+	//CheckNull(OwnerCharacter);
+	//CheckTrue(CHelpers::GetComponent<UCStateComponent>(OwnerCharacter)->IsAvoidMode());
+	if (OwnerCharacter)
+	{
+		if (CHelpers::GetComponent<UCStateComponent>(OwnerCharacter))
+		{
+			if (CHelpers::GetComponent<UCStateComponent>(OwnerCharacter)->IsAvoidMode())
+				return;
+		}
+	}
+
 	Health = FMath::Max(0.f, Health - Amount);
 	SetHealth(Health);
 	if (Health <= 0) Die();
