@@ -93,6 +93,7 @@ void ACBeam::UpdateDamageTimer(float DeltaTime)
 		else
 		{
 			bApplyDamage = false;
+			DamageTimer = 0.f;
 		}
 	}
 }
@@ -154,7 +155,10 @@ void ACBeam::HandleBeamHit(const FHitResult& HitResult)
 	HitVFX->SetWorldLocation(HitResult.Location + 10);
 
 	if (!bApplyDamage && HitResult.GetActor()->IsA(ACNox_Runner::StaticClass()))
+	{
 		OwnerAI->SetApplyDamage(HitResult.GetActor(), 10.f);
+		bApplyDamage = true;
+	}
 }
 
 void ACBeam::HandleBeamMiss(const FVector& EndLocation)

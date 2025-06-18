@@ -65,7 +65,7 @@ private:
 	bool AttackStart = false;
 	bool bApplyDamage = false;
 	float DamageTimer = 0.0f;
-	float DamageInterval = 0.5f;
+	float DamageInterval = 0.3f;
 	float CurPitch = 0.0f;
 	float CurAttackDelay = 0.0f;
 	float AttackDelay = 1.0f;
