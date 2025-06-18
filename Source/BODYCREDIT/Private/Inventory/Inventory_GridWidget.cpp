@@ -18,6 +18,7 @@
 #include "Lobby/LobbyWidget_Market.h"
 #include "Games/CMainGM.h"
 #include "Characters/CNox_Runner.h"
+#include "Session/NetGameInstance.h"
 
 
 void UInventory_GridWidget::InitInventory(UAC_InventoryBaseComponent* InventoryComponent, float Inventoy_TileSize)
@@ -37,6 +38,7 @@ void UInventory_GridWidget::InitInventory(UAC_InventoryBaseComponent* InventoryC
 	if (!InventoryBaseComp->InventoryChanged.IsAlreadyBound(this, &UInventory_GridWidget::Refresh)) {
 		InventoryBaseComp->InventoryChanged.AddDynamic(this, &UInventory_GridWidget::Refresh);
 	}
+	GI = Cast<UNetGameInstance>(GetGameInstance());
 }	
 
 //void UInventory_GridWidget::InitEquipment(UAC_InventoryBaseComponent* InventoryComponent, float Equipment_TileSize)
@@ -374,6 +376,11 @@ bool UInventory_GridWidget::NativeOnDrop(const FGeometry& InGeometry, const FDra
 {
 	Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
 
+	if (GI)
+	{
+		GI->IsDragging = false;
+	}
+
 	if (UInventory_ItemWidget* DraggedWidget = Cast<UInventory_ItemWidget>(InOperation->DefaultDragVisual))
 	{
 		DraggedWidget->IsMoving = false;
@@ -421,3 +428,34 @@ bool UInventory_GridWidget::NativeOnDrop(const FGeometry& InGeometry, const FDra
 	return true;
 
 }
+
+//void UInventory_GridWidget::RemoveWidget()
+//{
+//	if (UInventory_ItemWidget* DraggedWidget = Cast<UInventory_ItemWidget>(CachedDragOperation->DefaultDragVisual))
+//	{
+//		DraggedWidget->IsMoving = false;
+//	}
+//
+//	if (UInventory_EquipmentTile* InventoryItemTileUI = Cast<UInventory_EquipmentTile>(CachedDragOperation->DefaultDragVisual))
+//	{
+//		InventoryItemTileUI->IsMoving = false;
+//	}
+//
+//	UItemObject* ItemObject = GetPayLoad(CachedDragOperation);
+//
+//	if (!ItemObject || !ItemObject->OwnerInventoryComp) return;
+//
+//	const FIntPoint& StartPos = ItemObject->ItemData.StartPosition;
+//	FInventoryTile StartTile;
+//	StartTile.X = StartPos.X;
+//	StartTile.Y = StartPos.Y;
+//
+//	int32 Index = ItemObject->OwnerInventoryComp->TileToIndex(StartTile);
+//
+//	if (ItemObject->OwnerInventoryComp->IsRoomAvailable(ItemObject, Index))
+//	{
+//		ItemObject->OwnerInventoryComp->AddItemAt(ItemObject, Index);
+//	}
+//
+//	CachedDragOperation = nullptr;
+//}

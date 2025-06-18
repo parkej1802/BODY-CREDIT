@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Lootable_Base.h"
-#include "Lootable_Box.generated.h"
+#include "Blueprint/UserWidget.h"
+#include "ItemInteract.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class BODYCREDIT_API ALootable_Box : public ALootable_Base
+class BODYCREDIT_API UItemInteract : public UUserWidget
 {
 	GENERATED_BODY()
 	
