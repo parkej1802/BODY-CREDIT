@@ -126,6 +126,7 @@ FVector ACBeam::CalculateBeamEnd(float DeltaTime)
 
 	// 회전값 계산
 	FRotator NewRotation = FRotator(newPitch, 0, 0);
+	if (!OwnerAI) return FVector::ZeroVector;
 	FRotator aiRot = OwnerAI->GetActorRotation();
 	if (((180 > aiRot.Yaw && aiRot.Yaw > 90) || (-90 > aiRot.Yaw && aiRot.Yaw > -180))) 
 		NewRotation.Pitch *= -1;
