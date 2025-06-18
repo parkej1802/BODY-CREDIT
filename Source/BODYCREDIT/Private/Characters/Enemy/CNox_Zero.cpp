@@ -68,7 +68,12 @@ float ACNox_Zero::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 		if (ACNox* player = Cast<ACNox>(DamageCauser->GetOwner())) SetTarget(player);
 
 	HPComp->TakeDamage(DamageAmount);
-	if (HPComp->IsDead()) FSMComp->SetEnemyState(EEnemyState::Die);
+	if (HPComp->IsDead())
+	{
+		AttackComp_l->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		AttackComp_r->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		FSMComp->SetEnemyState(EEnemyState::Die);
+	}
 	else
 	{
 		if (FSMComp->GetEnemyState() == EEnemyState::Combat) return DamageAmount;
