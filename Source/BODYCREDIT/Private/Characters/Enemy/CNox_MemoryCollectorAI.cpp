@@ -373,8 +373,8 @@ void ACNox_MemoryCollectorAI::StartRangeAttack(bool bIsRight)
 	auto* PoolObj = RangeProjectileArray.Pop();
 	PoolObj->InitializeProjectile(SpawnTransform.GetLocation(), Target);
 	PoolObj->SetActorTransform(SpawnTransform);
-	PoolObj->SetActorEnableCollision(true);
 	PoolObj->SetActorHiddenInGame(false);
+	PoolObj->SetCollisionEnabled(true);
 	PoolObj->SetActorTickEnabled(true);
 }
 
@@ -386,6 +386,6 @@ void ACNox_MemoryCollectorAI::ReturnToPool(ACRangeProjectile* ReturnedProjectile
 	}
 
 	ReturnedProjectile->SetActorHiddenInGame(true);
-	ReturnedProjectile->SetActorEnableCollision(false);
+	ReturnedProjectile->SetCollisionEnabled(false);
 	ReturnedProjectile->SetActorTickEnabled(false);
 }

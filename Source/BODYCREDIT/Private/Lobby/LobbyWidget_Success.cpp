@@ -34,6 +34,11 @@ void ULobbyWidget_Success::NativeConstruct()
     GI = Cast<UNetGameInstance>(GetGameInstance());
 
     Refresh();
+
+    {
+	    ACMainGM* GM = Cast<ACMainGM>(GetWorld()->GetAuthGameMode());
+	    GM->DestroyEnemy();
+    }
 }
 
 void ULobbyWidget_Success::OnContinueClicked()
