@@ -68,8 +68,7 @@ void ACNox_Runner::BeginPlay()
 
 			MyGameState->SpawnItemHiddenFromActor(EquipComp->EquippedItems[Pair.Key], this, true);
 		}
-
-
+		
 		/*for (const FItemSaveData& Data : GI->SavedInventoryItems)
 		{
 			UItemObject* Item = CreateItemFromData(Data);
