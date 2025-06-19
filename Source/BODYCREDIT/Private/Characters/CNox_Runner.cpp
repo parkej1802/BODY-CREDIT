@@ -25,6 +25,7 @@
 #include "Components/CNoxObserverComp.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Lobby/LobbyWidget_Failed.h"
+#include "Lobby/Tutorial/CGuideWidget.h"
 
 ACNox_Runner::ACNox_Runner()
 {
@@ -102,6 +103,14 @@ void ACNox_Runner::BeginPlay()
 	//FPSCamera->bUsePawnControlRotation = true;
 	//// 머리 본 숨김
 	//GetMesh()->HideBoneByName(FName("neck_01"), EPhysBodyOp::PBO_None);
+
+	{
+		if (GuideFactory)
+		{
+			GuideWidget = CreateWidget<UCGuideWidget>(GetWorld(), GuideFactory);
+		}
+		PC = Cast<ACNox_Controller>(GetController());
+	}
 }
 
 float ACNox_Runner::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
@@ -197,6 +206,7 @@ void ACNox_Runner::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		Weapon->BindInput(input);
 
 		input->BindAction(IA_Jump, ETriggerEvent::Started, this, &ACNox_Runner::OnJumpOrDodgeInput);
+		input->BindAction(IA_Help, ETriggerEvent::Started, this, &ACNox_Runner::OnHelp);
 	}
 }
 
@@ -627,10 +637,28 @@ void ACNox_Runner::OnHelp()
 {
 	if (bIsHelp)
 	{
-		
+		if (GuideWidget)
+		{
+			GuideWidget->RemoveFromParent();
+			OnMovement();
+		}
+
+		FInputModeGameOnly UIInputMode;
+		PC->SetInputMode(UIInputMode);
+		PC->bShowMouseCursor = false;
 	}
 	else
 	{
+		if (GuideWidget)
+		{
+			GuideWidget->AddToViewport(0);
+			OffMovement();			
+		}
 		
+		FInputModeGameAndUI UIInputMode;
+		PC->SetInputMode(UIInputMode);
+		PC->bShowMouseCursor = true;		
 	}
+
+	bIsHelp = !bIsHelp;
 }

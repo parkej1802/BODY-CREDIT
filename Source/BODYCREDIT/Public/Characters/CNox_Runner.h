@@ -290,6 +290,8 @@ public:
 	void Reset();
 
 	// Help
+	UPROPERTY()
+	class ACNox_Controller* PC;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UUserWidget> GuideFactory;
 	UPROPERTY()

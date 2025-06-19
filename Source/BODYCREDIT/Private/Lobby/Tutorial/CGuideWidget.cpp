@@ -2,7 +2,6 @@
 #include "Components/Button.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
-#include "Slate/ButtonStyleAsset.h"
 
 namespace
 {
@@ -14,16 +13,49 @@ void UCGuideWidget::NativeConstruct()
 {
     Super::NativeConstruct();
 
-    if (Btn_GameDescription) Btn_GameDescription->OnClicked.AddDynamic(this, &UCGuideWidget::OnGameDescClicked);
-    if (Btn_Key) Btn_Key->OnClicked.AddDynamic(this, &UCGuideWidget::OnKeyClicked);
-    if (Btn_Player) Btn_Player->OnClicked.AddDynamic(this, &UCGuideWidget::OnPlayerClicked);
-    if (Btn_Inventory) Btn_Inventory->OnClicked.AddDynamic(this, &UCGuideWidget::OnInventoryClicked);
-    if (Btn_Enemy) Btn_Enemy->OnClicked.AddDynamic(this, &UCGuideWidget::OnEnemyClicked);
-    if (Btn_Map) Btn_Map->OnClicked.AddDynamic(this, &UCGuideWidget::OnMapClicked);
-    if (Btn_Prev) Btn_Prev->OnClicked.AddDynamic(this, &UCGuideWidget::OnPrevClicked);
-    if (Btn_Later) Btn_Later->OnClicked.AddDynamic(this, &UCGuideWidget::OnLaterClicked);
+    if (Btn_GameDescription)
+    {
+        Btn_GameDescription->OnClicked.RemoveDynamic(this, &UCGuideWidget::OnGameDescClicked);
+        Btn_GameDescription->OnClicked.AddDynamic(this, &UCGuideWidget::OnGameDescClicked);
+    }
+    if (Btn_Key)
+    {
+        Btn_Key->OnClicked.RemoveDynamic(this, &UCGuideWidget::OnKeyClicked);
+        Btn_Key->OnClicked.AddDynamic(this, &UCGuideWidget::OnKeyClicked);
+    }
+    if (Btn_Player)
+    {
+        Btn_Player->OnClicked.RemoveDynamic(this, &UCGuideWidget::OnPlayerClicked);
+        Btn_Player->OnClicked.AddDynamic(this, &UCGuideWidget::OnPlayerClicked);
+    }
+    if (Btn_Inventory)
+    {
+        Btn_Inventory->OnClicked.RemoveDynamic(this, &UCGuideWidget::OnInventoryClicked);
+        Btn_Inventory->OnClicked.AddDynamic(this, &UCGuideWidget::OnInventoryClicked);
+    }
+    if (Btn_Enemy)
+    {
+        Btn_Enemy->OnClicked.RemoveDynamic(this, &UCGuideWidget::OnEnemyClicked);
+        Btn_Enemy->OnClicked.AddDynamic(this, &UCGuideWidget::OnEnemyClicked);
+    }
+    if (Btn_Map)
+    {
+        Btn_Map->OnClicked.RemoveDynamic(this, &UCGuideWidget::OnMapClicked);
+        Btn_Map->OnClicked.AddDynamic(this, &UCGuideWidget::OnMapClicked);
+    }
+    if (Btn_Prev)
+    {
+        Btn_Prev->OnClicked.RemoveDynamic(this, &UCGuideWidget::OnPrevClicked);
+        Btn_Prev->OnClicked.AddDynamic(this, &UCGuideWidget::OnPrevClicked);
+    }
+    if (Btn_Later)
+    {
+        Btn_Later->OnClicked.RemoveDynamic(this, &UCGuideWidget::OnLaterClicked);
+        Btn_Later->OnClicked.AddDynamic(this, &UCGuideWidget::OnLaterClicked);
+    }
 
     SetGuideArray(GameDescArray, Btn_GameDescription);
+    SetButtonColor(Btn_GameDescription);
 }
 
 void UCGuideWidget::SetButtonColor(UButton* SelectedBtn)
