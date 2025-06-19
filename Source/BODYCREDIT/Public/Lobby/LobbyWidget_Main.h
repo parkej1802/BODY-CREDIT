@@ -112,4 +112,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class ACNox_Runner* PlayerCharacter;
 
+	UFUNCTION(BlueprintCallable)
+	FString GetAppVersion();
 };

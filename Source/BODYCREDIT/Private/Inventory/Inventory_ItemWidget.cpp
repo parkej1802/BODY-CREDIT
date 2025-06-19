@@ -23,7 +23,8 @@ void UInventory_ItemWidget::NativeConstruct()
 
 	Refresh();
 
-	if (UNetGameInstance* GI = Cast<UNetGameInstance>(GetGameInstance()))
+	GI = Cast<UNetGameInstance>(GetGameInstance());
+	if (GI)
 	{
 		GI->OnBack.RemoveAll(this);
 		GI->OnBack.AddUObject(this, &UInventory_ItemWidget::RemoveWidget);
@@ -77,6 +78,22 @@ void UInventory_ItemWidget::RemoveWidget()
 		ItemMenuUI->RemoveFromParent();
 		ItemMenuUI = nullptr;
 	}
+
+	/*if (!ItemObject || !ItemObject->OwnerInventoryComp) return;
+
+	const FIntPoint& StartPos = ItemObject->ItemData.StartPosition;
+	FInventoryTile StartTile;
+	StartTile.X = StartPos.X;
+	StartTile.Y = StartPos.Y;
+
+	int32 Index = ItemObject->OwnerInventoryComp->TileToIndex(StartTile);
+
+	if (ItemObject->OwnerInventoryComp->IsRoomAvailable(ItemObject, Index))
+	{
+		ItemObject->OwnerInventoryComp->AddItemAt(ItemObject, Index);
+	}
+
+	RemoveFromParent();*/
 }
 
 FReply UInventory_ItemWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
@@ -156,6 +173,11 @@ void UInventory_ItemWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent
 
 void UInventory_ItemWidget::NativeOnDragDetected(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent, UDragDropOperation*& OutOperation)
 {
+	if (GI)
+	{
+		GI->IsDragging = true;
+	}
+
 	if (ItemMenuUI) {
 		ItemMenuUI->RemoveFromParent();
 		ItemMenuUI = nullptr;
@@ -180,4 +202,16 @@ void UInventory_ItemWidget::NativeOnDragDetected(const FGeometry& InGeometry, co
 	RemoveFromParent();
 
 	OutOperation = DragOperation;
+}
+
+void UInventory_ItemWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+{
+	Super::NativeOnDragCancelled(InDragDropEvent, InOperation);
+
+	if (InOperation && InOperation->DefaultDragVisual)
+	{
+		InOperation->DefaultDragVisual->RemoveFromParent();
+	}
+
+	RemoveWidget();
 }

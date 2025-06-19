@@ -16,6 +16,8 @@
 #include "Camera/CameraComponent.h"
 #include "Characters/Enemy/CNox_EBase.h"
 #include "Components/Enemy/CNoxEnemyHPComponent.h"
+#include "Session/NetGameInstance.h"
+#include "Games/CMainGM.h"
 
 // Sets default values for this component's properties
 UAC_InventoryComponent::UAC_InventoryComponent()
@@ -66,6 +68,9 @@ void UAC_InventoryComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
+	GI = GetWorld()->GetGameInstance<UNetGameInstance>();
+	GM = Cast<ACMainGM>(GetWorld()->GetAuthGameMode());
+
 	AActor* OwnerActor = GetOwner();
 
 	if ((pc = OwnerActor->GetInstigatorController<ACNox_Controller>()) != nullptr)
@@ -100,9 +105,10 @@ void UAC_InventoryComponent::SetupInputBinding(class UEnhancedInputComponent* In
 
 void UAC_InventoryComponent::ShowInventory()
 {
-
+	if (GI->IsDragging) return;
 	if (InventoryMainUI)
 	{
+		GI->OnBack.Broadcast();
 		InventoryMainUI->RemoveFromParent();
 		InventoryMainUI = nullptr;
 		bIsLootableMode = false;
@@ -114,6 +120,7 @@ void UAC_InventoryComponent::ShowInventory()
 	}
 
 	if (bIsLootableMode) return;
+	if (!GM || !GM->IsStart) return;
 
 	if (!bIsInventoryMode) {
 		bIsInventoryMode = true;
@@ -156,7 +163,7 @@ void UAC_InventoryComponent::RotateItem()
 		UInventory_ItemWidget* ItemWidget = Cast<UInventory_ItemWidget>(CurrentOp->DefaultDragVisual);
 		if (ItemWidget)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, TEXT("RotateItem"));
+			// GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Cyan, TEXT("RotateItem"));
 			ItemWidget->ItemObject = ItemObject;
 			ItemWidget->Refresh();
 		}
@@ -170,9 +177,10 @@ void UAC_InventoryComponent::RotateItem()
 
 void UAC_InventoryComponent::ShowLootableInventory()
 {
-
+	if (GI->IsDragging) return;
 	if (InventoryMainUI)
 	{
+		GI->OnBack.Broadcast();
 		InventoryMainUI->RemoveFromParent();
 		InventoryMainUI = nullptr;
 		bIsLootableMode = false;
@@ -185,6 +193,7 @@ void UAC_InventoryComponent::ShowLootableInventory()
 	}
 
 	if (bIsInventoryMode) return;
+	if (!GM || !GM->IsStart) return;
 
 	if (bIsLootableMode) {
 		bIsLootableMode = false;
