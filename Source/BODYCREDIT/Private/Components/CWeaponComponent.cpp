@@ -16,6 +16,10 @@
 #include "Inventory/AC_EquipComponent.h"
 #include "Item/ItemDT.h"
 #include "Components/CZoomComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
+#include "Items/Equipments/Weapons/AddOns/CAddOn_Arrow.h"
+#include "Items/Equipments/Weapons/Attachments/CAttachment_Bow.h"
+#include "Items/Equipments/Weapons/DoActions/CDoAction_Bow.h"
 
 UCWeaponComponent::UCWeaponComponent()
 {
@@ -55,6 +59,15 @@ void UCWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 
 	if (!!GetSubAction())
 		GetSubAction()->Tick(DeltaTime);
+
+	if (IsBowMode() and bInSubAction)
+	{
+		if (ACAttachment_Bow* bow = Cast<ACAttachment_Bow>(GetAttachment()))
+		{
+			if (bow->Arrows.IsEmpty() or bow->Arrows.Last()->GetProjectileMovement()->IsActive())
+				bow->CreateArrow();
+		}
+	}
 
 }
 

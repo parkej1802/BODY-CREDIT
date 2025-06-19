@@ -1,6 +1,8 @@
 ﻿#include "Components/CMontageComponent.h"
 #include "Global.h"
 #include "Characters/CNox.h"
+#include "Characters/CNox_Runner.h"
+#include "Items/Equipments/Weapons/CWeapon_SubAction.h"
 
 UCMontageComponent::UCMontageComponent()
 {
@@ -216,8 +218,11 @@ void UCMontageComponent::PlayAvoidMode(EWeaponType InWeaponType, const FVector2D
 	}
 
 	OwnerCharacter->PlayAnimMontage(data->Montage, data->PlayRate);
+
+	if (ACNox_Runner* runner = Cast<ACNox_Runner>(OwnerCharacter))
+		runner->Weapon->GetSubAction()->Released();
 	
-	// if (FMontageData* data = AvoidDatas[WeaponIndex][DirIndex])
+	// if (FMontageData* data = AvoidDatas[WeaponIndex][DirsIndex])
 	// {
 	// 	if (data == nullptr || data->Montage == nullptr)
 	// 	{

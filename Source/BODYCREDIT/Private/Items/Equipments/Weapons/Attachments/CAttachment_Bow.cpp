@@ -5,17 +5,17 @@
 #include "Items/Equipments/Weapons/AnimInstances/CAnimInstance_Bow.h"
 #include "Characters/CNox.h"
 #include "GameFramework/PlayerController.h"
+#include "Items/Equipments/Weapons/AddOns/CAddOn_Arrow.h"
 
 float* ACAttachment_Bow::GetBend()
 {
 	return Cast<UCAnimInstance_Bow>(SkeletalMeshComp->GetAnimInstance())->GetBend();
-
 }
 
 ACAttachment_Bow::ACAttachment_Bow()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	
+
 	CapsuleComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	// CHelpers::CreateComponent<USkeletalMeshComponent>(this, &SkeletalMesh, "SkeletalMesh", Root);
@@ -30,12 +30,10 @@ ACAttachment_Bow::ACAttachment_Bow()
 	TSubclassOf<UCAnimInstance_Bow> animInstance;
 	CHelpers::GetClass<UCAnimInstance_Bow>(&animInstance, "/Script/Engine.AnimBlueprint'/Game/Items/Equipments/Weapons/Bow/BP_CAnimInstance_Bow.BP_CAnimInstance_Bow_C'");
 	SkeletalMeshComp->SetAnimInstanceClass(animInstance);
-
 }
 
 void ACAttachment_Bow::BeginPlay()
 {
-
 	// AttachTo("Holster_Bow");
 	SkeletalMeshComp->SetupAttachment(RootComponent);
 	// SkeletalMeshComp->SetVisibility(false);
@@ -44,7 +42,7 @@ void ACAttachment_Bow::BeginPlay()
 	PoseableMesh->SetSkinnedAsset(SkeletalMeshComp->GetSkeletalMeshAsset());
 	// PoseableMesh->SetSkeletalMesh(SkeletalMeshComp->GetSkeletalMeshAsset());
 	PoseableMesh->CopyPoseFromSkeletalComponent(SkeletalMeshComp);
-	
+
 	Super::BeginPlay();
 }
 
@@ -53,7 +51,6 @@ void ACAttachment_Bow::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	//PoseableMesh->CopyPoseFromSkeletalComponent(SkeletalMesh);
-
 }
 
 void ACAttachment_Bow::OnBeginEquip_Implementation()
@@ -71,7 +68,6 @@ void ACAttachment_Bow::OnBeginEquip_Implementation()
 		controller->PlayerCameraManager->ViewPitchMin = ViewPitchRange.X;
 		controller->PlayerCameraManager->ViewPitchMax = ViewPitchRange.Y;
 	}
-
 }
 
 void ACAttachment_Bow::OnUnequip_Implementation()
@@ -86,5 +82,23 @@ void ACAttachment_Bow::OnUnequip_Implementation()
 		controller->PlayerCameraManager->ViewPitchMin = OriginViewPitchRange.X;
 		controller->PlayerCameraManager->ViewPitchMax = OriginViewPitchRange.Y;
 	}
+}
 
+void ACAttachment_Bow::CreateArrow()
+{
+	if (OwnerCharacter->GetWorld()->bIsTearingDown == true) return;
+
+	FTransform transform;
+	ACAddOn_Arrow* arrow = OwnerCharacter->GetWorld()->SpawnActorDeferred<ACAddOn_Arrow>(ArrowClass, transform, GetOwner(), NULL, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
+	CheckNull(arrow);
+
+	arrow->AddIgnoreActor(OwnerCharacter);
+	arrow->AddIgnoreActor(this);
+
+	FAttachmentTransformRules rule = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
+	arrow->AttachToComponent(OwnerCharacter->GetMesh(), rule, "Hand_Bow_Arrow");
+	arrow->SetHidden(true);
+
+	Arrows.Add(arrow);
+	UGameplayStatics::FinishSpawningActor(arrow, transform);
 }

@@ -45,19 +45,34 @@ void UCSubAction_Bow::Tick_Implementation(float InDeltaTime)
 
 	Timeline.TickTimeline(InDeltaTime);
 
-	if (bInAction)
-	{
-		CheckNull(Bow);
-		CheckTrue(Bow->Arrows.IsEmpty());
-		Bow->Arrows.Last()->SetActorHiddenInGame(false);
-	}
-	else
-	{
-		CheckNull(Bow);
-		CheckTrue(Bow->Arrows.IsEmpty());
-		CheckTrue(Bow->Arrows.Last()->GetProjectileMovement()->IsActive());
-		Bow->Arrows.Last()->SetActorHiddenInGame(true);
-	}
+	// 1) 공통 가드
+	CheckNull(Bow);
+	CheckTrue(Bow->Arrows.IsEmpty());
+
+	// 2) LastArrow 캐싱 & 검사
+	ACAddOn_Arrow* LastArrow = Bow->Arrows.Last();
+	CheckNull(LastArrow);
+
+	// 3) Movement 검사
+	UProjectileMovementComponent* projectile = LastArrow->GetProjectileMovement();
+	// bInAction일 땐 Movement 검사 불필요하나, 분기 간편화를 위해 미리 체크
+	CheckNull(projectile);
+
+	// 4) 가시성 결정
+	bool bIsFlying   = projectile->IsActive();
+	bool bShouldHide = !bInAction && !bIsFlying;
+
+	LastArrow->SetActorHiddenInGame( bShouldHide );
+
+	// // 4) 분기 간소화
+	// if (bInAction)
+	// {
+	// 	LastArrow->SetActorHiddenInGame(!bInAction);
+	// }
+	// else
+	// {
+	// 	LastArrow->SetActorHiddenInGame(bInAction);
+	// }
 
 	// if (bInAction)
 	// {
