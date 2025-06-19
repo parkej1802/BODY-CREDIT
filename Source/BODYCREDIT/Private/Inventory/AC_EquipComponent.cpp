@@ -41,6 +41,8 @@ void UAC_EquipComponent::BeginPlay()
 	{
 		PlayerCharacter = Cast<ACNox_Runner>(OwnerActor);
 	}
+
+	GI = Cast<UNetGameInstance>(GetWorld()->GetGameInstance());
 }
 
 
@@ -80,6 +82,8 @@ void UAC_EquipComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 void UAC_EquipComponent::EquipItem(EPlayerPart Part, UItemObject* Item)
 {
 	if (!Item) return;
+
+	if (GI) GI->IsDragging = false;
 
 	SetPlayerStat(Item, 1);
 	EquippedItems.Add(Part, Item);
@@ -126,6 +130,7 @@ void UAC_EquipComponent::EquipItem(EPlayerPart Part, UItemObject* Item)
 
 void UAC_EquipComponent::UnequipItem(EPlayerPart Part)
 {
+	if (GI) GI->IsDragging = false;
 	if (EquippedItems.Contains(Part))
 	{
 		SetPlayerStat(EquippedItems[Part], -1);
