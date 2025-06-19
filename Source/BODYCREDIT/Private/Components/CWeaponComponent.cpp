@@ -64,8 +64,18 @@ void UCWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	{
 		if (ACAttachment_Bow* bow = Cast<ACAttachment_Bow>(GetAttachment()))
 		{
-			if (bow->Arrows.IsEmpty() or bow->Arrows.Last()->GetProjectileMovement()->IsActive())
+			if (bow->Arrows.IsEmpty())
+			{
 				bow->CreateArrow();
+			}
+			else
+			{
+				auto* LastArrow = bow->Arrows.Last();
+				if (LastArrow && LastArrow->GetProjectileMovement() && LastArrow->GetProjectileMovement()->IsActive())
+				{
+					bow->CreateArrow();
+				}
+			}
 		}
 	}
 

@@ -311,6 +311,8 @@ void ACNox_Runner::Init()
 	// Jump
 	CHelpers::GetAsset<UInputAction>(&IA_Jump, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Jump.IA_Jump'"));
 
+	// Help
+	CHelpers::GetAsset<UInputAction>(&IA_Help, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Help.IA_Help'"));
 	
 	// // State
 	// CHelpers::CreateActorComponent<UCStateComponent>(this, &State, "State");
@@ -619,4 +621,16 @@ void ACNox_Runner::Reset()
 	State->SetIdleMode();
 	Movement->Revive();
 	Weapon->SetUnarmedMode();
+}
+
+void ACNox_Runner::OnHelp()
+{
+	if (bIsHelp)
+	{
+		
+	}
+	else
+	{
+		
+	}
 }
