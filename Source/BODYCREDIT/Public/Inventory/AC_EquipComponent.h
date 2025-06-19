@@ -71,4 +71,8 @@ public:
 	int32 CalculatePriceRecursively(class UItemObject* ItemObject);
 
 	void RefreshEquip();
+
+private:
+	UPROPERTY()
+	class UNetGameInstance* GI; 
 };
