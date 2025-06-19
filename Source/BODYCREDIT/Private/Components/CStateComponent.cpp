@@ -40,7 +40,6 @@ void UCStateComponent::SetActionMode()
 void UCStateComponent::SetHittedMode()
 {
 	CheckTrue(IsAvoidMode());
-	CheckTrue(IsActionMode());
 	CheckTrue(IsDeadMode());
 	
 	ChangeType(EStateType::Hitted);
