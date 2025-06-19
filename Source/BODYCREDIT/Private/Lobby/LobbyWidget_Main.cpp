@@ -197,3 +197,16 @@ void ULobbyWidget_Main::OnExitUnhovered()
         Image_Button_Exit_Hovered->SetVisibility(ESlateVisibility::Hidden);
     }
 }
+
+FString ULobbyWidget_Main::GetAppVersion()
+{
+    FString AppVersion;
+    GConfig->GetString(
+        TEXT("/Script/EngineSettings.GeneralProjectSettings"),
+        TEXT("ProjectVersion"),
+        AppVersion,
+        GGameIni
+    );
+
+    return AppVersion;
+}
