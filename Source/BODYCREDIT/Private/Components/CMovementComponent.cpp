@@ -125,6 +125,9 @@ void UCMovementComponent::BindInput(UEnhancedInputComponent* InEnhancedInputComp
 
 void UCMovementComponent::OnMovement(const FInputActionValue& InVal)
 {
+	FVector2D SwizzledInput = InVal.Get<FVector2D>();
+	LastInput = FVector2D(SwizzledInput.Y, -SwizzledInput.X);
+	
 	CheckFalse(bCanMove);
 	CheckTrue(bSlide);
 
@@ -205,9 +208,6 @@ void UCMovementComponent::OnMovement(const FInputActionValue& InVal)
 	//	// Left
 	//	OwnerCharacter->AddMovementInput(FQuat(rot).GetRightVector(), input.Y);
 	//}
-	
-	FVector2D SwizzledInput = InVal.Get<FVector2D>();
-	LastInput = FVector2D(SwizzledInput.Y, -SwizzledInput.X); 
 
 }
 
