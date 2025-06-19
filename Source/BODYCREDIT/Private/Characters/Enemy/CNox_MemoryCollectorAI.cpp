@@ -147,6 +147,9 @@ float ACNox_MemoryCollectorAI::TakeDamage(float DamageAmount, FDamageEvent const
 {
 	if (!GetTarget())
 		if (ACNox* player = Cast<ACNox>(DamageCauser->GetOwner())) SetTarget(player);
+	
+	PlayLaunchCharacter(500);
+	PlayHitStop(0.05);
 
 	HPComp->TakeDamage(DamageAmount);
 	if (HPComp->IsDead()) FSMComp->SetEnemyState(EEnemyState::Die);

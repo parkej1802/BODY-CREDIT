@@ -47,7 +47,7 @@ public:
 	virtual void Released() override;
 
 public:
-	virtual void BeginPlay(class ACNox* InOwner, class ACWeapon_Attachment* InAttachment, class UCWeapon_DoAction* InDoAction) override;
+	void BeginPlay(class ACNox* InOwner, class ACWeapon_Attachment* InAttachment, class UCWeapon_DoAction* InDoAction) override;
 
 public:
 	void Tick_Implementation(float InDeltaTime) override;
@@ -57,7 +57,6 @@ private:
 	void OnAiming(FVector Output);
 
 private:
-	class ACAttachment_Bow* Bow;
 	class USpringArmComponent* SpringArm;
 	class UCameraComponent* Camera;
 
