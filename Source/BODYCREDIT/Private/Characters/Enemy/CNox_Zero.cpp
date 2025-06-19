@@ -66,6 +66,9 @@ float ACNox_Zero::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 {
 	if (!GetTarget())
 		if (ACNox* player = Cast<ACNox>(DamageCauser->GetOwner())) SetTarget(player);
+	
+	PlayLaunchCharacter(1000);
+	PlayHitStop(0.05);
 
 	HPComp->TakeDamage(DamageAmount);
 	if (HPComp->IsDead())
@@ -75,7 +78,7 @@ float ACNox_Zero::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 		FSMComp->SetEnemyState(EEnemyState::Die);
 	}
 	else
-	{
+	{		
 		if (FSMComp->GetEnemyState() == EEnemyState::Combat) return DamageAmount;
 		
 		const float HitChance = 0.3f; // 30% 확률로 피격 상태 진입

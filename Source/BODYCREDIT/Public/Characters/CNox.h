@@ -26,4 +26,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+protected:
+	void PlayHitStop(float InHitStopTime);
+	void PlayLaunchCharacter(float InLaunchPower);
 };
