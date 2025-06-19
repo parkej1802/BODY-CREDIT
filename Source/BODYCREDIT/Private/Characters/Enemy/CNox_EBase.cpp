@@ -164,7 +164,9 @@ void ACNox_EBase::ResetVal() const
 #pragma region Die
 void ACNox_EBase::HandleDie(const int32 sectionIdx)
 {
-	GetCapsuleComponent()->SetCollisionProfileName(FName("EnemyDie"));
+	GetMesh()->SetCollisionProfileName(FName("EnemyDie"));
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	GetCapsuleComponent()->SetCollisionProfileName(FName("EnemyDieCollision"));
 	if (EnemyAnim) EnemyAnim->PlayDieMontage(sectionIdx);
 	EnemyController->PerceptionDeactive();
 }
