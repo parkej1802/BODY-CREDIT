@@ -89,6 +89,9 @@ private:
 	UPROPERTY(VisibleAnywhere, Category = "EnhancedInput")
 	class UInputAction* IA_Jump;
 
+	UPROPERTY(VisibleAnywhere, Category = "EnhancedInput")
+	class UInputAction* IA_Help;
+
 private: // UI
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<class UCUserWidget_RunnerUI> RunnerUIClass;
@@ -285,4 +288,15 @@ public:
 	float GetFootstepNoiseLoudness() const;
 	
 	void Reset();
+
+	// Help
+	UPROPERTY()
+	class ACNox_Controller* PC;
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class UUserWidget> GuideFactory;
+	UPROPERTY()
+	class UCGuideWidget* GuideWidget;
+	bool bIsHelp = false;
+	UFUNCTION()
+	void OnHelp();
 };

@@ -24,8 +24,8 @@
 #include "Characters/CNox_Controller.h"
 #include "Components/CNoxObserverComp.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Items/Equipments/Weapons/CWeapon_DoAction.h"
 #include "Lobby/LobbyWidget_Failed.h"
+#include "Lobby/Tutorial/CGuideWidget.h"
 
 ACNox_Runner::ACNox_Runner()
 {
@@ -44,6 +44,7 @@ ACNox_Runner::ACNox_Runner()
 
 	SceneCapture2D = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SceneCapture"));
 	SceneCapture2D->SetupAttachment(CaptureRoot);
+	
 }
 
 void ACNox_Runner::BeginPlay()
@@ -68,7 +69,7 @@ void ACNox_Runner::BeginPlay()
 
 			MyGameState->SpawnItemHiddenFromActor(EquipComp->EquippedItems[Pair.Key], this, true);
 		}
-
+		
 		/*for (const FItemSaveData& Data : GI->SavedInventoryItems)
 		{
 			UItemObject* Item = CreateItemFromData(Data);
@@ -89,6 +90,7 @@ void ACNox_Runner::BeginPlay()
 				InventoryComp->TryAddItem(Item);
 			}
 		}*/
+		
 	}
 
 	State->OnStateTypeChanged.AddDynamic(this, &ACNox_Runner::OnStateTypeChanged);
@@ -101,47 +103,32 @@ void ACNox_Runner::BeginPlay()
 	//FPSCamera->bUsePawnControlRotation = true;
 	//// 머리 본 숨김
 	//GetMesh()->HideBoneByName(FName("neck_01"), EPhysBodyOp::PBO_None);
+
+	{
+		if (GuideFactory)
+		{
+			GuideWidget = CreateWidget<UCGuideWidget>(GetWorld(), GuideFactory);
+		}
+		PC = Cast<ACNox_Controller>(GetController());
+	}
 }
 
-float ACNox_Runner::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser)
+float ACNox_Runner::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+                               class AController* EventInstigator, AActor* DamageCauser)
 {
 	float damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-
-
+	
 	if (IsEscape) return 0.f;
-	// Avoid 회피 상태일 경우 데미지 미처리
-	CheckTrueResult(State->IsAvoidMode(), 0);
-
-	// Action 모드 일 때만 피격 방향 판정 계산
-	if (State->IsActionMode())
-	{
-		// 플레이어 전방 벡터와 데미지 Causer 방향 벡터 계산
-		FVector hit = (DamageCauser->GetActorLocation() - GetActorLocation()).GetSafeNormal();
-		FVector forward = GetActorForwardVector();
-
-		// 3-2. 내적(Dot) 계산: 양수 -> 전방, 음수 -> 후방
-		float dot = FVector::DotProduct(forward, hit);
-		bool bFrontHit = (dot >= 0.0f);
-
-		if (bFrontHit and FMath::RandRange(1, 10) <= 7) return damage;		
-	}
-
-	if (!Weapon->IsUnarmedMode())
-	{
-		Weapon->GetDoAction()->Begin_DoAction();
-		Weapon->GetDoAction()->End_DoAction();
-	}
-
-	State->SetHittedMode();
 	HPComp->TakeDamage(DamageAmount);
-
+	CheckTrueResult(State->IsAvoidMode(), 0);
+	State->SetHittedMode();
 	return damage;
 }
 
 void ACNox_Runner::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
+
 	if (bShouldRotateToTarget)
 	{
 		AController* controller = GetController<AController>();
@@ -150,43 +137,43 @@ void ACNox_Runner::Tick(float DeltaTime)
 
 		controller->SetControlRotation(NewRot);
 
-		if (State->IsHittedMode() or State->IsAvoidMode() or NewRot.Equals(TargetControlRotation, 0.5f))
+		if (NewRot.Equals(TargetControlRotation, 0.5f))
 		{
 			bShouldRotateToTarget = false;
 		}
 	}
-
+	
 	CheckFootstep(LeftFootSocketName, bLeftFootOnGround);
 	CheckFootstep(RightFootSocketName, bRightFootOnGround);
 
-	//#if WITH_EDITOR
-	//	const FVector Location = GetActorLocation();
-	//
-	//	// 1. Actor Rotation (청록색)
-	//	const FRotator ActorRot = GetActorRotation();
-	//	const FVector ActorDir = ActorRot.Vector() * 300.0f;
-	//	DrawDebugDirectionalArrow(GetWorld(), Location, Location + ActorDir, 100.f, FColor::Cyan, false, -1.f, 0, 2.f);
-	//	DrawDebugString(GetWorld(), Location + ActorDir + FVector(0, 0, 20.f),
-	//	                FString::Printf(TEXT("ActorYaw: %.1f"), ActorRot.Yaw), nullptr, FColor::Cyan, 0.f, true);
-	//
-	//	// 2. Control Rotation (노란색)
-	//	const FRotator ControlRot = GetControlRotation();
-	//	const FVector ControlDir = ControlRot.Vector() * 300.0f;
-	//	DrawDebugDirectionalArrow(GetWorld(), Location, Location + ControlDir, 100.f, FColor::Yellow, false, -1.f, 0, 2.f);
-	//	DrawDebugString(GetWorld(), Location + ControlDir + FVector(0, 0, 40.f),
-	//	                FString::Printf(TEXT("ControlYaw: %.1f"), ControlRot.Yaw), nullptr, FColor::Yellow, 0.f, true);
-	//
-	//	// 3. Velocity Rotation (빨간색)
-	//	if (!GetVelocity().IsNearlyZero())
-	//	{
-	//		const FRotator VelocityRot = GetVelocity().ToOrientationRotator();
-	//		const FVector VelocityDir = VelocityRot.Vector() * 300.0f;
-	//		DrawDebugDirectionalArrow(GetWorld(), Location, Location + VelocityDir, 100.f, FColor::Red, false, -1.f, 0,
-	//		                          2.f);
-	//		DrawDebugString(GetWorld(), Location + VelocityDir + FVector(0, 0, 60.f),
-	//		                FString::Printf(TEXT("VelocityYaw: %.1f"), VelocityRot.Yaw), nullptr, FColor::Red, 0.f, true);
-	//	}
-	//#endif
+//#if WITH_EDITOR
+//	const FVector Location = GetActorLocation();
+//
+//	// 1. Actor Rotation (청록색)
+//	const FRotator ActorRot = GetActorRotation();
+//	const FVector ActorDir = ActorRot.Vector() * 300.0f;
+//	DrawDebugDirectionalArrow(GetWorld(), Location, Location + ActorDir, 100.f, FColor::Cyan, false, -1.f, 0, 2.f);
+//	DrawDebugString(GetWorld(), Location + ActorDir + FVector(0, 0, 20.f),
+//	                FString::Printf(TEXT("ActorYaw: %.1f"), ActorRot.Yaw), nullptr, FColor::Cyan, 0.f, true);
+//
+//	// 2. Control Rotation (노란색)
+//	const FRotator ControlRot = GetControlRotation();
+//	const FVector ControlDir = ControlRot.Vector() * 300.0f;
+//	DrawDebugDirectionalArrow(GetWorld(), Location, Location + ControlDir, 100.f, FColor::Yellow, false, -1.f, 0, 2.f);
+//	DrawDebugString(GetWorld(), Location + ControlDir + FVector(0, 0, 40.f),
+//	                FString::Printf(TEXT("ControlYaw: %.1f"), ControlRot.Yaw), nullptr, FColor::Yellow, 0.f, true);
+//
+//	// 3. Velocity Rotation (빨간색)
+//	if (!GetVelocity().IsNearlyZero())
+//	{
+//		const FRotator VelocityRot = GetVelocity().ToOrientationRotator();
+//		const FVector VelocityDir = VelocityRot.Vector() * 300.0f;
+//		DrawDebugDirectionalArrow(GetWorld(), Location, Location + VelocityDir, 100.f, FColor::Red, false, -1.f, 0,
+//		                          2.f);
+//		DrawDebugString(GetWorld(), Location + VelocityDir + FVector(0, 0, 60.f),
+//		                FString::Printf(TEXT("VelocityYaw: %.1f"), VelocityRot.Yaw), nullptr, FColor::Red, 0.f, true);
+//	}
+//#endif
 }
 
 void ACNox_Runner::NotifyControllerChanged()
@@ -196,7 +183,8 @@ void ACNox_Runner::NotifyControllerChanged()
 	// MappingContext
 	if (ACNox_Controller* PlayerController = Cast<ACNox_Controller>(Controller))
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
+			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			// Subsystem->AddMappingContext(IMC_Movement, 11);
 			// Subsystem->AddMappingContext(IMC_Weapon, 11);
@@ -218,6 +206,7 @@ void ACNox_Runner::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 		Weapon->BindInput(input);
 
 		input->BindAction(IA_Jump, ETriggerEvent::Started, this, &ACNox_Runner::OnJumpOrDodgeInput);
+		input->BindAction(IA_Help, ETriggerEvent::Started, this, &ACNox_Runner::OnHelp);
 	}
 }
 
@@ -229,37 +218,38 @@ void ACNox_Runner::OnStateTypeChanged(EStateType InPrevType, EStateType InNewTyp
 	// 예시: 캐릭터나 MovementComponent에서
 	FVector2D InputDir2D = Movement->GetCachedInputDir2D();
 	FRotator ControlRot = GetControlRotation();
-
+	
 	switch (InNewType)
 	{
-		case EStateType::Hitted:
+	case EStateType::Hitted:
+		{
+			Montage->PlayHittedMode(InputDir2D, ControlRot);
+			// 1. 플레이어 컨트롤러 가져오기
+			APlayerController* PlayerController = Cast<APlayerController>(GetController());
+			if (PlayerController == nullptr)
 			{
-				Montage->PlayHittedMode(InputDir2D, ControlRot);
-				// 1. 플레이어 컨트롤러 가져오기
-				APlayerController* PlayerController = Cast<APlayerController>(GetController());
-				if (PlayerController == nullptr)
-				{
-					return;
-				}
-
-				// 2. CameraShake 클래스 지정 (BP로 만든 CameraShake 사용 가능)
-				TSubclassOf<UCameraShakeBase> ShakeClass = LoadClass<UCameraShakeBase>(nullptr, TEXT("/Script/Engine.Blueprint'/Game/Characters/Runner/Animations/CameraShakes/BP_NormalAttackShake.BP_NormalAttackShake_C'"));
-				if (ShakeClass == nullptr)
-				{
-					return;
-				}
-
-				// 3. 카메라 쉐이크 실행
-				PlayerController->ClientStartCameraShake(ShakeClass);
-				break;
+				return;
 			}
-		case EStateType::Avoid:
-			Montage->PlayAvoidMode(Weapon->GetWeaponType(), InputDir2D, ControlRot);
+			
+			// 2. CameraShake 클래스 지정 (BP로 만든 CameraShake 사용 가능)
+			TSubclassOf<UCameraShakeBase> ShakeClass = LoadClass<UCameraShakeBase>(nullptr, TEXT("/Script/Engine.Blueprint'/Game/Characters/Runner/Animations/CameraShakes/BP_NormalAttackShake.BP_NormalAttackShake_C'"));
+			if (ShakeClass == nullptr)
+			{
+				return;
+			}
+			
+			// 3. 카메라 쉐이크 실행
+			PlayerController->ClientStartCameraShake(ShakeClass);
 			break;
-		case EStateType::Dead:
-			Montage->PlayDeadMode(InputDir2D, ControlRot);
-			break;
+		}
+	case EStateType::Avoid:
+		Montage->PlayAvoidMode(Weapon->GetWeaponType(), InputDir2D, ControlRot);
+		break;
+	case EStateType::Dead:
+		Montage->PlayDeadMode(InputDir2D, ControlRot);
+		break;
 	}
+
 }
 
 void ACNox_Runner::Init()
@@ -267,8 +257,7 @@ void ACNox_Runner::Init()
 	UCapsuleComponent* capsule = Cast<UCapsuleComponent>(RootComponent);
 	capsule->SetCollisionProfileName(FName("Player"));
 
-	{
-		// Modular Character Mesh
+	{ // Modular Character Mesh
 		// Head
 		GetMesh()->SetRelativeLocation(FVector(0, 0, ~84));
 		GetMesh()->SetRelativeRotation(FRotator(0, ~89, 0));
@@ -281,7 +270,7 @@ void ACNox_Runner::Init()
 
 		// ChestRig
 		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &ChestRig, "ChestRig", GetMesh());
-
+		
 		// Arms
 		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Arms, "Arms", GetMesh());
 
@@ -301,6 +290,7 @@ void ACNox_Runner::Init()
 		// Weapon2
 		CHelpers::CreateComponent<USkeletalMeshComponent>(this, &Weapon2, "Weapon2", GetMesh());
 		Weapon2->SetHiddenInGame(true);
+
 	}
 
 	// SpringArm
@@ -316,16 +306,24 @@ void ACNox_Runner::Init()
 	TPSCamera->bUsePawnControlRotation = false;
 
 	// MappingContext
-	CHelpers::GetAsset<UInputMappingContext>(&IMC_Movement, TEXT("/Script/EnhancedInput.InputMappingContext'/Game/Inputs/IMC_Movement.IMC_Movement'"));
+	CHelpers::GetAsset<UInputMappingContext>(&IMC_Movement,
+	                                         TEXT(
+		                                         "/Script/EnhancedInput.InputMappingContext'/Game/Inputs/IMC_Movement.IMC_Movement'"));
 
-	CHelpers::GetAsset<UInputMappingContext>(&IMC_Weapon, TEXT("/Script/EnhancedInput.InputMappingContext'/Game/Inputs/IMC_Weapon.IMC_Weapon'"));
+	CHelpers::GetAsset<UInputMappingContext>(&IMC_Weapon,
+										 TEXT(
+											 "/Script/EnhancedInput.InputMappingContext'/Game/Inputs/IMC_Weapon.IMC_Weapon'"));
 
-	CHelpers::GetAsset<UInputMappingContext>(&IMC_Invectory, TEXT("/Script/EnhancedInput.InputMappingContext'/Game/Inputs/IMC_Runner.IMC_Runner'"));
+	CHelpers::GetAsset<UInputMappingContext>(&IMC_Invectory,
+										 TEXT(
+											 "/Script/EnhancedInput.InputMappingContext'/Game/Inputs/IMC_Runner.IMC_Runner'"));
 
 	// Jump
 	CHelpers::GetAsset<UInputAction>(&IA_Jump, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Jump.IA_Jump'"));
 
-
+	// Help
+	CHelpers::GetAsset<UInputAction>(&IA_Help, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Help.IA_Help'"));
+	
 	// // State
 	// CHelpers::CreateActorComponent<UCStateComponent>(this, &State, "State");
 
@@ -340,6 +338,7 @@ void ACNox_Runner::Init()
 
 	// Montage
 	CHelpers::CreateActorComponent<UCMontageComponent>(this, &Montage, "Montage");
+
 }
 
 FVector2D ACNox_Runner::GetLastMovementInputVector2D() const
@@ -371,12 +370,13 @@ void ACNox_Runner::End_Dead()
 	{
 		FailedWidget = nullptr;
 	}
-
+	
 	if (FailedWidgetClass)
 	{
 		FailedWidget = CreateWidget<ULobbyWidget_Failed>(GetWorld(), FailedWidgetClass);
 		FailedWidget->AddToViewport();
 	}
+	
 }
 
 void ACNox_Runner::ShowPlayerMainUI()
@@ -468,7 +468,9 @@ void ACNox_Runner::OnJumpOrDodgeInput()
 		// 첫 입력(딜레이 타이머 시작)
 		LastJumpInputTime = Now;
 		bPendingJump = true;
-		GetWorld()->GetTimerManager().SetTimer(JumpDelayHandle, this, &ACNox_Runner::DoJumpIfNoDoubleTap, DoubleTapThreshold, false);
+		GetWorld()->GetTimerManager().SetTimer(
+			JumpDelayHandle, this, &ACNox_Runner::DoJumpIfNoDoubleTap, DoubleTapThreshold, false
+		);
 		return;
 	}
 
@@ -513,14 +515,15 @@ void ACNox_Runner::CacheDefaultSkeletalMeshes()
 void ACNox_Runner::CheckFootstep(FName FootSocketName, bool& bWasOnGround)
 {
 	FVector FootLocation = GetMesh()->GetSocketLocation(FootSocketName);
-	FVector Start = FootLocation + FVector(0, 0, 5);
-	FVector End = FootLocation - FVector(0, 0, 20);
+	FVector Start        = FootLocation + FVector(0, 0, 5);
+	FVector End          = FootLocation - FVector(0, 0, 20);
 
 	FHitResult Hit;
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this);
 
-	bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, Start, End, ECC_Visibility, Params);
+	bool bHit          = GetWorld()->LineTraceSingleByChannel(
+							 Hit, Start, End, ECC_Visibility, Params);
 	bool bNowOnGround = bHit && Hit.bBlockingHit;
 
 	if (!bWasOnGround && bNowOnGround)
@@ -534,7 +537,7 @@ void ACNox_Runner::CheckFootstep(FName FootSocketName, bool& bWasOnGround)
 	}
 
 	bWasOnGround = bNowOnGround;
-
+	
 	// FVector FootLocation = GetMesh()->GetSocketLocation(FootSocketName);
 	// FVector Start = FootLocation + FVector(0, 0, 5); // 약간 위에서 시작
 	// FVector End = FootLocation - FVector(0, 0, 20); // 아래로 쏨
@@ -563,9 +566,9 @@ void ACNox_Runner::CheckFootstep(FName FootSocketName, bool& bWasOnGround)
 void ACNox_Runner::PlayFootstepSound(const FVector& Location)
 {
 	UCharacterMovementComponent* MoveComp = GetCharacterMovement();
-	bool bCrouched = MoveComp->IsCrouching();
-	float Speed = MoveComp->Velocity.Size();
-	bool bIsSprinting = (Speed > SprintSpeedThreshold);
+	bool bCrouched                     = MoveComp->IsCrouching();
+	float Speed                          = MoveComp->Velocity.Size();
+	bool bIsSprinting                    = (Speed > SprintSpeedThreshold);
 
 	TArray<USoundBase*>* SoundArray = nullptr;
 
@@ -588,10 +591,11 @@ void ACNox_Runner::PlayFootstepSound(const FVector& Location)
 		USoundBase* SelectedSound = (*SoundArray)[Index];
 		if (SelectedSound)
 		{
-			UGameplayStatics::PlaySoundAtLocation(GetWorld(), SelectedSound, Location);
+			UGameplayStatics::PlaySoundAtLocation(
+				GetWorld(), SelectedSound, Location);
 		}
 	}
-
+	
 	// if (FootstepSounds.Num() > 0)
 	// {
 	// 	int32 Index = FMath::RandRange(0, FootstepSounds.Num() - 1);
@@ -606,7 +610,7 @@ void ACNox_Runner::PlayFootstepSound(const FVector& Location)
 float ACNox_Runner::GetFootstepNoiseLoudness() const
 {
 	UCharacterMovementComponent* MoveComp = GetCharacterMovement();
-	bool bCrouched = MoveComp->IsCrouching();
+	bool bCrouched  = MoveComp->IsCrouching();
 	float Speed = MoveComp->Velocity.Size();
 	bool bIsSprinting = (Speed > SprintSpeedThreshold);
 
@@ -627,4 +631,34 @@ void ACNox_Runner::Reset()
 	State->SetIdleMode();
 	Movement->Revive();
 	Weapon->SetUnarmedMode();
+}
+
+void ACNox_Runner::OnHelp()
+{
+	if (bIsHelp)
+	{
+		if (GuideWidget)
+		{
+			GuideWidget->RemoveFromParent();
+			OnMovement();
+		}
+
+		FInputModeGameOnly UIInputMode;
+		PC->SetInputMode(UIInputMode);
+		PC->bShowMouseCursor = false;
+	}
+	else
+	{
+		if (GuideWidget)
+		{
+			GuideWidget->AddToViewport(0);
+			OffMovement();			
+		}
+		
+		FInputModeGameAndUI UIInputMode;
+		PC->SetInputMode(UIInputMode);
+		PC->bShowMouseCursor = true;		
+	}
+
+	bIsHelp = !bIsHelp;
 }
