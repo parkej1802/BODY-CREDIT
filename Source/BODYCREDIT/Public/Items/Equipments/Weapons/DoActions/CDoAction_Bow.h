@@ -68,10 +68,6 @@ class BODYCREDIT_API UCDoAction_Bow : public UCWeapon_DoAction
 // 	float ChargeTime = 0.0f;
 // 	FTimerHandle ChargeTimerHandle;
 // 	EArrowChargeStage ChargeStage = EArrowChargeStage::Stage1;
-	
-private:
-	UPROPERTY(EditDefaultsOnly, Category = "Arrow")
-	TSubclassOf<class ACAddOn_Arrow> ArrowClass;
 
 public:
 	UCDoAction_Bow();
@@ -100,7 +96,6 @@ public:
 	void End_BowString();
 
 private:
-	void CreateArrow();
 	class ACAddOn_Arrow* GetAttachedArrow();
 
 private:
@@ -127,5 +122,7 @@ private:
 
 private:
 	const bool* bEquipped;
+
+	bool bCanShoot = true;
 	
 };

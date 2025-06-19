@@ -182,7 +182,6 @@
 
 UCDoAction_Bow::UCDoAction_Bow()
 {
-
 }
 
 void UCDoAction_Bow::BeginPlay(class ACWeapon_Attachment* InAttachment, class UCWeapon_Equipment* InEquipment, class ACNox* InOwner, const TArray<FWeaponDoActionData>& InDoActionDatas, const TArray<FWeaponHitData>& InHitDatas, const TArray<FWeaponDoActionData>& InSprintDoActionDatas, const TArray<FWeaponHitData>& InSprintHitDatas)
@@ -202,14 +201,16 @@ void UCDoAction_Bow::BeginPlay(class ACWeapon_Attachment* InAttachment, class UC
 
 void UCDoAction_Bow::DoAction()
 {
+	CheckFalse(bCanShoot);
 	CheckFalse(State->IsIdleMode());
 	CheckFalse(State->IsSubActionMode());
+	CheckNull(GetAttachedArrow());
 
 	Super::DoAction();
 
-	if (!DoActionDatas.IsEmpty())
-		DoActionDatas[0].DoAction(OwnerCharacter);
+	if (!DoActionDatas.IsEmpty()) DoActionDatas[0].DoAction(OwnerCharacter);
 
+	bCanShoot = false;
 }
 
 void UCDoAction_Bow::Begin_DoAction()
@@ -221,9 +222,9 @@ void UCDoAction_Bow::Begin_DoAction()
 	*Bending = 0;
 	PoseableMesh->SetBoneLocationByName("ArrowBase", OriginLocation, EBoneSpaces::ComponentSpace);
 
-	CheckNull(ArrowClass);
-
+	CheckNull(Bow->ArrowClass);
 	ACAddOn_Arrow* arrow = GetAttachedArrow();
+	CheckNull(arrow);
 	arrow->DetachFromActor(FDetachmentTransformRules(EDetachmentRule::KeepWorld, true));
 
 	arrow->OnHit.AddDynamic(this, &UCDoAction_Bow::OnArrowHit);
@@ -249,30 +250,21 @@ void UCDoAction_Bow::Begin_DoAction()
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(OwnerCharacter);
 
-	bool bHit = GetWorld()->LineTraceSingleByChannel
-	(
-		Hit,
-		CameraLocation,
-		TraceEnd,
-		ECC_Visibility,
-		Params
-	);
+	bool bHit = GetWorld()->LineTraceSingleByChannel(Hit, CameraLocation, TraceEnd, ECC_Visibility, Params);
 
 	// 3) 목표 지점 결정
 	FVector AimPoint = bHit ? Hit.Location : TraceEnd;
 	FVector forward = (AimPoint - OwnerCharacter->GetActorLocation()).GetSafeNormal();
-	
+
 	// FVector forward = CHelpers::GetComponent<UCameraComponent>(OwnerCharacter)->GetForwardVector();
 	arrow->Shoot(forward);
-
 }
 
 void UCDoAction_Bow::End_DoAction()
 {
 	Super::End_DoAction();
 
-	CreateArrow();
-
+	bCanShoot = true;
 }
 
 void UCDoAction_Bow::OnBeginEquip()
@@ -281,8 +273,7 @@ void UCDoAction_Bow::OnBeginEquip()
 
 	OwnerCharacter->GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	CreateArrow();
-
+	Bow->CreateArrow();
 }
 
 void UCDoAction_Bow::OnUnequip()
@@ -296,16 +287,14 @@ void UCDoAction_Bow::OnUnequip()
 
 	for (int32 i = Bow->Arrows.Num() - 1; i >= 0; i--)
 	{
-		if (!!Bow->Arrows[i]->GetAttachParentActor())
-			Bow->Arrows[i]->Destroy();
+		if (!!Bow->Arrows[i]->GetAttachParentActor()) Bow->Arrows[i]->Destroy();
 	}
-
 }
 
 void UCDoAction_Bow::Tick(float InDeltaTime)
 {
 	Super::Tick(InDeltaTime);
-	
+
 	PoseableMesh->CopyPoseFromSkeletalComponent(SkeletalMesh);
 
 	bool bCheck = true;
@@ -317,46 +306,22 @@ void UCDoAction_Bow::Tick(float InDeltaTime)
 
 	FVector handLocation = OwnerCharacter->GetMesh()->GetSocketLocation("Hand_Bow_String");
 	PoseableMesh->SetBoneLocationByName("ArrowBase", handLocation, EBoneSpaces::WorldSpace);
-
 }
 
 void UCDoAction_Bow::End_BowString()
 {
 	*Bending = 100;
 	bAttachedString = true;
-
-}
-
-void UCDoAction_Bow::CreateArrow()
-{
-	if (World->bIsTearingDown == true)
-		return;
-
-	FTransform transform;
-	ACAddOn_Arrow* arrow = World->SpawnActorDeferred<ACAddOn_Arrow>(ArrowClass, transform, Bow->GetOwner(), NULL, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
-	CheckNull(arrow);
-
-	arrow->AddIgnoreActor(OwnerCharacter);
-
-	FAttachmentTransformRules rule = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
-	arrow->AttachToComponent(OwnerCharacter->GetMesh(), rule, "Hand_Bow_Arrow");
-	arrow->SetHidden(true);
-
-	Bow->Arrows.Add(arrow);
-	UGameplayStatics::FinishSpawningActor(arrow, transform);
-
 }
 
 ACAddOn_Arrow* UCDoAction_Bow::GetAttachedArrow()
 {
 	for (ACAddOn_Arrow* projectile : Bow->Arrows)
 	{
-		if (!!projectile->GetAttachParentActor())
-			return projectile;
+		if (!!projectile->GetAttachParentActor()) return projectile;
 	}
 
 	return nullptr;
-
 }
 
 void UCDoAction_Bow::OnArrowHit(AActor* InCauser, ACNox* InOtherCharacter)
@@ -364,11 +329,9 @@ void UCDoAction_Bow::OnArrowHit(AActor* InCauser, ACNox* InOtherCharacter)
 	CheckFalse(HitDatas.Num() > 0);
 
 	HitDatas[0].SendDamage(OwnerCharacter, InCauser, InOtherCharacter);
-
 }
 
 void UCDoAction_Bow::OnArrowEndPlay(ACAddOn_Arrow* InDestroyer)
 {
 	Bow->Arrows.Remove(InDestroyer);
-
 }

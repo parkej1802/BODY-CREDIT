@@ -1,7 +1,9 @@
 ﻿#include "Notifies/CAnimNotify_EndAction.h"
 #include "Global.h"
 #include "Components/CWeaponComponent.h"
+#include "Components/CStateComponent.h"
 #include "Items/Equipments/Weapons/CWeapon_DoAction.h"
+#include "Items/Equipments/Weapons/CWeapon_SubAction.h"
 
 FString UCAnimNotify_EndAction::GetNotifyName_Implementation() const
 {
@@ -19,5 +21,9 @@ void UCAnimNotify_EndAction::Notify(USkeletalMeshComponent* MeshComp, UAnimSeque
 	CheckNull(weapon->GetDoAction());
 
 	weapon->GetDoAction()->End_DoAction();
+
+	// CheckFalse(weapon->IsBowMode());
+	// CheckFalse(weapon->bInSubAction);
+	// weapon->GetSubAction()->Pressed();
 
 }

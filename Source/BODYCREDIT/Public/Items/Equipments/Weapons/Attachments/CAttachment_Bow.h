@@ -8,6 +8,10 @@ UCLASS()
 class BODYCREDIT_API ACAttachment_Bow : public ACWeapon_Attachment
 {
 	GENERATED_BODY()
+		
+public:
+	UPROPERTY(EditDefaultsOnly, Category = "Arrow")
+	TSubclassOf<class ACAddOn_Arrow> ArrowClass;
 	
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "View")
@@ -38,5 +42,7 @@ private:
 
 public:
 	TArray<class ACAddOn_Arrow*> Arrows;
+	
+	void CreateArrow();
 
 };

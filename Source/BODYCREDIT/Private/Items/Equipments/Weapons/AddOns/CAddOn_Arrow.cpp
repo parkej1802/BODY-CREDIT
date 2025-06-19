@@ -13,7 +13,6 @@ ACAddOn_Arrow::ACAddOn_Arrow()
 	Projectile->ProjectileGravityScale = 0;
 	Capsule->BodyInstance.bNotifyRigidBodyCollision = true;
 	Capsule->SetCollisionProfileName("BlockAll");
-
 }
 
 void ACAddOn_Arrow::BeginPlay()
@@ -24,22 +23,18 @@ void ACAddOn_Arrow::BeginPlay()
 	Capsule->OnComponentHit.AddDynamic(this, &ACAddOn_Arrow::OnComponentHit);
 
 	Projectile->Deactivate();
-
 }
 
 void ACAddOn_Arrow::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 void ACAddOn_Arrow::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
-	if (OnEndPlay.IsBound())
-		OnEndPlay.Broadcast(this);
-
+	if (OnEndPlay.IsBound()) OnEndPlay.Broadcast(this);
 }
 
 void ACAddOn_Arrow::Shoot(const FVector& InForward)
@@ -48,33 +43,25 @@ void ACAddOn_Arrow::Shoot(const FVector& InForward)
 	Projectile->Activate();
 
 	Capsule->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-
 }
 
 void ACAddOn_Arrow::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+	// 투사체 정지, 수명 설정
+	Capsule->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	SetLifeSpan(LifeSpanAfterCollision);
 
 	AttachToComponent(OtherComp, FAttachmentTransformRules::KeepWorldTransform);
 
-	for (AActor* actor : Ignores)
-		CheckTrue(actor == OtherActor);
-
-	Capsule->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
+	for (AActor* actor : Ignores) CheckTrue(actor == OtherActor);
+	
 	ACNox* character = Cast<ACNox>(OtherActor);
-	if (!!character && OnHit.IsBound())
-		OnHit.Broadcast(this, character);
+	if (!!character && OnHit.IsBound()) OnHit.Broadcast(this, character);
 
 	// 2. 파티클 스폰 (BP_ArrowVanishFX는 파티클 시스템)
 	if (ArrowVanishFX) // NiagaraSystem 사용 예시
 	{
-		UGameplayStatics::SpawnEmitterAtLocation
-		(
-			GetWorld(),
-			ArrowVanishFX,
-			Hit.ImpactPoint
-		);
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), ArrowVanishFX, Hit.ImpactPoint);
 		// UNiagaraFunctionLibrary::SpawnSystemAtLocation(
 		// 	GetWorld(),
 		// 	ArrowVanishFX,
@@ -84,11 +71,5 @@ void ACAddOn_Arrow::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* Ot
 
 	// [3] 사운드 이펙트 재생
 	if (ArrowVanishSFX)
-	{
-		UGameplayStatics::PlaySoundAtLocation(
-			GetWorld(),
-			ArrowVanishSFX,
-			Hit.ImpactPoint
-		);
-	}
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), ArrowVanishSFX, Hit.ImpactPoint);
 }

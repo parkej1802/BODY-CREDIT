@@ -17,11 +17,12 @@ void UCAnimNotify_BowString::Notify(USkeletalMeshComponent* MeshComp, UAnimSeque
 
 	UCWeaponComponent* weapon = CHelpers::GetComponent<UCWeaponComponent>(MeshComp->GetOwner());
 	CheckNull(weapon);
+	CheckFalse(weapon->bInSubAction);
 	CheckNull(weapon->GetDoAction());
 
 	UCDoAction_Bow* bow = Cast<UCDoAction_Bow>(weapon->GetDoAction());
 	CheckNull(bow);
 
-	bow->End_BowString();
+	bow->End_BowString();	
 
 }
