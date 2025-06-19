@@ -123,6 +123,10 @@ float ACNox_MedicAndroid::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 
 	if (IsShielding()) return 0.f;
 
+	
+	PlayLaunchCharacter(1000);
+	PlayHitStop(0.05);
+
 	HPComp->TakeDamage(DamageAmount);
 	if (HPComp->IsDead())
 	{

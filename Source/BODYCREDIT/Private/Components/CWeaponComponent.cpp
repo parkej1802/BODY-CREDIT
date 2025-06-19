@@ -24,18 +24,16 @@
 UCWeaponComponent::UCWeaponComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
-	
+
 	// CHelpers::GetAsset<UInputAction>(&IA_Bow, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Bow.IA_Bow'"));
 	// CHelpers::GetAsset<UInputAction>(&IA_Rifle, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Rifle.IA_Rifle'"));
 	// CHelpers::GetAsset<UInputAction>(&IA_Katana, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Katana.IA_Katana'"));
 
 	CHelpers::GetAsset<UInputAction>(&IA_WeaponSlot1, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_WeaponSlot1.IA_WeaponSlot1'"));
 	CHelpers::GetAsset<UInputAction>(&IA_WeaponSlot2, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_WeaponSlot2.IA_WeaponSlot2'"));
-	
+
 	CHelpers::GetAsset<UInputAction>(&IA_Action, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_Action.IA_Action'"));
 	CHelpers::GetAsset<UInputAction>(&IA_SubAction, TEXT("/Script/EnhancedInput.InputAction'/Game/Inputs/IA_SubAction.IA_SubAction'"));
-
-
 }
 
 void UCWeaponComponent::BeginPlay()
@@ -44,10 +42,8 @@ void UCWeaponComponent::BeginPlay()
 
 	for (int32 i = 0; i < (int32)EWeaponType::MAX; i++)
 	{
-		if (!!DataAssets[i])
-			DataAssets[i]->BeginPlay(OwnerCharacter, &Datas[i]);
+		if (!!DataAssets[i]) DataAssets[i]->BeginPlay(OwnerCharacter, &Datas[i]);
 	}
-	
 }
 
 void UCWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -59,32 +55,12 @@ void UCWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 
 	if (!!GetSubAction())
 		GetSubAction()->Tick(DeltaTime);
-
-	if (IsBowMode() and bInSubAction)
-	{
-		if (ACAttachment_Bow* bow = Cast<ACAttachment_Bow>(GetAttachment()))
-		{
-			if (bow->Arrows.IsEmpty())
-			{
-				bow->CreateArrow();
-			}
-			else
-			{
-				auto* LastArrow = bow->Arrows.Last();
-				if (LastArrow && LastArrow->GetProjectileMovement() && LastArrow->GetProjectileMovement()->IsActive())
-				{
-					bow->CreateArrow();
-				}
-			}
-		}
-	}
-
+	
 }
 
 bool UCWeaponComponent::IsIdleMode()
 {
 	return CHelpers::GetComponent<UCStateComponent>(OwnerCharacter)->IsIdleMode();
-
 }
 
 ACWeapon_Attachment* UCWeaponComponent::GetAttachment()
@@ -93,7 +69,6 @@ ACWeapon_Attachment* UCWeaponComponent::GetAttachment()
 	CheckFalseResult(!!Datas[(int32)Type], nullptr);
 
 	return Datas[(int32)Type]->GetAttachment();
-
 }
 
 UCWeapon_Equipment* UCWeaponComponent::GetEquipment()
@@ -102,7 +77,6 @@ UCWeapon_Equipment* UCWeaponComponent::GetEquipment()
 	CheckFalseResult(!!Datas[(int32)Type], nullptr);
 
 	return Datas[(int32)Type]->GetEquipment();
-
 }
 
 UCWeapon_DoAction* UCWeaponComponent::GetDoAction()
@@ -111,7 +85,6 @@ UCWeapon_DoAction* UCWeaponComponent::GetDoAction()
 	CheckFalseResult(!!Datas[(int32)Type], nullptr);
 
 	return Datas[(int32)Type]->GetDoAction();
-
 }
 
 UCWeapon_SubAction* UCWeaponComponent::GetSubAction()
@@ -120,7 +93,6 @@ UCWeapon_SubAction* UCWeaponComponent::GetSubAction()
 	CheckFalseResult(!!Datas[(int32)Type], nullptr);
 
 	return Datas[(int32)Type]->GetSubAction();
-
 }
 
 void UCWeaponComponent::SetKatanaMode()
@@ -128,7 +100,6 @@ void UCWeaponComponent::SetKatanaMode()
 	CheckFalse(IsIdleMode());
 
 	SetMode(EWeaponType::KATANA);
-
 }
 
 void UCWeaponComponent::SetBowMode()
@@ -136,26 +107,15 @@ void UCWeaponComponent::SetBowMode()
 	CheckFalse(IsIdleMode());
 
 	SetMode(EWeaponType::BOW);
-
 }
-
-// void UCWeaponComponent::SetRifleMode()
-// {
-// 	CheckFalse(IsIdleMode());
-//
-// 	SetMode(EWeaponType::RIFLE);
-//
-// }
 
 void UCWeaponComponent::SetUnarmedMode()
 {
 	CheckTrue(IsUnarmedMode());
-	
-	if (!CHelpers::GetComponent<UCStateComponent>(OwnerCharacter)->IsDeadMode())
-		GetEquipment()->Unequip();
+
+	if (!CHelpers::GetComponent<UCStateComponent>(OwnerCharacter)->IsDeadMode()) GetEquipment()->Unequip();
 
 	ChangeType(EWeaponType::UNARMED);
-
 }
 
 void UCWeaponComponent::SetWeaponSlot1()
@@ -165,15 +125,12 @@ void UCWeaponComponent::SetWeaponSlot1()
 	if (UAC_EquipComponent* equip = CHelpers::GetComponent<UAC_EquipComponent>(OwnerCharacter))
 	{
 		CheckNull(equip->EquippedItems.Find(EPlayerPart::Weapon1));
-		
-		if (equip->EquippedItems[EPlayerPart::Weapon1]->ItemData.ItemName == "Bow")
-			SetBowMode();
-		else if (equip->EquippedItems[EPlayerPart::Weapon1]->ItemData.ItemName == "Katana")
-			SetKatanaMode();
+
+		if (equip->EquippedItems[EPlayerPart::Weapon1]->ItemData.ItemName == "Bow") SetBowMode();
+		else if (equip->EquippedItems[EPlayerPart::Weapon1]->ItemData.ItemName == "Katana") SetKatanaMode();
 		else SetUnarmedMode();
 	}
-
-	// SetMode(EquippedWeaponType[EWeaponSlot::Weapon1]);
+	
 }
 
 void UCWeaponComponent::SetWeaponSlot2()
@@ -183,11 +140,9 @@ void UCWeaponComponent::SetWeaponSlot2()
 	if (UAC_EquipComponent* equip = CHelpers::GetComponent<UAC_EquipComponent>(OwnerCharacter))
 	{
 		CheckNull(equip->EquippedItems.Find(EPlayerPart::Weapon2));
-		
-		if (equip->EquippedItems[EPlayerPart::Weapon2]->ItemData.ItemName == "Bow")
-			SetBowMode();
-		else if (equip->EquippedItems[EPlayerPart::Weapon2]->ItemData.ItemName == "Katana")
-			SetKatanaMode();
+
+		if (equip->EquippedItems[EPlayerPart::Weapon2]->ItemData.ItemName == "Bow") SetBowMode();
+		else if (equip->EquippedItems[EPlayerPart::Weapon2]->ItemData.ItemName == "Katana") SetKatanaMode();
 		else SetUnarmedMode();
 	}
 }
@@ -198,28 +153,20 @@ void UCWeaponComponent::DoAction()
 
 	switch (Type)
 	{
-	case EWeaponType::UNARMED:
-		break;
-	case EWeaponType::KATANA:
-		if (CHelpers::GetComponent<UCMovementComponent>(OwnerCharacter)->IsSprint() == false)
-			GetDoAction()->DoAction();
-		else GetDoAction()->SprintDoAction();
-		break;
-	case EWeaponType::BOW:
-	// case EWeaponType::RIFLE:
-		// 눌렀을 때 → 내부에서 차징 시작 + Fire 조건 처리
-		GetDoAction()->DoAction(); 
-		break;
+		case EWeaponType::UNARMED:
+			break;
+		case EWeaponType::KATANA:
+			if (CHelpers::GetComponent<UCMovementComponent>(OwnerCharacter)->IsSprint() == false) GetDoAction()->DoAction();
+			else GetDoAction()->SprintDoAction();
+			break;
+		case EWeaponType::BOW:
+			// case EWeaponType::RIFLE:
+			// 눌렀을 때 → 내부에서 차징 시작 + Fire 조건 처리
+			if (GetDoAction()) GetDoAction()->DoAction();
+			break;
 	}
 
 	Cast<ACNox_Runner>(OwnerCharacter)->RegisterAttack();
-	
-	// if (!!GetDoAction())
-	// {
-	// 	GetDoAction()->DoAction();
-	// 	Cast<ACNox_Runner>(OwnerCharacter)->RegisterAttack();
-	// }
-
 }
 
 void UCWeaponComponent::EndDoAction()
@@ -228,21 +175,21 @@ void UCWeaponComponent::EndDoAction()
 
 	switch (Type)
 	{
-	case EWeaponType::UNARMED:
-		break;
-	case EWeaponType::KATANA:
-		break;
-	case EWeaponType::BOW:
-	// case EWeaponType::RIFLE:
-		GetDoAction()->Released(); 
-		break;
+		case EWeaponType::UNARMED:
+			break;
+		case EWeaponType::KATANA:
+			break;
+		case EWeaponType::BOW:
+			// case EWeaponType::RIFLE:
+			GetDoAction()->Released();
+			break;
 	}
 }
 
 void UCWeaponComponent::SubAction_Pressed()
 {
 	CheckFalse(CHelpers::GetComponent<UCStateComponent>(OwnerCharacter)->IsIdleMode());
-	
+
 	if (IsBowMode())
 	{
 		if (UCMovementComponent* movement = CHelpers::GetComponent<UCMovementComponent>(OwnerCharacter))
@@ -258,23 +205,18 @@ void UCWeaponComponent::SubAction_Pressed()
 		}
 	}
 
-	if (!!GetSubAction())
-		GetSubAction()->Pressed();
+	if (!!GetSubAction()) GetSubAction()->Pressed();
 
 	bInSubAction = true;
-
 }
 
 void UCWeaponComponent::SubAction_Released()
 {
-	if (IsBowMode())
-		CHelpers::GetComponent<UCZoomComponent>(OwnerCharacter)->SetComponentTickEnabled(true);
+	if (IsBowMode()) CHelpers::GetComponent<UCZoomComponent>(OwnerCharacter)->SetComponentTickEnabled(true);
 
-	if (!!GetSubAction())
-		GetSubAction()->Released();
+	if (!!GetSubAction()) GetSubAction()->Released();
 
 	bInSubAction = false;
-
 }
 
 void UCWeaponComponent::SetMode(EWeaponType InType)
@@ -299,7 +241,6 @@ void UCWeaponComponent::SetMode(EWeaponType InType)
 
 		ChangeType(InType);
 	}
-
 }
 
 void UCWeaponComponent::ChangeType(EWeaponType InType)
@@ -307,15 +248,13 @@ void UCWeaponComponent::ChangeType(EWeaponType InType)
 	EWeaponType prevType = Type;
 	Type = InType;
 
-	if (OnWeaponTypeChange.IsBound())
-		OnWeaponTypeChange.Broadcast(prevType, InType);
-
+	if (OnWeaponTypeChange.IsBound()) OnWeaponTypeChange.Broadcast(prevType, InType);
 }
 
 void UCWeaponComponent::BindInput(UEnhancedInputComponent* InEnhancedInputComponent)
 {
 	EnhancedInputComponent = InEnhancedInputComponent;
-	
+
 	// InEnhancedInputComponent->BindAction(IA_Bow, ETriggerEvent::Started, this, &UCWeaponComponent::SetBowMode);
 	// InEnhancedInputComponent->BindAction(IA_Rifle, ETriggerEvent::Started, this, &UCWeaponComponent::SetRifleMode);
 	// InEnhancedInputComponent->BindAction(IA_Katana, ETriggerEvent::Started, this, &UCWeaponComponent::SetKatanaMode);
@@ -328,7 +267,6 @@ void UCWeaponComponent::BindInput(UEnhancedInputComponent* InEnhancedInputCompon
 
 	InEnhancedInputComponent->BindAction(IA_SubAction, ETriggerEvent::Started, this, &UCWeaponComponent::SubAction_Pressed);
 	InEnhancedInputComponent->BindAction(IA_SubAction, ETriggerEvent::Completed, this, &UCWeaponComponent::SubAction_Released);
-
 }
 
 // Bow의 SubAction(줌/시위) 활성화 여부
