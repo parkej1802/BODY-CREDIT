@@ -87,6 +87,9 @@ void ULobbyWidget_Selection::OnPlayClicked()
 		}
 	}*/
 
+    if (PlayerCharacter)
+        PlayerCharacter->OnMovement();
+
     GI->PlayConfirmSound();
 
     if (LobbyWidget_DayLeft)
