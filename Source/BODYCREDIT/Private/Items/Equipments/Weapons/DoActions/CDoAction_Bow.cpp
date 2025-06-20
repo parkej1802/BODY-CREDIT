@@ -156,9 +156,9 @@ void UCDoAction_Bow::OnUnequip()
 
 	PoseableMesh->SetBoneLocationByName("ArrowBase", OriginLocation, EBoneSpaces::ComponentSpace);
 
-	for (int32 i = Arrows.Num() - 1; i >= 0; i--)
+	for (int32 i = Bow->Arrows.Num() - 1; i >= 0; i--)
 	{
-		if (!!Arrows[i]->GetAttachParentActor()) Arrows[i]->Destroy();
+		if (!!Bow->Arrows[i]->GetAttachParentActor()) Bow->Arrows[i]->Destroy();
 	}
 }
 
@@ -189,24 +189,24 @@ void UCDoAction_Bow::End_BowString()
 void UCDoAction_Bow::CreateArrow()
 {
 	if (World->bIsTearingDown == true) return;
-
-
+	
 	FTransform transform;
 	ACAddOn_Arrow* arrow = World->SpawnActorDeferred<ACAddOn_Arrow>(ArrowClass, transform, NULL, NULL, ESpawnActorCollisionHandlingMethod::AlwaysSpawn);
 	CheckNull(arrow);
+	arrow->SetActorHiddenInGame(true);
 
 	arrow->AddIgnoreActor(OwnerCharacter);
 
 	FAttachmentTransformRules rule = FAttachmentTransformRules(EAttachmentRule::KeepRelative, true);
 	arrow->AttachToComponent(OwnerCharacter->GetMesh(), rule, "Hand_Bow_Arrow");
 
-	Arrows.Add(arrow);
+	Bow->Arrows.Add(arrow);
 	UGameplayStatics::FinishSpawningActor(arrow, transform);
 }
 
 ACAddOn_Arrow* UCDoAction_Bow::GetAttachedArrow()
 {
-	for (ACAddOn_Arrow* projectile : Arrows)
+	for (ACAddOn_Arrow* projectile : Bow->Arrows)
 	{
 		if (!!projectile->GetAttachParentActor()) return projectile;
 	}
@@ -223,5 +223,5 @@ void UCDoAction_Bow::OnArrowHit(AActor* InCauser, ACNox* InOtherCharacter)
 
 void UCDoAction_Bow::OnArrowEndPlay(ACAddOn_Arrow* InDestroyer)
 {
-	Arrows.Remove(InDestroyer);
+	Bow->Arrows.Remove(InDestroyer);
 }

@@ -61,6 +61,13 @@ private:
 	class UCameraComponent* Camera;
 
 private:
+	UPROPERTY()
+	class ACNox_Runner* OwnerCharacter;
+
+	UPROPERTY()
+	class ACAttachment_Bow* Bow;
+	
+private:
 	FTimeline Timeline;
 
 private:

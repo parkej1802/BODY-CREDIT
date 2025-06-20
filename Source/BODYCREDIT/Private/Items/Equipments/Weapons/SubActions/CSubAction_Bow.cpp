@@ -1,7 +1,7 @@
 ﻿#include "Items/Equipments/Weapons/SubActions/CSubAction_Bow.h"
 #include "Global.h"
 #include "Curves/CurveVector.h"
-#include "Characters/CNox.h"
+#include "Characters/CNox_Runner.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
@@ -21,10 +21,13 @@ UCSubAction_Bow::UCSubAction_Bow()
 void UCSubAction_Bow::BeginPlay(ACNox * InOwner, ACWeapon_Attachment * InAttachment, UCWeapon_DoAction * InDoAction)
 {
 	Super::BeginPlay(InOwner, InAttachment, InDoAction);
+	
+	OwnerCharacter = Cast<ACNox_Runner>(InOwner);
+
+	Bow = Cast<ACAttachment_Bow>(InAttachment);
 
 	SpringArm = CHelpers::GetComponent<USpringArmComponent>(InOwner);
 	Camera = CHelpers::GetComponent<UCameraComponent>(InOwner);
-
 
 	FOnTimelineVector timeline;
 	timeline.BindUFunction(this, "OnAiming");
@@ -58,6 +61,8 @@ void UCSubAction_Bow::Pressed()
 {
 	CheckTrue(State->IsSubActionMode());
 
+	Bow->Arrows.Last()->SetActorHiddenInGame(false);
+
 	if (!!Owner->GetController<AAIController>())
 	{
 		Super::Pressed();
@@ -89,6 +94,9 @@ void UCSubAction_Bow::Pressed()
 void UCSubAction_Bow::Released()
 {
 	CheckFalse(State->IsSubActionMode());
+
+	if (!Bow->Arrows.Last()->GetProjectileMovement()->IsActive())
+		Bow->Arrows.Last()->SetActorHiddenInGame(false);
 
 	if (!!Owner->GetController<AAIController>())
 	{
