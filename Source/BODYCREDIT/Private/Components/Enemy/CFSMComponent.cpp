@@ -2,6 +2,8 @@
 #include "../../../Public/Interfaces/Enemy/CEnemyStateStrategy.h"
 #include "Characters/Enemy/CNox_EBase.h"
 #include "Characters/Enemy/CNox_Zero.h"
+#include "Characters/Enemy/CNox_MedicAndroid.h"
+#include "Characters/Enemy/CNox_MemoryCollectorAI.h"
 #include "State/CCTV/CDieState_CCTV.h"
 #include "State/CCTV/CIdleState_CCTV.h"
 #include "State/CCTV/CRotateMoveStrategy.h"
@@ -62,24 +64,42 @@ void UCFSMComponent::InitSkillCoolDowns(EEnemyType Type)
 	switch (Type)
 	{
 	case EEnemyType::Zero:
-		SkillCoolDowns.Add(GetSkillName(ESkillCoolDown::Melee), 0.f);
-		SkillMaxCoolDowns.Add(GetSkillName(ESkillCoolDown::Melee), 1.f);
+		{
+			ACNox_Zero* ZeroEnemy = Cast<ACNox_Zero>(OwnerEnemy);
+			if (ZeroEnemy)
+			{
+				SkillCoolDowns.Add(GetSkillName(ESkillCoolDown::Melee), 0.f);
+				SkillMaxCoolDowns.Add(GetSkillName(ESkillCoolDown::Melee), ZeroEnemy->MeleeCoolDown);
+			}
+		}
 		break;
 	case EEnemyType::MedicAndroid:
-		SkillCoolDowns.Add(GetSkillName(ESkillCoolDown::Melee), 0.f);
-		SkillMaxCoolDowns.Add(GetSkillName(ESkillCoolDown::Melee), 1.f);
-		SkillCoolDowns.Add(GetSkillName(ESkillCoolDown::Heal), 0.f);
-		SkillMaxCoolDowns.Add(GetSkillName(ESkillCoolDown::Heal), 20.f);
-		SkillCoolDowns.Add(GetSkillName(ESkillCoolDown::Grenade), 0.f);
-		SkillMaxCoolDowns.Add(GetSkillName(ESkillCoolDown::Grenade), 10.f);
+		{
+			ACNox_MedicAndroid* MedicEnemy = Cast<ACNox_MedicAndroid>(OwnerEnemy);
+			if (MedicEnemy)
+			{
+				SkillCoolDowns.Add(GetSkillName(ESkillCoolDown::Melee), 0.f);
+				SkillMaxCoolDowns.Add(GetSkillName(ESkillCoolDown::Melee), MedicEnemy->MeleeCoolDown);
+				SkillCoolDowns.Add(GetSkillName(ESkillCoolDown::Heal), 0.f);
+				SkillMaxCoolDowns.Add(GetSkillName(ESkillCoolDown::Heal), MedicEnemy->HealCoolDown);
+				SkillCoolDowns.Add(GetSkillName(ESkillCoolDown::Grenade), 0.f);
+				SkillMaxCoolDowns.Add(GetSkillName(ESkillCoolDown::Grenade), MedicEnemy->GrenadeCoolDown);
+			}
+		}
 		break;
 	default:
-		SkillCoolDowns.Add(GetSkillName(ESkillCoolDown::Ranged), 0.f);
-		SkillMaxCoolDowns.Add(GetSkillName(ESkillCoolDown::Ranged), 1.f);
-		SkillCoolDowns.Add(GetSkillName(ESkillCoolDown::Beam), 0.f);
-		SkillMaxCoolDowns.Add(GetSkillName(ESkillCoolDown::Beam), 20.f);
-		SkillCoolDowns.Add(GetSkillName(ESkillCoolDown::WavePulse), 0.f);
-		SkillMaxCoolDowns.Add(GetSkillName(ESkillCoolDown::WavePulse), 20.f);
+		{
+			ACNox_MemoryCollectorAI* MemoryEnemy = Cast<ACNox_MemoryCollectorAI>(OwnerEnemy);
+			if (MemoryEnemy)
+			{
+				SkillCoolDowns.Add(GetSkillName(ESkillCoolDown::Ranged), 0.f);
+				SkillMaxCoolDowns.Add(GetSkillName(ESkillCoolDown::Ranged), MemoryEnemy->RangedCoolDown);
+				SkillCoolDowns.Add(GetSkillName(ESkillCoolDown::Beam), 0.f);
+				SkillMaxCoolDowns.Add(GetSkillName(ESkillCoolDown::Beam), MemoryEnemy->BeamCoolDown);
+				SkillCoolDowns.Add(GetSkillName(ESkillCoolDown::WavePulse), 0.f);
+				SkillMaxCoolDowns.Add(GetSkillName(ESkillCoolDown::WavePulse), MemoryEnemy->WavePulseCoolDown);
+			}
+		}
 		break;
 	}
 }

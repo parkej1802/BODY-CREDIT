@@ -101,4 +101,13 @@ private:
 public:
 	void StartRangeAttack(bool bIsRight);
 	void ReturnToPool(ACRangeProjectile* ReturnedProjectile);
+
+public:
+	// Skill CoolDown Variables
+	UPROPERTY(EditDefaultsOnly, Category = "Skill CoolDown")
+	float RangedCoolDown = 1.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "Skill CoolDown")
+	float BeamCoolDown = 20.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "Skill CoolDown")
+	float WavePulseCoolDown = 20.0f;
 };

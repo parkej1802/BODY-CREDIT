@@ -52,16 +52,6 @@ void ACNox_MedicAndroid::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CHelpers::GetAssetDynamic(&(EnemyAnim->IdleMontage), TEXT("/Game/Assets/MedicAnim/LocomotionAnim/AM_Idle.AM_Idle"));
-	CHelpers::GetAssetDynamic(&(EnemyAnim->HitMontage), TEXT("/Game/Assets/MedicAnim/DamageAnim/AM_Hit.AM_Hit"));
-	CHelpers::GetAssetDynamic(&(EnemyAnim->DieMontage), TEXT("/Game/Assets/MedicAnim/DieAnim/AM_Die.AM_Die"));
-	CHelpers::GetAssetDynamic(&(EnemyAnim->GrenadeMontage),
-	                          TEXT("/Game/Assets/MedicAnim/AttackAnim/AM_Grenade.AM_Grenade"));
-	CHelpers::GetAssetDynamic(&(EnemyAnim->ShieldMontage),
-	                          TEXT("/Game/Assets/MedicAnim/HealAnim/AM_Shield.AM_Shield"));
-	CHelpers::GetAssetDynamic(&(EnemyAnim->AttackMontage),
-	                          TEXT("/Game/Assets/MedicAnim/AttackAnim/AM_Attack.AM_Attack"));
-
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 	ElectricGrenade = GetWorld()->SpawnActor<ACElectricGrenade>(ElectricGrenadeCls, this->GetActorLocation(),
@@ -123,10 +113,6 @@ float ACNox_MedicAndroid::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 
 	if (IsShielding()) return 0.f;
 
-	
-	PlayLaunchCharacter(1000);
-	PlayHitStop(0.05);
-
 	HPComp->TakeDamage(DamageAmount);
 	if (HPComp->IsDead())
 	{
@@ -138,6 +124,9 @@ float ACNox_MedicAndroid::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 	{
 		if (FSMComp->GetEnemyState() == EEnemyState::Combat) return DamageAmount;
 
+		PlayLaunchCharacter(1000);
+		PlayHitStop(0.05);
+		
 		const float HitChance = 0.3f; // 30% 확률로 피격 상태 진입
 		const float rand = FMath::FRand(); // 0~1 랜덤
 		if (rand <= HitChance)

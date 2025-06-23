@@ -49,14 +49,14 @@ void UCNoxEnemy_Animinstance::PlayAttackMontage()
 	if (OwnerEnemy->IsA(ACNox_MedicAndroid::StaticClass()) ||
 		OwnerEnemy->IsA(ACNox_Zero::StaticClass()))
 	{
-		if (AttackMontage) OwnerEnemy->PlayAnimMontage(AttackMontage, 1.0f);
+		if (OwnerEnemy->AttackMontage) OwnerEnemy->PlayAnimMontage(OwnerEnemy->AttackMontage, 1.0f);
 	}
 	else if (OwnerEnemy->IsA(ACNox_MemoryCollectorAI::StaticClass()))
 	{
-		if (Attack1Montage)
+		if (OwnerEnemy->Attack1Montage)
 		{
 			AttackCombo = 1;
-			OwnerEnemy->PlayAnimMontage(Attack1Montage, 1.0f);
+			OwnerEnemy->PlayAnimMontage(OwnerEnemy->Attack1Montage, 1.0f);
 		}
 	}
 }
@@ -65,14 +65,14 @@ bool UCNoxEnemy_Animinstance::IsAttacking() const
 {
 	if (OwnerEnemy->IsA(ACNox_MedicAndroid::StaticClass()) || OwnerEnemy->IsA(ACNox_Zero::StaticClass()))
 	{
-		if (AttackMontage && Montage_IsPlaying(AttackMontage)) return true;
+		if (OwnerEnemy->AttackMontage && Montage_IsPlaying(OwnerEnemy->AttackMontage)) return true;
 		else return false;
 	}
 	else if (OwnerEnemy->IsA(ACNox_MemoryCollectorAI::StaticClass()))
 	{
 		UAnimMontage* curMontage = OwnerEnemy->GetCurrentMontage();
-		if (curMontage == Attack1Montage || curMontage == Attack2Montage || curMontage == Attack3Montage || curMontage
-			== Attack4Montage)
+		if (curMontage == OwnerEnemy->Attack1Montage || curMontage == OwnerEnemy->Attack2Montage
+			|| curMontage == OwnerEnemy->Attack3Montage || curMontage == OwnerEnemy->Attack4Montage)
 			return true;
 		else return false;
 	}
@@ -99,12 +99,12 @@ void UCNoxEnemy_Animinstance::AnimNotify_EndAttack()
 #pragma region Grenade
 void UCNoxEnemy_Animinstance::PlayGrenadeMontage() const
 {
-	OwnerEnemy->PlayAnimMontage(GrenadeMontage, 1.0f);
+	OwnerEnemy->PlayAnimMontage(OwnerEnemy->GrenadeMontage, 1.0f);
 }
 
 bool UCNoxEnemy_Animinstance::IsPlayingGrenade() const
 {
-	return Montage_IsPlaying(GrenadeMontage);
+	return Montage_IsPlaying(OwnerEnemy->GrenadeMontage);
 }
 
 void UCNoxEnemy_Animinstance::AnimNotify_Grenade() const
@@ -117,21 +117,21 @@ void UCNoxEnemy_Animinstance::AnimNotify_Grenade() const
 void UCNoxEnemy_Animinstance::PlayShieldMontage(const bool bInShieldStart) const
 {
 	if (bInShieldStart)
-		OwnerEnemy->PlayAnimMontage(ShieldMontage, 1.0f, ShieldStartSection);
+		OwnerEnemy->PlayAnimMontage(OwnerEnemy->ShieldMontage, 1.0f, ShieldStartSection);
 	else
-		OwnerEnemy->PlayAnimMontage(ShieldMontage, -.65f, ShieldEndSection);
+		OwnerEnemy->PlayAnimMontage(OwnerEnemy->ShieldMontage, -.65f, ShieldEndSection);
 }
 
 bool UCNoxEnemy_Animinstance::IsShielding() const
 {
-	return Montage_IsPlaying(ShieldMontage);
+	return Montage_IsPlaying(OwnerEnemy->ShieldMontage);
 }
 #pragma endregion
 
 #pragma region Beam
 void UCNoxEnemy_Animinstance::PlayBeamAttack() const
 {
-	OwnerEnemy->PlayAnimMontage(BeamMontage, 1.0f);
+	OwnerEnemy->PlayAnimMontage(OwnerEnemy->BeamMontage, 1.0f);
 }
 
 void UCNoxEnemy_Animinstance::AnimNotify_BeamStart() const
@@ -141,12 +141,12 @@ void UCNoxEnemy_Animinstance::AnimNotify_BeamStart() const
 
 void UCNoxEnemy_Animinstance::StopBeamAttack() const
 {
-	OwnerEnemy->StopAnimMontage(BeamMontage);
+	OwnerEnemy->StopAnimMontage(OwnerEnemy->BeamMontage);
 }
 
 bool UCNoxEnemy_Animinstance::IsBeamAttacking() const
 {
-	return Montage_IsPlaying(BeamMontage);
+	return Montage_IsPlaying(OwnerEnemy->BeamMontage);
 }
 
 void UCNoxEnemy_Animinstance::AnimNotify_UsingBeamTimeChecker()
@@ -159,7 +159,7 @@ void UCNoxEnemy_Animinstance::AnimNotify_UsingBeamTimeChecker()
 #pragma region Wave Pulse
 void UCNoxEnemy_Animinstance::PlayWavePulse() const
 {
-	OwnerEnemy->PlayAnimMontage(WavePulseMontage, 1.0f);
+	OwnerEnemy->PlayAnimMontage(OwnerEnemy->WavePulseMontage, 1.0f);
 }
 
 void UCNoxEnemy_Animinstance::AnimNotify_WavePulseStart() const
@@ -169,7 +169,7 @@ void UCNoxEnemy_Animinstance::AnimNotify_WavePulseStart() const
 
 bool UCNoxEnemy_Animinstance::IsWavePulseAttacking() const
 {
-	return Montage_IsPlaying(WavePulseMontage);
+	return Montage_IsPlaying(OwnerEnemy->WavePulseMontage);
 }
 #pragma endregion
 
@@ -183,13 +183,13 @@ void UCNoxEnemy_Animinstance::AnimNotify_SaveAttack()
 		// tmpMontage = Attack1Montage;
 		break;
 	case 1:
-		tmpMontage = Attack2Montage;
+		tmpMontage = OwnerEnemy->Attack2Montage;
 		break;
 	case 2:
-		tmpMontage = Attack3Montage;
+		tmpMontage = OwnerEnemy->Attack3Montage;
 		break;
 	case 3:
-		tmpMontage = Attack4Montage;
+		tmpMontage = OwnerEnemy->Attack4Montage;
 		break;
 	default:
 		break;
@@ -210,12 +210,12 @@ void UCNoxEnemy_Animinstance::AnimNotify_ResetCombo()
 void UCNoxEnemy_Animinstance::AnimNotify_RangeAttack()
 {
 	UAnimMontage* curMontage = OwnerEnemy->GetCurrentMontage();
-	if (curMontage == Attack1Montage || curMontage == Attack3Montage)
+	if (curMontage == OwnerEnemy->Attack1Montage || curMontage == OwnerEnemy->Attack3Montage)
 	{
 		// 오른손
 		Cast<ACNox_MemoryCollectorAI>(OwnerEnemy)->StartRangeAttack(true);
 	}
-	else if (curMontage == Attack2Montage || curMontage == Attack4Montage)
+	else if (curMontage == OwnerEnemy->Attack2Montage || curMontage == OwnerEnemy->Attack4Montage)
 	{
 		// 왼손
 		Cast<ACNox_MemoryCollectorAI>(OwnerEnemy)->StartRangeAttack(false);
@@ -226,19 +226,19 @@ void UCNoxEnemy_Animinstance::AnimNotify_RangeAttack()
 #pragma region Hit
 void UCNoxEnemy_Animinstance::PlayHitMontage(const int32 sectionIdx)
 {
-	OwnerEnemy->PlayAnimMontage(HitMontage, 1, FName(FString::FromInt(sectionIdx)));
+	OwnerEnemy->PlayAnimMontage(OwnerEnemy->HitMontage, 1, FName(FString::FromInt(sectionIdx)));
 }
 
 bool UCNoxEnemy_Animinstance::IsHitting() const
 {
-	return Montage_IsPlaying(HitMontage);
+	return Montage_IsPlaying(OwnerEnemy->HitMontage);
 }
 #pragma endregion
 
 #pragma region Die
 void UCNoxEnemy_Animinstance::PlayDieMontage(const int32 sectionIdx)
 {
-	if (DieMontage) OwnerEnemy->PlayAnimMontage(DieMontage, 1.0f);
+	if (OwnerEnemy->DieMontage) OwnerEnemy->PlayAnimMontage(OwnerEnemy->DieMontage, 1.0f);
 }
 #pragma endregion
 

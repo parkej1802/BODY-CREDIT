@@ -41,39 +41,6 @@ public:
 	void SetEnemy(ACNox_EBase* InOwnerEnemy) { OwnerEnemy = InOwnerEnemy; }
 #pragma endregion
 
-#pragma region Montage
-
-public:
-	// Common
-	UPROPERTY(VisibleAnywhere)
-	UAnimMontage* IdleMontage;
-	UPROPERTY(VisibleAnywhere)
-	UAnimMontage* HitMontage;
-	UPROPERTY(VisibleAnywhere)
-	UAnimMontage* DieMontage;
-	// Zero, Medic
-	UPROPERTY(VisibleAnywhere)
-	UAnimMontage* AttackMontage;
-	// Medic
-	UPROPERTY(VisibleAnywhere)
-	UAnimMontage* GrenadeMontage;
-	UPROPERTY(VisibleAnywhere)
-	UAnimMontage* ShieldMontage;
-	// Memory Collector
-	UPROPERTY(VisibleAnywhere)
-	UAnimMontage* Attack1Montage;
-	UPROPERTY(VisibleAnywhere)
-	UAnimMontage* Attack2Montage;
-	UPROPERTY(VisibleAnywhere)
-	UAnimMontage* Attack3Montage;
-	UPROPERTY(VisibleAnywhere)
-	UAnimMontage* Attack4Montage;
-	UPROPERTY(VisibleAnywhere)
-	UAnimMontage* BeamMontage;
-	UPROPERTY(VisibleAnywhere)
-	UAnimMontage* WavePulseMontage;
-#pragma endregion
-
 #pragma region Attacking
 
 public:

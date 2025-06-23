@@ -73,4 +73,13 @@ private: // Electric Grenade
 
 public:
 	void LaunchElectricGrenade();
+
+public:
+	// Skill CoolDown Variables
+	UPROPERTY(EditDefaultsOnly, Category = "Skill CoolDown")
+	float MeleeCoolDown = 1.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "Skill CoolDown")
+	float HealCoolDown = 20.0f;
+	UPROPERTY(EditDefaultsOnly, Category = "Skill CoolDown")
+	float GrenadeCoolDown = 10.0f;
 };

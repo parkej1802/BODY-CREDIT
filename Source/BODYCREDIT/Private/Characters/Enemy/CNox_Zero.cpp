@@ -42,15 +42,6 @@ ACNox_Zero::ACNox_Zero()
 void ACNox_Zero::BeginPlay()
 {
 	Super::BeginPlay();
-	// Attack Montage 등록
-	CHelpers::GetAssetDynamic(&(EnemyAnim->AttackMontage),
-	                          TEXT("/Game/Assets/Cyber_Zombie_Arm/Anim/Attack/AM_Attack.AM_Attack"));
-	// Hit Montage 등록
-	CHelpers::GetAssetDynamic(&(EnemyAnim->HitMontage),
-	                          TEXT("/Game/Assets/Cyber_Zombie_Arm/Anim/Hit/AM_Hit.AM_Hit"));
-	// Die Montage 등록
-	CHelpers::GetAssetDynamic(&(EnemyAnim->DieMontage),
-	                          TEXT("/Game/Assets/Cyber_Zombie_Arm/Anim/Die/AM_Die.AM_Die"));
 	AttackCollision(false); // Attack Collision Off
 
 	HPComp->SetStatus(150, 0);
@@ -67,9 +58,6 @@ float ACNox_Zero::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 	if (!GetTarget())
 		if (ACNox* player = Cast<ACNox>(DamageCauser->GetOwner())) SetTarget(player);
 	
-	PlayLaunchCharacter(1000);
-	PlayHitStop(0.05);
-
 	HPComp->TakeDamage(DamageAmount);
 	if (HPComp->IsDead())
 	{
@@ -80,6 +68,9 @@ float ACNox_Zero::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 	else
 	{		
 		if (FSMComp->GetEnemyState() == EEnemyState::Combat) return DamageAmount;
+
+		PlayLaunchCharacter(1000);
+		PlayHitStop(0.05);
 		
 		const float HitChance = 0.3f; // 30% 확률로 피격 상태 진입
 		const float rand = FMath::FRand(); // 0~1 랜덤

@@ -119,6 +119,37 @@ protected:
 public:
 	void SetMovementSpeed(const EEnemyMovementSpeed& InMovementSpeed);
 #pragma endregion
+
+#pragma region Montage
+
+public:
+	// Common
+	UPROPERTY(EditDefaultsOnly, Category=Montage)
+	UAnimMontage* HitMontage;
+	UPROPERTY(EditDefaultsOnly, Category=Montage)
+	UAnimMontage* DieMontage;
+	// Zero, Medic
+	UPROPERTY(EditDefaultsOnly, Category=Montage)
+	UAnimMontage* AttackMontage;
+	// Medic
+	UPROPERTY(EditDefaultsOnly, Category=Montage)
+	UAnimMontage* GrenadeMontage;
+	UPROPERTY(EditDefaultsOnly, Category=Montage)
+	UAnimMontage* ShieldMontage;
+	// Memory Collector
+	UPROPERTY(EditDefaultsOnly, Category=Montage)
+	UAnimMontage* Attack1Montage;
+	UPROPERTY(EditDefaultsOnly, Category=Montage)
+	UAnimMontage* Attack2Montage;
+	UPROPERTY(EditDefaultsOnly, Category=Montage)
+	UAnimMontage* Attack3Montage;
+	UPROPERTY(EditDefaultsOnly, Category=Montage)
+	UAnimMontage* Attack4Montage;
+	UPROPERTY(EditDefaultsOnly, Category=Montage)
+	UAnimMontage* BeamMontage;
+	UPROPERTY(EditDefaultsOnly, Category=Montage)
+	UAnimMontage* WavePulseMontage;
+#pragma endregion
 	
 #pragma region Attacking
 

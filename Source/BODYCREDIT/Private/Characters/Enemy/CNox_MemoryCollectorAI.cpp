@@ -60,25 +60,6 @@ void ACNox_MemoryCollectorAI::BeginPlay()
 	}
 
 	{
-		CHelpers::GetAssetDynamic(&(EnemyAnim->Attack1Montage),
-		                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_Attack1.AM_Attack1"));
-		CHelpers::GetAssetDynamic(&(EnemyAnim->Attack2Montage),
-		                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_Attack2.AM_Attack2"));
-		CHelpers::GetAssetDynamic(&(EnemyAnim->Attack3Montage),
-		                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_Attack3.AM_Attack3"));
-		CHelpers::GetAssetDynamic(&(EnemyAnim->Attack4Montage),
-		                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_Attack4.AM_Attack4"));
-		CHelpers::GetAssetDynamic(&(EnemyAnim->BeamMontage),
-		                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_Beam.AM_Beam"));
-		CHelpers::GetAssetDynamic(&(EnemyAnim->WavePulseMontage),
-		                          TEXT("/Game/Assets/MemoryCollectorAnim/AM_WavePulse.AM_WavePulse"));
-
-		// 테스트 애니메이션
-		CHelpers::GetAssetDynamic(&(EnemyAnim->HitMontage), TEXT("/Game/Assets/MedicAnim/DamageAnim/AM_Hit.AM_Hit"));
-		CHelpers::GetAssetDynamic(&(EnemyAnim->DieMontage), TEXT("/Game/Assets/MedicAnim/DieAnim/AM_Die.AM_Die"));
-	}
-
-	{
 		// Beam
 		FVector SpawnLocation = FVector::ZeroVector;
 		FRotator SpawnRotation = FRotator::ZeroRotator;
@@ -148,15 +129,15 @@ float ACNox_MemoryCollectorAI::TakeDamage(float DamageAmount, FDamageEvent const
 	if (!GetTarget())
 		if (ACNox* player = Cast<ACNox>(DamageCauser->GetOwner())) SetTarget(player);
 	
-	PlayLaunchCharacter(500);
-	PlayHitStop(0.05);
-
 	HPComp->TakeDamage(DamageAmount);
 	if (HPComp->IsDead()) FSMComp->SetEnemyState(EEnemyState::Die);
 	else
 	{
 		if (FSMComp->GetEnemyState() == EEnemyState::Combat) return DamageAmount;
 
+		PlayLaunchCharacter(500);
+		PlayHitStop(0.05);
+		
 		const float HitChance = 0.3f; // 30% 확률로 피격 상태 진입
 		const float rand = FMath::FRand(); // 0~1 랜덤
 		if (rand <= HitChance)

@@ -43,4 +43,9 @@ public:
 
 public:
 	virtual void AttackCollision(bool bOn, bool IsRightHand = true) override;
+
+public:
+	// Skill CoolDown Variables
+	UPROPERTY(EditDefaultsOnly, Category = "Skill CoolDown")
+	float MeleeCoolDown = 1.0f;
 };
