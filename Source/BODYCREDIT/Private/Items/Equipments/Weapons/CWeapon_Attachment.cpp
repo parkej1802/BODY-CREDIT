@@ -69,7 +69,7 @@ void ACWeapon_Attachment::OnComponentBeginOverlap(UPrimitiveComponent* Overlappe
 	CheckTrue(OwnerCharacter->GetClass() == OtherActor->GetClass());
 
 	if (OnWeaponAttachmentBeginOverlap.IsBound())
-		OnWeaponAttachmentBeginOverlap.Broadcast(OwnerCharacter, this, Cast<ACNox>(OtherActor));
+		OnWeaponAttachmentBeginOverlap.Broadcast(OwnerCharacter, this, Cast<ACNox>(OtherActor), SweepResult);
 
 }
 

@@ -94,7 +94,7 @@ public:
 	FVector EffectScale = FVector::OneVector;
 
 public:
-	void SendDamage(class ACNox* InAttacker, AActor* InAttackCauser, class ACNox* InOther);
+	void SendDamage(class ACNox* InAttacker, AActor* InAttackCauser, class ACNox* InOther, struct FHitResult HitResult);
 	void PlayMontage(class ACNox* InOwner);
 	void PlayHitStop(UWorld* InWorld);
 	void PlaySoundWave(class ACNox* InOwner);
@@ -105,13 +105,12 @@ public:
 
 USTRUCT()
 struct FActionDamageEvent
-	: public FDamageEvent
+	: public FPointDamageEvent
 {
 	GENERATED_BODY()
 
 public:
 	FWeaponHitData* WeaponHitData;
-
 };
 
 USTRUCT(BlueprintType)

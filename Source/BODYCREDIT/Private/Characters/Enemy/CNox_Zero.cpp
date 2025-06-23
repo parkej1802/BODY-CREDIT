@@ -72,6 +72,7 @@ float ACNox_Zero::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent
 			FVector Impulse = ImpulseDir * 5000.f;
 			SetLastHitImpulse(Impulse);
 		}
+		
 		if (DamageEvent.IsOfType(FPointDamageEvent::ClassID))
 		{
 			const FPointDamageEvent* PointEvent = static_cast<const FPointDamageEvent*>(&DamageEvent);

@@ -56,10 +56,12 @@ void FWeaponDoActionData::PlayEffect(UWorld* InWorld, const FVector& InLocation,
 *  Weapon HitData  *
 *******************/
 
-void FWeaponHitData::SendDamage(ACNox* InAttacker, AActor* InAttackCauser, ACNox* InOther)
+void FWeaponHitData::SendDamage(ACNox* InAttacker, AActor* InAttackCauser, ACNox* InOther, const FHitResult HitResult)
 {
 	FActionDamageEvent e;
 	e.WeaponHitData = this;
+	e.HitInfo = HitResult;
+	e.ShotDirection = (InOther->GetActorLocation() - InAttacker->GetActorLocation()).GetSafeNormal();
 
 	InOther->TakeDamage(Power, e, InAttacker->GetController(), InAttackCauser);
 

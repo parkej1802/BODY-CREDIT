@@ -4,7 +4,7 @@
 #include "Items/Equipments/Weapons/AddOns/CAddOn.h"
 #include "CAddOn_Arrow.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FProjectileHit, class AActor*, InCauser, class ACNox*, InOtherCharacter);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FProjectileHit, class AActor*, InCauser, class ACNox*, InOtherCharacter, const struct FHitResult&, HitResult);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FProjectileEndPlay, class ACAddOn_Arrow*, InDestroyer);
 
 UCLASS()

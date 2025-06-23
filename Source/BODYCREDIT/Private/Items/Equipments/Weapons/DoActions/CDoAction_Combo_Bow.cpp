@@ -161,11 +161,11 @@ class ACAddOn_Arrow* UCDoAction_Combo_Bow::GetAttachedArrow()
 	return nullptr;
 }
 
-void UCDoAction_Combo_Bow::OnArrowHit(class AActor* InCauser, class ACNox* InOtherCharacter)
+void UCDoAction_Combo_Bow::OnArrowHit(class AActor* InCauser, class ACNox* InOtherCharacter, const struct FHitResult& HitResult)
 {
 	CheckFalse(HitDatas.Num() > 0);
 
-	HitDatas[0].SendDamage(OwnerCharacter, InCauser, InOtherCharacter);
+	HitDatas[0].SendDamage(OwnerCharacter, InCauser, InOtherCharacter, HitResult);
 }
 
 void UCDoAction_Combo_Bow::OnArrowEndPlay(class ACAddOn_Arrow* InDestroyer)

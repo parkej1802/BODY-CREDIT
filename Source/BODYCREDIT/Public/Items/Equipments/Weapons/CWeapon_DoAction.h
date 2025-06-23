@@ -55,7 +55,7 @@ public:
 	virtual void OnWeaponAttachmentEndCollision() {};
 	
 	UFUNCTION()
-	virtual void OnWeaponAttachmentBeginOverlap(class ACNox* InAttacker, AActor* InAttackCauser, class ACNox* InOther) {}
+	virtual void OnWeaponAttachmentBeginOverlap(class ACNox* InAttacker, AActor* InAttackCauser, class ACNox* InOther, const struct FHitResult& HitResult) {}
 	
 	UFUNCTION()
 	virtual void OnWeaponAttachmentEndOverlap(class ACNox* InAttacker, class ACNox* InOther) {}

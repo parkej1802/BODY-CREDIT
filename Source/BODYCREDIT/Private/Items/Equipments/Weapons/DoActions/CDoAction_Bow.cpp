@@ -214,11 +214,11 @@ ACAddOn_Arrow* UCDoAction_Bow::GetAttachedArrow()
 	return nullptr;
 }
 
-void UCDoAction_Bow::OnArrowHit(AActor* InCauser, ACNox* InOtherCharacter)
+void UCDoAction_Bow::OnArrowHit(AActor* InCauser, ACNox* InOtherCharacter, const FHitResult& HitResult)
 {
 	CheckFalse(HitDatas.Num() > 0);
 
-	HitDatas[0].SendDamage(OwnerCharacter, InCauser, InOtherCharacter);
+	HitDatas[0].SendDamage(OwnerCharacter, InCauser, InOtherCharacter, HitResult);
 }
 
 void UCDoAction_Bow::OnArrowEndPlay(ACAddOn_Arrow* InDestroyer)

@@ -57,9 +57,9 @@ void UCWeapon_DoAction_Combo::End_DoAction()
 
 }
 
-void UCWeapon_DoAction_Combo::OnWeaponAttachmentBeginOverlap(ACNox* InAttacker, AActor* InAttackCauser, ACNox* InOther)
+void UCWeapon_DoAction_Combo::OnWeaponAttachmentBeginOverlap(ACNox* InAttacker, AActor* InAttackCauser, ACNox* InOther, const FHitResult& HitResult)
 {
-	Super::OnWeaponAttachmentBeginOverlap(InAttacker, InAttackCauser, InOther);
+	Super::OnWeaponAttachmentBeginOverlap(InAttacker, InAttackCauser, InOther, HitResult);
 	CheckNull(InOther);
 
 	//CLog::Log(InOther->GetName());
@@ -77,7 +77,7 @@ void UCWeapon_DoAction_Combo::OnWeaponAttachmentBeginOverlap(ACNox* InAttacker, 
 		UGameplayStatics::SpawnEmitterAtLocation(World, HitVFX, InOther->GetActorLocation());
 
 	CheckTrue(HitDatas.Num() - 1 < Index);
-	HitDatas[Index].SendDamage(InAttacker, InAttackCauser, InOther);
+	HitDatas[Index].SendDamage(InAttacker, InAttackCauser, InOther, HitResult);
 
 }
 

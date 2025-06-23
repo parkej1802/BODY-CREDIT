@@ -56,7 +56,7 @@ void ACAddOn_Arrow::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* Ot
 	for (AActor* actor : Ignores) CheckTrue(actor == OtherActor);
 	
 	ACNox* character = Cast<ACNox>(OtherActor);
-	if (!!character && OnHit.IsBound()) OnHit.Broadcast(this, character);
+	if (!!character && OnHit.IsBound()) OnHit.Broadcast(this, character, Hit);
 
 	// 2. 파티클 스폰 (BP_ArrowVanishFX는 파티클 시스템)
 	if (ArrowVanishFX) // NiagaraSystem 사용 예시

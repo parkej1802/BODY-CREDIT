@@ -23,7 +23,7 @@ public:
 	virtual void End_DoAction() override;
 
 public:
-	void OnWeaponAttachmentBeginOverlap(class ACNox* InAttacker, AActor* InAttackCauser, class ACNox* InOther) override;
+	void OnWeaponAttachmentBeginOverlap(class ACNox* InAttacker, AActor* InAttackCauser, class ACNox* InOther, const struct FHitResult& HitResult) override;
 	void OnWeaponAttachmentEndCollision() override;
 
 protected:

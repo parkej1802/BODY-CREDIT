@@ -7,7 +7,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FWeaponAttachmentBeginCollision);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FWeaponAttachmentEndCollision);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FWeaponAttachmentBeginOverlap, class ACNox*, InAttacker, AActor*, InAttackCuaser, class ACNox*, InOther);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_FourParams(FWeaponAttachmentBeginOverlap, class ACNox*, InAttacker, AActor*, InAttackCuaser, class ACNox*, InOther, const struct FHitResult&, HitResult);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FWeaponAttachmentEndOverlap, class ACNox*, InAttacker, class ACNox*, InOther);
 
 UCLASS()

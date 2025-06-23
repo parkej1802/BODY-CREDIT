@@ -46,7 +46,7 @@ private:
 
 private:
 	UFUNCTION()
-	void OnArrowHit(class AActor* InCauser, class ACNox* InOtherCharacter);
+	void OnArrowHit(class AActor* InCauser, class ACNox* InOtherCharacter, const struct FHitResult& HitResult);
 
 	UFUNCTION()
 	void OnArrowEndPlay(class ACAddOn_Arrow* InDestroyer);
