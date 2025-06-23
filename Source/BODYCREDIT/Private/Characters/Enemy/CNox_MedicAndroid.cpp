@@ -7,6 +7,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/Enemy/CFSMComponent.h"
 #include "Components/Enemy/CNoxEnemyHPComponent.h"
+#include "Engine/DamageEvents.h"
 
 #pragma region Init
 ACNox_MedicAndroid::ACNox_MedicAndroid()
@@ -118,6 +119,29 @@ float ACNox_MedicAndroid::TakeDamage(float DamageAmount, FDamageEvent const& Dam
 	{
 		AttackComp_l->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		AttackComp_r->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		if (DamageCauser)
+		{
+			FVector ImpulseDir = GetActorLocation() - DamageCauser->GetActorLocation();
+			ImpulseDir.Z = 0;
+			ImpulseDir.Normalize();
+			FVector Impulse = ImpulseDir * 5000.f;
+			SetLastHitImpulse(Impulse);
+		}
+		if (DamageEvent.IsOfType(FPointDamageEvent::ClassID))
+		{
+			const FPointDamageEvent* PointEvent = static_cast<const FPointDamageEvent*>(&DamageEvent);
+			SetLastHitInfo(PointEvent->HitInfo.ImpactPoint, PointEvent->HitInfo.BoneName);
+		}
+		else if (DamageEvent.IsOfType(FRadialDamageEvent::ClassID))
+		{
+			const FRadialDamageEvent* RadialEvent = static_cast<const FRadialDamageEvent*>(&DamageEvent);
+			if (RadialEvent->ComponentHits.Num() > 0)
+				SetLastHitInfo(RadialEvent->ComponentHits[0].ImpactPoint, RadialEvent->ComponentHits[0].BoneName);
+		}
+		else
+		{
+			SetLastHitInfo(GetActorLocation());
+		}
 		FSMComp->SetEnemyState(EEnemyState::Die);
 	}
 	else

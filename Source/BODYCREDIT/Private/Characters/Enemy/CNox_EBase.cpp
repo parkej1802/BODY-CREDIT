@@ -164,11 +164,42 @@ void ACNox_EBase::ResetVal() const
 #pragma region Die
 void ACNox_EBase::HandleDie(const int32 sectionIdx)
 {
-	GetMesh()->SetCollisionProfileName(FName("EnemyDie"));
-	GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	GetCapsuleComponent()->SetCollisionProfileName(FName("EnemyDieCollision"));
-	if (EnemyAnim) EnemyAnim->PlayDieMontage(sectionIdx);
+	// GetMesh()->SetCollisionProfileName(FName("EnemyDie"));
+	// GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	// GetCapsuleComponent()->SetCollisionProfileName(FName("EnemyDieCollision"));
+	// if (EnemyAnim) EnemyAnim->PlayDieMontage(sectionIdx);
+	SetRagdoll();
 	EnemyController->PerceptionDeactive();
+}
+
+void ACNox_EBase::SetRagdoll()
+{
+	USkeletalMeshComponent* MeshComp = GetMesh();
+	if (MeshComp)
+	{
+		MeshComp->SetCollisionProfileName(TEXT("EnemyDie"));
+		MeshComp->SetSimulatePhysics(true);
+		MeshComp->WakeAllRigidBodies();
+		MeshComp->bBlendPhysics = true;
+
+		// 마지막 피격 위치/본에 임펄스 적용
+		if (!LastHitImpulse.IsNearlyZero())
+		{
+			if (!LastHitBoneName.IsNone())
+			{
+				MeshComp->AddImpulseAtLocation(LastHitImpulse, LastHitLocation, LastHitBoneName);
+			}
+			else
+			{
+				MeshComp->AddImpulse(LastHitImpulse, NAME_None, true);
+			}
+		}
+	}
+	UCapsuleComponent* Capsule = GetCapsuleComponent();
+	if (Capsule)
+	{
+		Capsule->SetCollisionProfileName(FName("EnemyDieCollision"));
+	}
 }
 #pragma endregion
 

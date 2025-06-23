@@ -180,6 +180,15 @@ public:
 
 public:
 	void HandleDie(const int32 sectionIdx = 1);
+	void SetLastHitImpulse(const FVector& InImpulse) { LastHitImpulse = InImpulse; }
+	void SetLastHitInfo(const FVector& InLocation, const FName& InBoneName = NAME_None) { LastHitLocation = InLocation; LastHitBoneName = InBoneName; }
+	
+private:
+	FVector LastHitImpulse = FVector::ZeroVector;
+	FVector LastHitLocation = FVector::ZeroVector;
+	FName LastHitBoneName = NAME_None;
+	
+	void SetRagdoll();
 #pragma endregion
 
 #pragma region Heal (Medic)
