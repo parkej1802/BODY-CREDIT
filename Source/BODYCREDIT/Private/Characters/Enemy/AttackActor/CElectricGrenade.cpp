@@ -49,16 +49,7 @@ void ACElectricGrenade::Explode()
 {
 	FVector Origin = GetActorLocation();
 	float Radius = 500.f; // 폭발 반경
-
-	//if (ACNox_Runner* runner = Cast<ACNox_Runner>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)))
-	//{
-	//	FVector Origin = GetActorLocation();
-	//	float Radius = 500.f; // 폭발 반경
-
-	//	if (UKismetMathLibrary::Vector_Distance2D(runner->GetActorLocation(), GetActorLocation()) <= Radius)
-	//		runner->ReactFlashBang(GetActorLocation());
-	//}
-
+	
 	TArray<FOverlapResult> Overlaps;
 	FCollisionQueryParams Params;
 	Params.AddIgnoredActor(this); // 수류탄 자신 제외
@@ -70,7 +61,7 @@ void ACElectricGrenade::Explode()
 		Overlaps,
 		Origin,
 		FQuat::Identity,
-		ECC_GameTraceChannel1,
+		ECC_GameTraceChannel9,
 		FCollisionShape::MakeSphere(Radius),
 		Params
 	);
@@ -80,28 +71,31 @@ void ACElectricGrenade::Explode()
 		AActor* Target = Result.GetActor();
 		if (!Target) continue;
 
-		// 플레이어만 처리
-		FVector PlayerLocation = Target->GetActorLocation();
-		FHitResult Hit;
-		FCollisionQueryParams TraceParams;
-		TraceParams.AddIgnoredActor(this);
-		TraceParams.AddIgnoredActor(Target);
+		if (ACNox_Runner* Runner = Cast<ACNox_Runner>(Target))
+		{
+			FVector PlayerLocation = Target->GetActorLocation();
+			FHitResult Hit;
+			FCollisionQueryParams TraceParams;
+			TraceParams.AddIgnoredActor(this);
+			TraceParams.AddIgnoredActor(Target);
 
-		bool bBlocked = GetWorld()->LineTraceSingleByChannel(
-			Hit,
-			Origin,
-			PlayerLocation,
-			ECC_Visibility,
-			TraceParams
-		);
+			bool bBlocked = GetWorld()->LineTraceSingleByChannel(
+				Hit,
+				Origin,
+				PlayerLocation,
+				ECC_Visibility,
+				TraceParams
+			);
 
-		if (bBlocked && Hit.GetActor() == Target) Cast<ACNox_Runner>(Target)->ReactFlashBang(GetActorLocation());
+			if (!bBlocked || (bBlocked && Hit.GetActor() == Target))
+				Runner->ReactFlashBang(GetActorLocation());
+		}
 	}
 
 	// 이펙트 처리
 	UseFX(true);
 	FTimerHandle TimerHandle;
-	Owner->GetWorldTimerManager().SetTimer(TimerHandle, [this]()
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this]()
 	{
 		UseFX(false);
 		Init(false);
